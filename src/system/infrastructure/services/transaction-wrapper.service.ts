@@ -1,7 +1,7 @@
 import { DataSource, QueryRunner } from 'typeorm';
 import { CommonService } from './common.service';
 import { InputIsNotDefinedException } from '../exceptions/input-is-not-defined.exception';
-import { LogsService } from '../loggers/logs.service';
+// import { LogsService } from '../loggers/logs.service';
 import { ValidationHelper } from '../helpers/validation.helper';
 
 export abstract class TransactionWrapperService<
@@ -9,8 +9,7 @@ export abstract class TransactionWrapperService<
   OUTPUT,
 > extends CommonService {
   constructor(
-    protected readonly dataSource: DataSource,
-    protected readonly logService: LogsService,
+    protected readonly dataSource: DataSource, // protected readonly logService: LogsService,
   ) {
     super();
     // logService.context = TransactionWraperService.name;

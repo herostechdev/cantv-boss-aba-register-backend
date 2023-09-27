@@ -1,5 +1,3 @@
-import { StringHelper } from '../helpers/string.helper';
-
 export class HttpConstants {
   static ACCEPT = 'Accept';
   static AUTHENTICATION = 'Authentication';

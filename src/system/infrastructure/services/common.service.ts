@@ -1,12 +1,12 @@
-import { Inject } from '@nestjs/common';
+// import { Inject } from '@nestjs/common';
 import { ICollectionResponse } from '../dtos/collections/collection-response.interface';
 import { ExceptionsService } from './exceptions.service';
-import { SettingsDictionary } from '../settings/settings.dictionary';
+// import { SettingsDictionary } from '../settings/settings.dictionary';
 import { IFilterField } from '../filters/filter-fields-builder/filter-field.interface';
 
 export abstract class CommonService extends ExceptionsService {
-  @Inject(SettingsDictionary)
-  protected readonly settingsDictionary: SettingsDictionary;
+  // @Inject(SettingsDictionary)
+  // protected readonly settingsDictionary: SettingsDictionary;
 
   protected getIds(id: number | string): number[] {
     if (typeof id === 'number') return [id];
