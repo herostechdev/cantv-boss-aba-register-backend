@@ -27,6 +27,8 @@ import { AppService } from './app.service';
 // import { NameDictionaryModule } from './system/infrastructure/name-dictionary/name-dictionary.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
+import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
+import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
 // import { PermissionsGuard } from './system/infrastructure/security/auth/guards/permissions.guard';
 // import { SettingsModule } from './system/infrastructure/settings/settings.module';
 // import { TreeGroupsModule } from './system/infrastructure/tree-groups/tree-groups.module';
@@ -63,6 +65,10 @@ import { OracleConfigurationService } from './system/configuration/oracle/oracle
     //   }),
     //   inject: [OracleConfigurationService],
     // }),
+
+    ApplicationConfigurationModule,
+    EncryptionModule,
+    SecurityConfigurationModule,
   ],
   controllers: [AppController],
   providers: [

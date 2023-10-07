@@ -1,9 +1,10 @@
 import * as Joi from 'joi';
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheConfigurationService } from './cache-configuration.service';
 import configuration from './cache.configuration';
 
+@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({

@@ -1,9 +1,10 @@
 import * as Joi from 'joi';
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerConfigurationService } from './throttler-configuration.service';
 import configuration from './throttler.configuration';
 
+@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
