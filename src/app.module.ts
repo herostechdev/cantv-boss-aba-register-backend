@@ -17,6 +17,7 @@ import { ThrottlerConfigurationService } from './system/configuration/throttler/
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CheckIpModule } from './check-ip/check-ip.module';
 // import { AuthModule } from './system/infrastructure/security/auth/auth.module';
 // import { ContextModule } from './system/infrastructure/contexts/context.module';
 // import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
@@ -67,6 +68,7 @@ import { SecurityConfigurationModule } from './system/configuration/security/sec
     // }),
 
     ApplicationConfigurationModule,
+    CheckIpModule,
     EncryptionModule,
     SecurityConfigurationModule,
   ],

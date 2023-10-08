@@ -6,7 +6,7 @@ import { IOrderBy } from './order-by.interface';
 
 @Injectable()
 export class DatabaseService extends CommonService {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(protected readonly dataSource: DataSource) {
     super();
   }
 
