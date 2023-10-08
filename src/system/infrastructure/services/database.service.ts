@@ -11,14 +11,16 @@ export class DatabaseService extends CommonService {
   }
 
   protected executeStoredProcedure(
-    query: string,
+    dbPackage: string,
+    storedProcedure: string,
     parameters?: any[],
     entityManager?: EntityManager,
   ): Promise<any> {
+    const query = `EXECUTE ${dbPackage}.${storedProcedure}`;
     if (entityManager) {
-      return entityManager.query(`CALL ${query}`, parameters);
+      return entityManager.query(query, parameters);
     }
-    return this.dataSource.query(`CALL ${query}`, parameters);
+    return this.dataSource.query(query, parameters);
   }
 
   public async storedProcedureSanitizer(

@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
 import helmet from 'helmet';
 import { HashService } from './system/infrastructure/security/encryption/hash.service';
+import { CheckIpService } from './check-ip/check-ip.service';
 
 const test = (app: INestApplication) => {
   const hashService: HashService = app.get(HashService);
@@ -22,6 +23,11 @@ const test = (app: INestApplication) => {
     'HASH                      >>',
     hashService.hashing(text).toString(),
   );
+};
+
+const spTest = async (app: INestApplication) => {
+  const service: CheckIpService = app.get(CheckIpService);
+  await service.checkIp({ ip: '124.47.3.5' });
 };
 
 const initializePipes = (app: INestApplication) => {
@@ -51,6 +57,7 @@ const bootstrap = async () => {
   initializePipes(app);
   await startServer(app);
   // test(app);
+  await spTest(app);
 };
 
 bootstrap();
