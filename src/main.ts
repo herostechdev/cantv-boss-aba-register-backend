@@ -6,15 +6,7 @@ import { ApplicationConfigurationService } from './system/configuration/applicat
 import helmet from 'helmet';
 import { HashService } from './system/infrastructure/security/encryption/hash.service';
 
-// async function bootstrap() {
-//   console.log(CryptoJS.MD5('Cantv2023').toString());
-//   const app = await NestFactory.create(AppModule);
-//   await app.listen(3000);
-// }
-// bootstrap();
-
 const test = (app: INestApplication) => {
-  // CipherService
   const hashService: HashService = app.get(HashService);
   const text = 'Cantv2023';
   console.log('MD5 Standard toString()   >>', hashService.md5(text).toString());
@@ -30,20 +22,6 @@ const test = (app: INestApplication) => {
     'HASH                      >>',
     hashService.hashing(text).toString(),
   );
-  // console.log();
-  // console.log('test');
-  // const service: CRMGetCustomerRequestPayloadService = app.get(
-  //   CRMGetCustomerRequestPayloadService,
-  // );
-  // console.log('xml document');
-  // const document = service.get({
-  //   functionName: 'obtenerclienteCRM',
-  //   body: {
-  //     CUST_ID: '1000122965',
-  //   } as ICRMGetCustomerRequestBody,
-  // } as ICRMGetCustomerRequestData);
-  // console.log(document);
-  // console.log('==============================');
 };
 
 const initializePipes = (app: INestApplication) => {
@@ -65,9 +43,6 @@ const startServer = async (app: INestApplication) => {
   app.use(helmet());
   app.use(json({ limit: '1mb' }));
   app.use(urlencoded({ limit: '1mb', extended: true, parameterLimit: 30 }));
-  // process.env.TZ = 'America/Caracas';
-  // process.env.TZ = 'UTC';
-  // app.use(csurf());
   await app.listen(applicationConfigurationService.port);
 };
 
@@ -75,7 +50,7 @@ const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
   initializePipes(app);
   await startServer(app);
-  test(app);
+  // test(app);
 };
 
 bootstrap();
