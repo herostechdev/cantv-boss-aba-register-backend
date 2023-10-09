@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'body-parser';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { PoolAttributes, createPool, initOracleClient } from 'oracledb';
 import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
 import helmet from 'helmet';
 import { HashService } from './system/infrastructure/security/encryption/hash.service';
 import { CheckIpService } from './check-ip/check-ip.service';
+import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
 
 const test = (app: INestApplication) => {
   const hashService: HashService = app.get(HashService);
@@ -41,6 +43,24 @@ const initializePipes = (app: INestApplication) => {
   return app;
 };
 
+const initializeOracleDatabaseClient = async (app: INestApplication) => {
+  // Initialize Oracle Client
+  const oracleConfigurationService: OracleConfigurationService = app.get(
+    OracleConfigurationService,
+  );
+  const clientOpts = { libDir: oracleConfigurationService.oracleHome };
+  initOracleClient(clientOpts);
+
+  // Initialize connection pool
+  const connectionString = `${oracleConfigurationService.uri}:${oracleConfigurationService.port}/${oracleConfigurationService.sid}`;
+  await createPool({
+    // poolAlias: 'BOSS_ABA_REGISTER',
+    user: oracleConfigurationService.username,
+    password: oracleConfigurationService.password,
+    connectionString: connectionString,
+  });
+};
+
 const startServer = async (app: INestApplication) => {
   const applicationConfigurationService: ApplicationConfigurationService =
     app.get(ApplicationConfigurationService);
@@ -55,6 +75,7 @@ const startServer = async (app: INestApplication) => {
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
   initializePipes(app);
+  await initializeOracleDatabaseClient(app);
   await startServer(app);
   // test(app);
   await spTest(app);

@@ -10,4 +10,5 @@ export default registerAs('db', () => ({
   sid: process.env.DB_SID,
   entities: process.env.DB_ENTITIES,
   synchronize: process.env.DB_SYNCHRONIZE,
+  oracleHome: process.env.DB_ORACLE_HOME,
 }));

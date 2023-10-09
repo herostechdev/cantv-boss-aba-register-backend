@@ -15,25 +15,41 @@ export class CheckIpService extends OracleDatabaseService {
   async checkIp(dto: CheckIpRequestDto): Promise<ICheckIpResponse> {
     try {
       console.log();
-      console.log('connect to DB....');
-      super.connect();
+      console.log('connecting to DB....');
+      await super.connect();
+      console.log('connection successfully');
+
       console.log();
-      console.log();
+      console.log('executing query...');
+      const queryResponse = await this.dbConnection.execute(
+        'SELECT COUNT(*) contador FROM TELMASTERLINES ML',
+      );
+      console.log(JSON.stringify(queryResponse));
+
       console.log();
       console.log('checkIp');
-      const response = await super.executeStoredProcedure(
+      let v1: any;
+      let v2: any;
+      const spResponse = await super.executeStoredProcedure(
         'boss_package',
         'GetIfRemoteInstallerIP',
-        [dto.ip],
+        [dto.ip, v1, v2],
       );
-      console.log('response', response);
-      return {
-        expireDate: response.o_expiredate,
-        status: response.o_status,
-      };
+      console.log('response', spResponse);
+      console.log('v1', v1);
+      console.log('v2', v2);
+      //   return {
+      //     expireDate: spResponse.o_expiredate,
+      //     status: spResponse.o_status,
+      //   };
+      return null;
     } catch (error) {
-      console.log('error', error);
-      super.exceptionHandler(error, dto?.ip);
+      console.log();
+      console.log('ERROR >>');
+      console.log(error);
+      //   super.exceptionHandler(error, dto?.ip);
+    } finally {
+      await this.closeConnection();
     }
   }
 }

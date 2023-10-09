@@ -20,6 +20,7 @@ import { OracleConfigurationService } from './oracle-configuration.service';
         DB_SID: Joi.string().default(''),
         DB_ENTITIES: Joi.string().default(''),
         DB_SYNCHRONIZE: Joi.boolean().default(false),
+        DB_ORACLE_HOME: Joi.string().default(''),
       }),
     }),
   ],

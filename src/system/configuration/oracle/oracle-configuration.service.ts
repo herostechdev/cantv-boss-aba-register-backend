@@ -40,4 +40,8 @@ export class OracleConfigurationService {
   get synchronize(): boolean {
     return Boolean(this.configService.get<boolean>('db.synchronize'));
   }
+
+  get oracleHome(): string {
+    return this.configService.get<string>('db.oracleHome');
+  }
 }
