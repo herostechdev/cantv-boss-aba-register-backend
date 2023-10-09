@@ -30,6 +30,8 @@ import { OracleConfigurationModule } from './system/configuration/oracle/oracle-
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
+import { LoginModule } from './login/login.module';
+import { FindPreOrderModule } from './find-pre-order/find-pre-order.module';
 // import { PermissionsGuard } from './system/infrastructure/security/auth/guards/permissions.guard';
 // import { SettingsModule } from './system/infrastructure/settings/settings.module';
 // import { TreeGroupsModule } from './system/infrastructure/tree-groups/tree-groups.module';
@@ -71,6 +73,8 @@ import { SecurityConfigurationModule } from './system/configuration/security/sec
     ApplicationConfigurationModule,
     CheckIpModule,
     EncryptionModule,
+    FindPreOrderModule,
+    LoginModule,
     OracleConfigurationModule,
     SecurityConfigurationModule,
   ],

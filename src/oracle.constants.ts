@@ -3,8 +3,11 @@ export class OracleConstants {
   public static POOL_ALIAS = 'BOSS_ABA_REGISTER_DB_POOL';
 
   // PACKAGES
-  public static BOSS_PACKAGE = 'boss_package';
+  public static ACT_PACKAGE = 'ACT_PACKAGE';
+  public static BOSS_PACKAGE = 'BOSS_PACKAGE';
 
   // STORED PROCEDURES
   public static GET_IF_REMOTE_INSTALLER_IP = 'GetIfRemoteInstallerIP';
+  public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
+  public static LOGIN = 'Login';
 }
