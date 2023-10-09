@@ -30,7 +30,7 @@ export class CheckIpService extends OracleDatabaseService {
       console.log();
       console.log('checkIp');
       const parameters = {
-        i_ipsource: '10.50.10.5',
+        i_ipsource: dto.ip,
         o_expiredate: null,
         o_status: null,
       };
@@ -42,11 +42,10 @@ export class CheckIpService extends OracleDatabaseService {
       );
       console.log('response', spResponse);
       console.log('parameters (AFTER)', parameters);
-      //   return {
-      //     expireDate: spResponse.o_expiredate,
-      //     status: spResponse.o_status,
-      //   };
-      return null;
+      return {
+        expireDate: parameters.o_expiredate,
+        status: parameters.o_status,
+      };
     } catch (error) {
       console.log();
       console.log('ERROR >>');
