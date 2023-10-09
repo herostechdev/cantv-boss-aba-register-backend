@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import { HashService } from './system/infrastructure/security/encryption/hash.service';
 import { CheckIpService } from './check-ip/check-ip.service';
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
+import { OracleConstants } from './oracle.constants';
 
 const test = (app: INestApplication) => {
   const hashService: HashService = app.get(HashService);
@@ -54,10 +55,12 @@ const initializeOracleDatabaseClient = async (app: INestApplication) => {
   // Initialize connection pool
   const connectionString = `${oracleConfigurationService.uri}:${oracleConfigurationService.port}/${oracleConfigurationService.sid}`;
   await createPool({
-    // poolAlias: 'BOSS_ABA_REGISTER',
+    poolAlias: OracleConstants.POOL_ALIAS,
     user: oracleConfigurationService.username,
     password: oracleConfigurationService.password,
     connectionString: connectionString,
+    poolMax: oracleConfigurationService.poolMaxConnections,
+    poolMin: oracleConfigurationService.poolMinConnections,
   });
 };
 

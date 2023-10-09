@@ -28,16 +28,18 @@ export class CheckIpService extends OracleDatabaseService {
 
       console.log();
       console.log('checkIp');
-      let v1: any;
-      let v2: any;
+      const parameters = {
+        i_ipsource: '10.50.10.5',
+        o_expiredate: null,
+        o_status: null,
+      };
       const spResponse = await super.executeStoredProcedure(
         'boss_package',
         'GetIfRemoteInstallerIP',
-        [dto.ip, v1, v2],
+        parameters,
       );
       console.log('response', spResponse);
-      console.log('v1', v1);
-      console.log('v2', v2);
+      console.log('parameters', parameters);
       //   return {
       //     expireDate: spResponse.o_expiredate,
       //     status: spResponse.o_status,

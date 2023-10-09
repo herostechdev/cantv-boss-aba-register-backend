@@ -21,6 +21,8 @@ import { OracleConfigurationService } from './oracle-configuration.service';
         DB_ENTITIES: Joi.string().default(''),
         DB_SYNCHRONIZE: Joi.boolean().default(false),
         DB_ORACLE_HOME: Joi.string().default(''),
+        DB_POOL_MAX_CONNECTIONS: Joi.number().default(4),
+        DB_POOL_MIN_CONNECTIONS: Joi.number().default(2),
       }),
     }),
   ],

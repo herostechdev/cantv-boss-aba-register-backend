@@ -11,4 +11,6 @@ export default registerAs('db', () => ({
   entities: process.env.DB_ENTITIES,
   synchronize: process.env.DB_SYNCHRONIZE,
   oracleHome: process.env.DB_ORACLE_HOME,
+  poolMaxConnections: process.env.DB_POOL_MAX_CONNECTIONS,
+  poolMinConnections: process.env.DB_POOL_MIN_CONNECTIONS,
 }));

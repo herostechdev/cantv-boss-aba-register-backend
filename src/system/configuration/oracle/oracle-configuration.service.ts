@@ -44,4 +44,12 @@ export class OracleConfigurationService {
   get oracleHome(): string {
     return this.configService.get<string>('db.oracleHome');
   }
+
+  get poolMaxConnections(): number {
+    return Number(this.configService.get<number>('db.poolMaxConnections'));
+  }
+
+  get poolMinConnections(): number {
+    return Number(this.configService.get<number>('db.poolMinConnections'));
+  }
 }
