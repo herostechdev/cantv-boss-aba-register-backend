@@ -34,13 +34,14 @@ export class CheckIpService extends OracleDatabaseService {
         o_expiredate: null,
         o_status: null,
       };
+      console.log('parameters (BEFORE)', parameters);
       const spResponse = await super.executeStoredProcedure(
         OracleConstants.BOSS_PACKAGE,
         OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
         parameters,
       );
       console.log('response', spResponse);
-      console.log('parameters', parameters);
+      console.log('parameters (AFTER)', parameters);
       //   return {
       //     expireDate: spResponse.o_expiredate,
       //     status: spResponse.o_status,
