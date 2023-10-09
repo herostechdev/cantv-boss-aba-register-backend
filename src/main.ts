@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'body-parser';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { PoolAttributes, createPool, initOracleClient } from 'oracledb';
+import { createPool, initOracleClient } from 'oracledb';
 import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
 import helmet from 'helmet';

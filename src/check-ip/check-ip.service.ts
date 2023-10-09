@@ -3,6 +3,7 @@ import { CheckIpRequestDto } from './check-ip-request.dto';
 import { ICheckIpResponse } from './check-ip-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
+import { OracleConstants } from 'src/oracle.constants';
 
 @Injectable()
 export class CheckIpService extends OracleDatabaseService {
@@ -34,8 +35,8 @@ export class CheckIpService extends OracleDatabaseService {
         o_status: null,
       };
       const spResponse = await super.executeStoredProcedure(
-        'boss_package',
-        'GetIfRemoteInstallerIP',
+        OracleConstants.BOSS_PACKAGE,
+        OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
         parameters,
       );
       console.log('response', spResponse);

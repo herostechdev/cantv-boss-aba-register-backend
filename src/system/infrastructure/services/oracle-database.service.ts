@@ -65,18 +65,17 @@ export abstract class OracleDatabaseService extends CommonService {
     console.log('    storedProcedure >>', storedProcedure);
     console.log('    parameters      >>');
     console.log(parameters);
-    const sql = this.getStoredProcedureExecuteStatement(
+    const sql = this.getStoredProcedureStatement(
       dbPackage,
       storedProcedure,
       parameters,
     );
     console.log();
-    console.log('    sql             >>');
-    console.log(sql);
+    console.log('    sql             >>', sql);
     return await this.dbConnection.execute(sql, parameters);
   }
 
-  private getStoredProcedureExecuteStatement(
+  private getStoredProcedureStatement(
     dbPackage: string,
     storedProcedure: string,
     parameters?: any,
