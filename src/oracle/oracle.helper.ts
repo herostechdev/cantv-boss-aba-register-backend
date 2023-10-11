@@ -7,21 +7,9 @@ import {
   DB_TYPE_VARCHAR,
   DB_TYPE_NUMBER,
 } from 'oracledb';
+import { ArrayHelper } from 'src/system/infrastructure/helpers/array.helper';
 
-export class OracleConstants {
-  // DB CONNECTION
-  public static POOL_ALIAS = 'BOSS_ABA_REGISTER_DB_POOL';
-
-  // PACKAGES
-  public static ACT_PACKAGE = 'ACT_PACKAGE';
-  public static BOSS_PACKAGE = 'BOSS_PACKAGE';
-
-  // STORED PROCEDURES
-  public static CHECK_IP = 'CheckIp';
-  public static GET_IF_REMOTE_INSTALLER_IP = 'GetlfRemoteInstallerIP';
-  public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
-  public static LOGIN = 'Login';
-
+export class OracleHelper {
   public static stringBindIn(
     value: string,
     maxSize: number = undefined,
@@ -54,6 +42,7 @@ export class OracleConstants {
       maxArraySize: maxArraySize,
     };
   }
+
   public static tableOfNumberBindOut(maxArraySize = 1): BindParameters {
     return {
       dir: BIND_OUT,
@@ -61,5 +50,18 @@ export class OracleConstants {
       // isArray: true,
       maxArraySize: maxArraySize,
     };
+  }
+
+  public static getFirstItem(result: any, itemName: string): any {
+    if (
+      !result ||
+      !result.hasOwnProperty('outBinds') ||
+      !result.outBinds.hasOwnProperty(itemName)
+    ) {
+      return null;
+    }
+    return ArrayHelper.isArrayWithItems(result.outBinds[itemName])
+      ? result.outBinds[itemName][0]
+      : null;
   }
 }

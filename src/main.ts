@@ -8,7 +8,7 @@ import helmet from 'helmet';
 import { HashService } from './system/infrastructure/security/encryption/hash.service';
 import { CheckIpService } from './check-ip/check-ip.service';
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from './oracle.constants';
+import { OracleConstants } from './oracle/oracle.constants';
 
 const test = (app: INestApplication) => {
   const hashService: HashService = app.get(HashService);

@@ -3,7 +3,7 @@ import { FindPreOrderRequestDto } from './find-pre-order-request.dto';
 import { IFindPreOrderResponse } from './find-pre-order-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle.constants';
+import { OracleConstants } from 'src/oracle/oracle.constants';
 
 @Injectable()
 export class FindPreOrderService extends OracleDatabaseService {

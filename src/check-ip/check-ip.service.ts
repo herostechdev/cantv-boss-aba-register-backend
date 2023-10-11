@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import * as oracledb from 'oracledb';
 import { CheckIpRequestDto } from './check-ip-request.dto';
 import { ICheckIpResponse } from './check-ip-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle.constants';
-import { ArrayHelper } from 'src/system/infrastructure/helpers/array.helper';
+import { OracleConstants } from 'src/oracle/oracle.constants';
+import { OracleHelper } from 'src/oracle/oracle.helper';
 
 @Injectable()
 export class CheckIpService extends OracleDatabaseService {
@@ -19,9 +18,9 @@ export class CheckIpService extends OracleDatabaseService {
     try {
       await super.connect();
       const parameters = {
-        i_ipsource: OracleConstants.stringBindIn(dto.ip),
-        o_expiredate: OracleConstants.tableOfStringBindOut(1, 532),
-        o_status: OracleConstants.tableOfNumberBindOut(),
+        i_ipsource: OracleHelper.stringBindIn(dto.ip),
+        o_expiredate: OracleHelper.tableOfStringBindOut(1, 532),
+        o_status: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(
         OracleConstants.BOSS_PACKAGE,
@@ -29,12 +28,8 @@ export class CheckIpService extends OracleDatabaseService {
         parameters,
       );
       return {
-        expireDate: ArrayHelper.isArrayWithItems(result?.outBinds?.o_expiredate)
-          ? result.outBinds.o_expiredate[0]
-          : null,
-        status: ArrayHelper.isArrayWithItems(result?.outBinds?.o_status)
-          ? result.outBinds.o_status[0]
-          : null,
+        expireDate: OracleHelper.getFirstItem(result, 'o_expiredate'),
+        status: OracleHelper.getFirstItem(result, 'o_status'),
       };
     } catch (error) {
       console.log();

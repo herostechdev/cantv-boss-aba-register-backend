@@ -1,7 +1,7 @@
 import { getConnection, Connection } from 'oracledb';
 import { CommonService } from './common.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle.constants';
+import { OracleConstants } from 'src/oracle/oracle.constants';
 
 export abstract class OracleDatabaseService extends CommonService {
   constructor(

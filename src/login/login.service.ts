@@ -3,7 +3,7 @@ import { ILoginResponse } from './login-response.interface';
 import { LoginRequestDto } from './login-request.dto';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle.constants';
+import { OracleConstants } from 'src/oracle/oracle.constants';
 
 @Injectable()
 export class LoginService extends OracleDatabaseService {
