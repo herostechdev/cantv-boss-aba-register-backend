@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { CheckIpRequestDto } from './check-ip-request.dto';
-import { ICheckIpResponse } from './check-ip-response.interface';
+import { IsIPAllowedRequestDto } from './is-ip-allowed-request.dto';
+import { IIsIPAllowedResponse } from './is-ip-allowed-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 
 @Injectable()
-export class CheckIpService extends OracleDatabaseService {
+export class IsIPAllowedService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
   ) {
     super(oracleConfigurationService);
   }
 
-  async checkIp(dto: CheckIpRequestDto): Promise<ICheckIpResponse> {
+  async isIPAllowed(dto: IsIPAllowedRequestDto): Promise<IIsIPAllowedResponse> {
     try {
       await super.connect();
       const parameters = {

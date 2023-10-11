@@ -1,4 +1,4 @@
-export interface ICheckIpResponse {
+export interface IIsIPAllowedResponse {
   expireDate: string;
   status: string;
 }

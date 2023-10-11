@@ -1,6 +1,6 @@
 import { IsIP } from 'class-validator';
 
-export class CheckIpRequestDto {
+export class IsIPAllowedRequestDto {
   @IsIP(4, { message: 'La IP es inválida' })
   ip: string;
 }
