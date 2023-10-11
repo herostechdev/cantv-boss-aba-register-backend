@@ -1,4 +1,8 @@
 export class ArrayHelper {
+  static isArrayWithItems(array: any): boolean {
+    return Array.isArray(array) && array.length > 0;
+  }
+
   static intersect<T>(left: T[], right: T[]): T[] {
     return left.filter((val1) => {
       return right.find((val2) => val1 === val2);
