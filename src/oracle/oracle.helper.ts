@@ -38,7 +38,6 @@ export class OracleHelper {
       dir: BIND_OUT,
       type: DB_TYPE_VARCHAR,
       maxSize: maxSize,
-      // isArray: true,
       maxArraySize: maxArraySize,
     };
   }
@@ -47,7 +46,6 @@ export class OracleHelper {
     return {
       dir: BIND_OUT,
       type: DB_TYPE_NUMBER,
-      // isArray: true,
       maxArraySize: maxArraySize,
     };
   }
