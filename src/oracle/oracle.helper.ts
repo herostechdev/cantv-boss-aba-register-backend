@@ -30,6 +30,13 @@ export class OracleHelper {
     };
   }
 
+  public static numberBindOut(): BindParameters {
+    return {
+      type: NUMBER,
+      dir: BIND_OUT,
+    };
+  }
+
   public static tableOfStringBindOut(
     maxArraySize = 1,
     maxSize: number = undefined,
