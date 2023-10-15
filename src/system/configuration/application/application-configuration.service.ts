@@ -31,7 +31,8 @@ export class ApplicationConfigurationService {
 
   get requestFilter(): string {
     return this.configService.get<string>('application.requestFilter');
-  }  
+  }
+
   get maxConcurrentProcess(): number {
     return Number(
       this.configService.get<number>('application.maxConcurrentProcess'),

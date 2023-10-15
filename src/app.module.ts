@@ -14,9 +14,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { FindPreOrderModule } from './find-pre-order/find-pre-order.module';
+import { GetASAPOrderDetailModule } from './get-asap-order-detail/get-asap-order-detail.module';
 import { IsIPAllowedModule } from './is-ip-allowed/is-ip-allowed.module';
 import { LoginModule } from './login/login.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
+import { PICConfigurationModule } from './system/configuration/pic/pic-configuration.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
 
 @Module({
@@ -56,9 +58,11 @@ import { SecurityConfigurationModule } from './system/configuration/security/sec
     ApplicationConfigurationModule,
     EncryptionModule,
     FindPreOrderModule,
+    GetASAPOrderDetailModule,
     IsIPAllowedModule,
     LoginModule,
     OracleConfigurationModule,
+    PICConfigurationModule,
     SecurityConfigurationModule,
   ],
   controllers: [AppController],

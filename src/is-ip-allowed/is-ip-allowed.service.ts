@@ -16,27 +16,39 @@ export class IsIPAllowedService extends OracleDatabaseService {
 
   async isIPAllowed(dto: IsIPAllowedRequestDto): Promise<IIsIPAllowedResponse> {
     try {
+      console.log();
+      console.log('isIPAllowed');
+      console.log('Connecting to database....');
       await super.connect();
+      console.log('Database connected!!!');
       const parameters = {
         i_ipsource: OracleHelper.stringBindIn(dto.ip),
         o_expiredate: OracleHelper.tableOfStringBindOut(1, 532),
         o_status: OracleHelper.tableOfNumberBindOut(),
       };
+      console.log('Parameters');
+      console.log(parameters);
       const result = await super.executeStoredProcedure(
         OracleConstants.BOSS_PACKAGE,
         OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
         parameters,
       );
-      return {
+      console.log('parameters');
+      console.log(parameters);
+      const response = {
         expireDate: OracleHelper.getFirstItem(result, 'o_expiredate'),
         status: OracleHelper.getFirstItem(result, 'o_status'),
       };
+      console.log('response');
+      console.log(response);
+      return response;
     } catch (error) {
       console.log();
       console.log('ERROR >>');
       console.log(error);
       //   super.exceptionHandler(error, dto?.ip);
     } finally {
+      console.log('closeConnection');
       await this.closeConnection();
     }
   }

@@ -7,9 +7,9 @@ import { ISOAPCommonResponse } from './soap-common-response.interface';
 export abstract class SOAPRequestService<
   RESPONSE extends ISOAPCommonResponse,
 > extends CommonService {
-  protected getAxiosRequestConfig(soapActtion: string): AxiosRequestConfig {
+  protected getAxiosRequestConfig(soapAction: string): AxiosRequestConfig {
     return {
-      headers: this.getheaders(soapActtion),
+      headers: this.getheaders(soapAction),
     };
   }
 

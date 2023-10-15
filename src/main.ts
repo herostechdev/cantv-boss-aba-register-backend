@@ -79,9 +79,9 @@ const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
   initializePipes(app);
   await initializeOracleDatabaseClient(app);
-  await startServer(app);
   // test(app);
   await spTest(app);
+  await startServer(app);
 };
 
 bootstrap();
