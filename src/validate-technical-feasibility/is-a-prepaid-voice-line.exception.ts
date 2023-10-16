@@ -5,7 +5,8 @@ export class IsAPrepaidVoiceLineException extends CustomBadRequestException {
     super({
       code: '',
       guid: 'a6360b68-d3eb-46d2-9d93-ed76077794f9',
-      objectOrError: 'Es línea de voz prepago',
+      objectOrError:
+        'El Cliente debe contactar a Atención al Cliente pata migrar lína de voz prepago.',
     });
   }
 }

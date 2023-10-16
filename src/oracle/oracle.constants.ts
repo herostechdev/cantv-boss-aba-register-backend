@@ -10,9 +10,15 @@ export class OracleConstants {
 
   // STORED PROCEDURES
   public static CHECK_IP = 'CheckIp';
+  public static GET_AND_REGISTER_QUALIF_OF_SERVICE =
+    'GetAndRegisterQualifOfServ';
+  public static GET_ABA_DATA_FROM_REQUESTS = 'GetABADataFromRequests';
+  public static GET_DATA_FROM_REQUESTS = 'GetDataFromRequests';
+  public static GET_DOWNSTREAM_FROM_PLAN = 'GETDOWNSTREAMFROMPLAN';
   public static GET_IF_REMOTE_INSTALLER_IP = 'GetlfRemoteInstallerIP';
   public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
   public static INSERT_DSL_ABA_REGISTERS = 'InsertDslAbaRegisters';
   public static IS_PREPAID = 'IsPrepago  ';
   public static LOGIN = 'Login';
+  public static VERIFY_CONTRACT_BY_PHONE = 'verifycontracbyphone';
 }

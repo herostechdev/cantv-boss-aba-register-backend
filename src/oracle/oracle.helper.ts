@@ -24,6 +24,14 @@ export class OracleHelper {
     };
   }
 
+  public static stringBindOut(maxSize: number = undefined): BindParameters {
+    return {
+      type: DB_TYPE_VARCHAR,
+      dir: BIND_OUT,
+      maxSize: maxSize,
+    };
+  }
+
   public static numberBindIn(value: number): BindParameters {
     return {
       val: value,

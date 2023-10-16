@@ -1,0 +1,12 @@
+import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
+
+export class GetABADataFromRequestsException extends CustomBadRequestException {
+  constructor() {
+    super({
+      code: '',
+      guid: 'ba286f3e-2bdb-42e1-a502-acb066d9e02c',
+      objectOrError:
+        'Error al obtener los datos de ABA ONLINE - Datos PreOrden',
+    });
+  }
+}
