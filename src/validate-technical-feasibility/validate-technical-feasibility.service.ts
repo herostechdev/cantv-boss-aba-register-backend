@@ -35,7 +35,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       await this.verifyContractByPhone(dto);
       await this.getDataFromRequests(dto);
       await this.getDownstreamFromPlan(dto);
-      await this.getABADataFromRequests(dto);
+      const getABADataFromRequestsResponse = await this.getABADataFromRequests(
+        dto,
+      );
       return null;
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
