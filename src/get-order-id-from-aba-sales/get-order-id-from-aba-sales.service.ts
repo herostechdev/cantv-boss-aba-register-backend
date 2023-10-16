@@ -26,7 +26,7 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
         str_status: OracleHelper.numberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.BOSS_PACKAGE,
+        OracleConstants.ACT_PACKAGE,
         OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
         parameters,
       );

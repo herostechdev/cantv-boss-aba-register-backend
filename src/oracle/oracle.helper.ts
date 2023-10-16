@@ -1,3 +1,4 @@
+import { IsDate } from 'class-validator';
 import {
   BindParameters,
   BIND_IN,
@@ -6,6 +7,7 @@ import {
   BIND_OUT,
   DB_TYPE_VARCHAR,
   DB_TYPE_NUMBER,
+  DB_TYPE_DATE,
 } from 'oracledb';
 import { ArrayHelper } from 'src/system/infrastructure/helpers/array.helper';
 
@@ -26,6 +28,14 @@ export class OracleHelper {
     return {
       val: value,
       type: NUMBER,
+      dir: BIND_IN,
+    };
+  }
+
+  public static dateBindIn(value: Date): BindParameters {
+    return {
+      val: value,
+      type: DB_TYPE_DATE,
       dir: BIND_IN,
     };
   }
