@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { DSLAuditLogsRequestDto } from './dsl-audit-logs-request.dto';
+import { IDSLAuditLogsResponse } from './dsl-audit-logs-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { DSLAuditLogsRequestDto } from './dsl-audit-logs-request.dto';
-import { IDSLAuditLogsResponse } from './dsl-audit-logs-response.interface';
 
 @Injectable()
 export class DSLAuditLogsService extends OracleDatabaseService {
