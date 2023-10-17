@@ -2,25 +2,34 @@ import { Injectable } from '@nestjs/common';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
-import { GetABADataFromRequestsException } from './exceptions/get-aba-data-from-requests.exception';
+import {
+  GetABADataFromRequestsException,
+  GetPortIdFromIpExecutionException,
+} from './exceptions/get-port-id-from-ip-execution.exception';
 import { GetAndRegisterQualifOfServiceException } from './exceptions/get-and-register-qualif-of-service.exception';
 import { GetDownstreamFromPlanException } from './exceptions/get-downstream-from-plan.exception';
-import { IGetABADataFromRequestsResponse } from './response/get-aba-data-from-requests-response.interface';
-import { IGetDownstreamFromPlanResponse } from './response/get-downstream-from-plan-response.interface';
+import { GetPortIdFromIpConstants } from './constants/get-port-id-from-ip.constants';
+import { GetPortIdFromIpException } from './exceptions/get-aba-data-from-requests.exception';
+import { IGetInfoFromABARequestsResponse } from './responses/get-info-from-aba-requests-response.interface';
+import { IGetABADataFromRequestsResponse } from './responses/get-aba-data-from-requests-response.interface';
+import { IGetDownstreamFromPlanResponse } from './responses/get-downstream-from-plan-response.interface';
+import { IGetPortIdFromIpResponse } from './responses/get-port-id-from-ip-response.interface';
+import { IIsValidIpAddressResponse } from './responses/is-valid-ip-address-response.interface';
 import { InsertDslAbaRegisterConstants } from './constants/insert-dsl-aba-register.constants';
 import { InsertDslAbaRegisterException } from './exceptions/insert-dsl-aba-register.exception';
 import { IsAPrepaidVoiceLineException } from './exceptions/is-a-prepaid-voice-line.exception';
+import { IsValidIpAddressConstants } from './constants/is-valid-ip-address.constants';
 import { IValidateTechnicalFeasibilityResponse } from './validate-technical-feasibility-response.interface';
+import { IVerifiyContractByPhoneResponse } from './responses/verify-contract-by-phone-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-feasibility-request.dto';
 import { VerifyContractByPhoneException } from './exceptions/verify-contract-by-phone.exception';
-import { IVerifiyContractByPhoneResponse } from './response/verify-contract-by-phone-response.interface';
-import { IIsValidIpAddressResponse } from './response/is-valid-ip-address-response.interface';
-import { IGetInfoFromABARequestsResponse } from './response/get-info-from-aba-requests-response.interface';
-import { IsValidIpAddressConstants } from './constants/is-valid-ip-address.constants';
+import { GetPortIdFromIpDSLAMDataNotFoundException } from './exceptions/get-port-id-from-ip-dslam-data-not-found.exception';
+import { GetPortIdFromIpBadIpFormatException } from './exceptions/get-port-id-from-ip-bad-ip-format.exception';
+import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -53,10 +62,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         dto,
       );
       if (verifyContractByPhoneResponse.status == 0) {
-        // TODO: throw ABA EXISTE exceprion
+        throw new VerifyContractByPhoneException();
       }
       const isValidIpAddressResponse = await this.IsValidIpAddress(dto);
-      return null;
+      const getPortidFromIpResponse = await this.getPortidFromIp(dto);
+      if (ValidationHelper.isDefined(getPortidFromIpResponse.dslamportId))
+        return null;
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
@@ -166,16 +177,17 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         parameters,
       );
       const status = result?.outBinds?.oStatus ?? 1;
-      if (status != 0) {
-        throw new VerifyContractByPhoneException();
-      }
+      // if (status != 0) {
+      //   throw new VerifyContractByPhoneException();
+      // }
       return {
         status: status,
       };
     } catch (error) {
-      if (!(error instanceof VerifyContractByPhoneException)) {
-        throw new VerifyContractByPhoneException();
-      }
+      // if (!(error instanceof VerifyContractByPhoneException)) {
+      //   throw new VerifyContractByPhoneException();
+      // }
+      throw new VerifyContractByPhoneException();
     }
   }
 
@@ -330,7 +342,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         case IsValidIpAddressConstants.ERROR_3005_5:
           throw new Error30055Exception();
         case IsValidIpAddressConstants.POOL_RBE_LEASE:
-        // TODO: Preguntar que se debe hacer en este caso
+          return {
+            status: status,
+          };
         default:
           throw new Error1003Exception();
       }
@@ -345,5 +359,77 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         throw new Error1003Exception();
       }
     }
+  }
+
+  private async getPortidFromIp(
+    dto: ValidateTechnicalFeasibilityRequestDto,
+  ): Promise<IGetPortIdFromIpResponse> {
+    try {
+      const parameters = {
+        i_ipaddress: OracleHelper.stringBindIn(dto.areaCode, 15),
+        o_dslamportid: OracleHelper.numberBindOut(),
+        o_status: OracleHelper.numberBindOut(),
+      };
+      const result = await super.executeStoredProcedure(
+        OracleConstants.BOSS_PACKAGE,
+        OracleConstants.GET_PORT_ID_FROM_IP,
+        parameters,
+      );
+      const dslamportId = result?.outBinds?.o_dslamportid ?? 1;
+      const status = (result?.outBinds?.status ??
+        GetPortIdFromIpConstants.EXECUTION_ERROR) as GetPortIdFromIpConstants;
+      switch (status) {
+        case GetPortIdFromIpConstants.SUCCESSFULL:
+          return {
+            dslamportId: dslamportId,
+            status: status,
+          };
+        case GetPortIdFromIpConstants.EXECUTION_ERROR:
+          throw new GetPortIdFromIpExecutionException();
+        case GetPortIdFromIpConstants.DSLAM_DATA_NOT_FOUND_FOR_BOSS_PORT:
+          throw new GetPortIdFromIpDSLAMDataNotFoundException();
+        case GetPortIdFromIpConstants.IP_FORMAT_ERROR:
+          throw new GetPortIdFromIpBadIpFormatException();
+        default:
+          throw new GetPortIdFromIpExecutionException();
+      }
+    } catch (error) {
+      if (
+        !(
+          error instanceof GetPortIdFromIpExecutionException ||
+          error instanceof GetPortIdFromIpDSLAMDataNotFoundException ||
+          error instanceof GetPortIdFromIpBadIpFormatException
+        )
+      ) {
+        throw new GetPortIdFromIpExecutionException();
+      }
+    }
+  }
+
+  private async getPortIdFlow(
+    dto: ValidateTechnicalFeasibilityRequestDto,
+  ): Promise<any> {
+    const queryDHCPResponse = await this.queryDHCP(dto);
+    const getValidVPIResponse = await this.getValidVPI(dto);
+    const getPortIdResponse = await this.getPortId(dto);
+    return getPortIdResponse;
+  }
+
+  private async queryDHCP(
+    dto: ValidateTechnicalFeasibilityRequestDto,
+  ): Promise<any> {
+    return null;
+  }
+
+  private async getValidVPI(
+    dto: ValidateTechnicalFeasibilityRequestDto,
+  ): Promise<any> {
+    return null;
+  }
+
+  private async getPortId(
+    dto: ValidateTechnicalFeasibilityRequestDto,
+  ): Promise<any> {
+    return null;
   }
 }

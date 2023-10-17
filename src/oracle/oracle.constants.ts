@@ -17,6 +17,7 @@ export class OracleConstants {
   public static GET_DOWNSTREAM_FROM_PLAN = 'GETDOWNSTREAMFROMPLAN';
   public static GET_IF_REMOTE_INSTALLER_IP = 'GetlfRemoteInstallerIP';
   public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
+  public static GET_PORT_ID_FROM_IP = 'GetPortidFromIp';
   public static INSERT_DSL_ABA_REGISTERS = 'InsertDslAbaRegisters';
   public static IS_VALID_IP_ADDRESS = 'IsValidIpAddress';
   public static IS_PREPAID = 'IsPrepago  ';

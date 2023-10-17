@@ -1,12 +1,11 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class GetABADataFromRequestsException extends CustomBadRequestException {
+export class GetPortIdFromIpException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',
-      guid: 'ba286f3e-2bdb-42e1-a502-acb066d9e02c',
-      objectOrError:
-        'Error al obtener los datos de ABA ONLINE - Datos PreOrden',
+      guid: '541a8aa4-ffd2-45b7-8fd4-eb43b7a693f3',
+      objectOrError: 'Error al obtener el id del puerto a partir de la IP',
     });
   }
 }
