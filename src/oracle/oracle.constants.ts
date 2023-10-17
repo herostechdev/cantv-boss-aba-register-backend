@@ -10,6 +10,7 @@ export class OracleConstants {
 
   // STORED PROCEDURES
   public static CHECK_IP = 'CheckIp';
+  public static DSL_AUDIT_LOGS = 'DSLAUDITLOGS';
   public static GET_AND_REGISTER_QUALIF_OF_SERVICE =
     'GetAndRegisterQualifOfServ';
   public static GET_ABA_DATA_FROM_REQUESTS = 'GetABADataFromRequests';

@@ -12,6 +12,7 @@ import { ThrottlerConfigurationService } from './system/configuration/throttler/
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { FindPreOrderModule } from './find-pre-order/find-pre-order.module';
 import { GetASAPOrderDetailModule } from './get-asap-order-detail/get-asap-order-detail.module';
@@ -20,6 +21,7 @@ import { LoginModule } from './login/login.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { PICConfigurationModule } from './system/configuration/pic/pic-configuration.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
+import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibility/validate-technical-feasibility.module';
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { SecurityConfigurationModule } from './system/configuration/security/sec
     // }),
 
     ApplicationConfigurationModule,
+    DSLAuditLogsModule,
     EncryptionModule,
     FindPreOrderModule,
     GetASAPOrderDetailModule,
@@ -64,6 +67,7 @@ import { SecurityConfigurationModule } from './system/configuration/security/sec
     OracleConfigurationModule,
     PICConfigurationModule,
     SecurityConfigurationModule,
+    ValidateTechnicalFeasibilityModule,
   ],
   controllers: [AppController],
   providers: [

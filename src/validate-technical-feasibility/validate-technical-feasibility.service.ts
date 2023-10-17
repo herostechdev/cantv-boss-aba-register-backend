@@ -2,14 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
-import {
-  GetABADataFromRequestsException,
-  GetPortIdFromIpExecutionException,
-} from './exceptions/get-port-id-from-ip-execution.exception';
+import { GetPortIdFromIpExecutionException } from './exceptions/get-port-id-from-ip-execution.exception';
+import { GetABADataFromRequestsException } from './exceptions/get-aba-data-from-requests.exception';
 import { GetAndRegisterQualifOfServiceException } from './exceptions/get-and-register-qualif-of-service.exception';
 import { GetDownstreamFromPlanException } from './exceptions/get-downstream-from-plan.exception';
 import { GetPortIdFromIpConstants } from './constants/get-port-id-from-ip.constants';
-import { GetPortIdFromIpException } from './exceptions/get-aba-data-from-requests.exception';
 import { IGetInfoFromABARequestsResponse } from './responses/get-info-from-aba-requests-response.interface';
 import { IGetABADataFromRequestsResponse } from './responses/get-aba-data-from-requests-response.interface';
 import { IGetDownstreamFromPlanResponse } from './responses/get-downstream-from-plan-response.interface';
