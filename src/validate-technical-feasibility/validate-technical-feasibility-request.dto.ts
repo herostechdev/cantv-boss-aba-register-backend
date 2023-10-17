@@ -1,6 +1,9 @@
-import { IsDate, IsString } from 'class-validator';
+import { IsDate, IsIP, IsInt, IsString } from 'class-validator';
 
 export class ValidateTechnicalFeasibilityRequestDto {
+  @IsIP(4, { message: 'La IP es inválida' })
+  ipAddress: string;
+
   @IsString()
   areaCode: string;
 
@@ -15,4 +18,7 @@ export class ValidateTechnicalFeasibilityRequestDto {
 
   @IsString()
   loginInstall: string;
+
+  @IsInt()
+  orderId: number;
 }

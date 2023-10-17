@@ -1,18 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { GetABADataFromRequestsException } from './get-aba-data-from-requests.exception';
-import { GetAndRegisterQualifOfServiceException } from './get-and-register-qualif-of-service.exception';
-import { GetDownstreamFromPlanException } from './get-downstream-from-plan.exception';
-import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests-response.interface';
-import { InsertDslAbaRegisterConstants } from './insert-dsl-aba-register.constants';
-import { InsertDslAbaRegisterException } from './insert-dsl-aba-register.exception';
-import { IsAPrepaidVoiceLineException } from './is-a-prepaid-voice-line.exception';
+import { Error1003Exception } from 'src/exceptions/error-1003.exception';
+import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
+import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
+import { GetABADataFromRequestsException } from './exceptions/get-aba-data-from-requests.exception';
+import { GetAndRegisterQualifOfServiceException } from './exceptions/get-and-register-qualif-of-service.exception';
+import { GetDownstreamFromPlanException } from './exceptions/get-downstream-from-plan.exception';
+import { IGetABADataFromRequestsResponse } from './response/get-aba-data-from-requests-response.interface';
+import { IGetDownstreamFromPlanResponse } from './response/get-downstream-from-plan-response.interface';
+import { InsertDslAbaRegisterConstants } from './constants/insert-dsl-aba-register.constants';
+import { InsertDslAbaRegisterException } from './exceptions/insert-dsl-aba-register.exception';
+import { IsAPrepaidVoiceLineException } from './exceptions/is-a-prepaid-voice-line.exception';
 import { IValidateTechnicalFeasibilityResponse } from './validate-technical-feasibility-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-feasibility-request.dto';
-import { VerifyContractByPhoneException } from './verify-contract-by-phone.exception';
+import { VerifyContractByPhoneException } from './exceptions/verify-contract-by-phone.exception';
+import { IVerifiyContractByPhoneResponse } from './response/verify-contract-by-phone-response.interface';
+import { IIsValidIpAddressResponse } from './response/is-valid-ip-address-response.interface';
+import { IGetInfoFromABARequestsResponse } from './response/get-info-from-aba-requests-response.interface';
+import { IsValidIpAddressConstants } from './constants/is-valid-ip-address.constants';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -32,12 +40,22 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       );
       await this.isPrepaidVoiceLine(dto);
       await this.getAndRegisterQualifOfService(dto);
-      await this.verifyContractByPhone(dto);
-      await this.getDataFromRequests(dto);
-      await this.getDownstreamFromPlan(dto);
+      const verifyContractByPhoneResponse = await this.verifyContractByPhone(
+        dto,
+      );
+      const getInfoFromABARequestsResponse = await this.GetInfoFromABARequests(
+        dto,
+      );
+      const getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
+        dto,
+      );
       const getABADataFromRequestsResponse = await this.getABADataFromRequests(
         dto,
       );
+      if (verifyContractByPhoneResponse.status == 0) {
+        // TODO: throw ABA EXISTE exceprion
+      }
+      const isValidIpAddressResponse = await this.IsValidIpAddress(dto);
       return null;
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
@@ -107,7 +125,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   ): Promise<void> {
     try {
       const parameters = {
-        i_clientserviceid: OracleHelper.numberBindOut(dto.clientServiceId),
+        i_clientserviceid: OracleHelper.numberBindIn(dto.orderId),
         i_areacode: OracleHelper.stringBindIn(dto.areaCode, 256),
         i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 256),
         o_qualifpossible: OracleHelper.stringBindOut(),
@@ -135,7 +153,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
 
   private async verifyContractByPhone(
     dto: ValidateTechnicalFeasibilityRequestDto,
-  ): Promise<void> {
+  ): Promise<IVerifiyContractByPhoneResponse> {
     try {
       const parameters = {
         i_areacode: OracleHelper.stringBindIn(dto.areaCode, 256),
@@ -151,6 +169,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       if (status != 0) {
         throw new VerifyContractByPhoneException();
       }
+      return {
+        status: status,
+      };
     } catch (error) {
       if (!(error instanceof VerifyContractByPhoneException)) {
         throw new VerifyContractByPhoneException();
@@ -158,25 +179,45 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Pendiente definición de STORED PROCEDURE
-  private async getDataFromRequests(
+  private async GetInfoFromABARequests(
     dto: ValidateTechnicalFeasibilityRequestDto,
-  ): Promise<void> {
+  ): Promise<IGetInfoFromABARequestsResponse> {
     try {
       const parameters = {
         i_areacode: OracleHelper.stringBindIn(dto.areaCode, 256),
         i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 256),
-        o_status: OracleHelper.numberBindOut(),
+        sz_Fecha1: OracleHelper.stringBindOut(10),
+        sz_Fecha2: OracleHelper.stringBindOut(10),
+        sz_Fecha3: OracleHelper.stringBindOut(10),
+        sz_PlanDesired: OracleHelper.stringBindOut(32),
+        sz_PlanDescription: OracleHelper.stringBindOut(256),
+        sz_MedioP: OracleHelper.stringBindOut(32),
+        abarequests_row: OracleHelper.stringBindOut(10),
+        abaacceptedrequests_row: OracleHelper.stringBindOut(10),
+        abarequestsregistes_row: OracleHelper.stringBindOut(10),
+        Status: OracleHelper.numberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.BOSS_PACKAGE,
-        OracleConstants.GET_DATA_FROM_REQUESTS,
+        OracleConstants.ACT_PACKAGE,
+        OracleConstants.GET_INFO_FROM_ABA_REQUESTS,
         parameters,
       );
       const status = result?.outBinds?.oStatus ?? 1;
       if (status != 0) {
         throw new VerifyContractByPhoneException();
       }
+      return {
+        date1: result?.outBinds?.sz_Fecha1,
+        date2: result?.outBinds?.sz_Fecha2,
+        date3: result?.outBinds?.sz_Fecha3,
+        desiredPlan: result?.outBinds?.sz_PlanDesired,
+        descriptionPlan: result?.outBinds?.sz_PlanDescription,
+        medioP: result?.outBinds?.sz_MedioP,
+        abaRequestsRow: result?.outBinds?.abarequests_row,
+        abaAcceptedRequestsRow: result?.outBinds?.abaacceptedrequests_row,
+        abaRequestsRegistersRow: result?.outBinds?.abarequestsregistes_row,
+        status: result?.outBinds?.Status,
+      };
     } catch (error) {
       if (!(error instanceof VerifyContractByPhoneException)) {
         throw new VerifyContractByPhoneException();
@@ -186,7 +227,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
 
   private async getDownstreamFromPlan(
     dto: ValidateTechnicalFeasibilityRequestDto,
-  ): Promise<void> {
+  ): Promise<IGetDownstreamFromPlanResponse> {
     try {
       const parameters = {
         i_planname: OracleHelper.stringBindIn(dto.areaCode, 32),
@@ -203,6 +244,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       if (status != 0) {
         throw new GetDownstreamFromPlanException();
       }
+      return {
+        downstream: downstream,
+        status: status,
+      };
     } catch (error) {
       if (!(error instanceof GetDownstreamFromPlanException)) {
         throw new GetDownstreamFromPlanException();
@@ -252,6 +297,52 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     } catch (error) {
       if (!(error instanceof GetABADataFromRequestsException)) {
         throw new GetABADataFromRequestsException();
+      }
+    }
+  }
+
+  private async IsValidIpAddress(
+    dto: ValidateTechnicalFeasibilityRequestDto,
+  ): Promise<IIsValidIpAddressResponse> {
+    try {
+      const parameters = {
+        abaareacode: OracleHelper.stringBindIn(dto.areaCode, 3),
+        abaphonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 16),
+        abaipaddress: OracleHelper.stringBindIn(dto.ipAddress, 15),
+        Status: OracleHelper.numberBindOut(),
+      };
+      const result = await super.executeStoredProcedure(
+        OracleConstants.BOSS_PACKAGE,
+        OracleConstants.IS_VALID_IP_ADDRESS,
+        parameters,
+      );
+      const status = (result?.outBinds?.status ??
+        IsValidIpAddressConstants.ERROR_1003) as IsValidIpAddressConstants;
+      switch (status) {
+        case IsValidIpAddressConstants.SUCCESSFULL:
+          return {
+            status: status,
+          };
+        case IsValidIpAddressConstants.ERROR_1003:
+          throw new Error1003Exception();
+        case IsValidIpAddressConstants.ERROR_3004_1:
+          throw new Error30041Exception();
+        case IsValidIpAddressConstants.ERROR_3005_5:
+          throw new Error30055Exception();
+        case IsValidIpAddressConstants.POOL_RBE_LEASE:
+        // TODO: Preguntar que se debe hacer en este caso
+        default:
+          throw new Error1003Exception();
+      }
+    } catch (error) {
+      if (
+        !(
+          error instanceof Error1003Exception ||
+          error instanceof Error30041Exception ||
+          error instanceof Error30055Exception
+        )
+      ) {
+        throw new Error1003Exception();
       }
     }
   }
