@@ -6,7 +6,7 @@ export class GetPortIdFromIpExecutionException extends CustomBadRequestException
       code: '',
       guid: '8b2634a3-2cbe-44ef-9797-f05a5ca0c3e8',
       objectOrError:
-        'Ha ocurrido un error al ejecutare el Stored Procedure GetPortidFromIp',
+        'Ha ocurrido un error al ejecutar el Stored Procedure GetPortidFromIp',
     });
   }
 }

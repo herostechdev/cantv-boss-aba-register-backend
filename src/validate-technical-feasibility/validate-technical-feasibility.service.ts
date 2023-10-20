@@ -27,6 +27,8 @@ import { VerifyContractByPhoneException } from './exceptions/verify-contract-by-
 import { GetPortIdFromIpDSLAMDataNotFoundException } from './exceptions/get-port-id-from-ip-dslam-data-not-found.exception';
 import { GetPortIdFromIpBadIpFormatException } from './exceptions/get-port-id-from-ip-bad-ip-format.exception';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
+import { ValidateTechnicalFeasibilityData } from './validate-technical-feasibility-data';
+import { GetValidVPIException } from './exceptions/get-valid-vpi.exception';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -40,31 +42,38 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     dto: ValidateTechnicalFeasibilityRequestDto,
   ): Promise<IValidateTechnicalFeasibilityResponse> {
     try {
+      const data = new ValidateTechnicalFeasibilityData();
+      data.requestDto = dto;
       await super.connect();
-      const insertDslAbaRegistersResponse = await this.insertDslAbaRegisters(
-        dto,
+      data.insertDslAbaRegistersResponse = await this.insertDslAbaRegisters(
+        data,
       );
-      await this.isPrepaidVoiceLine(dto);
-      await this.getAndRegisterQualifOfService(dto);
-      const verifyContractByPhoneResponse = await this.verifyContractByPhone(
-        dto,
+      await this.isPrepaidVoiceLine(data);
+      await this.getAndRegisterQualifOfService(data);
+      data.verifyContractByPhoneResponse = await this.verifyContractByPhone(
+        data,
       );
-      const getInfoFromABARequestsResponse = await this.GetInfoFromABARequests(
-        dto,
+      data.getInfoFromABARequestsResponse = await this.GetInfoFromABARequests(
+        data,
       );
-      const getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
-        dto,
+      data.getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
+        data,
       );
-      const getABADataFromRequestsResponse = await this.getABADataFromRequests(
-        dto,
+      data.getABADataFromRequestsResponse = await this.getABADataFromRequests(
+        data,
       );
-      if (verifyContractByPhoneResponse.status == 0) {
+      if (data.verifyContractByPhoneResponse.status == 0) {
         throw new VerifyContractByPhoneException();
       }
-      const isValidIpAddressResponse = await this.IsValidIpAddress(dto);
-      const getPortidFromIpResponse = await this.getPortidFromIp(dto);
-      if (ValidationHelper.isDefined(getPortidFromIpResponse.dslamportId))
-        return null;
+      data.isValidIpAddressResponse = await this.IsValidIpAddress(data);
+      data.getPortidFromIpResponse = await this.getPortidFromIp(data);
+      if (
+        ValidationHelper.isDefined(data.getPortidFromIpResponse.dslamportId)
+      ) {
+      } else {
+        await this.getPortIdFlow(data);
+      }
+      return null;
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
@@ -73,14 +82,20 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async insertDslAbaRegisters(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<number> {
     const parameters = {
-      iAreaCode: OracleHelper.stringBindIn(dto.areaCode, 3),
-      iPhoneNumber: OracleHelper.stringBindIn(dto.phoneNumber, 7),
-      iRegisterDate: OracleHelper.dateBindIn(dto.registerDate),
-      iRegisterStatus: OracleHelper.stringBindIn(dto.registerStatus, 16),
-      iLoginInstall: OracleHelper.stringBindIn(dto.loginInstall, 32),
+      iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
+      iPhoneNumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber, 7),
+      iRegisterDate: OracleHelper.dateBindIn(data.requestDto.registerDate),
+      iRegisterStatus: OracleHelper.stringBindIn(
+        data.requestDto.registerStatus,
+        16,
+      ),
+      iLoginInstall: OracleHelper.stringBindIn(
+        data.requestDto.loginInstall,
+        32,
+      ),
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
@@ -102,12 +117,15 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async isPrepaidVoiceLine(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<void> {
     try {
       const parameters = {
-        Abaareacode: OracleHelper.stringBindIn(dto.areaCode, 3),
-        abaphonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 16),
+        Abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
+        abaphonenumber: OracleHelper.stringBindIn(
+          data.requestDto.phoneNumber,
+          16,
+        ),
         isPrepago: OracleHelper.numberBindOut(),
         oStatus: OracleHelper.numberBindOut(),
       };
@@ -129,13 +147,16 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getAndRegisterQualifOfService(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<void> {
     try {
       const parameters = {
-        i_clientserviceid: OracleHelper.numberBindIn(dto.orderId),
-        i_areacode: OracleHelper.stringBindIn(dto.areaCode, 256),
-        i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 256),
+        i_clientserviceid: OracleHelper.numberBindIn(data.requestDto.orderId),
+        i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
+        i_phonenumber: OracleHelper.stringBindIn(
+          data.requestDto.phoneNumber,
+          256,
+        ),
         o_qualifpossible: OracleHelper.stringBindOut(),
         o_modemstatus: OracleHelper.stringBindOut(),
         o_maxdownstream: OracleHelper.stringBindOut(),
@@ -160,12 +181,15 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async verifyContractByPhone(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<IVerifiyContractByPhoneResponse> {
     try {
       const parameters = {
-        i_areacode: OracleHelper.stringBindIn(dto.areaCode, 256),
-        i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 256),
+        i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
+        i_phonenumber: OracleHelper.stringBindIn(
+          data.requestDto.phoneNumber,
+          256,
+        ),
         o_status: OracleHelper.numberBindOut(),
       };
       const result = await super.executeStoredProcedure(
@@ -189,12 +213,15 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async GetInfoFromABARequests(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetInfoFromABARequestsResponse> {
     try {
       const parameters = {
-        i_areacode: OracleHelper.stringBindIn(dto.areaCode, 256),
-        i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 256),
+        i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
+        i_phonenumber: OracleHelper.stringBindIn(
+          data.requestDto.phoneNumber,
+          256,
+        ),
         sz_Fecha1: OracleHelper.stringBindOut(10),
         sz_Fecha2: OracleHelper.stringBindOut(10),
         sz_Fecha3: OracleHelper.stringBindOut(10),
@@ -235,11 +262,11 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getDownstreamFromPlan(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDownstreamFromPlanResponse> {
     try {
       const parameters = {
-        i_planname: OracleHelper.stringBindIn(dto.areaCode, 32),
+        i_planname: OracleHelper.stringBindIn(data.requestDto.areaCode, 32),
         o_downstream: OracleHelper.stringBindOut(32),
         o_status: OracleHelper.numberBindOut(),
       };
@@ -265,12 +292,15 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getABADataFromRequests(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetABADataFromRequestsResponse> {
     try {
       const parameters = {
-        i_areacode: OracleHelper.stringBindIn(dto.areaCode, 256),
-        i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 256),
+        i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
+        i_phonenumber: OracleHelper.stringBindIn(
+          data.requestDto.phoneNumber,
+          256,
+        ),
         o_id: OracleHelper.tableOfStringBindOut(532),
         o_firstname: OracleHelper.tableOfStringBindOut(532),
         o_lastname: OracleHelper.tableOfStringBindOut(532),
@@ -311,13 +341,16 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async IsValidIpAddress(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<IIsValidIpAddressResponse> {
     try {
       const parameters = {
-        abaareacode: OracleHelper.stringBindIn(dto.areaCode, 3),
-        abaphonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 16),
-        abaipaddress: OracleHelper.stringBindIn(dto.ipAddress, 15),
+        abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
+        abaphonenumber: OracleHelper.stringBindIn(
+          data.requestDto.phoneNumber,
+          16,
+        ),
+        abaipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 15),
         Status: OracleHelper.numberBindOut(),
       };
       const result = await super.executeStoredProcedure(
@@ -359,11 +392,11 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getPortidFromIp(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetPortIdFromIpResponse> {
     try {
       const parameters = {
-        i_ipaddress: OracleHelper.stringBindIn(dto.areaCode, 15),
+        i_ipaddress: OracleHelper.stringBindIn(data.requestDto.areaCode, 15),
         o_dslamportid: OracleHelper.numberBindOut(),
         o_status: OracleHelper.numberBindOut(),
       };
@@ -404,28 +437,43 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getPortIdFlow(
-    dto: ValidateTechnicalFeasibilityRequestDto,
-  ): Promise<any> {
-    const queryDHCPResponse = await this.queryDHCP(dto);
-    const getValidVPIResponse = await this.getValidVPI(dto);
-    const getPortIdResponse = await this.getPortId(dto);
+    data: ValidateTechnicalFeasibilityData,
+  ): Promise<void> {
+    const queryDHCPResponse = await this.queryDHCP(data);
+    data.getValidVPIResponse = await this.getValidVPI(data);
+    const getPortIdResponse = await this.getPortId(data);
     return getPortIdResponse;
   }
 
   private async queryDHCP(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<any> {
     return null;
   }
 
   private async getValidVPI(
-    dto: ValidateTechnicalFeasibilityRequestDto,
-  ): Promise<any> {
-    return null;
+    data: ValidateTechnicalFeasibilityData,
+  ): Promise<number> {
+    try {
+      const parameters = {
+        i_nspip: OracleHelper.stringBindIn(data.requestDto.areaCode, 15),
+        // TODO: Investigar y capturar el valor de i_invalidvpi
+        i_invalidvpi: OracleHelper.numberBindIn(0),
+      };
+      const result = await super.executeStoredProcedure(
+        OracleConstants.UTL_PACKAGE,
+        OracleConstants.GET_VALID_VPI,
+        parameters,
+      );
+      // TODO: DETERMINAR COMO SE OBTIENE EL VALOR DE SALIDA:   VPI (Virtual Path Indicator)
+      return result?.outBinds?.vpi ?? 0;
+    } catch (error) {
+      throw new GetValidVPIException();
+    }
   }
 
   private async getPortId(
-    dto: ValidateTechnicalFeasibilityRequestDto,
+    data: ValidateTechnicalFeasibilityData,
   ): Promise<any> {
     return null;
   }
