@@ -8,7 +8,7 @@ export class DSLAuditLogsRequestDto {
   phoneNumber: string;
 
   @IsInt()
-  orderId: string;
+  orderId: number;
 
   @IsIP(4, { message: 'La IP es inválida' })
   ipAddress: string;
