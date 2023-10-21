@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-error.exception';
 import { CheckIpPortNotFoundByPhoneNumberException } from './check-ip/check-ip-port-not-found-by-phone-number.exception';
 import { CheckIpStatusConstants } from './check-ip/check-ip-status.constants';
@@ -886,27 +887,67 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IReadIABAOrderResponse> {
     try {
+      const orderDate = DateTime.fromFormat(
+        data?.getABADataResponse?.abaorderdate,
+        'dd/MM/yyyy',
+      );
       const parameters = {
+        // TODO: determinar origen del parametro: sz_ncc
         sz_ncc: OracleHelper.stringBindIn(null, 10),
-        sz_areacode: OracleHelper.stringBindIn(null, 3),
-        sz_phonenumber: OracleHelper.stringBindIn(null, 16),
-        orderid: OracleHelper.stringBindIn(null, 12),
-        sz_clienttype: OracleHelper.stringBindIn(null, 1),
-        sz_orderdate: OracleHelper.dateBindIn(null),
-        sz_rack: OracleHelper.stringBindIn(null, 2),
-        sz_position: OracleHelper.stringBindIn(null, 2),
-        n_dslamslot: OracleHelper.numberBindIn(null),
-        n_port: OracleHelper.numberBindIn(null),
-        sz_ad: OracleHelper.stringBindIn(null, 5),
-        sz_adpair: OracleHelper.stringBindIn(null, 4),
+        sz_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
+        sz_phonenumber: OracleHelper.stringBindIn(
+          data.requestDto.phoneNumber,
+          16,
+        ),
+        orderid: OracleHelper.stringBindIn(String(data.requestDto.orderId), 12),
+        sz_clienttype: OracleHelper.stringBindIn(
+          data.getABADataResponse.abaclienttype,
+          1,
+        ),
+        sz_orderdate: OracleHelper.dateBindIn(
+          orderDate.isValid ? orderDate.toJSDate() : null,
+        ),
+        sz_rack: OracleHelper.stringBindIn(
+          String(data.getDataFromDslamPortIdResponse.abarack),
+          2,
+        ),
+        sz_position: OracleHelper.stringBindIn(
+          data.getDataFromDslamPortIdResponse.abadslamposition,
+          2,
+        ),
+        n_dslamslot: OracleHelper.numberBindIn(
+          data.getDataFromDslamPortIdResponse.abaslot,
+        ),
+        n_port: OracleHelper.numberBindIn(
+          data.getDataFromDslamPortIdResponse.abaport,
+        ),
+        sz_ad: OracleHelper.stringBindIn(
+          data.getDataFromDslamPortIdResponse.abaad,
+          5,
+        ),
+        sz_adpair: OracleHelper.stringBindIn(
+          data.getDataFromDslamPortIdResponse.abapairad,
+          4,
+        ),
+        // TODO: determinar origen del parametro: sz_office
         sz_office: OracleHelper.stringBindIn(null, 10),
+        // TODO: determinar origen del parametro: sz_createdby
         sz_createdby: OracleHelper.stringBindIn(null, 8),
-        sz_provider: OracleHelper.stringBindIn(null, 16),
+        sz_provider: OracleHelper.stringBindIn(
+          data.getDataFromDslamPortIdResponse.abaprovider,
+          16,
+        ),
+        // TODO: determinar origen del parametro: sz_room
         sz_room: OracleHelper.stringBindIn(null, 32),
+        // TODO: determinar origen del parametro: n_recursive
         n_recursive: OracleHelper.numberBindIn(null),
+        // TODO: determinar origen del parametro: sz_sistema
         sz_sistema: OracleHelper.stringBindIn(null),
+        // TODO: determinar origen del parametro: iCoid
         iCoid: OracleHelper.stringBindIn(null, 10),
+        // TODO: determinar origen del parametro: i_executiondate
         i_executiondate: OracleHelper.stringBindIn(null),
+        // TODO: determinar origen del parametro: i_autoinstall
         i_autoinstall: OracleHelper.numberBindIn(null),
         l_errorcode: OracleHelper.tableOfNumberBindOut(),
       };
