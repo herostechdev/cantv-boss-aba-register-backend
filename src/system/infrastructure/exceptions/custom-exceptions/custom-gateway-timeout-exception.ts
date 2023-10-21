@@ -7,7 +7,10 @@ export class CustomGatewayTimeoutException
   implements IException
 {
   constructor(exceptionData: IExceptionInputData) {
-    super(exceptionData.objectOrError, exceptionData.descriptionOrOptions);
+    super(
+      exceptionData.objectOrError,
+      exceptionData.descriptionOrOptions ?? exceptionData.objectOrError,
+    );
     this.code = exceptionData.code;
     this.guid = exceptionData.guid;
     this.innerException = exceptionData.innerException;

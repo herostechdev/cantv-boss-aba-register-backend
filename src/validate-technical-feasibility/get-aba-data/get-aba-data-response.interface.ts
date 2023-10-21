@@ -1,4 +1,4 @@
-import { GetABADataConstants } from '../constants/get-aba-data.constants';
+import { GetABADataConstants } from './get-aba-data.constants';
 
 export interface IGetABADataResponse {
   abadslamportid: number;

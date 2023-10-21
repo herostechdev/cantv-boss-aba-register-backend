@@ -1,34 +1,46 @@
 import { Injectable } from '@nestjs/common';
+import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-error.exception';
+import { CheckIpPortNotFoundByPhoneNumberException } from './check-ip/check-ip-port-not-found-by-phone-number.exception';
+import { CheckIpStatusConstants } from './check-ip/check-ip-status.constants';
+import { CheckIpThePortIsReservedException } from './check-ip/check-ip-the-port-is-reserved.exception';
+import { CheckIpThereIsNotContractAssociatedWithThePortException } from './check-ip/check-ip-there-is-not-contract-associated-with-the-port.exception';
 import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
+import { Error30031Exception } from 'src/exceptions/error-3003-1.exception';
+import { Error30032Exception } from 'src/exceptions/error-3003-2.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorSearchingASAPException } from './exceptions/error-searching-asap.exception ';
-import { GetPortIdFromIpExecutionException } from './exceptions/get-port-id-from-ip-execution.exception';
-import { GetABADataFromRequestsException } from './exceptions/get-aba-data-from-requests.exception';
-import { GetAndRegisterQualifOfServiceException } from './exceptions/get-and-register-qualif-of-service.exception';
-import { GetDownstreamFromPlanException } from './exceptions/get-downstream-from-plan.exception';
-import { GetPortIdFromIpBadIpFormatException } from './exceptions/get-port-id-from-ip-bad-ip-format.exception';
-import { GetPortIdFromIpConstants } from './constants/get-port-id-from-ip.constants';
-import { GetPortIdFromIpDSLAMDataNotFoundException } from './exceptions/get-port-id-from-ip-dslam-data-not-found.exception';
-import { GetValidVPIException } from './exceptions/get-valid-vpi.exception';
-import { IGetInfoFromABARequestsResponse } from './responses/get-info-from-aba-requests-response.interface';
-import { IGetABADataResponse } from './responses/get-aba-data-response.interface';
-import { IGetABADataFromRequestsResponse } from './responses/get-aba-data-from-requests-response.interface';
-import { IGetDownstreamFromPlanResponse } from './responses/get-downstream-from-plan-response.interface';
-import { IGetPortIdFromIpResponse } from './responses/get-port-id-from-ip-response.interface';
-import { IIsValidIpAddressResponse } from './responses/is-valid-ip-address-response.interface';
-import { InsertDslAbaRegisterConstants } from './constants/insert-dsl-aba-register.constants';
-import { InsertDslAbaRegisterException } from './exceptions/insert-dsl-aba-register.exception';
-import { IsAPrepaidVoiceLineException } from './exceptions/is-a-prepaid-voice-line.exception';
-import { IIsOccupiedPortResponse } from './responses/is-occupied-port-response.interface';
-import { IsOccupiedPortConstants } from './constants/is-occupied-port.constants';
-import { IsOccupiedPortInternalErrorException } from './exceptions/is-occupied-port-internal-error.exception';
-import { IsOccupiedPortTherIsNoDataException } from './exceptions/is-occupied-port-there-is-no-data.exception';
-import { IsValidIpAddressConstants } from './constants/is-valid-ip-address.constants';
+import { GetPortIdFromIpExecutionException } from './get-port-id-from-ip/get-port-id-from-ip-execution.exception';
+import { GetABADataConstants } from './get-aba-data/get-aba-data.constants';
+import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-execution-error.exception';
+import { GetABADataThereIsNoDataException } from './get-aba-data/get-aba-data-there-is-no-data.exception';
+import { GetABADataFromRequestsException } from './get-aba-data-from-requests/get-aba-data-from-requests.exception';
+import { GetAndRegisterQualifOfServiceException } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service.exception';
+import { GetDownstreamFromPlanException } from './get-downstream-from-plan/get-downstream-from-plan.exception';
+import { GetInfoFromABARequestsException } from './get-info-from-aba-requests/get-info-from-aba-requests.exception';
+import { GetPortIdFromIpBadIpFormatException } from './get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
+import { GetPortIdFromIpConstants } from './get-port-id-from-ip/get-port-id-from-ip.constants';
+import { GetPortIdFromIpDSLAMDataNotFoundException } from './get-port-id-from-ip/get-port-id-from-ip-dslam-data-not-found.exception';
+import { GetValidVPIException } from './get-valid-vpi/get-valid-vpi.exception';
+import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
+import { IGetInfoFromABARequestsResponse } from './get-info-from-aba-requests/get-info-from-aba-requests-response.interface';
+import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interface';
+import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests/get-aba-data-from-requests-response.interface';
+import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
+import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
+import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
+import { InsertDslAbaRegisterConstants } from './insert-dsl-aba-registers/insert-dsl-aba-register.constants';
+import { InsertDslAbaRegisterException } from './insert-dsl-aba-registers/insert-dsl-aba-register.exception';
+import { IsAPrepaidVoiceLineException } from './is-prepaid-voice-line/is-a-prepaid-voice-line.exception';
+import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
+import { IsOccupiedPortConstants } from './Is-occupied-port/is-occupied-port.constants';
+import { IsOccupiedPortInternalErrorException } from './Is-occupied-port/is-occupied-port-internal-error.exception';
+import { IsOccupiedPortTherIsNoDataException } from './Is-occupied-port/is-occupied-port-there-is-no-data.exception';
+import { IsValidIpAddressConstants } from './is-valid-ip-address/is-valid-ip-address.constants';
 import { IValidateTechnicalFeasibilityResponse } from './validate-technical-feasibility-response.interface';
-import { IVerifiyContractByPhoneResponse } from './responses/verify-contract-by-phone-response.interface';
+import { IVerifiyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
@@ -37,10 +49,11 @@ import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-
 import { ValidateTechnicalFeasibilityData } from './validate-technical-feasibility-data';
 import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-feasibility-request.dto';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
-import { VerifyContractByPhoneException } from './exceptions/verify-contract-by-phone.exception';
-import { GetABADataConstants } from './constants/get-aba-data.constants';
-import { GetABADataExecutionErrorException } from './exceptions/get-aba-data-execution-error.exception';
-import { GetABADataTherIsNoDataException } from './exceptions/get-aba-data-there-is-no-data.exception';
+import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
+import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
+import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
+import { GetDataFromDSLAMPortIdThereIsNoDataException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-there-is-no-data.exception';
+import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -66,7 +79,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.verifyContractByPhoneResponse = await this.verifyContractByPhone(
         data,
       );
-      data.getInfoFromABARequestsResponse = await this.GetInfoFromABARequests(
+      data.getInfoFromABARequestsResponse = await this.getInfoFromABARequests(
         data,
       );
       data.getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
@@ -78,23 +91,35 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       if (data.verifyContractByPhoneResponse.status == 0) {
         throw new VerifyContractByPhoneException();
       }
-      data.isValidIpAddressResponse = await this.IsValidIpAddress(data);
-      data.getPortidFromIpResponse = await this.getPortidFromIp(data);
+      data.isValidIpAddressResponse = await this.isValidIpAddress(data);
+      data.getPortIdFromIpResponse = await this.getPortIdFromIp(data);
       if (
-        ValidationHelper.isDefined(data.getPortidFromIpResponse.dslamportId)
+        ValidationHelper.isDefined(data.getPortIdFromIpResponse.dslamportId)
       ) {
         data.isOccupiedPortResponse = await this.IsOccupiedPort(data);
-        // TODO: Verificar el proceso BPM porque hay discrepancias entre lo que devuelve el SP vs lo que se comprueba en el IF.
-        if (data.isOccupiedPortResponse.result === 999999) {
+        if (data.isOccupiedPortResponse.result > 0) {
           await this.getPortIdFlow(data);
         } else {
-          await this.rbeDoesNotExist(data);
+          await this.rbeDoesNotExistLog(data);
           data.snacomDllResponse = await this.snacomDll(data);
         }
       } else {
         await this.getPortIdFlow(data);
       }
       data.getABADataResponse = await this.getABAData(data);
+      if (data.getABADataResponse.status === 0) {
+        if (ValidationHelper.isDefined(data.getABADataResponse.abacontractid)) {
+          throw new TheClientAlreadyHasABAServiceException();
+        } else {
+          data.checkIpResponse = await this.checkIp(data);
+          // TODO: Revisar las condiciones del flujo porque SOLO contemplan los CheckIpStatusConstants 10 Y 6
+          // if(data.checkIpResponse.status === CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT)
+        }
+      } else {
+        data.getDataFromDslamPortIdResponse = await this.getDataFromDslamPortId(
+          data,
+        );
+      }
       return null;
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
@@ -234,7 +259,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  private async GetInfoFromABARequests(
+  private async getInfoFromABARequests(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetInfoFromABARequestsResponse> {
     try {
@@ -262,7 +287,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       );
       const status = result?.outBinds?.oStatus ?? 1;
       if (status != 0) {
-        throw new VerifyContractByPhoneException();
+        throw new GetInfoFromABARequestsException();
       }
       return {
         date1: result?.outBinds?.sz_Fecha1,
@@ -277,8 +302,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         status: result?.outBinds?.Status,
       };
     } catch (error) {
-      if (!(error instanceof VerifyContractByPhoneException)) {
-        throw new VerifyContractByPhoneException();
+      if (!(error instanceof GetInfoFromABARequestsException)) {
+        throw new GetInfoFromABARequestsException();
       }
     }
   }
@@ -362,7 +387,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  private async IsValidIpAddress(
+  private async isValidIpAddress(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IIsValidIpAddressResponse> {
     try {
@@ -413,7 +438,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  private async getPortidFromIp(
+  private async getPortIdFromIp(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetPortIdFromIpResponse> {
     try {
@@ -479,7 +504,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         planName: null,
       });
       if (data.isValidIpAddressResponse.status === 5) {
-        await this.rbeDoesNotExist(data);
+        await this.rbeDoesNotExistLog(data);
       } else {
         // SNACOM.DLL (dada Orden IABA) CONSUMIR SERVICIO PIC (Por definir)
         data.snacomDllResponse = await this.snacomDll(data);
@@ -489,7 +514,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  private async rbeDoesNotExist(
+  private async rbeDoesNotExistLog(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<void> {
     await this.dslAuditLogsService.log({
@@ -560,7 +585,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // TODO: FALTA ESPECIFICACIÓN DEL STP: GetPortId
+  // TODO: FALTA ESPECIFICACIÓN DEL SP: GetPortId
   private async getPortId(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<any> {
@@ -601,7 +626,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           IsOccupiedPortConstants.INTERNAL_ERROR) as IsOccupiedPortConstants,
       };
       switch (response.status) {
-        case GetPortIdFromIpConstants.SUCCESSFULL:
+        case IsOccupiedPortConstants.SUCCESSFULL:
           return response;
         case IsOccupiedPortConstants.INTERNAL_ERROR:
           throw new IsOccupiedPortInternalErrorException();
@@ -671,12 +696,111 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         case GetABADataConstants.EXECUTION_ERROR:
           throw new GetABADataExecutionErrorException();
         case GetABADataConstants.THERE_IS_NO_DATA:
-          throw new GetABADataTherIsNoDataException();
+          throw new GetABADataThereIsNoDataException();
         default:
           throw new GetABADataExecutionErrorException();
       }
     } catch (error) {
       throw new GetABADataExecutionErrorException();
+    }
+  }
+
+  private async checkIp(
+    data: ValidateTechnicalFeasibilityData,
+  ): Promise<ICheckIpResponse> {
+    try {
+      const parameters = {
+        abadslamportid: OracleHelper.stringBindIn(
+          String(data.getPortIdFromIpResponse.dslamportId),
+        ),
+        abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
+        abaphonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
+        abauserlogin: OracleHelper.stringBindIn(data.requestDto.loginInstall),
+        //TODO: Determinar origen del parámetro: abaportwithcontract
+        abaportwithcontract: OracleHelper.numberBindIn(null),
+        Status: OracleHelper.numberBindOut(),
+      };
+      const result = await super.executeStoredProcedure(
+        OracleConstants.BOSS_PACKAGE,
+        OracleConstants.CHECK_IP,
+        parameters,
+      );
+      const response: ICheckIpResponse = {
+        status: (result?.outBinds?.Status ??
+          CheckIpStatusConstants.EXECUTION_ERROR) as CheckIpStatusConstants,
+      };
+      switch (response.status) {
+        case CheckIpStatusConstants.SUCCESSFULL:
+          return response;
+        case CheckIpStatusConstants.EXECUTION_ERROR:
+          throw new CheckIpExecutionErrorException();
+        case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PHONE_NUMBER:
+          throw new CheckIpPortNotFoundByPhoneNumberException();
+        case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PARAMETER:
+          throw new Error30032Exception();
+        case CheckIpStatusConstants.SUCCESSFULL_BY_BUSSINESS_LOGIC:
+          return response;
+        case CheckIpStatusConstants.THERE_IS_NOT_CONTRACT_ASSOCIATED_WITH_THE_PORT:
+          throw new CheckIpThereIsNotContractAssociatedWithThePortException();
+        case CheckIpStatusConstants.THE_PORT_IS_RESERVED:
+          throw new CheckIpThePortIsReservedException();
+        case CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
+          throw new Error30031Exception();
+        default:
+          throw new CheckIpExecutionErrorException();
+      }
+    } catch (error) {
+      throw new CheckIpExecutionErrorException();
+    }
+  }
+
+  private async getDataFromDslamPortId(
+    data: ValidateTechnicalFeasibilityData,
+  ): Promise<IGetDataFromDSLAMPortIdResponse> {
+    try {
+      const parameters = {
+        abadslamportid: OracleHelper.stringBindIn(
+          String(data.getPortIdFromIpResponse.dslamportId),
+        ),
+        abarack: OracleHelper.tableOfNumberBindOut(),
+        abadslamposition: OracleHelper.tableOfStringBindOut(532),
+        abaslot: OracleHelper.tableOfNumberBindOut(),
+        abaport: OracleHelper.tableOfNumberBindOut(),
+        abaad: OracleHelper.tableOfStringBindOut(532),
+        abapairad: OracleHelper.tableOfStringBindOut(532),
+        abaprovider: OracleHelper.tableOfStringBindOut(532),
+        abasistema: OracleHelper.tableOfStringBindOut(532),
+        status: OracleHelper.tableOfNumberBindOut(),
+      };
+      const result = await super.executeStoredProcedure(
+        OracleConstants.BOSS_PACKAGE,
+        OracleConstants.GET_DATA_FROM_DSLAM_PORT_ID,
+        parameters,
+      );
+      const response: IGetDataFromDSLAMPortIdResponse = {
+        abarack: OracleHelper.getFirstItem(result, 'abarack'),
+        abadslamposition: OracleHelper.getFirstItem(result, 'abadslamposition'),
+        abaslot: OracleHelper.getFirstItem(result, 'abaslot'),
+        abaport: OracleHelper.getFirstItem(result, 'abaport'),
+        abaad: OracleHelper.getFirstItem(result, 'abaad'),
+        abapairad: OracleHelper.getFirstItem(result, 'abapairad'),
+        abaprovider: OracleHelper.getFirstItem(result, 'abaprovider'),
+        abasistema: OracleHelper.getFirstItem(result, 'abasistema'),
+        status: (result?.outBinds?.Status ??
+          GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR) as GetDataFromDSLAMPortIdStatusConstants,
+      };
+      switch (response.status) {
+        case GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL:
+          return response;
+        case GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR:
+          throw new GetDataFromDSLAMPortIdExecutionErrorException();
+        case GetDataFromDSLAMPortIdStatusConstants.THERE_IS_NO_DATA:
+          throw new GetDataFromDSLAMPortIdThereIsNoDataException();
+        default:
+          throw new GetDataFromDSLAMPortIdExecutionErrorException();
+      }
+    } catch (error) {
+      throw new GetDataFromDSLAMPortIdExecutionErrorException();
     }
   }
 }

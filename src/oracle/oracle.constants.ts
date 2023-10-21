@@ -15,9 +15,10 @@ export class OracleConstants {
     'GetAndRegisterQualifOfServ';
   public static GET_ABA_DATA = 'GetAbaData';
   public static GET_ABA_DATA_FROM_REQUESTS = 'GetABADataFromRequests';
-  public static GET_INFO_FROM_ABA_REQUESTS = 'GetInfoFromABARequests';
+  public static GET_DATA_FROM_DSLAM_PORT_ID = 'GetDataFromDslamPortid';
   public static GET_DOWNSTREAM_FROM_PLAN = 'GETDOWNSTREAMFROMPLAN';
   public static GET_IF_REMOTE_INSTALLER_IP = 'GetlfRemoteInstallerIP';
+  public static GET_INFO_FROM_ABA_REQUESTS = 'GetInfoFromABARequests';
   public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
   public static GET_PORT_ID = 'getPortId';
   public static GET_PORT_ID_FROM_IP = 'GetPortidFromIp';
