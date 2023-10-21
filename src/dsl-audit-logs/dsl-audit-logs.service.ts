@@ -20,7 +20,7 @@ export class DSLAuditLogsService extends OracleDatabaseService {
       const parameters = {
         i_areacode: OracleHelper.stringBindIn(dto.areaCode, 3),
         i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 16),
-        i_orderid: OracleHelper.stringBindIn(dto.orderId, 30),
+        i_orderid: OracleHelper.stringBindIn(String(dto.orderId), 30),
         i_ipaddress: OracleHelper.stringBindIn(dto.ipAddress, 15),
         i_activationlogin: OracleHelper.stringBindIn(dto.activationLogin, 256),
         i_webpage: OracleHelper.dateBindIn(dto.webPage),

@@ -35,11 +35,11 @@ import { InsertDslAbaRegisterConstants } from './insert-dsl-aba-registers/insert
 import { InsertDslAbaRegisterException } from './insert-dsl-aba-registers/insert-dsl-aba-register.exception';
 import { IsAPrepaidVoiceLineException } from './is-prepaid-voice-line/is-a-prepaid-voice-line.exception';
 import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
+import { IReadIABAOrderResponse } from './read-iaba-order/read-iaba-order-response.interface';
 import { IsOccupiedPortConstants } from './Is-occupied-port/is-occupied-port.constants';
 import { IsOccupiedPortInternalErrorException } from './Is-occupied-port/is-occupied-port-internal-error.exception';
 import { IsOccupiedPortTherIsNoDataException } from './Is-occupied-port/is-occupied-port-there-is-no-data.exception';
 import { IsValidIpAddressConstants } from './is-valid-ip-address/is-valid-ip-address.constants';
-import { IValidateTechnicalFeasibilityResponse } from './validate-technical-feasibility-response.interface';
 import { IVerifiyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
@@ -51,9 +51,18 @@ import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-fea
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
-import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
-import { GetDataFromDSLAMPortIdThereIsNoDataException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-there-is-no-data.exception';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
+import { IDeleteOrderResponse } from './delete-order/delete-order-response.interface';
+import { DeleteOrderStatusConstants } from './delete-order/delete-order-status.constants';
+import { DeleteOrderExecutionErrorException } from './delete-order/delete-order-execution-error.exception';
+import { DeleteOrderThereIsNoDataException } from './delete-order/delete-order-there-is-no-data.exception';
+import { DeleteOrderThePortIsOccupiedByAnotherContractException } from './delete-order/delete-order-the-is-occupied-by-another-contract.exception';
+import { ReadIABAOrderErrorCodeConstants } from './read-iaba-order/read-iaba-order-error_code.constants';
+import { ReadIABAOrderAssignedPortException } from './read-iaba-order/read-iaba-order-assigned-port.exception';
+import { ReadIABAOrderOrderExistsException } from './read-iaba-order/read-iaba-order-order-exists.exception';
+import { ReadIABAOrderOrderIsOldException } from './read-iaba-order/read-iaba-order-order-is-old.exception';
+import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from './read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
+import { ReadIABAOrderGeneralDatabaseEerrorException } from './read-iaba-order/read-iaba-order-general-database-error.exception';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -66,7 +75,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
 
   async ValidateTechnicalFeasibility(
     dto: ValidateTechnicalFeasibilityRequestDto,
-  ): Promise<IValidateTechnicalFeasibilityResponse> {
+  ): Promise<ValidateTechnicalFeasibilityData> {
     try {
       const data = new ValidateTechnicalFeasibilityData();
       data.requestDto = dto;
@@ -119,13 +128,39 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         data.getDataFromDslamPortIdResponse = await this.getDataFromDslamPortId(
           data,
         );
+        if (
+          data.getDataFromDslamPortIdResponse.status ===
+          GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL
+        ) {
+          await this.modifyNetworkAccessLog(data);
+        }
+        data.deleteOrderResponse = await this.deleteOrder(data);
+        data.readIABAOrderResponse = await this.readIABAOrder(data);
       }
-      return null;
+      return data;
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
       await this.closeConnection();
     }
+  }
+
+  private async callAuditLog(
+    data: ValidateTechnicalFeasibilityData,
+    description: string,
+  ): Promise<void> {
+    await this.dslAuditLogsService.log({
+      areaCode: data.requestDto.areaCode,
+      phoneNumber: data.requestDto.phoneNumber,
+      orderId: data.requestDto.orderId,
+      ipAddress: data.requestDto.ipAddress,
+      activationLogin: null,
+      webPage: null,
+      code: null,
+      description: description,
+      comments: null,
+      planName: null,
+    });
   }
 
   private async insertDslAbaRegisters(
@@ -517,18 +552,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   private async rbeDoesNotExistLog(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<void> {
-    await this.dslAuditLogsService.log({
-      areaCode: data.requestDto.areaCode,
-      phoneNumber: data.requestDto.phoneNumber,
-      orderId: data.requestDto.orderId,
-      ipAddress: data.requestDto.ipAddress,
-      activationLogin: null,
-      webPage: null,
-      code: null,
-      description: 'RBE no existe',
-      comments: null,
-      planName: null,
-    });
+    await this.callAuditLog(data, 'RBE no existe');
   }
 
   // TODO: Identificar y desarrollar servicio en el PIC
@@ -789,18 +813,134 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         status: (result?.outBinds?.Status ??
           GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR) as GetDataFromDSLAMPortIdStatusConstants,
       };
+      // switch (response.status) {
+      //   case GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL:
+      //     return response;
+      //   case GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR:
+      //     throw new GetDataFromDSLAMPortIdExecutionErrorException();
+      //   case GetDataFromDSLAMPortIdStatusConstants.THERE_IS_NO_DATA:
+      //     throw new GetDataFromDSLAMPortIdThereIsNoDataException();
+      //   default:
+      //     throw new GetDataFromDSLAMPortIdExecutionErrorException();
+      // }
+      return response;
+    } catch (error) {
+      // throw new GetDataFromDSLAMPortIdExecutionErrorException();
+      return {
+        abarack: null,
+        abadslamposition: null,
+        abaslot: null,
+        abaport: null,
+        abaad: null,
+        abapairad: null,
+        abaprovider: null,
+        abasistema: null,
+        status: GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR,
+      };
+    }
+  }
+
+  private async modifyNetworkAccessLog(
+    data: ValidateTechnicalFeasibilityData,
+  ): Promise<void> {
+    await this.callAuditLog(data, 'Modificar Red de Acceso');
+  }
+
+  private async deleteOrder(
+    data: ValidateTechnicalFeasibilityData,
+  ): Promise<IDeleteOrderResponse> {
+    try {
+      const parameters = {
+        abadslamportid: OracleHelper.stringBindIn(
+          String(data.getPortIdFromIpResponse.dslamportId),
+        ),
+        Status: OracleHelper.tableOfNumberBindOut(),
+      };
+      const result = await super.executeStoredProcedure(
+        OracleConstants.BOSS_PACKAGE,
+        OracleConstants.DELETE_ORDER,
+        parameters,
+      );
+      const response: IDeleteOrderResponse = {
+        status: (result?.outBinds?.Status ??
+          DeleteOrderStatusConstants.EXECUTION_ERROR) as DeleteOrderStatusConstants,
+      };
       switch (response.status) {
-        case GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL:
+        case DeleteOrderStatusConstants.SUCCESSFULL:
           return response;
-        case GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR:
-          throw new GetDataFromDSLAMPortIdExecutionErrorException();
-        case GetDataFromDSLAMPortIdStatusConstants.THERE_IS_NO_DATA:
-          throw new GetDataFromDSLAMPortIdThereIsNoDataException();
+        case DeleteOrderStatusConstants.EXECUTION_ERROR:
+          throw new DeleteOrderExecutionErrorException();
+        case DeleteOrderStatusConstants.THERE_IS_NO_DATA:
+          throw new DeleteOrderThereIsNoDataException();
+        case DeleteOrderStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
+          throw new DeleteOrderThePortIsOccupiedByAnotherContractException();
         default:
-          throw new GetDataFromDSLAMPortIdExecutionErrorException();
+          throw new DeleteOrderExecutionErrorException();
       }
     } catch (error) {
-      throw new GetDataFromDSLAMPortIdExecutionErrorException();
+      throw new DeleteOrderExecutionErrorException();
+    }
+  }
+
+  private async readIABAOrder(
+    data: ValidateTechnicalFeasibilityData,
+  ): Promise<IReadIABAOrderResponse> {
+    try {
+      const parameters = {
+        sz_ncc: OracleHelper.stringBindIn(null, 10),
+        sz_areacode: OracleHelper.stringBindIn(null, 3),
+        sz_phonenumber: OracleHelper.stringBindIn(null, 16),
+        orderid: OracleHelper.stringBindIn(null, 12),
+        sz_clienttype: OracleHelper.stringBindIn(null, 1),
+        sz_orderdate: OracleHelper.dateBindIn(null),
+        sz_rack: OracleHelper.stringBindIn(null, 2),
+        sz_position: OracleHelper.stringBindIn(null, 2),
+        n_dslamslot: OracleHelper.numberBindIn(null),
+        n_port: OracleHelper.numberBindIn(null),
+        sz_ad: OracleHelper.stringBindIn(null, 5),
+        sz_adpair: OracleHelper.stringBindIn(null, 4),
+        sz_office: OracleHelper.stringBindIn(null, 10),
+        sz_createdby: OracleHelper.stringBindIn(null, 8),
+        sz_provider: OracleHelper.stringBindIn(null, 16),
+        sz_room: OracleHelper.stringBindIn(null, 32),
+        n_recursive: OracleHelper.numberBindIn(null),
+        sz_sistema: OracleHelper.stringBindIn(null),
+        iCoid: OracleHelper.stringBindIn(null, 10),
+        i_executiondate: OracleHelper.stringBindIn(null),
+        i_autoinstall: OracleHelper.numberBindIn(null),
+        l_errorcode: OracleHelper.tableOfNumberBindOut(),
+      };
+      const result = await super.executeStoredProcedure(
+        OracleConstants.UTL_PACKAGE,
+        OracleConstants.READ_IABA_ORDER,
+        parameters,
+      );
+      const response: IReadIABAOrderResponse = {
+        errorCode: (OracleHelper.getFirstItem(result, 'l_errorcode') ??
+          ReadIABAOrderErrorCodeConstants.GENERAL_DATABASE_ERROR) as ReadIABAOrderErrorCodeConstants,
+      };
+      // switch (response.errorCode) {
+      //   case ReadIABAOrderErrorCodeConstants.SUCCESSFULL:
+      //     return response;
+      //   case ReadIABAOrderErrorCodeConstants.ASSIGNED_PORT:
+      //     throw new ReadIABAOrderAssignedPortException();
+      //   case ReadIABAOrderErrorCodeConstants.THE_ORDER_EXISTS:
+      //     throw new ReadIABAOrderOrderExistsException();
+      //   case ReadIABAOrderErrorCodeConstants.THE_ORDER_ID_OLD:
+      //     throw new ReadIABAOrderOrderIsOldException();
+      //   case ReadIABAOrderErrorCodeConstants.THE_ORDER_ALREADY_EXISTS_IN_BOSS:
+      //     throw new ReadIABAOrderTheOrderAlreadyExistsInBossException();
+      //   case ReadIABAOrderErrorCodeConstants.GENERAL_DATABASE_ERROR:
+      //     throw new ReadIABAOrderGeneralDatabaseEerrorException();
+      //   default:
+      //     throw new ReadIABAOrderGeneralDatabaseEerrorException();
+      // }
+      return response;
+    } catch (error) {
+      // throw new ReadIABAOrderGeneralDatabaseEerrorException();
+      return {
+        errorCode: ReadIABAOrderErrorCodeConstants.GENERAL_DATABASE_ERROR,
+      };
     }
   }
 }

@@ -10,6 +10,7 @@ export class OracleConstants {
 
   // STORED PROCEDURES
   public static CHECK_IP = 'CheckIp';
+  public static DELETE_ORDER = 'DeleteOrder';
   public static DSL_AUDIT_LOGS = 'DSLAUDITLOGS';
   public static GET_AND_REGISTER_QUALIF_OF_SERVICE =
     'GetAndRegisterQualifOfServ';
@@ -28,6 +29,7 @@ export class OracleConstants {
   public static IS_VALID_IP_ADDRESS = 'IsValidIpAddress';
   public static IS_PREPAID = 'IsPrepago  ';
   public static LOGIN = 'Login';
+  public static READ_IABA_ORDER = 'ReadIABAOrder';
   public static VERIFY_CONTRACT_BY_PHONE = 'verifycontracbyphone';
 
   // GENERAL
