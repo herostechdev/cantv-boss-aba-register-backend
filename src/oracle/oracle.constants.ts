@@ -11,20 +11,22 @@ export class OracleConstants {
 
   // STORED PROCEDURES
   public static CHECK_IP = 'CheckIp';
-  public static CLIENT_EXISTS = 'ClientExist';
+  public static CUSTOMER_EXISTS = 'ClientExist';
+  public static CREATE_AND_PROVISIONING_CUSTOMER = 'CreateAndProvisionClient';
   public static DELETE_ORDER = 'DeleteOrder';
   public static DSL_AUDIT_LOGS = 'DSLAUDITLOGS';
   public static GET_AND_REGISTER_QUALIF_OF_SERVICE =
     'GetAndRegisterQualifOfServ';
   public static GET_ABA_DATA = 'GetAbaData';
   public static GET_ABA_DATA_FROM_REQUESTS = 'GetABADataFromRequests';
-  public static GET_ALL_VALUES_FROM_CLIENT_VALUES = 'GetAllValuesFromCltvalues';
-  public static GET_CLIENT_CLASS_NAME_FROM_ID_VALUE =
+  public static GET_ALL_VALUES_FROM_CUSTOMER_VALUES =
+    'GetAllValuesFromCltvalues';
+  public static GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE =
     'GetCltClassNameFromIdValue';
-  public static GET_CLIENT_INSTANCE_ID_FROM_ID_VALUE =
+  public static GET_CUSTOMER_INSTANCE_ID_FROM_ID_VALUE =
     'GetCltInstanceidFromIdValue';
   public static GET_DATA_FROM_DSLAM_PORT_ID = 'GetDataFromDslamPortid';
-  public static GET_DEBT_FROM_CLIENT = 'GetDebtFromClient';
+  public static GET_DEBT_FROM_CUSTOMER = 'GetDebtFromClient';
   public static GET_DOWNSTREAM_FROM_PLAN = 'GETDOWNSTREAMFROMPLAN';
   public static GET_FIRST_LETTER_FROM_ABA_REQUEST =
     'GetFirstLetterFromABARequest';
