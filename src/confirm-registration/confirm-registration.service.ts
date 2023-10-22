@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CustomerExistsService } from 'src/client-exists/customer-exists.service';
-import { CustomerExistsStatusConstants } from 'src/client-exists/customer-exists-status.constants';
+import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
+import { CustomerExistsStatusConstants } from 'src/customer-exists/customer-exists-status.constants';
 import { ConfirmRegistrationRequestDto } from './confirm-registration-request.dto';
 import { ConfirmRegistrationData } from './confirm-registration-data';
 import { IGetPlanABAFromKenanResponse } from './get-plan-aba-from-kenan/get-plan-aba-from-kenan-response.interface';
