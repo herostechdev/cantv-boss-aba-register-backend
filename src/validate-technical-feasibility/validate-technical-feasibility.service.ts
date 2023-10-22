@@ -602,7 +602,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     await this.callAuditLog(data, 'RBE no existe');
   }
 
-  // TODO: Identificar y desarrollar servicio en el PIC
+  // TODO: Identificar y desarrollar servicio en el PIC. BLOCKING!!!
   // SNACOM.DLL (dada Orden IABA) CONSUMIR SERVICIO PIC (Por definir)
   private async snacomDll(
     data: ValidateTechnicalFeasibilityData,
@@ -628,7 +628,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     return response;
   }
 
-  // TODO: Invoke query dhcp service.
+  // TODO: Invoke query dhcp service. BLOCKING!!!
   private async queryDHCP(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<any> {
@@ -656,7 +656,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // TODO: FALTA ESPECIFICACIÓN DEL SP: GetPortId
+  // TODO: FALTA ESPECIFICACIÓN DEL SP: GetPortId. BLOCKING!!!
   private async getPortId(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<any> {
