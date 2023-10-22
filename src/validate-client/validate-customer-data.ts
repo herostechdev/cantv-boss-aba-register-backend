@@ -5,10 +5,10 @@ import { IGetClientInstanceIdFromIdValueResponse } from './get-client-instance-i
 import { IGetDebtFromClientResponse } from './get-debt-from-client/get-debt-from-client-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
-import { ValidateClientRequestDto } from './validate-client-request.dto';
+import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 
-export class ValidateClientData {
-  requestDto: ValidateClientRequestDto;
+export class ValidateCustomerData {
+  requestDto: ValidateCustomerRequestDto;
   clientExistsResponse: IClientExistsResponse;
   getAllValuesFromClientValuesResponse: IGetAllValuesFromClientValuesResponse;
   getClientClassNameFromIdValueResponse: IGetClientClassNameFromIdValueResponse;

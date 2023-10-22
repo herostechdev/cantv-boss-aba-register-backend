@@ -11,8 +11,8 @@ import { OracleConfigurationService } from 'src/system/configuration/oracle/orac
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { ValidateClientData } from './validate-client-data';
-import { ValidateClientRequestDto } from './validate-client-request.dto';
+import { ValidateCustomerData } from './validate-customer-data';
+import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 import { GetClientClassNameFromIdValueInternalErrorException } from './get-client-class-name-from-id-value/get-client-class-name-from-id-value-internal-error.exception';
 import { GetClientClassNameFromIdValueThereIsNoDataException } from './get-client-class-name-from-id-value/get-client-class-name-from-id-value-there-is-no-data.exception';
 import { IGetClientClassNameFromIdValueResponse } from './get-client-class-name-from-id-value/get-client-class-name-from-id-value-response.interface';
@@ -33,7 +33,7 @@ import { UpdateDslAbaRegistersInternalErrorException } from './update-dsl-aba-re
 import { ClientExistsService } from '../client-exists/client-exists.service';
 
 @Injectable()
-export class ValidateClientService extends OracleDatabaseService {
+export class ValidateCustomerService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
@@ -42,11 +42,11 @@ export class ValidateClientService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  async validateClient(
-    dto: ValidateClientRequestDto,
-  ): Promise<ValidateClientData> {
+  async validateCustomer(
+    dto: ValidateCustomerRequestDto,
+  ): Promise<ValidateCustomerData> {
     try {
-      const data = new ValidateClientData();
+      const data = new ValidateCustomerData();
       data.requestDto = dto;
       await super.connect();
       // TODO: Validar condición: Si IDENTIFICADOR DE CLIENTE ES CEDULA
@@ -136,7 +136,7 @@ export class ValidateClientService extends OracleDatabaseService {
   }
 
   private async callAuditLog(
-    data: ValidateClientData,
+    data: ValidateCustomerData,
     description: string,
   ): Promise<void> {
     await this.dslAuditLogsService.log({
@@ -171,7 +171,7 @@ export class ValidateClientService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       OracleConstants.SIGS_PACKAGE,
-      OracleConstants.GET_ALL_VALUES_FROM_CLIENT_VALUES,
+      OracleConstants.GET_ALL_VALUES_FROM_CUSTOMER_VALUES,
       parameters,
     );
     const response: IGetAllValuesFromClientValuesResponse = {
@@ -207,7 +207,7 @@ export class ValidateClientService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_CLIENT_CLASS_NAME_FROM_ID_VALUE,
+      OracleConstants.GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE,
       parameters,
     );
     const response: IGetClientClassNameFromIdValueResponse = {
@@ -241,7 +241,7 @@ export class ValidateClientService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_CLIENT_INSTANCE_ID_FROM_ID_VALUE,
+      OracleConstants.GET_CUSTOMER_INSTANCE_ID_FROM_ID_VALUE,
       parameters,
     );
     const response: IGetClientInstanceIdFromIdValueResponse = {
@@ -262,7 +262,7 @@ export class ValidateClientService extends OracleDatabaseService {
   }
 
   private async getFirstLetterFromABARequest(
-    data: ValidateClientData,
+    data: ValidateCustomerData,
   ): Promise<IGetFirstLetterFromABARequestResponse> {
     const parameters = {
       sz_Areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
@@ -309,7 +309,7 @@ export class ValidateClientService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_DEBT_FROM_CLIENT,
+      OracleConstants.GET_DEBT_FROM_CUSTOMER,
       parameters,
     );
     const response: IGetDebtFromClientResponse = {
@@ -330,7 +330,7 @@ export class ValidateClientService extends OracleDatabaseService {
   }
 
   private async updateDslABARegisters(
-    data: ValidateClientData,
+    data: ValidateCustomerData,
   ): Promise<IUpdateDslAbaRegistersResponse> {
     const parameters = {
       iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
@@ -341,7 +341,7 @@ export class ValidateClientService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_DEBT_FROM_CLIENT,
+      OracleConstants.UPDATE_DSL_ABA_REGISTERS,
       parameters,
     );
     const response: IUpdateDslAbaRegistersResponse = {

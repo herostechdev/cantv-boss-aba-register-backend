@@ -1,6 +1,6 @@
-import { IsDate, IsIP, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsIP, IsInt, IsOptional, IsString } from 'class-validator';
 
-export class ValidateClientRequestDto {
+export class ValidateCustomerRequestDto {
   @IsIP(4, { message: 'La IP es inválida' })
   ipAddress: string;
 

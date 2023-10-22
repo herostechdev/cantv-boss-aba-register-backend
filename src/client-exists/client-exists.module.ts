@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ValidateClientController } from 'src/validate-client/validate-client.controller';
-import { ValidateClientService } from 'src/validate-client/validate-client.service';
+import { ValidateCustomerController } from 'src/validate-client/validate-customer.controller';
+import { ValidateCustomerService } from 'src/validate-client/validate-customer.service';
 
 @Module({
   imports: [],
-  controllers: [ValidateClientController],
-  providers: [ValidateClientService],
+  controllers: [ValidateCustomerController],
+  providers: [ValidateCustomerService],
   exports: [],
 })
 export class ClientExistsModule {}

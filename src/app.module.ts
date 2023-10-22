@@ -23,7 +23,7 @@ import { LoginModule } from './login/login.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { PICConfigurationModule } from './system/configuration/pic/pic-configuration.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
-import { ValidateClientModule } from './validate-client/validate-client.module';
+import { ValidateCustomerModule } from './validate-client/validate-customer.module';
 import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibility/validate-technical-feasibility.module';
 
 @Module({
@@ -72,7 +72,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     OracleConfigurationModule,
     PICConfigurationModule,
     SecurityConfigurationModule,
-    ValidateClientModule,
+    ValidateCustomerModule,
     ValidateTechnicalFeasibilityModule,
   ],
   controllers: [AppController],
