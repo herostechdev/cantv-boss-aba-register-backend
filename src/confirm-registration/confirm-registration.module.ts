@@ -1,10 +1,10 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfirmRegistrationController } from './confirm-registration.controller';
 import { ConfirmRegistrationService } from './confirm-registration.service';
+import { ValidateClientModule } from 'src/validate-client/validate-client.module';
 
-@Global()
 @Module({
-  imports: [],
+  imports: [ValidateClientModule],
   controllers: [ConfirmRegistrationController],
   providers: [ConfirmRegistrationService],
   exports: [],

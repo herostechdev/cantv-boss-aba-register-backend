@@ -31,6 +31,7 @@ export class OracleConstants {
   public static GET_IF_REMOTE_INSTALLER_IP = 'GetlfRemoteInstallerIP';
   public static GET_INFO_FROM_ABA_REQUESTS = 'GetInfoFromABARequests';
   public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
+  public static GET_PLAN_ABA_FROM_KENAN = 'GetPlanAbaFromKenan';
   public static GET_PORT_ID = 'getPortId';
   public static GET_PORT_ID_FROM_IP = 'GetPortidFromIp';
   public static GET_VALID_VPI = 'GetValidVPI';

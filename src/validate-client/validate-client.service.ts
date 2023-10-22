@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ClientExistsStatusConstants } from './client-exists/client-exists-status.constants';
-import { ClientExistsInternalErrorException } from './client-exists/client-exists-internal-error.exception';
-import { ClientExistsThereIsNoDataException } from './client-exists/client-exists-there-is-no-data.exception';
 import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { GetAllValuesFromClientValuesStatusConstants } from './get-all-values-from-client-values/get-all-values-from-client-values-status.constants';
 import { GetAllValuesFromClientvaluesInternalErrorException } from './get-all-values-from-client-values/get-all-values-from-client-values-internal-error.exception';
 import { GetFirstLetterFromABARequestStatusConstants } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
 import { GetFirstLetterFromABARequestInternalErrorException } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-internal-error.exception';
 import { GetFirstLetterFromABARequestThereIsNoDataException } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-there-is-no-data.exception';
-import { IClientExistsResponse } from './client-exists/client-exists-response.interface';
 import { IGetAllValuesFromClientValuesResponse } from './get-all-values-from-client-values/get-all-values-from-client-values-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
@@ -34,12 +30,14 @@ import { GetDebtFromClientThereIsNoDataException } from './get-debt-from-client/
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers/update-dsl-aba-registers-status.constants';
 import { UpdateDslAbaRegistersInternalErrorException } from './update-dsl-aba-registers/update-dsl-aba-registers-internal-error.exception';
+import { ClientExistsService } from './client-exists/client-exists.service';
 
 @Injectable()
 export class ValidateClientService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
+    private readonly clientExistsService: ClientExistsService,
   ) {
     super(oracleConfigurationService);
   }
@@ -74,7 +72,12 @@ export class ValidateClientService extends OracleDatabaseService {
           // TODO: Cuál es el Campo Identificador de Cliente
         }
       } else {
-        data.clientExistsResponse = await this.clientExists(data);
+        // TODO: Determinar origen del parámetro: attributeName
+        // TODO: Determinar origen del parámetro: attributeValue
+        data.clientExistsResponse = await this.clientExistsService.clientExists(
+          null,
+          null,
+        );
         // TODO: VALIDAR CONDICIÓN: ClientExists tiene datos
         if (data.clientExistsResponse) {
           // TODO: En qué consiste: Clase de Cliente igual a resultado de Procedimiento53
@@ -255,36 +258,6 @@ export class ValidateClientService extends OracleDatabaseService {
         throw new GetClientInstanceIdFromIdValueThereIsNoDataException();
       default:
         throw new GetClientInstanceIdFromIdValueInternalErrorException();
-    }
-  }
-
-  private async clientExists(
-    data: ValidateClientData,
-  ): Promise<IClientExistsResponse> {
-    const parameters = {
-      //TODO: Determinar origen del parámetro: sz_attributename
-      sz_attributename: OracleHelper.stringBindIn(null),
-      //TODO: Determinar origen del parámetro: sz_attributevalue
-      status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      null,
-      OracleConstants.CLIENT_EXISTS,
-      parameters,
-    );
-    const response: IClientExistsResponse = {
-      status: (result?.outBinds?.status ??
-        ClientExistsStatusConstants.INTERNAL_ERROR) as ClientExistsStatusConstants,
-    };
-    switch (response.status) {
-      case ClientExistsStatusConstants.SUCCESSFULL:
-        return response;
-      case ClientExistsStatusConstants.INTERNAL_ERROR:
-        throw new ClientExistsInternalErrorException();
-      case ClientExistsStatusConstants.THERE_IS_NO_DATA:
-        throw new ClientExistsThereIsNoDataException();
-      default:
-        throw new ClientExistsInternalErrorException();
     }
   }
 

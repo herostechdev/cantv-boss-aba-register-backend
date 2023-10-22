@@ -10,9 +10,13 @@ export class ConfirmRegistrationRequestDto {
   @IsString()
   phoneNumber: string;
 
+  @IsString()
   clientType: string;
 
   @IsInt()
   @IsOptional()
   orderId?: number;
+
+  @IsString()
+  abaPlan: string;
 }
