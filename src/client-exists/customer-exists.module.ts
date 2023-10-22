@@ -8,4 +8,4 @@ import { ValidateCustomerService } from 'src/validate-client/validate-customer.s
   providers: [ValidateCustomerService],
   exports: [],
 })
-export class ClientExistsModule {}
+export class CustomerExistsModule {}

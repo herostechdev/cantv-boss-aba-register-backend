@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ClientExistsStatusConstants } from './client-exists-status.constants';
-import { ClientExistsInternalErrorException } from './client-exists-internal-error.exception';
-import { ClientExistsThereIsNoDataException } from './client-exists-there-is-no-data.exception';
-import { IClientExistsResponse } from './client-exists-response.interface';
+import { CustomerExistsStatusConstants } from './customer-exists-status.constants';
+import { CustomerExistsInternalErrorException } from './customer-exists-internal-error.exception';
+import { CustomerExistsThereIsNoDataException } from './customer-exists-there-is-no-data.exception';
+import { ICustomerExistsResponse } from './customer-exists-response.interface';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 
 @Injectable()
-export class ClientExistsService extends OracleDatabaseService {
+export class CustomerExistsService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
   ) {
@@ -22,7 +22,7 @@ export class ClientExistsService extends OracleDatabaseService {
   async clientExists(
     attributeName: string,
     attributeValue: string,
-  ): Promise<IClientExistsResponse> {
+  ): Promise<ICustomerExistsResponse> {
     const parameters = {
       sz_attributename: OracleHelper.stringBindIn(attributeName),
       sz_attributevalue: OracleHelper.stringBindIn(attributeValue),
@@ -30,22 +30,22 @@ export class ClientExistsService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       null,
-      OracleConstants.CLIENT_EXISTS,
+      OracleConstants.CUSTOMER_EXISTS,
       parameters,
     );
-    const response: IClientExistsResponse = {
+    const response: ICustomerExistsResponse = {
       status: (result?.outBinds?.status ??
-        ClientExistsStatusConstants.INTERNAL_ERROR) as ClientExistsStatusConstants,
+        CustomerExistsStatusConstants.INTERNAL_ERROR) as CustomerExistsStatusConstants,
     };
     switch (response.status) {
-      case ClientExistsStatusConstants.SUCCESSFULL:
+      case CustomerExistsStatusConstants.SUCCESSFULL:
         return response;
-      case ClientExistsStatusConstants.INTERNAL_ERROR:
-        throw new ClientExistsInternalErrorException();
-      case ClientExistsStatusConstants.THERE_IS_NO_DATA:
-        throw new ClientExistsThereIsNoDataException();
+      case CustomerExistsStatusConstants.INTERNAL_ERROR:
+        throw new CustomerExistsInternalErrorException();
+      case CustomerExistsStatusConstants.THERE_IS_NO_DATA:
+        throw new CustomerExistsThereIsNoDataException();
       default:
-        throw new ClientExistsInternalErrorException();
+        throw new CustomerExistsInternalErrorException();
     }
   }
 }

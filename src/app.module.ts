@@ -12,7 +12,7 @@ import { ThrottlerConfigurationService } from './system/configuration/throttler/
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ClientExistsModule } from './client-exists/client-exists.module';
+import { CustomerExistsModule } from './client-exists/customer-exists.module';
 import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
 import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
@@ -61,7 +61,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     // }),
 
     ApplicationConfigurationModule,
-    ClientExistsModule,
+    CustomerExistsModule,
     ConfirmRegistrationModule,
     DSLAuditLogsModule,
     EncryptionModule,

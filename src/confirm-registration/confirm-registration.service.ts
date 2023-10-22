@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ClientExistsService } from 'src/client-exists/client-exists.service';
-import { ClientExistsStatusConstants } from 'src/client-exists/client-exists-status.constants';
+import { CustomerExistsService } from 'src/client-exists/customer-exists.service';
+import { CustomerExistsStatusConstants } from 'src/client-exists/customer-exists-status.constants';
 import { ConfirmRegistrationRequestDto } from './confirm-registration-request.dto';
 import { ConfirmRegistrationData } from './confirm-registration-data';
 import { IGetPlanABAFromKenanResponse } from './get-plan-aba-from-kenan/get-plan-aba-from-kenan-response.interface';
@@ -13,7 +13,7 @@ import { OracleConstants } from 'src/oracle/oracle.constants';
 export class ConfirmRegistrationService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly clientExistsService: ClientExistsService,
+    private readonly clientExistsService: CustomerExistsService,
   ) {
     super(oracleConfigurationService);
   }
@@ -32,7 +32,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       );
       if (
         data.clientExistsResponse.status ===
-        ClientExistsStatusConstants.SUCCESSFULL
+        CustomerExistsStatusConstants.SUCCESSFULL
       ) {
         // CreateAndProvisionMasterAct
       } else {

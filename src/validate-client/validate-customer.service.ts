@@ -30,14 +30,14 @@ import { GetDebtFromClientThereIsNoDataException } from './get-debt-from-client/
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers/update-dsl-aba-registers-status.constants';
 import { UpdateDslAbaRegistersInternalErrorException } from './update-dsl-aba-registers/update-dsl-aba-registers-internal-error.exception';
-import { ClientExistsService } from '../client-exists/client-exists.service';
+import { CustomerExistsService } from '../client-exists/customer-exists.service';
 
 @Injectable()
 export class ValidateCustomerService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
-    private readonly clientExistsService: ClientExistsService,
+    private readonly clientExistsService: CustomerExistsService,
   ) {
     super(oracleConfigurationService);
   }

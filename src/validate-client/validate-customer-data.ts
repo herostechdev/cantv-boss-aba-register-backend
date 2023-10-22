@@ -1,4 +1,4 @@
-import { IClientExistsResponse } from '../client-exists/client-exists-response.interface';
+import { ICustomerExistsResponse } from '../client-exists/customer-exists-response.interface';
 import { IGetAllValuesFromClientValuesResponse } from './get-all-values-from-client-values/get-all-values-from-client-values-response.interface';
 import { IGetClientClassNameFromIdValueResponse } from './get-client-class-name-from-id-value/get-client-class-name-from-id-value-response.interface';
 import { IGetClientInstanceIdFromIdValueResponse } from './get-client-instance-id-from-id-value/get-client-instance-id-from-id-value-response.interface';
@@ -9,7 +9,7 @@ import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 
 export class ValidateCustomerData {
   requestDto: ValidateCustomerRequestDto;
-  clientExistsResponse: IClientExistsResponse;
+  clientExistsResponse: ICustomerExistsResponse;
   getAllValuesFromClientValuesResponse: IGetAllValuesFromClientValuesResponse;
   getClientClassNameFromIdValueResponse: IGetClientClassNameFromIdValueResponse;
   getClientInstanceIdFromIdValueResponse: IGetClientInstanceIdFromIdValueResponse;
