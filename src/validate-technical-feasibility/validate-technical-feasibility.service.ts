@@ -34,7 +34,7 @@ import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from
 import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
 import { InsertDslAbaRegisterConstants } from './insert-dsl-aba-registers/insert-dsl-aba-register.constants';
 import { InsertDslAbaRegisterException } from './insert-dsl-aba-registers/insert-dsl-aba-register.exception';
-import { IsAPrepaidVoiceLineException } from './is-prepaid-voice-line/is-a-prepaid-voice-line.exception';
+import { IsPrepaidVoiceLineException } from './is-prepaid-voice-line/is-a-prepaid-voice-line.exception';
 import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
 import { IReadIABAOrderResponse } from './read-iaba-order/read-iaba-order-response.interface';
 import { IsOccupiedPortConstants } from './Is-occupied-port/is-occupied-port.constants';
@@ -67,6 +67,11 @@ import { ReadIABAOrderGeneralDatabaseEerrorException } from './read-iaba-order/r
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetInfoFromABARequestsStatusConstants } from './get-info-from-aba-requests/get-info-from-aba-requests-status.constants';
 import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
+import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
+import { IsPrepaidVoiceLineStatusConstants } from './is-prepaid-voice-line/is-prepaid-voice-line-status.constants';
+import { IsPrepaidVoiceLineIsPrepaidConstants } from './is-prepaid-voice-line/is-prepaid-voice-line-is-prepaid.constants';
+import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
+import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -87,8 +92,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.insertDslAbaRegistersResponse = await this.insertDslAbaRegisters(
         data,
       );
-      await this.isPrepaidVoiceLine(data);
-      await this.getAndRegisterQualifOfService(data);
+      data.isPrepaidVoiceLine = await this.isPrepaidVoiceLine(data);
+      data.getAndRegisterQualifOfServiceResponse =
+        await this.getAndRegisterQualifOfService(data);
       data.verifyContractByPhoneResponse = await this.verifyContractByPhone(
         data,
       );
@@ -220,7 +226,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
 
   private async isPrepaidVoiceLine(
     data: ValidateTechnicalFeasibilityData,
-  ): Promise<void> {
+  ): Promise<IIsPrepaidVoiceLineResponse> {
     try {
       const parameters = {
         Abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
@@ -236,21 +242,26 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         OracleConstants.IS_PREPAID,
         parameters,
       );
-      const isPrepaid = result?.outBinds?.isPrepago ?? 1;
-      const status = result?.outBinds?.oStatus ?? 1;
-      if (isPrepaid == 1 || status == 1) {
-        throw new IsAPrepaidVoiceLineException();
+      const response: IIsPrepaidVoiceLineResponse = {
+        isPrepaid: (result?.outBinds?.Status ??
+          IsPrepaidVoiceLineIsPrepaidConstants.IT_IS_NOT_A_PREPAID_VOICE_LINE) as IsPrepaidVoiceLineIsPrepaidConstants,
+        status: (result?.outBinds?.Status ??
+          IsPrepaidVoiceLineStatusConstants.ERROR) as IsPrepaidVoiceLineStatusConstants,
+      };
+      if (response.isPrepaid == 1 || response.status == 1) {
+        throw new IsPrepaidVoiceLineException();
       }
+      return response;
     } catch (error) {
-      if (!(error instanceof IsAPrepaidVoiceLineException)) {
-        throw new IsAPrepaidVoiceLineException();
+      if (!(error instanceof IsPrepaidVoiceLineException)) {
+        throw new IsPrepaidVoiceLineException();
       }
     }
   }
 
   private async getAndRegisterQualifOfService(
     data: ValidateTechnicalFeasibilityData,
-  ): Promise<void> {
+  ): Promise<IGetAndRegisterQualifOfServiceResponse> {
     try {
       const parameters = {
         i_clientserviceid: OracleHelper.numberBindIn(data.requestDto.orderId),
@@ -270,11 +281,21 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         OracleConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
         parameters,
       );
-      const isPrepaid = result?.outBinds?.isPrepago ?? 1;
-      const status = result?.outBinds?.oStatus ?? 1;
-      if (isPrepaid == 1 || status == 1) {
+      const status = (result?.outBinds?.Status ??
+        GetAndRegisterQualifOfServiceStatusConstants.ERROR) as GetAndRegisterQualifOfServiceStatusConstants;
+      const response: IGetAndRegisterQualifOfServiceResponse = {
+        qualifpossible: null,
+        modemstatus: null,
+        maxdownstream: null,
+        maxupstream: null,
+        status: status,
+      };
+      if (
+        response.status === GetAndRegisterQualifOfServiceStatusConstants.ERROR
+      ) {
         throw new GetAndRegisterQualifOfServiceException();
       }
+      return response;
     } catch (error) {
       if (!(error instanceof GetAndRegisterQualifOfServiceException)) {
         throw new GetAndRegisterQualifOfServiceException();
@@ -342,7 +363,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       );
       const status = (result?.outBinds?.Status ??
         GetInfoFromABARequestsStatusConstants.EXECUTION_ERROR) as GetInfoFromABARequestsStatusConstants;
-
       if (status != 0) {
         throw new GetInfoFromABARequestsException();
       }

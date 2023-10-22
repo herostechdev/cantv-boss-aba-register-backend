@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class IsAPrepaidVoiceLineException extends CustomBadRequestException {
+export class IsPrepaidVoiceLineException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',

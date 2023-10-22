@@ -11,10 +11,14 @@ import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-add
 import { IVerifiyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-feasibility-request.dto';
 import { IReadIABAOrderResponse } from './read-iaba-order/read-iaba-order-response.interface';
+import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
+import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 
 export class ValidateTechnicalFeasibilityData {
   requestDto: ValidateTechnicalFeasibilityRequestDto;
   insertDslAbaRegistersResponse: number;
+  isPrepaidVoiceLine: IIsPrepaidVoiceLineResponse;
+  getAndRegisterQualifOfServiceResponse: IGetAndRegisterQualifOfServiceResponse;
   verifyContractByPhoneResponse: IVerifiyContractByPhoneResponse;
   getInfoFromABARequestsResponse: IGetInfoFromABARequestsResponse;
   getDownstreamFromPlanResponse: IGetDownstreamFromPlanResponse;
