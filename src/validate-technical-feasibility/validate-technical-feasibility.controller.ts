@@ -3,7 +3,7 @@ import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-c
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { ValidateTechnicalFeasibilityService } from './validate-technical-feasibility.service';
 import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-feasibility-request.dto';
-import { IValidateTechnicalFeasibilityResponse } from './validate-technical-feasibility-response.interface';
+import { ValidateTechnicalFeasibilityData } from './validate-technical-feasibility-data';
 
 @Controller({
   path: 'validateTechnicalFeasibility',
@@ -17,7 +17,7 @@ export class ValidateTechnicalFeasibilityController {
   @UseFilters(new HttpExceptionFilter())
   ValidateTechnicalFeasibility(
     @Body() dto: ValidateTechnicalFeasibilityRequestDto,
-  ): Promise<IValidateTechnicalFeasibilityResponse> {
-    return this.service.log(dto);
+  ): Promise<ValidateTechnicalFeasibilityData> {
+    return this.service.validateTechnicalFeasibility(dto);
   }
 }

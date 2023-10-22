@@ -19,8 +19,12 @@ import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-e
 import { GetABADataThereIsNoDataException } from './get-aba-data/get-aba-data-there-is-no-data.exception';
 import { GetABADataFromRequestsException } from './get-aba-data-from-requests/get-aba-data-from-requests.exception';
 import { GetAndRegisterQualifOfServiceException } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service.exception';
+import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
+import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDownstreamFromPlanException } from './get-downstream-from-plan/get-downstream-from-plan.exception';
+import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
 import { GetInfoFromABARequestsException } from './get-info-from-aba-requests/get-info-from-aba-requests.exception';
+import { GetInfoFromABARequestsStatusConstants } from './get-info-from-aba-requests/get-info-from-aba-requests-status.constants';
 import { GetPortIdFromIpBadIpFormatException } from './get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
 import { GetPortIdFromIpConstants } from './get-port-id-from-ip/get-port-id-from-ip.constants';
 import { GetPortIdFromIpDSLAMDataNotFoundException } from './get-port-id-from-ip/get-port-id-from-ip-dslam-data-not-found.exception';
@@ -29,17 +33,21 @@ import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
 import { IGetInfoFromABARequestsResponse } from './get-info-from-aba-requests/get-info-from-aba-requests-response.interface';
 import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interface';
 import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests/get-aba-data-from-requests-response.interface';
+import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
+import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
 import { InsertDslAbaRegisterConstants } from './insert-dsl-aba-registers/insert-dsl-aba-register.constants';
 import { InsertDslAbaRegisterException } from './insert-dsl-aba-registers/insert-dsl-aba-register.exception';
 import { IsPrepaidVoiceLineException } from './is-prepaid-voice-line/is-a-prepaid-voice-line.exception';
+import { IsPrepaidVoiceLineIsPrepaidConstants } from './is-prepaid-voice-line/is-prepaid-voice-line-is-prepaid.constants';
 import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
 import { IReadIABAOrderResponse } from './read-iaba-order/read-iaba-order-response.interface';
 import { IsOccupiedPortConstants } from './Is-occupied-port/is-occupied-port.constants';
 import { IsOccupiedPortInternalErrorException } from './Is-occupied-port/is-occupied-port-internal-error.exception';
 import { IsOccupiedPortTherIsNoDataException } from './Is-occupied-port/is-occupied-port-there-is-no-data.exception';
+import { IsPrepaidVoiceLineStatusConstants } from './is-prepaid-voice-line/is-prepaid-voice-line-status.constants';
 import { IsValidIpAddressConstants } from './is-valid-ip-address/is-valid-ip-address.constants';
 import { IVerifiyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
@@ -64,14 +72,6 @@ import { ReadIABAOrderOrderExistsException } from './read-iaba-order/read-iaba-o
 import { ReadIABAOrderOrderIsOldException } from './read-iaba-order/read-iaba-order-order-is-old.exception';
 import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from './read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
 import { ReadIABAOrderGeneralDatabaseEerrorException } from './read-iaba-order/read-iaba-order-general-database-error.exception';
-import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
-import { GetInfoFromABARequestsStatusConstants } from './get-info-from-aba-requests/get-info-from-aba-requests-status.constants';
-import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
-import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
-import { IsPrepaidVoiceLineStatusConstants } from './is-prepaid-voice-line/is-prepaid-voice-line-status.constants';
-import { IsPrepaidVoiceLineIsPrepaidConstants } from './is-prepaid-voice-line/is-prepaid-voice-line-is-prepaid.constants';
-import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
-import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -82,7 +82,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  async ValidateTechnicalFeasibility(
+  async validateTechnicalFeasibility(
     dto: ValidateTechnicalFeasibilityRequestDto,
   ): Promise<ValidateTechnicalFeasibilityData> {
     try {
@@ -151,6 +151,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           ReadIABAOrderErrorCodeConstants.SUCCESSFULL
         ) {
           // TODO: Validate reassign response
+          // TODO: Validate exceptions management
           data.getABADataResponse = await this.getABAData(data);
           if (
             data.getABADataResponse.status === GetABADataConstants.SUCCESSFULL
@@ -581,7 +582,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         comments: null,
         planName: null,
       });
-      if (data.isValidIpAddressResponse.status === 5) {
+      if (
+        data.isValidIpAddressResponse.status ===
+        IsValidIpAddressConstants.POOL_RBE_LEASE
+      ) {
         await this.rbeDoesNotExistLog(data);
       } else {
         // SNACOM.DLL (dada Orden IABA) CONSUMIR SERVICIO PIC (Por definir)
