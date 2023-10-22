@@ -1,5 +1,7 @@
-import { IStatusNumberResponse } from 'src/responses/status-number-response.interface';
+import { IStatusResponse } from 'src/responses/status-number-response.interface';
+import { GetPortIdFromIpConstants } from './get-port-id-from-ip.constants';
 
-export interface IGetPortIdFromIpResponse extends IStatusNumberResponse {
+export interface IGetPortIdFromIpResponse
+  extends IStatusResponse<GetPortIdFromIpConstants> {
   dslamportId: number;
 }

@@ -1,6 +1,8 @@
-import { IStatusNumberResponse } from 'src/responses/status-number-response.interface';
+import { IStatusResponse } from 'src/responses/status-number-response.interface';
+import { GetInfoFromABARequestsStatusConstants } from './get-info-from-aba-requests-status.constants';
 
-export interface IGetInfoFromABARequestsResponse extends IStatusNumberResponse {
+export interface IGetInfoFromABARequestsResponse
+  extends IStatusResponse<GetInfoFromABARequestsStatusConstants> {
   date1: string;
   date2: string;
   date3: string;

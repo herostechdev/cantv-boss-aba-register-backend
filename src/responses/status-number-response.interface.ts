@@ -1,3 +1,3 @@
-export interface IStatusNumberResponse {
-  status: number;
+export interface IStatusResponse<T> {
+  status: T;
 }

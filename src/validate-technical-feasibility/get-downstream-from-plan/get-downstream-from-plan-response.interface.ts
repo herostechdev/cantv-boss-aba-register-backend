@@ -1,5 +1,7 @@
-import { IStatusNumberResponse } from 'src/responses/status-number-response.interface';
+import { IStatusResponse } from 'src/responses/status-number-response.interface';
+import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan-status.constants';
 
-export interface IGetDownstreamFromPlanResponse extends IStatusNumberResponse {
+export interface IGetDownstreamFromPlanResponse
+  extends IStatusResponse<GetDownstreamFromPlanStatusConstants> {
   downstream: string;
 }

@@ -64,6 +64,9 @@ import { ReadIABAOrderOrderExistsException } from './read-iaba-order/read-iaba-o
 import { ReadIABAOrderOrderIsOldException } from './read-iaba-order/read-iaba-order-order-is-old.exception';
 import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from './read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
 import { ReadIABAOrderGeneralDatabaseEerrorException } from './read-iaba-order/read-iaba-order-general-database-error.exception';
+import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
+import { GetInfoFromABARequestsStatusConstants } from './get-info-from-aba-requests/get-info-from-aba-requests-status.constants';
+import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -137,6 +140,22 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         }
         data.deleteOrderResponse = await this.deleteOrder(data);
         data.readIABAOrderResponse = await this.readIABAOrder(data);
+        if (
+          data.readIABAOrderResponse.errorCode ===
+          ReadIABAOrderErrorCodeConstants.SUCCESSFULL
+        ) {
+          // TODO: Validate reassign response
+          data.getABADataResponse = await this.getABAData(data);
+          if (
+            data.getABADataResponse.status === GetABADataConstants.SUCCESSFULL
+          ) {
+            //throw error insertando IABA desde registro
+          }
+        } else {
+          if (data.deleteOrderResponse.status === 2) {
+            // throw error puerto ocupado
+          }
+        }
       }
       return data;
     } catch (error) {
@@ -321,7 +340,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         OracleConstants.GET_INFO_FROM_ABA_REQUESTS,
         parameters,
       );
-      const status = result?.outBinds?.oStatus ?? 1;
+      const status = (result?.outBinds?.Status ??
+        GetInfoFromABARequestsStatusConstants.EXECUTION_ERROR) as GetInfoFromABARequestsStatusConstants;
+
       if (status != 0) {
         throw new GetInfoFromABARequestsException();
       }
@@ -335,7 +356,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         abaRequestsRow: result?.outBinds?.abarequests_row,
         abaAcceptedRequestsRow: result?.outBinds?.abaacceptedrequests_row,
         abaRequestsRegistersRow: result?.outBinds?.abarequestsregistes_row,
-        status: result?.outBinds?.Status,
+        status: status,
       };
     } catch (error) {
       if (!(error instanceof GetInfoFromABARequestsException)) {
@@ -359,7 +380,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         parameters,
       );
       const downstream = result?.outBinds?.o_downstream ?? 1;
-      const status = result?.outBinds?.o_status ?? 1;
+      const status = (result?.outBinds?.o_status ??
+        GetDownstreamFromPlanStatusConstants.INTERNAL_ERROR) as GetDownstreamFromPlanStatusConstants;
       if (status != 0) {
         throw new GetDownstreamFromPlanException();
       }
@@ -715,18 +737,34 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         status: (result?.outBinds?.status ??
           GetABADataConstants.EXECUTION_ERROR) as GetABADataConstants,
       };
-      switch (response.status) {
-        case GetABADataConstants.SUCCESSFULL:
-          return response;
-        case GetABADataConstants.EXECUTION_ERROR:
-          throw new GetABADataExecutionErrorException();
-        case GetABADataConstants.THERE_IS_NO_DATA:
-          throw new GetABADataThereIsNoDataException();
-        default:
-          throw new GetABADataExecutionErrorException();
-      }
+      // switch (response.status) {
+      //   case GetABADataConstants.SUCCESSFULL:
+      //     return response;
+      //   case GetABADataConstants.EXECUTION_ERROR:
+      //     throw new GetABADataExecutionErrorException();
+      //   case GetABADataConstants.THERE_IS_NO_DATA:
+      //     throw new GetABADataThereIsNoDataException();
+      //   default:
+      //     throw new GetABADataExecutionErrorException();
+      // }
+      return response;
     } catch (error) {
       throw new GetABADataExecutionErrorException();
+      // return {
+      //   abadslamportid: null,
+      //   abancc: null,
+      //   abaclienttype: null,
+      //   abaorderdate: null,
+      //   abaad: null,
+      //   abaparad: null,
+      //   abaslot: null,
+      //   abaport: null,
+      //   abarack: null,
+      //   abaposition: null,
+      //   abavci: null,
+      //   abacontractid: null,
+      //   status: GetABADataConstants.EXECUTION_ERROR,
+      // };
     }
   }
 
@@ -826,18 +864,18 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       // }
       return response;
     } catch (error) {
-      // throw new GetDataFromDSLAMPortIdExecutionErrorException();
-      return {
-        abarack: null,
-        abadslamposition: null,
-        abaslot: null,
-        abaport: null,
-        abaad: null,
-        abapairad: null,
-        abaprovider: null,
-        abasistema: null,
-        status: GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR,
-      };
+      throw new GetDataFromDSLAMPortIdExecutionErrorException();
+      // return {
+      //   abarack: null,
+      //   abadslamposition: null,
+      //   abaslot: null,
+      //   abaport: null,
+      //   abaad: null,
+      //   abapairad: null,
+      //   abaprovider: null,
+      //   abasistema: null,
+      //   status: GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR,
+      // };
     }
   }
 
@@ -978,10 +1016,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       // }
       return response;
     } catch (error) {
-      // throw new ReadIABAOrderGeneralDatabaseEerrorException();
-      return {
-        errorCode: ReadIABAOrderErrorCodeConstants.GENERAL_DATABASE_ERROR,
-      };
+      throw new ReadIABAOrderGeneralDatabaseEerrorException();
+      // return {
+      //   errorCode: ReadIABAOrderErrorCodeConstants.GENERAL_DATABASE_ERROR,
+      // };
     }
   }
 }

@@ -1,3 +1,3 @@
-import { IStatusNumberResponse } from 'src/responses/status-number-response.interface';
+import { IStatusResponse } from 'src/responses/status-number-response.interface';
 
-export type IVerifiyContractByPhoneResponse = IStatusNumberResponse;
+export type IVerifiyContractByPhoneResponse = IStatusResponse;
