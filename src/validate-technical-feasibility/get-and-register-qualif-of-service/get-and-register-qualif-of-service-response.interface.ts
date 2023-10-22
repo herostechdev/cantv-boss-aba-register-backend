@@ -1,4 +1,4 @@
-import { IStatusResponse } from 'src/responses/status-number-response.interface';
+import { IStatusResponse } from 'src/responses/status-response.interface';
 import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service-status.constants';
 
 export interface IGetAndRegisterQualifOfServiceResponse
