@@ -12,6 +12,7 @@ import { ThrottlerConfigurationService } from './system/configuration/throttler/
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
 import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { FindPreOrderModule } from './find-pre-order/find-pre-order.module';
@@ -59,6 +60,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     // }),
 
     ApplicationConfigurationModule,
+    ConfirmRegistrationModule,
     DSLAuditLogsModule,
     EncryptionModule,
     FindPreOrderModule,
