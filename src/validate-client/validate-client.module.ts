@@ -1,12 +1,12 @@
 import { Global, Module } from '@nestjs/common';
-import { ValidateTechnicalFeasibilityController } from './validate-client.controller';
-import { ValidateTechnicalFeasibilityService } from './validate-client.service';
+import { ValidateClientController } from './validate-client.controller';
+import { ValidateClientService } from './validate-client.service';
 
 @Global()
 @Module({
   imports: [],
-  controllers: [ValidateTechnicalFeasibilityController],
-  providers: [ValidateTechnicalFeasibilityService],
+  controllers: [ValidateClientController],
+  providers: [ValidateClientService],
   exports: [],
 })
-export class ValidateTechnicalFeasibilityModule {}
+export class ValidateClientModule {}

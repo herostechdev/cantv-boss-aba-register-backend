@@ -1,23 +1,23 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
-import { ValidateTechnicalFeasibilityService } from './validate-client.service';
-import { ValidateTechnicalFeasibilityRequestDto } from './validate-client-request.dto';
-import { ValidateTechnicalFeasibilityData } from './validate-client-data';
+import { ValidateClientService } from './validate-client.service';
+import { ValidateClientData } from './validate-client-data';
+import { ValidateClientRequestDto } from './validate-client-request.dto';
 
 @Controller({
-  path: 'validateTechnicalFeasibility',
+  path: 'validateClient',
   version: '1',
 })
-export class ValidateTechnicalFeasibilityController {
-  constructor(private readonly service: ValidateTechnicalFeasibilityService) {}
+export class ValidateClientController {
+  constructor(private readonly service: ValidateClientService) {}
 
   @Post()
-  @HttpCode(HttpCodeConstants.HTTP_204_NO_CONTENT)
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
-  ValidateTechnicalFeasibility(
-    @Body() dto: ValidateTechnicalFeasibilityRequestDto,
-  ): Promise<ValidateTechnicalFeasibilityData> {
-    return this.service.validateTechnicalFeasibility(dto);
+  validateClient(
+    @Body() dto: ValidateClientRequestDto,
+  ): Promise<ValidateClientData> {
+    return this.service.validateClient(dto);
   }
 }
