@@ -13,6 +13,8 @@ export class OracleConstants {
   public static CHECK_IP = 'CheckIp';
   public static CUSTOMER_EXISTS = 'ClientExist';
   public static CREATE_AND_PROVISIONING_CUSTOMER = 'CreateAndProvisionClient';
+  public static CREATE_AND_PROVISIONING_MASTER_ACT =
+    'CreateAndProvisionMasterAct';
   public static DELETE_ORDER = 'DeleteOrder';
   public static DSL_AUDIT_LOGS = 'DSLAUDITLOGS';
   public static GET_AND_REGISTER_QUALIF_OF_SERVICE =
