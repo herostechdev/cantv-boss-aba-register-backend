@@ -18,5 +18,14 @@ export class ConfirmRegistrationRequestDto {
   orderId?: number;
 
   @IsString()
-  abaPlan: string;
+  @IsOptional()
+  abaPlan?: string;
+
+  @IsString()
+  @IsOptional()
+  installerLogin?: string;
+
+  @IsString()
+  @IsOptional()
+  contractLogin?: string;
 }

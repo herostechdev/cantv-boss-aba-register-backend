@@ -10,6 +10,8 @@ export class OracleConstants {
   public static UTL_PACKAGE = 'UTL_PACKAGE';
 
   // STORED PROCEDURES
+  public static ABA_REGISTER = 'AbaRegister';
+  public static CANCEL_ABA_INSTALLATION = 'CancelABAInstallation';
   public static CHECK_IP = 'CheckIp';
   public static CUSTOMER_EXISTS = 'ClientExist';
   public static CREATE_AND_PROVISIONING_CUSTOMER = 'CreateAndProvisionClient';
@@ -40,7 +42,9 @@ export class OracleConstants {
   public static GET_PORT_ID_FROM_IP = 'GetPortidFromIp';
   public static GET_VALID_VPI = 'GetValidVPI';
   public static INSERT_DSL_ABA_REGISTERS = 'InsertDslAbaRegisters';
+  public static INSERT_MODIFY_CUSTOMER_ATTRIBUTE = 'InsertModifyCltAttribute';
   public static IS_OCCUPIED_PORT = 'IsOccupiedPort';
+  public static IS_RESERVED_LOGIN = 'IsReservedLogin';
   public static IS_VALID_IP_ADDRESS = 'IsValidIpAddress';
   public static IS_PREPAID = 'IsPrepago  ';
   public static LOGIN = 'Login';
