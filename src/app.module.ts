@@ -25,6 +25,7 @@ import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/p
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
 import { ValidateCustomerModule } from './validate-client/validate-customer.module';
 import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibility/validate-technical-feasibility.module';
+import { CRMCustomersModule } from './customers/crm-customers.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     ApplicationConfigurationModule,
     CustomerExistsModule,
     ConfirmRegistrationModule,
+    CRMCustomersModule,
     DSLAuditLogsModule,
     EncryptionModule,
     FindPreOrderModule,
