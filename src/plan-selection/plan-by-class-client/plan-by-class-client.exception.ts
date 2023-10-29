@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class GetPlanDFescriptionFromPlanNameException extends CustomBadRequestException {
+export class PlanByClassClientException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',

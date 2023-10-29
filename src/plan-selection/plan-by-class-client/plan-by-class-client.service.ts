@@ -5,7 +5,7 @@ import { OracleConfigurationService } from 'src/system/configuration/oracle/orac
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { PlanByClassClientRequestDto } from './plan-by-class-client-request.dto';
 import { PlanByClassClientStatusConstants } from './plan-by-class-client-status.constants';
-import { GetPlanDFescriptionFromPlanNameException } from './plan-by-class-client.exception';
+import { PlanByClassClientException } from './plan-by-class-client.exception';
 import { IPlanByClassClientResponse } from './plan-by-class-client-response.interface';
 
 @Injectable()
@@ -64,11 +64,11 @@ export class PlanByClassClientService extends OracleDatabaseService {
         case PlanByClassClientStatusConstants.SUCCESSFULL:
           return response;
         case PlanByClassClientStatusConstants.ERROR:
-          throw new GetPlanDFescriptionFromPlanNameException();
+          throw new PlanByClassClientException();
         case PlanByClassClientStatusConstants.THERE_IS_NO_DATA:
           return response;
         default:
-          throw new GetPlanDFescriptionFromPlanNameException();
+          throw new PlanByClassClientException();
       }
     } catch (error) {
       super.exceptionHandler(error);

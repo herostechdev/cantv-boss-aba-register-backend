@@ -42,6 +42,7 @@ export class OracleConstants {
     'GetPlanDescriptionFromPlanName';
   public static GET_PORT_ID = 'getPortId';
   public static GET_PORT_ID_FROM_IP = 'GetPortidFromIp';
+  public static GET_STATE_FROM_SERIAL = 'GetStateFromSerial';
   public static GET_VALID_VPI = 'GetValidVPI';
   public static INSERT_DSL_ABA_REGISTERS = 'InsertDslAbaRegisters';
   public static INSERT_MODIFY_CUSTOMER_ATTRIBUTE = 'InsertModifyCltAttribute';

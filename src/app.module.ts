@@ -16,6 +16,7 @@ import { EncryptionModule } from './system/infrastructure/security/encryption/en
 import { FindPreOrderModule } from './find-pre-order/find-pre-order.module';
 import { GetASAPOrderDetailModule } from './get-asap-order-detail/get-asap-order-detail.module';
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
+import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
 import { IsIPAllowedModule } from './is-ip-allowed/is-ip-allowed.module';
 import { LoginModule } from './login/login.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
@@ -45,6 +46,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     FindPreOrderModule,
     GetASAPOrderDetailModule,
     GetPlanDescriptionFromPlanNameModule,
+    GetStateFromSerialModule,
     IsIPAllowedModule,
     LoginModule,
     OracleConfigurationModule,
