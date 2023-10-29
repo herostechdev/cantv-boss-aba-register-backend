@@ -38,6 +38,8 @@ export class OracleConstants {
   public static GET_INFO_FROM_ABA_REQUESTS = 'GetInfoFromABARequests';
   public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
   public static GET_PLAN_ABA_FROM_KENAN = 'GetPlanAbaFromKenan';
+  public static GET_PLAN_DESCRIPTION_FROM_PLAN_NAME =
+    'GetPlanDescriptionFromPlanName';
   public static GET_PORT_ID = 'getPortId';
   public static GET_PORT_ID_FROM_IP = 'GetPortidFromIp';
   public static GET_VALID_VPI = 'GetValidVPI';
@@ -48,6 +50,7 @@ export class OracleConstants {
   public static IS_VALID_IP_ADDRESS = 'IsValidIpAddress';
   public static IS_PREPAID = 'IsPrepago  ';
   public static LOGIN = 'Login';
+  public static PLAN_BY_CLAS_CLIENT = 'PlansByClassClient';
   public static READ_IABA_ORDER = 'ReadIABAOrder';
   public static UPDATE_DSL_ABA_REGISTERS = 'UpdateDslAbaRegisters';
   public static VERIFY_CONTRACT_BY_PHONE = 'verifycontracbyphone';
