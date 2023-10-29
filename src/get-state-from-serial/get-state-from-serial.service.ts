@@ -17,6 +17,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
   }
 
   // TODO: Determinar origen de todos los parámetros de entrada (DTO)
+  // TODO: Determinar si la respuesta es un solo estado o una LISTA DE ESTADOS ?
   async getGetStateFromSerial(
     dto: GetStateFromSerialRequestDto,
   ): Promise<IGetStateFromSerialResponse> {
