@@ -76,25 +76,22 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         }
       }
 
-      // TODO: Determinar  atributos cliente PENDIENTE
-
-      // TODO: Determinar parámetros del SP insertModifyCustomerAttribute
-      // ESTE SP NO SE VA A INVOCAR (CONSULTAR BPM)
-      data.insertModifyCustomerAttributeResponse =
-        await this.insertModifyCustomerAttribute(null, null, null);
-      if (
-        data.insertModifyCustomerAttributeResponse.status ===
-        InsertModifyCustomerAttributeStatusConstants.SUCCESSFULL
-      ) {
-        throw new Error10022Exception();
-      }
+      // ESTA PARTE DEL FLUJO NO SE VA A INVOCAR (CONSULTAR BPM)
+      // // TODO: Determinar  atributos cliente PENDIENTE
+      // // TODO: Determinar parámetros del SP insertModifyCustomerAttribute
+      // data.insertModifyCustomerAttributeResponse =
+      //   await this.insertModifyCustomerAttribute(null, null, null);
+      // if (
+      //   data.insertModifyCustomerAttributeResponse.status ===
+      //   InsertModifyCustomerAttributeStatusConstants.SUCCESSFULL
+      // ) {
+      //   throw new Error10022Exception();
+      // }
       data.isReservedLoginResponse = await this.isReservedLogin(data);
       data.abaRegisterResponse = await this.abaRegister(data);
-
       data.cancelABAInstallationResponse = await this.cancelABAInstallation(
         data,
       );
-
       return data;
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);

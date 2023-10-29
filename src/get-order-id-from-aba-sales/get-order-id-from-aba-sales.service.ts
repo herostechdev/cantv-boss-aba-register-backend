@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales-request.dto';
+import { GetOrderIdFromABASalesStatusConstants } from './get-order-id-from-aba-sales-status.constants';
+import { GetOrderIdFromABASalesException } from './get-order-id-from-aba-sales.exception';
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
@@ -30,15 +32,25 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
         OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
         parameters,
       );
-      const response = {
+      const status = (OracleHelper.getFirstItem(result, 'str_status') ??
+        GetOrderIdFromABASalesStatusConstants.INTERNAL_ERROR) as GetOrderIdFromABASalesStatusConstants;
+      const response: IGetOrderIdFromABASalesResponse = {
         orderId: OracleHelper.getFirstItem(result, 'str_orderid'),
-        status: OracleHelper.getFirstItem(result, 'str_status'),
+        status: status,
       };
-      return response;
+      switch (response.status) {
+        case GetOrderIdFromABASalesStatusConstants.SUCCESSFULL:
+          return response;
+        case GetOrderIdFromABASalesStatusConstants.INTERNAL_ERROR:
+          throw new GetOrderIdFromABASalesException();
+        case GetOrderIdFromABASalesStatusConstants.IMVALID_IP:
+          return response;
+        default:
+          throw new GetOrderIdFromABASalesException();
+      }
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
-      console.log('closeConnection');
       await this.closeConnection();
     }
   }
