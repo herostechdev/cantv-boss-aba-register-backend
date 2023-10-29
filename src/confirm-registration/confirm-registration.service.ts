@@ -79,6 +79,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       // TODO: Determinar  atributos cliente PENDIENTE
 
       // TODO: Determinar parámetros del SP insertModifyCustomerAttribute
+      // ESTE SP NO SE VA A INVOCAR (CONSULTAR BPM)
       data.insertModifyCustomerAttributeResponse =
         await this.insertModifyCustomerAttribute(null, null, null);
       if (
@@ -107,7 +108,6 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
   ): Promise<IGetPlanABAFromKenanResponse> {
     const parameters = {
       abaplan: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      // TODO: Cómo obtener la respuesta de la ejecución del SP
       abaPlanCode: OracleHelper.stringBindOut(),
     };
     const result = await super.executeStoredProcedure(
@@ -319,8 +319,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         data.requestDto.installerLogin,
         32,
       ),
-      // TODO: Nombre del parámetro con    t
-      tstatus: OracleHelper.tableOfNumberBindOut(),
+      status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
       OracleConstants.ACT_PACKAGE,
@@ -328,7 +327,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       parameters,
     );
     const response: ICancelABAInstallationResponse = {
-      status: (result?.outBinds?.o_status ??
+      status: (result?.outBinds?.status ??
         CancelABAInstallationStatusConstants.INTERNAL_ERROR) as CancelABAInstallationStatusConstants,
     };
     switch (response.status) {

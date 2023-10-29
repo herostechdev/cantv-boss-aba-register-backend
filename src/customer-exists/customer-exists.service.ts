@@ -18,7 +18,9 @@ export class CustomerExistsService extends OracleDatabaseService {
 
   // TODO: Determinar origen del parámetro: attributeName
   // TODO: Determinar origen del parámetro: attributeValue
-  // TODO: Verificar gestión de errores
+  // TODO: Verificar gestión de errores (resuelto segun acuerdo de gestión de errores 27/10/2023)
+
+  // respuesta segun flujo bpm
   async clientExists(
     attributeName: string,
     attributeValue: string,

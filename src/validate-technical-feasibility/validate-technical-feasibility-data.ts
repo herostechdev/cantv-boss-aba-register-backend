@@ -27,7 +27,7 @@ export class ValidateTechnicalFeasibilityData {
   getPortIdFromIpResponse: IGetPortIdFromIpResponse;
   // TODO: DETERMINAR EL TIPO DE LA RESPUESTA DEL RECURSO API: queryDHCP
   queryDHCPResponse: any;
-  getValidVPIResponse: number;
+  getValidVPIResponse: string;
   // TODO: DETERMINAR EL TIPO DE LA RESPUESTA DEL SP: getPortId
   getPortIdResponse: any;
   isOccupiedPortResponse: IIsOccupiedPortResponse;

@@ -329,13 +329,13 @@ export class ValidateCustomerService extends OracleDatabaseService {
     }
   }
 
+  // TODO: Determinar origen del campo: iRegisterStatus
   private async updateDslABARegisters(
     data: ValidateCustomerData,
   ): Promise<IUpdateDslAbaRegistersResponse> {
     const parameters = {
       iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
       iPhoneNumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber, 7),
-      // TODO: Determinar origen del campo: iRegisterStatus
       iRegisterStatus: OracleHelper.stringBindIn(null, 16),
       status: OracleHelper.numberBindOut(),
     };

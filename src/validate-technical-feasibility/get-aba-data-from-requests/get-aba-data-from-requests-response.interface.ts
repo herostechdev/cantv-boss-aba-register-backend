@@ -1,4 +1,8 @@
-export interface IGetABADataFromRequestsResponse {
+import { IStatusResponse } from 'src/responses/status-response.interface';
+import { GetABADataFromRequestsConstants } from './get-aba-data-from-requests-status.constants';
+
+export interface IGetABADataFromRequestsResponse
+  extends IStatusResponse<GetABADataFromRequestsConstants> {
   id: string;
   firstname: string;
   lastname: string;
@@ -8,5 +12,4 @@ export interface IGetABADataFromRequestsResponse {
   address2: string;
   city: string;
   state: string;
-  status: number;
 }

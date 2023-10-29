@@ -51,7 +51,6 @@ const initializeOracleDatabaseClient = async (app: INestApplication) => {
   );
   const clientOpts = { libDir: oracleConfigurationService.oracleHome };
   initOracleClient(clientOpts);
-
   // Initialize connection pool
   const connectionString = `${oracleConfigurationService.uri}:${oracleConfigurationService.port}/${oracleConfigurationService.sid}`;
   await createPool({
