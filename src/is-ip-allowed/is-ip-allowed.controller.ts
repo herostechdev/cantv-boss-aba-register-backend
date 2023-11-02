@@ -13,7 +13,7 @@ export class IsIPAllowedController {
   constructor(private readonly service: IsIPAllowedService) {}
 
   @Post()
-  @HttpCode(HttpCodeConstants.HTTP_204_NO_CONTENT)
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
   isIPAllowed(
     @Body() dto: IsIPAllowedRequestDto,

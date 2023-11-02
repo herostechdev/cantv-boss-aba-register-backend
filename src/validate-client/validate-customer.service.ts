@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
 import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { GetAllValuesFromClientValuesStatusConstants } from './get-all-values-from-client-values/get-all-values-from-client-values-status.constants';
 import { GetAllValuesFromClientvaluesInternalErrorException } from './get-all-values-from-client-values/get-all-values-from-client-values-internal-error.exception';
@@ -30,7 +31,6 @@ import { GetDebtFromClientThereIsNoDataException } from './get-debt-from-client/
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers/update-dsl-aba-registers-status.constants';
 import { UpdateDslAbaRegistersInternalErrorException } from './update-dsl-aba-registers/update-dsl-aba-registers-internal-error.exception';
-import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
 
 @Injectable()
 export class ValidateCustomerService extends OracleDatabaseService {

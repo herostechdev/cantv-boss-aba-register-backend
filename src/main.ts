@@ -1,6 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'body-parser';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  INestApplication,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import { createPool, initOracleClient } from 'oracledb';
 import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
@@ -68,6 +72,9 @@ const startServer = async (app: INestApplication) => {
     app.get(ApplicationConfigurationService);
   app.setGlobalPrefix(applicationConfigurationService.routesPrefix);
   app.enableCors();
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
   app.use(helmet());
   app.use(json({ limit: '1mb' }));
   app.use(urlencoded({ limit: '1mb', extended: true, parameterLimit: 30 }));
