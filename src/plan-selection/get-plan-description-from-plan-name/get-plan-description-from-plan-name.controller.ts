@@ -6,7 +6,7 @@ import { GetPlanDescriptionFromPlanNameRequestDto } from './get-plan-description
 import { IGetPlanDescriptionFromPlanNameResponse } from './get-plan-description-from-plan-name-response.interface';
 
 @Controller({
-  path: 'getPlanDescriptionFromPLanName',
+  path: 'getPlanDescriptionFromPlanName',
   version: '1',
 })
 export class GetPlanDescriptionFromPlanNameController {

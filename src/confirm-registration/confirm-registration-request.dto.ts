@@ -11,7 +11,7 @@ export class ConfirmRegistrationRequestDto {
   phoneNumber: string;
 
   @IsString()
-  clientType: string;
+  customerType: string;
 
   @IsInt()
   @IsOptional()

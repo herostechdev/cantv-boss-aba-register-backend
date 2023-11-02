@@ -2,7 +2,7 @@ import { IsInt, IsString } from 'class-validator';
 
 export class PlanByClassClientRequestDto {
   @IsString()
-  classClient: string;
+  classCustomer: string;
 
   @IsInt()
   dslamPortId: number;

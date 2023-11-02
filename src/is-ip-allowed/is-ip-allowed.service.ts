@@ -18,7 +18,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
     try {
       await super.connect();
       const parameters = {
-        i_ipsource: OracleHelper.stringBindIn(dto.ip),
+        i_ipsource: OracleHelper.stringBindIn(dto.ipAddress),
         o_expiredate: OracleHelper.tableOfStringBindOut(1, 532),
         o_status: OracleHelper.tableOfNumberBindOut(),
       };
@@ -33,7 +33,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
       };
       return response;
     } catch (error) {
-      super.exceptionHandler(error, dto?.ip);
+      super.exceptionHandler(error, dto?.ipAddress);
     } finally {
       await this.closeConnection();
     }

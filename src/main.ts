@@ -34,7 +34,7 @@ const test = (app: INestApplication) => {
 
 const spTest = async (app: INestApplication) => {
   const service: IsIPAllowedService = app.get(IsIPAllowedService);
-  await service.isIPAllowed({ ip: '124.47.3.5' });
+  await service.isIPAllowed({ ipAddress: '124.47.3.5' });
 };
 
 const initializePipes = (app: INestApplication) => {

@@ -10,7 +10,7 @@ export class ValidateCustomerRequestDto {
   @IsString()
   phoneNumber: string;
 
-  clientType: string;
+  customerType: string;
 
   @IsInt()
   @IsOptional()

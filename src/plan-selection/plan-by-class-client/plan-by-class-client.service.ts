@@ -23,7 +23,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
     try {
       await super.connect();
       const parameters = {
-        I_CLASSCLIENT: OracleHelper.stringBindIn(dto.classClient),
+        I_CLASSCLIENT: OracleHelper.stringBindIn(dto.classCustomer),
         I_DSLAMPORTID: OracleHelper.numberBindIn(dto.dslamPortId),
         I_WSCONTRACT: OracleHelper.numberBindIn(dto.wsContract),
         I_WS3CONTRACT: OracleHelper.stringBindIn(dto.ws3Contract),
