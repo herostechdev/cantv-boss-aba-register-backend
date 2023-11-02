@@ -6,7 +6,7 @@ import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/except
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales-response.interface';
 
 @Controller({
-  path: 'GetOrderIdFromABASales',
+  path: 'getOrderIdFromABASales',
   version: '1',
 })
 export class GetOrderIdFromABASalesController {

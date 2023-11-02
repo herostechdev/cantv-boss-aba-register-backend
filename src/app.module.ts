@@ -10,11 +10,13 @@ import { ThrottlerConfigurationService } from './system/configuration/throttler/
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
+import { CRMCustomersModule } from './customers/crm-customers.module';
 import { CustomerExistsModule } from './customer-exists/customer-exists.module';
 import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { FindPreOrderModule } from './find-pre-order/find-pre-order.module';
 import { GetASAPOrderDetailModule } from './get-asap-order-detail/get-asap-order-detail.module';
+import { GetOrderIdFromABASalesModule } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales.module';
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
 import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
 import { IsIPAllowedModule } from './is-ip-allowed/is-ip-allowed.module';
@@ -25,7 +27,6 @@ import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/p
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
 import { ValidateCustomerModule } from './validate-client/validate-customer.module';
 import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibility/validate-technical-feasibility.module';
-import { CRMCustomersModule } from './customers/crm-customers.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { CRMCustomersModule } from './customers/crm-customers.module';
     EncryptionModule,
     FindPreOrderModule,
     GetASAPOrderDetailModule,
+    GetOrderIdFromABASalesModule,
     GetPlanDescriptionFromPlanNameModule,
     GetStateFromSerialModule,
     IsIPAllowedModule,
