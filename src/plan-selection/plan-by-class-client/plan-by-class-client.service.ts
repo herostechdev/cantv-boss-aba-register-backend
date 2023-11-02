@@ -35,6 +35,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
         I_LOGININSTALADOR: OracleHelper.stringBindIn(dto.loginDialup),
         I_AREACODE: OracleHelper.stringBindIn(dto.areaCode),
         I_PHONENUMBER: OracleHelper.stringBindIn(dto.phoneNumber),
+
         O_PLAN: OracleHelper.tableOfStringBindOut(532),
         O_PLANDESIRED: OracleHelper.tableOfStringBindOut(532),
         O_SHORTNAME: OracleHelper.tableOfStringBindOut(532),
@@ -46,7 +47,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
       };
       const result = await super.executeStoredProcedure(
         OracleConstants.ACT_PACKAGE,
-        OracleConstants.GET_PLAN_DESCRIPTION_FROM_PLAN_NAME,
+        OracleConstants.PLAN_BY_CLAS_CLIENT,
         parameters,
       );
       const response: IPlanByClassClientResponse = {

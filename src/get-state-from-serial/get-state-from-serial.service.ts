@@ -16,8 +16,8 @@ export class GetStateFromSerialService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  // TODO: Determinar origen de todos los parámetros de entrada (DTO)
-  // TODO: Determinar si la respuesta es un solo estado o una LISTA DE ESTADOS ?
+  // TODO: DESARROLLAR EL SUBSTRING DEL NÚMERO DE TELEFONO  Campo: i_serial   SON LOS PRIMEROS 3 DIGITOS DEL NÚMERO DE TELEFONO
+  // TODO: Determinar si la respuesta es un solo estado o una LISTA DE ESTADOS , normalmente devuelve 1 pero es posible que devuelva varios
   async getGetStateFromSerial(
     dto: GetStateFromSerialRequestDto,
   ): Promise<IGetStateFromSerialResponse> {
