@@ -13,7 +13,7 @@ export class FindPreOrderController {
   constructor(private readonly service: FindPreOrderService) {}
 
   @Post()
-  @HttpCode(HttpCodeConstants.HTTP_204_NO_CONTENT)
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
   FindPreOrder(
     @Body() dto: FindPreOrderRequestDto,

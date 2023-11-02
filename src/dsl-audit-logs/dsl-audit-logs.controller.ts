@@ -13,7 +13,7 @@ export class DSLAuditLogsController {
   constructor(private readonly service: DSLAuditLogsService) {}
 
   @Post()
-  @HttpCode(HttpCodeConstants.HTTP_204_NO_CONTENT)
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
   DSLAuditLogs(
     @Body() dto: DSLAuditLogsRequestDto,

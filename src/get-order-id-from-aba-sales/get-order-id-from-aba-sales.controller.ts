@@ -13,7 +13,7 @@ export class GetOrderIdFromABASalesController {
   constructor(private readonly service: GetOrderIdFromABASalesService) {}
 
   @Post()
-  @HttpCode(HttpCodeConstants.HTTP_204_NO_CONTENT)
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
   GetOrderIdFromABASales(
     @Body() dto: GetOrderIdFromABASalesRequestDto,

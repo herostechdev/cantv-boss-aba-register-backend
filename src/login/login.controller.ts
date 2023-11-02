@@ -13,7 +13,7 @@ export class LoginController {
   constructor(private readonly service: LoginService) {}
 
   @Post()
-  @HttpCode(HttpCodeConstants.HTTP_204_NO_CONTENT)
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
   checkIP(@Body() dto: LoginRequestDto): Promise<ILoginResponse> {
     return this.service.login(dto);
