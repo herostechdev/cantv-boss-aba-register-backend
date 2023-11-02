@@ -34,6 +34,7 @@ export class OracleConstants {
   public static GET_DOWNSTREAM_FROM_PLAN = 'GETDOWNSTREAMFROMPLAN';
   public static GET_FIRST_LETTER_FROM_ABA_REQUEST =
     'GetFirstLetterFromABARequest';
+  public static GET_GROUP_ACCESS_FROM_LOGIN = 'GetGroupAccessFromLogin';
   public static GET_IF_REMOTE_INSTALLER_IP = 'GetlfRemoteInstallerIP';
   public static GET_INFO_FROM_ABA_REQUESTS = 'GetInfoFromABARequests';
   public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
@@ -50,7 +51,7 @@ export class OracleConstants {
   public static IS_RESERVED_LOGIN = 'IsReservedLogin';
   public static IS_VALID_IP_ADDRESS = 'IsValidIpAddress';
   public static IS_PREPAID = 'IsPrepago  ';
-  public static LOGIN = 'Login';
+  public static ISG_ACTION_ALLOWED = 'ISGActionAllowed';
   public static PLAN_BY_CLAS_CLIENT = 'PlansByClassClient';
   public static READ_IABA_ORDER = 'ReadIABAOrder';
   public static UPDATE_DSL_ABA_REGISTERS = 'UpdateDslAbaRegisters';
