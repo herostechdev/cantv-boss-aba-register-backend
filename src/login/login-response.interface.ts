@@ -1,4 +1,4 @@
 export interface ILoginResponse {
   expireDate: string;
-  status: string;
+  status: number;
 }

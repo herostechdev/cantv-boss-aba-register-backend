@@ -29,7 +29,7 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
       };
       const result = await super.executeStoredProcedure(
         OracleConstants.ACT_PACKAGE,
-        OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
+        OracleConstants.GET_ORDER_ID_FROM_ABA_SALES,
         parameters,
       );
       const status = (OracleHelper.getFirstItem(result, 'str_status') ??

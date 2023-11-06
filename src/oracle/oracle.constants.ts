@@ -30,6 +30,7 @@ export class OracleConstants {
   public static GET_CUSTOMER_INSTANCE_ID_FROM_ID_VALUE =
     'GetCltInstanceidFromIdValue';
   public static GET_DATA_FROM_DSLAM_PORT_ID = 'GetDataFromDslamPortid';
+  public static GET_DATA_FROM_REQUESTS = 'GetDataFromRequests';
   public static GET_DEBT_FROM_CUSTOMER = 'GetDebtFromClient';
   public static GET_DOWNSTREAM_FROM_PLAN = 'GETDOWNSTREAMFROMPLAN';
   public static GET_FIRST_LETTER_FROM_ABA_REQUEST =
