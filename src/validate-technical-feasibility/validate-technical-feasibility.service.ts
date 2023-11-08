@@ -67,6 +67,12 @@ import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-fea
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from './verify-contract-by-phone/verify-contract-by-phone-status.constants';
+import { IGetDataFromRequestsResponse } from './get-data-from-requests/get-data-from-requests-response.interface';
+import { GetDataFromRequestsStatusConstants } from './get-data-from-requests/get-data-from-requests-status.constants';
+import { GetDataFromRequestsException } from './get-data-from-requests/get-data-from-requests.exception';
+import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
+import { GetPortIdStatusConstants } from './get-port-id/get-port-id-status.constants';
+import { GetPortIdException } from './get-port-id/get-port-id.exception';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -93,16 +99,17 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.verifyContractByPhoneResponse = await this.verifyContractByPhone(
         data,
       );
-      data.getInfoFromABARequestsResponse = await this.getInfoFromABARequests(
-        data,
-      );
+      data.getDataFromRequestsResponse = await this.getDataFromRequests(data);
+      // data.getInfoFromABARequestsResponse = await this.getInfoFromABARequests(
+      //   data,
+      // );
       data.getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
         data,
       );
       data.getABADataFromRequestsResponse = await this.getABADataFromRequests(
         data,
       );
-      if (data.verifyContractByPhoneResponse.status == 0) {
+      if (data.verifyContractByPhoneResponse.status === 0) {
         throw new VerifyContractByPhoneException();
       }
       data.isValidIpAddressResponse = await this.isValidIpAddress(data);
@@ -322,34 +329,81 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  private async getInfoFromABARequests(
+  // private async getInfoFromABARequests(
+  //   data: ValidateTechnicalFeasibilityData,
+  // ): Promise<IGetInfoFromABARequestsResponse> {
+  //   const parameters = {
+  //     i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
+  //     i_phonenumber: OracleHelper.stringBindIn(
+  //       data.requestDto.phoneNumber,
+  //       256,
+  //     ),
+  //     sz_Fecha1: OracleHelper.stringBindOut(10),
+  //     sz_Fecha2: OracleHelper.stringBindOut(10),
+  //     sz_Fecha3: OracleHelper.stringBindOut(10),
+  //     sz_PlanDesired: OracleHelper.stringBindOut(32),
+  //     sz_PlanDescription: OracleHelper.stringBindOut(256),
+  //     sz_MedioP: OracleHelper.stringBindOut(32),
+  //     abarequests_row: OracleHelper.stringBindOut(10),
+  //     abaacceptedrequests_row: OracleHelper.stringBindOut(10),
+  //     abarequestsregistes_row: OracleHelper.stringBindOut(10),
+  //     Status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     OracleConstants.ACT_PACKAGE,
+  //     OracleConstants.GET_INFO_FROM_ABA_REQUESTS,
+  //     parameters,
+  //   );
+  //   const status = (result?.outBinds?.Status ??
+  //     GetInfoFromABARequestsStatusConstants.EXECUTION_ERROR) as GetInfoFromABARequestsStatusConstants;
+  //   const response: IGetInfoFromABARequestsResponse = {
+  //     date1: result?.outBinds?.sz_Fecha1,
+  //     date2: result?.outBinds?.sz_Fecha2,
+  //     date3: result?.outBinds?.sz_Fecha3,
+  //     desiredPlan: result?.outBinds?.sz_PlanDesired,
+  //     descriptionPlan: result?.outBinds?.sz_PlanDescription,
+  //     medioP: result?.outBinds?.sz_MedioP,
+  //     abaRequestsRow: result?.outBinds?.abarequests_row,
+  //     abaAcceptedRequestsRow: result?.outBinds?.abaacceptedrequests_row,
+  //     abaRequestsRegistersRow: result?.outBinds?.abarequestsregistes_row,
+  //     status: status,
+  //   };
+  //   switch (status) {
+  //     case GetInfoFromABARequestsStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetInfoFromABARequestsStatusConstants.EXECUTION_ERROR:
+  //       throw new GetInfoFromABARequestsException();
+  //     case GetInfoFromABARequestsStatusConstants.THERE_IS_NO_DATA:
+  //       return response;
+  //     default:
+  //       throw new GetInfoFromABARequestsException();
+  //   }
+  // }
+  private async getDataFromRequests(
     data: ValidateTechnicalFeasibilityData,
-  ): Promise<IGetInfoFromABARequestsResponse> {
+  ): Promise<IGetDataFromRequestsResponse> {
     const parameters = {
       i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
-      i_phonenumber: OracleHelper.stringBindIn(
-        data.requestDto.phoneNumber,
-        256,
-      ),
+      i_phonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
       sz_Fecha1: OracleHelper.stringBindOut(10),
       sz_Fecha2: OracleHelper.stringBindOut(10),
       sz_Fecha3: OracleHelper.stringBindOut(10),
       sz_PlanDesired: OracleHelper.stringBindOut(32),
       sz_PlanDescription: OracleHelper.stringBindOut(256),
       sz_MedioP: OracleHelper.stringBindOut(32),
-      abarequests_row: OracleHelper.stringBindOut(10),
-      abaacceptedrequests_row: OracleHelper.stringBindOut(10),
-      abarequestsregistes_row: OracleHelper.stringBindOut(10),
+      abarequests_row: OracleHelper.rawBindOut(),
+      abaacceptedrequests_row: OracleHelper.rawBindOut(),
+      abarequestsregisters_row: OracleHelper.rawBindOut(),
       Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
       OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_INFO_FROM_ABA_REQUESTS,
+      OracleConstants.GET_DATA_FROM_REQUESTS,
       parameters,
     );
     const status = (result?.outBinds?.Status ??
-      GetInfoFromABARequestsStatusConstants.EXECUTION_ERROR) as GetInfoFromABARequestsStatusConstants;
-    const response: IGetInfoFromABARequestsResponse = {
+      GetDataFromRequestsStatusConstants.EXECUTION_ERROR) as GetDataFromRequestsStatusConstants;
+    const response: IGetDataFromRequestsResponse = {
       date1: result?.outBinds?.sz_Fecha1,
       date2: result?.outBinds?.sz_Fecha2,
       date3: result?.outBinds?.sz_Fecha3,
@@ -358,18 +412,18 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       medioP: result?.outBinds?.sz_MedioP,
       abaRequestsRow: result?.outBinds?.abarequests_row,
       abaAcceptedRequestsRow: result?.outBinds?.abaacceptedrequests_row,
-      abaRequestsRegistersRow: result?.outBinds?.abarequestsregistes_row,
+      abaRequestsRegistersRow: result?.outBinds?.abarequestsregisters_row,
       status: status,
     };
     switch (status) {
-      case GetInfoFromABARequestsStatusConstants.SUCCESSFULL:
+      case GetDataFromRequestsStatusConstants.SUCCESSFULL:
         return response;
-      case GetInfoFromABARequestsStatusConstants.EXECUTION_ERROR:
-        throw new GetInfoFromABARequestsException();
-      case GetInfoFromABARequestsStatusConstants.THERE_IS_NO_DATA:
+      case GetDataFromRequestsStatusConstants.EXECUTION_ERROR:
+        throw new GetDataFromRequestsException();
+      case GetDataFromRequestsStatusConstants.THERE_IS_NO_DATA:
         return response;
       default:
-        throw new GetInfoFromABARequestsException();
+        throw new GetDataFromRequestsException();
     }
   }
 
@@ -618,20 +672,39 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     return result;
   }
 
-  // TODO: FALTA ESPECIFICACIÓN DEL SP: GetPortId. BLOCKING!!!
+  // TODO: MAPEO DE PARAMETROS DE ENTRADA
   private async getPortId(
     data: ValidateTechnicalFeasibilityData,
-  ): Promise<any> {
+  ): Promise<IGetPortIdResponse> {
     const parameters = {
-      l_portid: OracleHelper.numberBindIn(data.requestDto.orderId),
-      i_invalidvpi: OracleHelper.numberBindIn(0),
+      s_nspip: OracleHelper.stringBindIn(null),
+      n_vpi: OracleHelper.numberBindIn(null),
+      n_vci: OracleHelper.numberBindIn(null),
+      I_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress),
+      t_portid: OracleHelper.tableOfNumberBindOut(0),
+      status: OracleHelper.tableOfNumberBindOut(0),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.UTL_PACKAGE,
+      OracleConstants.BOSS_PACKAGE,
       OracleConstants.GET_PORT_ID,
       parameters,
     );
-    return result?.outBinds?.vpi ?? 0;
+    const status = (result?.outBinds?.status ??
+      GetPortIdStatusConstants.EXECUTION_ERROR) as GetPortIdStatusConstants;
+    const response: IGetPortIdResponse = {
+      portId: result?.outBinds?.t_portid,
+      status: status,
+    };
+    switch (status) {
+      case GetPortIdStatusConstants.SUCCESSFULL:
+        return response;
+      case GetPortIdStatusConstants.EXECUTION_ERROR:
+        throw new GetPortIdException();
+      case GetPortIdStatusConstants.THERE_IS_NO_DATA:
+        throw new Error30092Exception();
+      default:
+        throw new GetPortIdException();
+    }
   }
 
   private async IsOccupiedPort(

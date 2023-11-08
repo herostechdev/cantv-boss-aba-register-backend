@@ -42,7 +42,7 @@ export class OracleConstants {
   public static GET_PLAN_ABA_FROM_KENAN = 'GetPlanAbaFromKenan';
   public static GET_PLAN_DESCRIPTION_FROM_PLAN_NAME =
     'GetPlanDescriptionFromPlanName';
-  public static GET_PORT_ID = 'getPortId';
+  public static GET_PORT_ID = 'GetPortId';
   public static GET_PORT_ID_FROM_IP = 'GetPortidFromIp';
   public static GET_STATE_FROM_SERIAL = 'GetStateFromSerial';
   public static GET_VALID_VPI = 'GetValidVPI';

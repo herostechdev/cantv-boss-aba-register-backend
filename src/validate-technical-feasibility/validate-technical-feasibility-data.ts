@@ -13,6 +13,7 @@ import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-fea
 import { IReadIABAOrderResponse } from './read-iaba-order/read-iaba-order-response.interface';
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
+import { IGetDataFromRequestsResponse } from './get-data-from-requests/get-data-from-requests-response.interface';
 
 export class ValidateTechnicalFeasibilityData {
   requestDto: ValidateTechnicalFeasibilityRequestDto;
@@ -20,7 +21,8 @@ export class ValidateTechnicalFeasibilityData {
   isPrepaidVoiceLine: IIsPrepaidVoiceLineResponse;
   getAndRegisterQualifOfServiceResponse: IGetAndRegisterQualifOfServiceResponse;
   verifyContractByPhoneResponse: IVerifiyContractByPhoneResponse;
-  getInfoFromABARequestsResponse: IGetInfoFromABARequestsResponse;
+  getDataFromRequestsResponse: IGetDataFromRequestsResponse;
+  // getInfoFromABARequestsResponse: IGetInfoFromABARequestsResponse;
   getDownstreamFromPlanResponse: IGetDownstreamFromPlanResponse;
   getABADataFromRequestsResponse: IGetABADataFromRequestsResponse;
   isValidIpAddressResponse: IIsValidIpAddressResponse;

@@ -6,7 +6,7 @@ import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/except
 import { IFindPreOrderResponse } from './find-pre-order-response.interface';
 
 @Controller({
-  path: 'FindPreOrder',
+  path: 'findPreOrder',
   version: '1',
 })
 export class FindPreOrderController {
