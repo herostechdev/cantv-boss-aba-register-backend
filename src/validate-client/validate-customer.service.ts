@@ -1,43 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
 import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
+import { Error1002Exception } from 'src/exceptions/error-1002.exception';
+import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
 import { GetAllValuesFromClientValuesStatusConstants } from './get-all-values-from-client-values/get-all-values-from-client-values-status.constants';
 import { GetAllValuesFromClientvaluesInternalErrorException } from './get-all-values-from-client-values/get-all-values-from-client-values-internal-error.exception';
+import { GetCustomerClassNameFromIdValueInternalErrorException } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-internal-error.exception';
+import { GetCustomerClassNameFromIdValueStatusConstants } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
+import { GetCustomerClassNameFromIdValueThereIsNoDataException } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-there-is-no-data.exception';
+import { GetCustomerInstanceIdFromIdValueStatusConstants } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
+import { GetCustomerInstanceIdFromIdValueInternalErrorException } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-internal-error.exception';
+import { GetCustomerInstanceIdFromIdValueThereIsNoDataException } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-there-is-no-data.exception';
+import { GetDebtFromCustomerInternalErrorException } from './get-debt-from-client/get-debt-from-customer-internal-error.exception';
+import { GetDebtFromCustomerStatusConstants } from './get-debt-from-client/get-debt-from-customer-status.constants';
+import { GetDebtFromCustomerThereIsNoDataException } from './get-debt-from-client/get-debt-from-customer-there-is-no-data.exception';
 import { GetFirstLetterFromABARequestStatusConstants } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
 import { GetFirstLetterFromABARequestInternalErrorException } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-internal-error.exception';
 import { GetFirstLetterFromABARequestThereIsNoDataException } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-there-is-no-data.exception';
+import { GetOrderIdFromABASalesService } from 'src/get-order-id-from-aba-sales/get-order-id-from-aba-sales.service';
 import { IGetAllValuesFromClientValuesResponse } from './get-all-values-from-client-values/get-all-values-from-client-values-response.interface';
+import { IGetCustomerClassNameFromIdValueResponse } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
+import { IGetCustomerInstanceIdFromIdValueResponse } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
+import { IGetDebtFromCustomerResponse } from './get-debt-from-client/get-debt-from-customer-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
+import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { ValidateCustomerData } from './validate-customer-data';
-import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
-import { GetClientClassNameFromIdValueInternalErrorException } from './get-client-class-name-from-id-value/get-client-class-name-from-id-value-internal-error.exception';
-import { GetClientClassNameFromIdValueThereIsNoDataException } from './get-client-class-name-from-id-value/get-client-class-name-from-id-value-there-is-no-data.exception';
-import { IGetClientClassNameFromIdValueResponse } from './get-client-class-name-from-id-value/get-client-class-name-from-id-value-response.interface';
-import { GetClientClassNameFromIdValueStatusConstants } from './get-client-class-name-from-id-value/get-client-class-name-from-id-value-status.constants';
-import { Error1002Exception } from 'src/exceptions/error-1002.exception';
-import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
-import { IGetClientInstanceIdFromIdValueResponse } from './get-client-instance-id-from-id-value/get-client-instance-id-from-id-value-response.interface';
-import { GetClientInstanceIdFromIdValueStatusConstants } from './get-client-instance-id-from-id-value/get-client-instance-id-from-id-value-status.constants';
-import { GetClientInstanceIdFromIdValueInternalErrorException } from './get-client-instance-id-from-id-value/get-client-instance-id-from-id-value-internal-error.exception';
-import { GetClientInstanceIdFromIdValueThereIsNoDataException } from './get-client-instance-id-from-id-value/get-client-instance-id-from-id-value-there-is-no-data.exception';
-import { GetDebtFromClientStatusConstants } from './get-debt-from-client/get-debt-from-client-status.constants';
-import { IGetDebtFromClientResponse } from './get-debt-from-client/get-debt-from-client-response.interface';
-import { GetDebtFromClientInternalErrorException } from './get-debt-from-client/get-debt-from-client-internal-error.exception';
-import { GetDebtFromClientThereIsNoDataException } from './get-debt-from-client/get-debt-from-client-there-is-no-data.exception';
-import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers/update-dsl-aba-registers-status.constants';
 import { UpdateDslAbaRegistersInternalErrorException } from './update-dsl-aba-registers/update-dsl-aba-registers-internal-error.exception';
+import { ValidateCustomerData } from './validate-customer-data';
+import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 
 @Injectable()
 export class ValidateCustomerService extends OracleDatabaseService {
   constructor(
+    private readonly clientExistsService: CustomerExistsService,
+    private readonly getOrderIdFromABASalesService: GetOrderIdFromABASalesService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
-    private readonly clientExistsService: CustomerExistsService,
   ) {
     super(oracleConfigurationService);
   }
@@ -56,7 +58,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           await this.getClientClassNameFromIdValue(null, null);
         if (
           data.getClientClassNameFromIdValueResponse.status !==
-          GetClientClassNameFromIdValueStatusConstants.SUCCESSFULL
+          GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL
         ) {
           // TODO: qué significa: Actualizar en la información de clientes en memoria en el frontend el campo de clase NATURAL
           // TODO: Eliminar los ceros a la izquierda del Campo Identificador de Cliente
@@ -98,7 +100,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           await this.getClientInstanceIdFromIdValue(null, null);
         if (
           data.getClientInstanceIdFromIdValueResponse.status ===
-          GetClientInstanceIdFromIdValueStatusConstants.SUCCESSFULL
+          GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL
         ) {
           // TODO: Cuáles son los datos para invocar el SP GetDebtFromClient
           data.getDebtFromClientResponse = await this.getDebtFromClient(
@@ -107,7 +109,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           );
           if (
             data.getDebtFromClientResponse.status ===
-            GetDebtFromClientStatusConstants.SUCCESSFULL
+            GetDebtFromCustomerStatusConstants.SUCCESSFULL
           ) {
             // TODO: UpdateDSLAbaRegister a NO PROCESADO
             data.updateDslABARegistersResponse =
@@ -198,7 +200,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
   private async getClientClassNameFromIdValue(
     idValue: string,
     clientAttributeName: string,
-  ): Promise<IGetClientClassNameFromIdValueResponse> {
+  ): Promise<IGetCustomerClassNameFromIdValueResponse> {
     const parameters = {
       sz_IdValue: OracleHelper.stringBindIn(idValue, 256),
       sz_Cltattributename: OracleHelper.stringBindIn(clientAttributeName, 256),
@@ -210,20 +212,20 @@ export class ValidateCustomerService extends OracleDatabaseService {
       OracleConstants.GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE,
       parameters,
     );
-    const response: IGetClientClassNameFromIdValueResponse = {
+    const response: IGetCustomerClassNameFromIdValueResponse = {
       clientClassName: result?.outBinds?.sz_Cltclassname,
       status: (result?.outBinds?.o_status ??
-        GetClientClassNameFromIdValueStatusConstants.ERROR) as GetClientClassNameFromIdValueStatusConstants,
+        GetCustomerClassNameFromIdValueStatusConstants.ERROR) as GetCustomerClassNameFromIdValueStatusConstants,
     };
     switch (response.status) {
-      case GetClientClassNameFromIdValueStatusConstants.SUCCESSFULL:
+      case GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL:
         return response;
-      case GetClientClassNameFromIdValueStatusConstants.ERROR:
-        throw new GetClientClassNameFromIdValueInternalErrorException();
-      case GetClientClassNameFromIdValueStatusConstants.THERE_IS_NO_DATA:
-        throw new GetClientClassNameFromIdValueThereIsNoDataException();
+      case GetCustomerClassNameFromIdValueStatusConstants.ERROR:
+        throw new GetCustomerClassNameFromIdValueInternalErrorException();
+      case GetCustomerClassNameFromIdValueStatusConstants.THERE_IS_NO_DATA:
+        throw new GetCustomerClassNameFromIdValueThereIsNoDataException();
       default:
-        throw new GetClientClassNameFromIdValueInternalErrorException();
+        throw new GetCustomerClassNameFromIdValueInternalErrorException();
     }
   }
 
@@ -232,7 +234,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
   private async getClientInstanceIdFromIdValue(
     idValue: string,
     clientAttributeName: string,
-  ): Promise<IGetClientInstanceIdFromIdValueResponse> {
+  ): Promise<IGetCustomerInstanceIdFromIdValueResponse> {
     const parameters = {
       sz_IdValue: OracleHelper.stringBindIn(idValue, 256),
       sz_Cltattributename: OracleHelper.stringBindIn(clientAttributeName, 256),
@@ -244,20 +246,20 @@ export class ValidateCustomerService extends OracleDatabaseService {
       OracleConstants.GET_CUSTOMER_INSTANCE_ID_FROM_ID_VALUE,
       parameters,
     );
-    const response: IGetClientInstanceIdFromIdValueResponse = {
+    const response: IGetCustomerInstanceIdFromIdValueResponse = {
       clientInstanceId: result?.outBinds?.l_cltinstanceid,
       status: (result?.outBinds?.status ??
-        GetClientInstanceIdFromIdValueStatusConstants.INTERNAL_ERROR) as GetClientInstanceIdFromIdValueStatusConstants,
+        GetCustomerInstanceIdFromIdValueStatusConstants.INTERNAL_ERROR) as GetCustomerInstanceIdFromIdValueStatusConstants,
     };
     switch (response.status) {
-      case GetClientInstanceIdFromIdValueStatusConstants.SUCCESSFULL:
+      case GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL:
         return response;
-      case GetClientInstanceIdFromIdValueStatusConstants.INTERNAL_ERROR:
-        throw new GetClientInstanceIdFromIdValueInternalErrorException();
-      case GetClientInstanceIdFromIdValueStatusConstants.THERE_IS_NO_DATA:
-        throw new GetClientInstanceIdFromIdValueThereIsNoDataException();
+      case GetCustomerInstanceIdFromIdValueStatusConstants.INTERNAL_ERROR:
+        throw new GetCustomerInstanceIdFromIdValueInternalErrorException();
+      case GetCustomerInstanceIdFromIdValueStatusConstants.THERE_IS_NO_DATA:
+        throw new GetCustomerInstanceIdFromIdValueThereIsNoDataException();
       default:
-        throw new GetClientInstanceIdFromIdValueInternalErrorException();
+        throw new GetCustomerInstanceIdFromIdValueInternalErrorException();
     }
   }
 
@@ -300,7 +302,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
   private async getDebtFromClient(
     idValue: string,
     clientAttributeName: string,
-  ): Promise<IGetDebtFromClientResponse> {
+  ): Promise<IGetDebtFromCustomerResponse> {
     const parameters = {
       sz_IdValue: OracleHelper.stringBindIn(idValue, 256),
       sz_Cltattributename: OracleHelper.stringBindIn(clientAttributeName, 256),
@@ -312,20 +314,20 @@ export class ValidateCustomerService extends OracleDatabaseService {
       OracleConstants.GET_DEBT_FROM_CUSTOMER,
       parameters,
     );
-    const response: IGetDebtFromClientResponse = {
+    const response: IGetDebtFromCustomerResponse = {
       clientInstanceId: result?.outBinds?.l_cltinstanceid,
       status: (result?.outBinds?.status ??
-        GetDebtFromClientStatusConstants.INTERNAL_ERROR) as GetDebtFromClientStatusConstants,
+        GetDebtFromCustomerStatusConstants.INTERNAL_ERROR) as GetDebtFromCustomerStatusConstants,
     };
     switch (response.status) {
-      case GetDebtFromClientStatusConstants.SUCCESSFULL:
+      case GetDebtFromCustomerStatusConstants.SUCCESSFULL:
         return response;
-      case GetDebtFromClientStatusConstants.INTERNAL_ERROR:
-        throw new GetDebtFromClientInternalErrorException();
-      case GetDebtFromClientStatusConstants.THERE_IS_NO_DATA:
-        throw new GetDebtFromClientThereIsNoDataException();
+      case GetDebtFromCustomerStatusConstants.INTERNAL_ERROR:
+        throw new GetDebtFromCustomerInternalErrorException();
+      case GetDebtFromCustomerStatusConstants.THERE_IS_NO_DATA:
+        throw new GetDebtFromCustomerThereIsNoDataException();
       default:
-        throw new GetDebtFromClientInternalErrorException();
+        throw new GetDebtFromCustomerInternalErrorException();
     }
   }
 

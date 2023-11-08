@@ -6,6 +6,6 @@ import { GetOrderIdFromABASalesService } from './get-order-id-from-aba-sales.ser
   imports: [],
   controllers: [GetOrderIdFromABASalesController],
   providers: [GetOrderIdFromABASalesService],
-  exports: [],
+  exports: [GetOrderIdFromABASalesService],
 })
 export class GetOrderIdFromABASalesModule {}

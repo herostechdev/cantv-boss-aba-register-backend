@@ -1,10 +1,10 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class GetDebtFromClientThereIsNoDataException extends CustomBadRequestException {
+export class GetCustomerInstanceIdFromIdValueThereIsNoDataException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',
-      guid: '2aa2b4d5-168e-4a11-a1b2-ce508281d2bd',
+      guid: 'dd7aa1b3-d52f-4b00-bf67-4ab97020a134',
       objectOrError: 'No hay datos',
     });
   }

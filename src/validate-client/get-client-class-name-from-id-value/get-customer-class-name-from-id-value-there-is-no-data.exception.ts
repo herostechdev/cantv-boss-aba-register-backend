@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class GetClientClassNameFromIdValueThereIsNoDataException extends CustomBadRequestException {
+export class GetCustomerClassNameFromIdValueThereIsNoDataException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',
