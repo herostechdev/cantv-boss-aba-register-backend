@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { DocumentsConfigurationService } from 'src/system/configuration/documents/documents-configuration.service';
 import { IGetLegalDocuments } from './get-legal-documents-response.interface';
@@ -21,10 +22,18 @@ export class GetLegalDocumentsService extends ExceptionsService {
   }
 
   private getContractDocument(): string {
-    return null;
+    const filePath = path.join(
+      this.documentsConfigurationService.legalDocumentsFolder,
+      this.documentsConfigurationService.contractDocumentName,
+    );
+    return fs.readFileSync(filePath, 'utf8');
   }
 
   private getTermsAndConditionsDocument(): string {
-    return null;
+    const filePath = path.join(
+      this.documentsConfigurationService.legalDocumentsFolder,
+      this.documentsConfigurationService.termsAndConditionsDocumentName,
+    );
+    return fs.readFileSync(filePath, 'utf8');
   }
 }
