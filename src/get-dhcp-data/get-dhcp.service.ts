@@ -6,6 +6,7 @@ import { IGetDHCPDataResponse } from './get-dhcp-data-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 import { HttpConstants } from 'src/system/infrastructure/http/http-constants';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
+import { GetDHCPDataException } from './get-dhcp-data.exception';
 
 @Injectable()
 export class GetDHCPDataService extends ExceptionsService {
@@ -40,7 +41,7 @@ export class GetDHCPDataService extends ExceptionsService {
         nsp: parts[2],
       };
     } catch (error) {
-      super.exceptionHandler(error, dto.ipAddress);
+      throw new GetDHCPDataException(error);
     }
   }
 }
