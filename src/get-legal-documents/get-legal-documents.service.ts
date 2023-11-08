@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { DocumentsConfigurationService } from 'src/system/configuration/documents/documents-configuration.service';
 import { IGetLegalDocuments } from './get-legal-documents-response.interface';
 
+@Injectable()
 export class GetLegalDocumentsService extends ExceptionsService {
   constructor(
     private readonly documentsConfigurationService: DocumentsConfigurationService,

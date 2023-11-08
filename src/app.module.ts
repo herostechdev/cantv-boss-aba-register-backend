@@ -17,6 +17,7 @@ import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { FindPreOrderModule } from './find-pre-order/find-pre-order.module';
 import { GetASAPOrderDetailModule } from './get-asap-order-detail/get-asap-order-detail.module';
+import { GetLegalDocumentsModule } from './get-legal-documents/get-legal-documents.module';
 import { GetOrderIdFromABASalesModule } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales.module';
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
 import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
@@ -50,6 +51,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     EncryptionModule,
     FindPreOrderModule,
     GetASAPOrderDetailModule,
+    GetLegalDocumentsModule,
     GetOrderIdFromABASalesModule,
     GetPlanDescriptionFromPlanNameModule,
     GetStateFromSerialModule,
