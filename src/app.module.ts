@@ -27,7 +27,7 @@ import { OracleConfigurationModule } from './system/configuration/oracle/oracle-
 import { PICConfigurationModule } from './system/configuration/pic/pic-configuration.module';
 import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/plan-by-class-client.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
-import { ValidateCustomerModule } from './validate-client/validate-customer.module';
+import { ValidateCustomerModule } from './validate-customer/validate-customer.module';
 import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibility/validate-technical-feasibility.module';
 
 @Module({

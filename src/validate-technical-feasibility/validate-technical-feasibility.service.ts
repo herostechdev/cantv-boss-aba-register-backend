@@ -73,6 +73,7 @@ import { GetDataFromRequestsException } from './get-data-from-requests/get-data-
 import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
 import { GetPortIdStatusConstants } from './get-port-id/get-port-id-status.constants';
 import { GetPortIdException } from './get-port-id/get-port-id.exception';
+import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from './get-dsl-central-co-id-by-dslam-port-id/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -147,6 +148,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           await this.modifyNetworkAccessLog(data);
         }
         data.deleteOrderResponse = await this.deleteOrder(data);
+        // TODO: Agregar llamada al SP GETDSLCENTRALCOIDBYDSLAMPORTID
+        data.getDSLCentralCoIdByDSLAMPortIdResponse =
+          await this.getDSLCentralCoIdByDSLAMPortId(data);
         data.readIABAOrderResponse = await this.readIABAOrder(data);
         if (
           data.readIABAOrderResponse.errorCode ===
@@ -932,6 +936,25 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       default:
         throw new DeleteOrderExecutionErrorException();
     }
+  }
+
+  // TODO: Origen del parámetro l_dslamportid
+  private async getDSLCentralCoIdByDSLAMPortId(
+    data: ValidateTechnicalFeasibilityData,
+  ): Promise<IGetDSLCentralCoIdByDSLAMPortIdResponse> {
+    const parameters = {
+      l_dslamportid: OracleHelper.numberBindIn(null),
+      sz_Coid: OracleHelper.stringBindOut(),
+    };
+    const result = await super.executeStoredProcedure(
+      null,
+      OracleConstants.GET_DSL_CENTRAL_CO_ID_BY_DSLAM_PORT_ID,
+      parameters,
+    );
+    const response: IGetDSLCentralCoIdByDSLAMPortIdResponse = {
+      coId: result?.outBinds?.sz_Coid,
+    };
+    return response;
   }
 
   // TODO: determinar origen del parametro: sz_ncc
