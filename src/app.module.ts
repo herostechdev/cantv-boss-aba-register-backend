@@ -12,6 +12,7 @@ import { AppService } from './app.service';
 import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
 import { CRMCustomersModule } from './customers/crm-customers.module';
 import { CustomerExistsModule } from './customer-exists/customer-exists.module';
+import { DocumentsConfigurationModule } from './system/configuration/documents/documents-configuration.module';
 import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { FindPreOrderModule } from './find-pre-order/find-pre-order.module';
@@ -44,6 +45,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     CustomerExistsModule,
     ConfirmRegistrationModule,
     CRMCustomersModule,
+    DocumentsConfigurationModule,
     DSLAuditLogsModule,
     EncryptionModule,
     FindPreOrderModule,
