@@ -17,14 +17,15 @@ import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { FindPreOrderModule } from './find-pre-order/find-pre-order.module';
 import { GetASAPOrderDetailModule } from './get-asap-order-detail/get-asap-order-detail.module';
+import { GetDHCPDataModule } from './get-dhcp-data/get-dhcp-data.module';
 import { GetLegalDocumentsModule } from './get-legal-documents/get-legal-documents.module';
 import { GetOrderIdFromABASalesModule } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales.module';
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
 import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
+import { IntegrationsConfigurationModule } from './system/configuration/pic/integrations-configuration.module';
 import { IsIPAllowedModule } from './is-ip-allowed/is-ip-allowed.module';
 import { LoginModule } from './login/login.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
-import { PICConfigurationModule } from './system/configuration/pic/pic-configuration.module';
 import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/plan-by-class-client.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
 import { ValidateCustomerModule } from './validate-customer/validate-customer.module';
@@ -51,14 +52,15 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     EncryptionModule,
     FindPreOrderModule,
     GetASAPOrderDetailModule,
+    GetDHCPDataModule,
     GetLegalDocumentsModule,
     GetOrderIdFromABASalesModule,
     GetPlanDescriptionFromPlanNameModule,
     GetStateFromSerialModule,
+    IntegrationsConfigurationModule,
     IsIPAllowedModule,
     LoginModule,
     OracleConfigurationModule,
-    PICConfigurationModule,
     PlanByClassClientModule,
     SecurityConfigurationModule,
     ValidateCustomerModule,

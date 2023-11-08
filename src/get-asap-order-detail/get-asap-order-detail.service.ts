@@ -6,14 +6,14 @@ import { IGetASAPOrderDetailRequest } from './get-asap-order-detail-request.inte
 import { IGetASAPOrderDetailResponse } from './get-asap-order-detail-response.interface';
 import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
 import { GetASAPOrderDetailInvalidQueryRequestException } from './get-asap-order-detail-invalid-request.exception';
-import { PICConfigurationService } from 'src/system/configuration/pic/pic-configuration.service';
+import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 
 @Injectable()
 export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderDetailResponse> {
   constructor(
     private readonly httpService: HttpService,
     private readonly requestPayloadService: GetASAPOrderDetailPayloadService,
-    private readonly picConfigurationService: PICConfigurationService,
+    private readonly picConfigurationService: IntegrationsConfigurationService,
   ) {
     super();
   }

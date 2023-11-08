@@ -5,6 +5,7 @@ import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interf
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDataFromRequestsResponse } from './get-data-from-requests/get-data-from-requests-response.interface';
+import { IGetDHCPDataResponse } from 'src/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from './get-dsl-central-co-id-by-dslam-port-id/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
@@ -27,8 +28,7 @@ export class ValidateTechnicalFeasibilityData {
   getABADataFromRequestsResponse: IGetABADataFromRequestsResponse;
   isValidIpAddressResponse: IIsValidIpAddressResponse;
   getPortIdFromIpResponse: IGetPortIdFromIpResponse;
-  // TODO: DETERMINAR EL TIPO DE LA RESPUESTA DEL RECURSO API: queryDHCP
-  queryDHCPResponse: any;
+  queryDHCPResponse: IGetDHCPDataResponse;
   getValidVPIResponse: string;
   // TODO: DETERMINAR EL TIPO DE LA RESPUESTA DEL SP: getPortId
   getPortIdResponse: any;

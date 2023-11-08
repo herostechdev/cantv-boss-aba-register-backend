@@ -1,8 +1,8 @@
 import * as Joi from 'joi';
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import configuration from './pic-configuration';
-import { PICConfigurationService } from './pic-configuration.service';
+import configuration from './integrations-configuration';
+import { IntegrationsConfigurationService } from './integrations-configuration.service';
 
 @Global()
 @Module({
@@ -12,10 +12,11 @@ import { PICConfigurationService } from './pic-configuration.service';
       load: [configuration],
       validationSchema: Joi.object({
         PIC_GET_ASAP_ORDER_DETAIL_URL: Joi.string(),
+        BOSS_GET_DHCP_DATA_URL: Joi.string(),
       }),
     }),
   ],
-  providers: [ConfigService, PICConfigurationService],
-  exports: [ConfigService, PICConfigurationService],
+  providers: [ConfigService, IntegrationsConfigurationService],
+  exports: [ConfigService, IntegrationsConfigurationService],
 })
-export class PICConfigurationModule {}
+export class IntegrationsConfigurationModule {}

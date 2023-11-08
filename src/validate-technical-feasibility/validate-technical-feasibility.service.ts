@@ -25,6 +25,7 @@ import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDataFromDSLAMPortIdThereIsNoDataException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-there-is-no-data.exception';
+import { GetDHCPDataService } from 'src/get-dhcp-data/get-dhcp.service';
 import { GetDownstreamFromPlanException } from './get-downstream-from-plan/get-downstream-from-plan.exception';
 import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
 import { GetInfoFromABARequestsException } from './get-info-from-aba-requests/get-info-from-aba-requests.exception';
@@ -74,10 +75,12 @@ import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface
 import { GetPortIdStatusConstants } from './get-port-id/get-port-id-status.constants';
 import { GetPortIdException } from './get-port-id/get-port-id.exception';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from './get-dsl-central-co-id-by-dslam-port-id/get-dsl-central-co-id-by-dslam-port-id-response.interface';
+import { IGetDHCPDataResponse } from 'src/get-dhcp-data/get-dhcp-data-response.interface';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
+    private readonly getDHCPDataService: GetDHCPDataService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
   ) {
@@ -653,11 +656,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     return response;
   }
 
-  // TODO: Invoke query dhcp service. BLOCKING!!!
-  private async queryDHCP(
+  private queryDHCP(
     data: ValidateTechnicalFeasibilityData,
-  ): Promise<any> {
-    return null;
+  ): Promise<IGetDHCPDataResponse> {
+    return this.getDHCPDataService.get({
+      ipAddress: data.requestDto.ipAddress,
+    });
   }
 
   // TODO: Investigar y capturar el valor del parametro de entrada i_invalidvpi
