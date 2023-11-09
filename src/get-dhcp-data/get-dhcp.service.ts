@@ -30,10 +30,14 @@ export class GetDHCPDataService extends ExceptionsService {
         });
       if (!ValidationHelper.isDefined(response.data)) {
         // TODO: throw exception
+        throw new Error('Parámetros de entrada inválidos');
       }
       const parts = String(response.data).split('|');
       if (!ValidationHelper.isArrayWithItems(parts) || parts.length < 3) {
         // TODO: throw exception
+        throw new Error(
+          'Respuesta incorrecta del servicio de consulta de datos del DHCP',
+        );
       }
       return {
         vpi: parts[0],
