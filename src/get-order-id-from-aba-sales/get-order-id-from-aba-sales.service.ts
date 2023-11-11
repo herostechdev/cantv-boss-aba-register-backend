@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Error2002Exception } from 'src/exceptions/error-2002.exception';
 import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesStatusConstants } from './get-order-id-from-aba-sales-status.constants';
 import { GetOrderIdFromABASalesException } from './get-order-id-from-aba-sales.exception';
@@ -33,7 +34,7 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
         parameters,
       );
       const status = (OracleHelper.getFirstItem(result, 'str_status') ??
-        GetOrderIdFromABASalesStatusConstants.INTERNAL_ERROR) as GetOrderIdFromABASalesStatusConstants;
+        GetOrderIdFromABASalesStatusConstants.ERROR) as GetOrderIdFromABASalesStatusConstants;
       const response: IGetOrderIdFromABASalesResponse = {
         orderId: OracleHelper.getFirstItem(result, 'str_orderid'),
         status: status,
@@ -41,10 +42,12 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
       switch (response.status) {
         case GetOrderIdFromABASalesStatusConstants.SUCCESSFULL:
           return response;
-        case GetOrderIdFromABASalesStatusConstants.INTERNAL_ERROR:
+        case GetOrderIdFromABASalesStatusConstants.ERROR:
           throw new GetOrderIdFromABASalesException();
-        case GetOrderIdFromABASalesStatusConstants.IMVALID_IP:
+        case GetOrderIdFromABASalesStatusConstants.PHONE_WITHOUT_PRE_ORDER:
           return response;
+        case GetOrderIdFromABASalesStatusConstants.PRE_ORDER_NOT_ACCEPTED_OR_COMPLETED:
+          throw new Error2002Exception();
         default:
           throw new GetOrderIdFromABASalesException();
       }

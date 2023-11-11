@@ -1,5 +1,6 @@
 export enum GetOrderIdFromABASalesStatusConstants {
   SUCCESSFULL,
-  INTERNAL_ERROR,
-  IMVALID_IP,
+  ERROR,
+  PHONE_WITHOUT_PRE_ORDER = 5,
+  PRE_ORDER_NOT_ACCEPTED_OR_COMPLETED = 6,
 }

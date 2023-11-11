@@ -25,9 +25,6 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       this.validateInput(dto);
       return await this.invoke(dto);
     } catch (error) {
-      console.log();
-      console.log('ERROR   >> getASAPOrderDetail');
-      console.log(error);
       this.exceptionHandler(error);
     }
   }
