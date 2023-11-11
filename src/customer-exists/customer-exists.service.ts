@@ -28,14 +28,16 @@ export class CustomerExistsService extends OracleDatabaseService {
     const parameters = {
       sz_attributename: OracleHelper.stringBindIn(attributeName),
       sz_attributevalue: OracleHelper.stringBindIn(attributeValue),
+      sz_cltclassname: OracleHelper.stringBindOut(),
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      null,
+      OracleConstants.ACT_PACKAGE,
       OracleConstants.CUSTOMER_EXISTS,
       parameters,
     );
     const response: ICustomerExistsResponse = {
+      customerClassName: result?.outBinds?.sz_cltclassname,
       status: (result?.outBinds?.status ??
         CustomerExistsStatusConstants.INTERNAL_ERROR) as CustomerExistsStatusConstants,
     };
@@ -45,7 +47,8 @@ export class CustomerExistsService extends OracleDatabaseService {
       case CustomerExistsStatusConstants.INTERNAL_ERROR:
         throw new CustomerExistsInternalErrorException();
       case CustomerExistsStatusConstants.THERE_IS_NO_DATA:
-        throw new CustomerExistsThereIsNoDataException();
+        // throw new CustomerExistsThereIsNoDataException();
+        return response;
       default:
         throw new CustomerExistsInternalErrorException();
     }
