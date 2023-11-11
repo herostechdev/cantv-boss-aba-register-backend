@@ -1,4 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { ABARegisterStatusConstants } from './aba-register/aba-register-status.constants';
+import { ABARegisterInternalErrorException } from './aba-register/aba-register-internal-error.exception';
+import { ABARegisterThereIsNoDataException } from './aba-register/aba-register-there-is-no-data.exception';
+import { ABARegisterOccupiedPortException } from './aba-register/aba-register-occupied-port.exception';
+import { CancelABAInstallationStatusConstants } from './cancel-aba-installation/cancel-aba-installation-status.constants';
+import { CancelABAInstallationInternalErrorException } from './cancel-aba-installation/cancel-aba-installation-internal-error.exception';
+import { CancelABAInstallationThereIsNoDataException } from './cancel-aba-installation/cancel-aba-installation-there-is-no-data.exception';
+import { CancelABAInstallationOccupiedPortException } from './cancel-aba-installation/cancel-aba-installation-occupied-port.exception';
 import { ConfirmRegistrationRequestDto } from './confirm-registration-request.dto';
 import { ConfirmRegistrationData } from './confirm-registration-data';
 import { CreateAndProvisioningCustomerStatusConstants } from './create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
@@ -7,8 +15,9 @@ import { CreateAndProvisioningMasterActStatusConstants } from './create-and-prov
 import { CreateAndProvisioningMasterActInternalErrorException } from './create-and-provisioning-master-act/create-and-provisioning-master-act-internal-error.exception';
 import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
 import { CustomerExistsStatusConstants } from 'src/customer-exists/customer-exists-status.constants';
-import { Error10022Exception } from 'src/exceptions/error-1002-2.exception';
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
+import { IABARegisterResponse } from './aba-register/aba-register-response.interface';
+import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
 import { ICreateAndProvisioningCustomerResponse } from './create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICreateAndProvisioningMasterActResponse } from './create-and-provisioning-master-act/create-and-provisioning-master-act-response.interface';
 import { IGetPlanABAFromKenanResponse } from './get-plan-aba-from-kenan/get-plan-aba-from-kenan-response.interface';
@@ -23,16 +32,20 @@ import { OracleConfigurationService } from 'src/system/configuration/oracle/orac
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConstants } from 'src/oracle/oracle.constants';
-import { IABARegisterResponse } from './aba-register/aba-register-response.interface';
-import { ABARegisterStatusConstants } from './aba-register/aba-register-status.constants';
-import { ABARegisterInternalErrorException } from './aba-register/aba-register-internal-error.exception';
-import { ABARegisterThereIsNoDataException } from './aba-register/aba-register-there-is-no-data.exception';
-import { ABARegisterOccupiedPortException } from './aba-register/aba-register-occupied-port.exception';
-import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
-import { CancelABAInstallationStatusConstants } from './cancel-aba-installation/cancel-aba-installation-status.constants';
-import { CancelABAInstallationInternalErrorException } from './cancel-aba-installation/cancel-aba-installation-internal-error.exception';
-import { CancelABAInstallationThereIsNoDataException } from './cancel-aba-installation/cancel-aba-installation-there-is-no-data.exception';
-import { CancelABAInstallationOccupiedPortException } from './cancel-aba-installation/cancel-aba-installation-occupied-port.exception';
+import { BillingException } from './create-and-provisioning-master-act/billing.exception';
+import { ContactAdministratorException } from './create-and-provisioning-master-act/contact-administrator.exception';
+import { CreateUserInstanceException } from './create-and-provisioning-master-act/create-user-instance.exception';
+import { CreatingAccountStatementException } from './create-and-provisioning-master-act/creating-account-statement.exception';
+import { CreatingBillingChargeException } from './create-and-provisioning-master-act/creating-billing-charge.exception';
+import { CreatingContractException } from './create-and-provisioning-master-act/creating-contract.exception';
+import { CreatingDiscountException } from './create-and-provisioning-master-act/creating-discount.exception';
+import { CreatingHostingChargeException } from './create-and-provisioning-master-act/creating-hosting-charge.exception';
+import { CreatingMasterAccountException } from './create-and-provisioning-master-act/creating-master-account.exception';
+import { CreatingPaymentInstanceException } from './create-and-provisioning-master-act/creating-payment-instance.exception';
+import { CreatingSubaccountException } from './create-and-provisioning-master-act/creating-subaccount.exception';
+import { ObtainingInstanceFromAttributeListException } from './create-and-provisioning-master-act/obtaining-instance-from-attribute-list.exception';
+import { ThereIsNoDataException } from './create-and-provisioning-master-act/there-is-no-data.exception';
+import { Error10023Exception } from 'src/exceptions/error-1002-3.exception';
 
 @Injectable()
 export class ConfirmRegistrationService extends OracleDatabaseService {
@@ -208,6 +221,32 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         return response;
       case CreateAndProvisioningMasterActStatusConstants.INTERNAL_ERROR:
         throw new CreateAndProvisioningMasterActInternalErrorException();
+      case CreateAndProvisioningMasterActStatusConstants.CREATE_USER_INSTANCE_ERROR:
+        throw new CreateUserInstanceException();
+      case CreateAndProvisioningMasterActStatusConstants.OBTAINING_INSTANCE_FROM_ATTRIBUTE_LIST_ERROR:
+        throw new ObtainingInstanceFromAttributeListException();
+      case CreateAndProvisioningMasterActStatusConstants.BILLING_ERROR:
+        throw new BillingException();
+      case CreateAndProvisioningMasterActStatusConstants.CREATING_MASTER_ACCOUNT_ERROR:
+        throw new CreatingMasterAccountException();
+      case CreateAndProvisioningMasterActStatusConstants.CREATING_ACCOUNT_STATEMENT_ERROR:
+        throw new CreatingAccountStatementException();
+      case CreateAndProvisioningMasterActStatusConstants.CREATING_BILLING_CHARGE_ERROR:
+        throw new CreatingBillingChargeException();
+      case CreateAndProvisioningMasterActStatusConstants.CREATING_HOSTING_CHARGE_ERROR:
+        throw new CreatingHostingChargeException();
+      case CreateAndProvisioningMasterActStatusConstants.CREATING_SUBACCOUNT_ERROR:
+        throw new CreatingSubaccountException();
+      case CreateAndProvisioningMasterActStatusConstants.CREATING_PAYMENT_INSTANCE_ERROR:
+        throw new CreatingPaymentInstanceException();
+      case CreateAndProvisioningMasterActStatusConstants.CREATING_CONTRACT_ERROR:
+        throw new CreatingContractException();
+      case CreateAndProvisioningMasterActStatusConstants.THERE_IS_NO_DATA_ERROR:
+        throw new ThereIsNoDataException();
+      case CreateAndProvisioningMasterActStatusConstants.CONTACT_ADMINISTRATOR_ERROR:
+        throw new ContactAdministratorException();
+      case CreateAndProvisioningMasterActStatusConstants.CREATING_DISCOUNT_ERROR:
+        throw new CreatingDiscountException();
       default:
         throw new CreateAndProvisioningMasterActInternalErrorException();
     }
@@ -277,17 +316,22 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     data: ConfirmRegistrationData,
   ): Promise<IABARegisterResponse> {
     const parameters = {
-      sz_Login: OracleHelper.stringBindIn(data.requestDto.installerLogin, 32),
-      l_result: OracleHelper.numberBindOut(),
-      o_status: OracleHelper.numberBindOut(),
+      abadslamportid: OracleHelper.stringBindIn(
+        data.requestDto.installerLogin,
+        32,
+      ),
+      abaclientserviceid: OracleHelper.stringBindIn(null),
+      abaattrvalues: OracleHelper.stringBindIn(null),
+      tstatus: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
       OracleConstants.ACT_PACKAGE,
       OracleConstants.ABA_REGISTER,
       parameters,
     );
+
     const response: IABARegisterResponse = {
-      status: (result?.outBinds?.o_status ??
+      status: (OracleHelper.getFirstItem(result, 'tstatus') ??
         ABARegisterStatusConstants.INTERNAL_ERROR) as ABARegisterStatusConstants,
     };
     switch (response.status) {
@@ -296,9 +340,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       case ABARegisterStatusConstants.INTERNAL_ERROR:
         throw new ABARegisterInternalErrorException();
       case ABARegisterStatusConstants.THERE_IS_NO_DATA:
-        throw new ABARegisterThereIsNoDataException();
-      case ABARegisterStatusConstants.OCCUPIED_PORT:
-        throw new ABARegisterOccupiedPortException();
+        throw new Error10023Exception();
       default:
         throw new ABARegisterInternalErrorException();
     }
@@ -334,8 +376,6 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         throw new CancelABAInstallationInternalErrorException();
       case CancelABAInstallationStatusConstants.THERE_IS_NO_DATA:
         throw new CancelABAInstallationThereIsNoDataException();
-      case CancelABAInstallationStatusConstants.OCCUPIED_PORT:
-        throw new CancelABAInstallationOccupiedPortException();
       default:
         throw new CancelABAInstallationInternalErrorException();
     }
