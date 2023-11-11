@@ -1,4 +1,4 @@
-export enum GetABADataFromRequestsConstants {
+export enum GetABADataFromRequestsStatusConstants {
   SUCCESSFULL,
   EXECUTION_ERROR,
   THERE_IS_NO_DATA,

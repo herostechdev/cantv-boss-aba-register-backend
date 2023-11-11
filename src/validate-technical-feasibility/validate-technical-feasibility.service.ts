@@ -19,7 +19,7 @@ import { GetPortIdFromIpExecutionException } from './get-port-id-from-ip/get-por
 import { GetABADataConstants } from './get-aba-data/get-aba-data.constants';
 import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-execution-error.exception';
 import { GetABADataFromRequestsException } from './get-aba-data-from-requests/get-aba-data-from-requests.exception';
-import { GetABADataFromRequestsConstants } from './get-aba-data-from-requests/get-aba-data-from-requests-status.constants';
+import { GetABADataFromRequestsStatusConstants } from './get-aba-data-from-requests/get-aba-data-from-requests-status.constants';
 import { GetAndRegisterQualifOfServiceException } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service.exception';
 import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
@@ -481,42 +481,42 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         data.requestDto.phoneNumber,
         256,
       ),
-      o_id: OracleHelper.tableOfStringBindOut(532),
-      o_firstname: OracleHelper.tableOfStringBindOut(532),
-      o_lastname: OracleHelper.tableOfStringBindOut(532),
-      o_email: OracleHelper.tableOfStringBindOut(532),
-      o_phonenumber: OracleHelper.tableOfStringBindOut(532),
-      o_address1: OracleHelper.tableOfStringBindOut(532),
-      o_address2: OracleHelper.tableOfStringBindOut(532),
-      o_city: OracleHelper.tableOfStringBindOut(532),
-      o_state: OracleHelper.tableOfStringBindOut(532),
+      sz_Fecha1: OracleHelper.stringBindOut(10),
+      sz_Fecha2: OracleHelper.stringBindOut(10),
+      sz_Fecha3: OracleHelper.stringBindOut(10),
+      sz_PlanDesired: OracleHelper.stringBindOut(32),
+      sz_PlanDescription: OracleHelper.stringBindOut(256),
+      sz_MedioP: OracleHelper.stringBindOut(32),
+      abarequests_row: OracleHelper.stringBindOut(10),
+      abaacceptedrequests_row: OracleHelper.stringBindOut(10),
+      abarequestsregistes_row: OracleHelper.stringBindOut(10),
       Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
+      OracleConstants.ACT_PACKAGE,
       OracleConstants.GET_ABA_DATA_FROM_REQUESTS,
       parameters,
     );
+    const status = (result?.outBinds?.Status ??
+      GetABADataFromRequestsStatusConstants.EXECUTION_ERROR) as GetABADataFromRequestsStatusConstants;
     const response: IGetABADataFromRequestsResponse = {
-      id: OracleHelper.getFirstItem(result, 'o_id'),
-      firstname: OracleHelper.getFirstItem(result, 'o_firstname'),
-      lastname: OracleHelper.getFirstItem(result, 'o_lastname'),
-      email: OracleHelper.getFirstItem(result, 'o_email'),
-      phonenumber: OracleHelper.getFirstItem(result, 'o_phonenumber'),
-      address1: OracleHelper.getFirstItem(result, 'o_address1'),
-      address2: OracleHelper.getFirstItem(result, 'o_address2'),
-      city: OracleHelper.getFirstItem(result, 'o_city'),
-      state: OracleHelper.getFirstItem(result, 'o_state'),
-      status: result?.outBinds?.Status,
+      date1: result?.outBinds?.sz_Fecha1,
+      date2: result?.outBinds?.sz_Fecha2,
+      date3: result?.outBinds?.sz_Fecha3,
+      desiredPlan: result?.outBinds?.sz_PlanDesired,
+      descriptionPlan: result?.outBinds?.sz_PlanDescription,
+      medioP: result?.outBinds?.sz_MedioP,
+      abaRequestsRow: result?.outBinds?.abarequests_row,
+      abaAcceptedRequestsRow: result?.outBinds?.abaacceptedrequests_row,
+      abaRequestsRegistersRow: result?.outBinds?.abarequestsregistes_row,
+      status: status,
     };
-    switch (response.status) {
-      case GetABADataFromRequestsConstants.SUCCESSFULL:
+    switch (status) {
+      case GetABADataFromRequestsStatusConstants.SUCCESSFULL:
         return response;
-      case GetABADataFromRequestsConstants.EXECUTION_ERROR:
+      case GetABADataFromRequestsStatusConstants.EXECUTION_ERROR:
         throw new GetInfoFromABARequestsException();
-      case GetABADataFromRequestsConstants.THERE_IS_NO_DATA:
-        return response;
-      case GetABADataFromRequestsConstants.OCCUPIED_PORT:
+      case GetABADataFromRequestsStatusConstants.THERE_IS_NO_DATA:
         return response;
       default:
         throw new GetInfoFromABARequestsException();

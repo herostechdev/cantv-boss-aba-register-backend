@@ -1,15 +1,15 @@
 import { IStatusResponse } from 'src/responses/status-response.interface';
-import { GetABADataFromRequestsConstants } from './get-aba-data-from-requests-status.constants';
+import { GetABADataFromRequestsStatusConstants } from './get-aba-data-from-requests-status.constants';
 
 export interface IGetABADataFromRequestsResponse
-  extends IStatusResponse<GetABADataFromRequestsConstants> {
-  id: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  phonenumber: string;
-  address1: string;
-  address2: string;
-  city: string;
-  state: string;
+  extends IStatusResponse<GetABADataFromRequestsStatusConstants> {
+  date1: string;
+  date2: string;
+  date3: string;
+  desiredPlan: string;
+  descriptionPlan: string;
+  medioP: string;
+  abaRequestsRow: any;
+  abaAcceptedRequestsRow: any;
+  abaRequestsRegistersRow: any;
 }
