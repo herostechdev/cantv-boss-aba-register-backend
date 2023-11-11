@@ -1,4 +1,4 @@
-export interface ILoginResponse {
-  expireDate: string;
-  status: number;
-}
+import { IStatusResponse } from 'src/responses/status-response.interface';
+import { LoginActionStausConstants } from './login.constans';
+
+export type ILoginResponse = IStatusResponse<LoginActionStausConstants>;

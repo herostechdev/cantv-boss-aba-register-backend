@@ -6,6 +6,8 @@ export enum LoginStatusConstants {
   NOT_FOUND,
 }
 
-export enum LoginActionConstants {
-  INSTALAR_ABA = 'INSTALAR_ABA',
+export enum LoginActionStausConstants {
+  SUCCESSFULL,
+  INTERNAL_ERROR,
+  THERE_IS_NO_DATA,
 }

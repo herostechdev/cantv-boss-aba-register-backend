@@ -61,5 +61,6 @@ export class OracleConstants {
   public static VERIFY_CONTRACT_BY_PHONE = 'verifycontracbyphone';
 
   // GENERAL
+  public static INSTALL_ABA = 'INSTALAR_ABA';
   public static OCCUPIED_PORT = 1;
 }

@@ -6,12 +6,17 @@ import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { LoginData } from './LOGIN-data';
 import { IISGActionAllowedResponse } from './get-group-access-from-login-response.interface';
-import { LoginActionConstants, LoginStatusConstants } from './login.constans';
+import {
+  LoginActionStausConstants,
+  LoginStatusConstants,
+} from './login.constans';
 import { GetGroupAccessFromLoginInternalErrorException } from './get-group-access-from-login-internal-error.exception';
 import { GetGroupAccessFromLoginThereIsNoDataException } from './get-group-access-from-login-there-is-no-data.exception';
 import { GetGroupAccessFromLoginNotFoundException } from './get-group-access-from-login-not-found.exception';
 import { IGetGroupAccessFromLoginResponse } from './isg-action-allowed-response.interface';
 import { ILoginResponse } from './login-response.interface';
+import { ISGActionAllowedThereIsNoDataException } from './isg-action-allowed-there-is-no-data.exception';
+import { ISGActionAllowedException } from './isg-action-allowed.exception';
 
 @Injectable()
 export class LoginService extends OracleDatabaseService {
@@ -29,15 +34,10 @@ export class LoginService extends OracleDatabaseService {
       data.getGroupAccessFromLoginResponse = await this.getGroupAccessFromLogin(
         data,
       );
-      //TODO: Validar si el password es correcto: data.getGroupAccessFromLoginResponse.userpassword
-      //TODO: No correcto: Error Correcto: Continua
-      //Valida si el usuario tiene permisos para Instalar ABA
+      //TODO: Validar si el password es correcto: data.getGroupAccessFromLoginResponse.userpassword. Validar con Ivan validación MD5
       data.isgActionAllowedResponse = await this.isgActionAllowed(data);
-      //TODO: Validar que data va en expireDate
-      //TODO: El campo status estaba string en ILoginResponse y lo cambie a number
       return {
         status: data.isgActionAllowedResponse.status,
-        expireDate: '2023/12//12',
       };
     } catch (error) {
       super.exceptionHandler(error, `${dto?.userlogin}`);
@@ -58,8 +58,8 @@ export class LoginService extends OracleDatabaseService {
         status: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.BOSS_PACKAGE,
-        OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
+        OracleConstants.SIGS_PACKAGE,
+        OracleConstants.GET_GROUP_ACCESS_FROM_LOGIN,
         parameters,
       );
       const response: IGetGroupAccessFromLoginResponse = {
@@ -96,11 +96,11 @@ export class LoginService extends OracleDatabaseService {
         groupname: OracleHelper.stringBindIn(
           data.getGroupAccessFromLoginResponse.accessgroup,
         ),
-        action: OracleHelper.stringBindIn(LoginActionConstants.INSTALAR_ABA),
+        action: OracleHelper.stringBindIn(OracleConstants.INSTALL_ABA),
         status: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.BOSS_PACKAGE,
+        OracleConstants.SIGS_PACKAGE,
         OracleConstants.ISG_ACTION_ALLOWED,
         parameters,
       );
@@ -108,14 +108,14 @@ export class LoginService extends OracleDatabaseService {
         status: OracleHelper.getFirstItem(result, 'status'),
       };
       switch (response.status) {
-        case LoginStatusConstants.SUCCESSFULL:
+        case LoginActionStausConstants.SUCCESSFULL:
           return response;
-        case LoginStatusConstants.INTERNAL_ERROR:
-          throw new GetGroupAccessFromLoginInternalErrorException();
-        case LoginStatusConstants.THERE_IS_NO_DATA:
-          throw new GetGroupAccessFromLoginThereIsNoDataException();
+        case LoginActionStausConstants.INTERNAL_ERROR:
+          throw new ISGActionAllowedException();
+        case LoginActionStausConstants.THERE_IS_NO_DATA:
+          throw new ISGActionAllowedThereIsNoDataException();
         default:
-          throw new GetGroupAccessFromLoginInternalErrorException();
+          throw new ISGActionAllowedException();
       }
     } catch (error) {
       super.exceptionHandler(error, data?.requestDto.userlogin);

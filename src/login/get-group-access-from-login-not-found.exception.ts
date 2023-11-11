@@ -5,7 +5,7 @@ export class GetGroupAccessFromLoginNotFoundException extends CustomBadRequestEx
     super({
       code: '',
       guid: '8ed39200-ec38-402c-ac3e-dda9bcdd303c',
-      objectOrError: 'Login no existe',
+      objectOrError: 'El usuario no existe',
     });
   }
 }
