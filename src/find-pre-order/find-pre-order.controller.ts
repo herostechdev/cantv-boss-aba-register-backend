@@ -18,6 +18,6 @@ export class FindPreOrderController {
   FindPreOrder(
     @Body() dto: FindPreOrderRequestDto,
   ): Promise<IFindPreOrderResponse> {
-    return this.service.FindPreOrder(dto);
+    return this.service.findPreOrder(dto);
   }
 }

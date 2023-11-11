@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { DSLAuditLogsErrorException } from './dsl-audit-logs-error.exception';
 import { DSLAuditLogsRequestDto } from './dsl-audit-logs-request.dto';
+import { DSLAuditLogsStatusConstants } from './dsl-audit-logs-status.constants';
 import { IDSLAuditLogsResponse } from './dsl-audit-logs-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
@@ -36,10 +38,19 @@ export class DSLAuditLogsService extends OracleDatabaseService {
         OracleConstants.DSL_AUDIT_LOGS,
         parameters,
       );
-      return {
-        status: OracleHelper.getFirstItem(result, 'o_status'),
+      const response: IDSLAuditLogsResponse = {
         message: OracleHelper.getFirstItem(result, 'o_message'),
+        status: (result?.outBinds?.status ??
+          DSLAuditLogsStatusConstants.ERROR) as DSLAuditLogsStatusConstants,
       };
+      switch (response.status) {
+        case DSLAuditLogsStatusConstants.SUCCESSFULL:
+          return response;
+        case DSLAuditLogsStatusConstants.ERROR:
+          throw new DSLAuditLogsErrorException();
+        default:
+          throw new DSLAuditLogsErrorException();
+      }
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode}-${dto?.phoneNumber}`);
     } finally {
