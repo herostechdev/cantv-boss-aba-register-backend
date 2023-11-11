@@ -3,5 +3,5 @@ import { GetDebtFromCustomerStatusConstants } from './get-debt-from-customer-sta
 
 export interface IGetDebtFromCustomerResponse
   extends IStatusResponse<GetDebtFromCustomerStatusConstants> {
-  clientInstanceId: number;
+  amount: number;
 }

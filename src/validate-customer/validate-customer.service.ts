@@ -103,10 +103,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL
         ) {
           // TODO: Cuáles son los datos para invocar el SP GetDebtFromClient
-          data.getDebtFromClientResponse = await this.getDebtFromClient(
-            null,
-            null,
-          );
+          data.getDebtFromClientResponse = await this.getDebtFromClient(null);
           if (
             data.getDebtFromClientResponse.status ===
             GetDebtFromCustomerStatusConstants.SUCCESSFULL
@@ -223,7 +220,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       case GetCustomerClassNameFromIdValueStatusConstants.ERROR:
         throw new GetCustomerClassNameFromIdValueInternalErrorException();
       case GetCustomerClassNameFromIdValueStatusConstants.THERE_IS_NO_DATA:
-        throw new GetCustomerClassNameFromIdValueThereIsNoDataException();
+        // throw new GetCustomerClassNameFromIdValueThereIsNoDataException();
+        return response;
       default:
         throw new GetCustomerClassNameFromIdValueInternalErrorException();
     }
@@ -257,7 +255,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       case GetCustomerInstanceIdFromIdValueStatusConstants.INTERNAL_ERROR:
         throw new GetCustomerInstanceIdFromIdValueInternalErrorException();
       case GetCustomerInstanceIdFromIdValueStatusConstants.THERE_IS_NO_DATA:
-        throw new GetCustomerInstanceIdFromIdValueThereIsNoDataException();
+        // throw new GetCustomerInstanceIdFromIdValueThereIsNoDataException();
+        return response;
       default:
         throw new GetCustomerInstanceIdFromIdValueInternalErrorException();
     }
@@ -291,22 +290,20 @@ export class ValidateCustomerService extends OracleDatabaseService {
       case GetFirstLetterFromABARequestStatusConstants.ERROR:
         throw new GetFirstLetterFromABARequestInternalErrorException();
       case GetFirstLetterFromABARequestStatusConstants.THERE_IS_NO_DATA:
-        throw new GetFirstLetterFromABARequestThereIsNoDataException();
+        // throw new GetFirstLetterFromABARequestThereIsNoDataException();
+        return response;
       default:
         throw new GetFirstLetterFromABARequestInternalErrorException();
     }
   }
 
-  // TODO: Determinar origen del parámetro: idValue
-  // TODO: Determinar origen del parámetro: attributeName
+  // TODO: Determinar origen del parámetro: customerInstanceId
   private async getDebtFromClient(
-    idValue: string,
-    clientAttributeName: string,
+    customerInstanceId: number,
   ): Promise<IGetDebtFromCustomerResponse> {
     const parameters = {
-      sz_IdValue: OracleHelper.stringBindIn(idValue, 256),
-      sz_Cltattributename: OracleHelper.stringBindIn(clientAttributeName, 256),
-      l_cltinstanceid: OracleHelper.numberBindOut(),
+      l_cltinstanceid: OracleHelper.numberBindIn(customerInstanceId),
+      d_Amount: OracleHelper.numberBindOut(),
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
@@ -315,7 +312,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       parameters,
     );
     const response: IGetDebtFromCustomerResponse = {
-      clientInstanceId: result?.outBinds?.l_cltinstanceid,
+      amount: result?.outBinds?.d_Amount,
       status: (result?.outBinds?.status ??
         GetDebtFromCustomerStatusConstants.INTERNAL_ERROR) as GetDebtFromCustomerStatusConstants,
     };
@@ -325,7 +322,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       case GetDebtFromCustomerStatusConstants.INTERNAL_ERROR:
         throw new GetDebtFromCustomerInternalErrorException();
       case GetDebtFromCustomerStatusConstants.THERE_IS_NO_DATA:
-        throw new GetDebtFromCustomerThereIsNoDataException();
+        // throw new GetDebtFromCustomerThereIsNoDataException();
+        return response;
       default:
         throw new GetDebtFromCustomerInternalErrorException();
     }
@@ -342,7 +340,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
+      OracleConstants.ABA_PACKAGE,
       OracleConstants.UPDATE_DSL_ABA_REGISTERS,
       parameters,
     );
