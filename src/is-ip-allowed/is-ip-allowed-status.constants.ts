@@ -1,0 +1,6 @@
+export enum IsIpAllowedStatusConstants {
+  SUCCESSFULL,
+  ERROR,
+  INVALID_IP_FOR_REMOTE_REGISTRATION,
+  EXPIRED_IP,
+}

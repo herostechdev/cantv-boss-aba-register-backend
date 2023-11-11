@@ -5,6 +5,9 @@ import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
+import { IsIpAllowedStatusConstants } from './is-ip-allowed-status.constants';
+import { IsIpAllowedException } from './is-ip-allowed.exception';
+import { ExpiredIpException } from './expired-ip.exception';
 
 @Injectable()
 export class IsIPAllowedService extends OracleDatabaseService {
@@ -27,11 +30,23 @@ export class IsIPAllowedService extends OracleDatabaseService {
         OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
         parameters,
       );
-      const response = {
+      const response: IIsIPAllowedResponse = {
         expireDate: OracleHelper.getFirstItem(result, 'o_expiredate'),
-        status: OracleHelper.getFirstItem(result, 'o_status'),
+        status: (result?.outBinds?.status ??
+          IsIpAllowedStatusConstants.ERROR) as IsIpAllowedStatusConstants,
       };
-      return response;
+      switch (response.status) {
+        case IsIpAllowedStatusConstants.SUCCESSFULL:
+          return response;
+        case IsIpAllowedStatusConstants.ERROR:
+          throw new IsIpAllowedException();
+        case IsIpAllowedStatusConstants.INVALID_IP_FOR_REMOTE_REGISTRATION:
+          return response;
+        case IsIpAllowedStatusConstants.EXPIRED_IP:
+          throw new ExpiredIpException();
+        default:
+          throw new IsIpAllowedException();
+      }
     } catch (error) {
       super.exceptionHandler(error, dto?.ipAddress);
     } finally {
