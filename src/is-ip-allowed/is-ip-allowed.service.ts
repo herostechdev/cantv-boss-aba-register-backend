@@ -32,9 +32,8 @@ export class IsIPAllowedService extends OracleDatabaseService {
       );
       const response: IIsIPAllowedResponse = {
         expireDate: OracleHelper.getFirstItem(result, 'o_expiredate'),
-        status: 3,
-        // status: (OracleHelper.getFirstItem(result, 'o_status') ??
-        //   IsIpAllowedStatusConstants.ERROR) as IsIpAllowedStatusConstants,
+        status: (OracleHelper.getFirstItem(result, 'o_status') ??
+          IsIpAllowedStatusConstants.ERROR) as IsIpAllowedStatusConstants,
       };
 
       switch (response.status) {
