@@ -3,13 +3,13 @@ import { GetDataFromRequestsStatusConstants } from './get-data-from-requests-sta
 
 export interface IGetDataFromRequestsResponse
   extends IStatusResponse<GetDataFromRequestsStatusConstants> {
-  date1: string;
-  date2: string;
-  date3: string;
-  desiredPlan: string;
-  descriptionPlan: string;
-  medioP: string;
-  abaRequestsRow: any;
-  abaAcceptedRequestsRow: any;
-  abaRequestsRegistersRow: any;
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  phonenumber: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
 }

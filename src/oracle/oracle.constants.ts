@@ -53,7 +53,7 @@ export class OracleConstants {
   public static IS_OCCUPIED_PORT = 'IsOccupiedPort';
   public static IS_RESERVED_LOGIN = 'IsReservedLogin';
   public static IS_VALID_IP_ADDRESS = 'IsValidIpAddress';
-  public static IS_PREPAID = 'IsPrepago  ';
+  public static IS_PREPAID = 'IsPrepago';
   public static ISG_ACTION_ALLOWED = 'ISGActionAllowed';
   public static PLAN_BY_CUSTOMER_CLASS = 'PlansByClassClient';
   public static READ_IABA_ORDER = 'ReadIABAOrder';
