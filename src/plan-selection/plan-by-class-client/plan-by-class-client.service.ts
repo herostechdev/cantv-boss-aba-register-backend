@@ -23,7 +23,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
     try {
       await super.connect();
       const parameters = {
-        I_CLASSCLIENT: OracleHelper.stringBindIn(dto.classCustomer),
+        I_CLASSCLIENT: OracleHelper.stringBindIn(dto.customerClassName),
         I_DSLAMPORTID: OracleHelper.numberBindIn(dto.dslamPortId),
         I_WSCONTRACT: OracleHelper.numberBindIn(dto.wsContract),
         I_WS3CONTRACT: OracleHelper.stringBindIn(dto.ws3Contract),
@@ -47,7 +47,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
       };
       const result = await super.executeStoredProcedure(
         OracleConstants.ACT_PACKAGE,
-        OracleConstants.PLAN_BY_CLAS_CLIENT,
+        OracleConstants.PLAN_BY_CUSTOMER_CLASS,
         parameters,
       );
       const response: IPlanByClassClientResponse = {

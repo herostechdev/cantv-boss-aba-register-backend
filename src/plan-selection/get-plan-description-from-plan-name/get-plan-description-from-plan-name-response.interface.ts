@@ -3,5 +3,6 @@ import { GetPlanDescriptionFromPlanNameStatusConstants } from './get-plan-descri
 
 export interface IGetPlanDescriptionFromPlanNameResponse
   extends IStatusResponse<GetPlanDescriptionFromPlanNameStatusConstants> {
-  amount: number;
+  name: string;
+  description: string;
 }

@@ -1,6 +1,6 @@
-import { IsInt } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class GetPlanDescriptionFromPlanNameRequestDto {
-  @IsInt()
-  customerInstanceId: number;
+  @IsString()
+  planName: string;
 }

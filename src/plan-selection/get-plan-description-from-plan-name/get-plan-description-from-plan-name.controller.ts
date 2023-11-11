@@ -20,6 +20,6 @@ export class GetPlanDescriptionFromPlanNameController {
   ConfirmRegistration(
     @Body() dto: GetPlanDescriptionFromPlanNameRequestDto,
   ): Promise<IGetPlanDescriptionFromPlanNameResponse> {
-    return this.service.getPlanDescriptionFromPLanName(dto);
+    return this.service.getPlanDescriptionFromPlanName(dto);
   }
 }

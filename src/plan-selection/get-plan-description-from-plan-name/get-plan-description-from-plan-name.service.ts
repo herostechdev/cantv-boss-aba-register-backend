@@ -16,15 +16,15 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
     super(oracleConfigurationService);
   }
 
-  // TODO: Determinar origen del parámetro de entrada: l_CltInstanceid
-  async getPlanDescriptionFromPLanName(
+  // TODO: Revisar que el parámetro de entrada indica que es NUMBER, pero el y nombre y la descripción en el documento de especificacion indican que STRING
+  async getPlanDescriptionFromPlanName(
     dto: GetPlanDescriptionFromPlanNameRequestDto,
   ): Promise<IGetPlanDescriptionFromPlanNameResponse> {
     try {
       await super.connect();
       const parameters = {
-        l_CltInstanceid: OracleHelper.numberBindIn(dto.customerInstanceId),
-        d_amount: OracleHelper.numberBindOut(),
+        sz_PlanName: OracleHelper.stringBindIn(dto.planName),
+        sz_Description: OracleHelper.stringBindOut(),
         status: OracleHelper.numberBindOut(),
       };
       const result = await super.executeStoredProcedure(
@@ -33,7 +33,8 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
         parameters,
       );
       const response: IGetPlanDescriptionFromPlanNameResponse = {
-        amount: result?.outBinds?.d_amount,
+        name: dto.planName,
+        description: result?.outBinds?.sz_Description,
         status: (result?.outBinds?.status ??
           GetPlanDescriptionFromPlanNameStatusConstants.INTERNAL_ERROR) as GetPlanDescriptionFromPlanNameStatusConstants,
       };

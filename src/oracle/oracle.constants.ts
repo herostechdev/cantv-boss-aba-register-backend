@@ -55,7 +55,7 @@ export class OracleConstants {
   public static IS_VALID_IP_ADDRESS = 'IsValidIpAddress';
   public static IS_PREPAID = 'IsPrepago  ';
   public static ISG_ACTION_ALLOWED = 'ISGActionAllowed';
-  public static PLAN_BY_CLAS_CLIENT = 'PlansByClassClient';
+  public static PLAN_BY_CUSTOMER_CLASS = 'PlansByClassClient';
   public static READ_IABA_ORDER = 'ReadIABAOrder';
   public static UPDATE_DSL_ABA_REGISTERS = 'UpdateDslAbaRegisters';
   public static VERIFY_CONTRACT_BY_PHONE = 'verifycontracbyphone';
