@@ -3,5 +3,5 @@ import { GetStateFromSerialStatusConstants } from './get-state-from-serial-statu
 
 export interface IGetStateFromSerialResponse
   extends IStatusResponse<GetStateFromSerialStatusConstants> {
-  state: string;
+  states: any[];
 }

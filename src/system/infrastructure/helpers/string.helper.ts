@@ -6,6 +6,10 @@ export class StringHelper {
     return value === undefined || value === null || value.trim() === '';
   }
 
+  static isEmpty(value: string) {
+    return value.trim() === '';
+  }
+
   static getUUID(): string {
     return v4();
   }

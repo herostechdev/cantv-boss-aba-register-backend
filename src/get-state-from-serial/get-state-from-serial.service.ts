@@ -7,6 +7,7 @@ import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 
 @Injectable()
 export class GetStateFromSerialService extends OracleDatabaseService {
@@ -16,8 +17,6 @@ export class GetStateFromSerialService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  // TODO: DESARROLLAR EL SUBSTRING DEL NÚMERO DE TELEFONO  Campo: i_serial   SON LOS PRIMEROS 3 DIGITOS DEL NÚMERO DE TELEFONO
-  // TODO: Determinar si la respuesta es un solo estado o una LISTA DE ESTADOS , normalmente devuelve 1 pero es posible que devuelva varios
   async getGetStateFromSerial(
     dto: GetStateFromSerialRequestDto,
   ): Promise<IGetStateFromSerialResponse> {
@@ -25,7 +24,9 @@ export class GetStateFromSerialService extends OracleDatabaseService {
       await super.connect();
       const parameters = {
         i_areacode: OracleHelper.numberBindIn(dto.areaCode),
-        i_serial: OracleHelper.numberBindIn(dto.phoneNumber),
+        i_serial: OracleHelper.numberBindIn(
+          Number(BossHelper.getSerial(dto.phoneNumber)),
+        ),
         o_state: OracleHelper.tableOfStringBindOut(532),
         o_status: OracleHelper.tableOfStringBindOut(532),
       };
@@ -35,7 +36,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
         parameters,
       );
       const response: IGetStateFromSerialResponse = {
-        state: OracleHelper.getFirstItem(result, 'o_state'),
+        states: OracleHelper.getItems(result, 'o_state'),
         status: (result?.outBinds?.status ??
           GetStateFromSerialStatusConstants.ERROR) as GetStateFromSerialStatusConstants,
       };

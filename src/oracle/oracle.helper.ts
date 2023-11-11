@@ -94,4 +94,17 @@ export class OracleHelper {
       ? result.outBinds[itemName][0]
       : null;
   }
+
+  public static getItems(result: any, itemName: string): any[] {
+    if (
+      !result ||
+      !result.hasOwnProperty('outBinds') ||
+      !result.outBinds.hasOwnProperty(itemName)
+    ) {
+      return null;
+    }
+    return ArrayHelper.isArrayWithItems(result.outBinds[itemName])
+      ? result.outBinds[itemName]
+      : null;
+  }
 }
