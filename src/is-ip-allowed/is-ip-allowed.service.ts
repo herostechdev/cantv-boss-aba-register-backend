@@ -30,11 +30,13 @@ export class IsIPAllowedService extends OracleDatabaseService {
         OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
         parameters,
       );
+      console.log('result', JSON.stringify(result));
       const response: IIsIPAllowedResponse = {
         expireDate: OracleHelper.getFirstItem(result, 'o_expiredate'),
-        status: (result?.outBinds?.status ??
+        status: (OracleHelper.getFirstItem(result, 'o_status') ??
           IsIpAllowedStatusConstants.ERROR) as IsIpAllowedStatusConstants,
       };
+      console.log('response.status', response.status);
       switch (response.status) {
         case IsIpAllowedStatusConstants.SUCCESSFULL:
           return response;
@@ -48,6 +50,9 @@ export class IsIPAllowedService extends OracleDatabaseService {
           throw new IsIpAllowedException();
       }
     } catch (error) {
+      console.log();
+      console.log('ERROR isIPAllowed  >>');
+      console.log(JSON.stringify(error));
       super.exceptionHandler(error, dto?.ipAddress);
     } finally {
       await this.closeConnection();
