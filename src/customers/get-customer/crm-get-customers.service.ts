@@ -18,7 +18,7 @@ export class CRMGetCustomersService extends SOAPRequestService<ICRMGetCustomerRe
     super();
   }
 
-  async getCustomer(dto: CRMGetCustomerDto): Promise<ICRMGetCustomerResponse> {
+  async get(dto: CRMGetCustomerDto): Promise<ICRMGetCustomerResponse> {
     try {
       this.validateInput(dto);
       if (dto.customerId)

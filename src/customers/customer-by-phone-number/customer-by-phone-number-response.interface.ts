@@ -1,6 +1,6 @@
-import { ICRMCommonResponse } from '../crm-common-response.interface';
+import { IPICCommonResponse } from '../pic-common-response.interface';
 
-export interface ICustomerByPhoneNumberResponse extends ICRMCommonResponse {
+export interface ICustomerByPhoneNumberResponse extends IPICCommonResponse {
   DIRECCION_COBRO?: string;
   CONDICION_NUMERO_PRIVADO?: string;
   ZONA_POSTAL?: string;

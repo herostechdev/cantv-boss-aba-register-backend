@@ -10,7 +10,7 @@ import { ThrottlerConfigurationService } from './system/configuration/throttler/
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
-import { CRMCustomersModule } from './customers/crm-customers.module';
+import { CustomersModule } from './customers/customers.module';
 import { CustomerExistsModule } from './customer-exists/customer-exists.module';
 import { DocumentsConfigurationModule } from './system/configuration/documents/documents-configuration.module';
 import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
@@ -45,7 +45,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     ApplicationConfigurationModule,
     CustomerExistsModule,
     ConfirmRegistrationModule,
-    CRMCustomersModule,
+    CustomersModule,
     DocumentsConfigurationModule,
     DSLAuditLogsModule,
     EncryptionModule,
