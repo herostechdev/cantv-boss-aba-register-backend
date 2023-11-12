@@ -15,7 +15,10 @@ export class GetASAPOrderDetailPayloadService extends SOAPRequestPayloadService<
     return {
       consultarDetalleOrdenesAsap: {
         in0: {
+          CTVCLSSERVAS: '',
+          CTVIDPRDINSTAS: '',
           CTVIDSRVORD: requestData.body.orderId,
+          CTVPHONEAS: '',
         },
       },
     };
