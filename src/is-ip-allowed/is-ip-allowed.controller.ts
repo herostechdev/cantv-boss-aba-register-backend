@@ -3,7 +3,7 @@ import { IsIPAllowedRequestDto } from './is-ip-allowed-request.dto';
 import { IsIPAllowedService } from './is-ip-allowed.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
-import { IIsIPAllowedResponse } from './is-ip-allowed-response.interface';
+import { IIsIPAllowedRestrictedResponse } from './is-ip-allowed-response.interface';
 
 @Controller({
   path: 'isIPAllowed',
@@ -17,7 +17,7 @@ export class IsIPAllowedController {
   @UseFilters(new HttpExceptionFilter())
   isIPAllowed(
     @Body() dto: IsIPAllowedRequestDto,
-  ): Promise<IIsIPAllowedResponse> {
+  ): Promise<IIsIPAllowedRestrictedResponse> {
     return this.service.isIPAllowed(dto);
   }
 }
