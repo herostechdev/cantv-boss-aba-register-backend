@@ -1,5 +1,5 @@
-import { IISGActionAllowedResponse } from './get-group-access-from-login-response.interface';
-import { IGetGroupAccessFromLoginResponse } from './isg-action-allowed-response.interface';
+import { IISGActionAllowedResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
+import { IGetGroupAccessFromLoginResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
 import { LoginRequestDto } from './login-request.dto';
 
 export class LoginData {

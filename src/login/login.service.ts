@@ -5,18 +5,18 @@ import { OracleConfigurationService } from 'src/system/configuration/oracle/orac
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { LoginData } from './LOGIN-data';
-import { IISGActionAllowedResponse } from './get-group-access-from-login-response.interface';
+import { IISGActionAllowedResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
 import {
   LoginActionStausConstants,
   LoginStatusConstants,
 } from './login.constans';
-import { GetGroupAccessFromLoginInternalErrorException } from './get-group-access-from-login-internal-error.exception';
-import { GetGroupAccessFromLoginThereIsNoDataException } from './get-group-access-from-login-there-is-no-data.exception';
-import { GetGroupAccessFromLoginNotFoundException } from './get-group-access-from-login-not-found.exception';
-import { IGetGroupAccessFromLoginResponse } from './isg-action-allowed-response.interface';
+import { GetGroupAccessFromLoginInternalErrorException } from './get-group-access-from-login/get-group-access-from-login-internal-error.exception';
+import { GetGroupAccessFromLoginThereIsNoDataException } from './get-group-access-from-login/get-group-access-from-login-there-is-no-data.exception';
+import { GetGroupAccessFromLoginNotFoundException } from './get-group-access-from-login/get-group-access-from-login-not-found.exception';
+import { IGetGroupAccessFromLoginResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
 import { ILoginResponse } from './login-response.interface';
-import { ISGActionAllowedThereIsNoDataException } from './isg-action-allowed-there-is-no-data.exception';
-import { ISGActionAllowedException } from './isg-action-allowed.exception';
+import { ISGActionAllowedThereIsNoDataException } from './isg-action-allowed/isg-action-allowed-there-is-no-data.exception';
+import { ISGActionAllowedException } from './isg-action-allowed/isg-action-allowed.exception';
 
 @Injectable()
 export class LoginService extends OracleDatabaseService {
@@ -35,6 +35,10 @@ export class LoginService extends OracleDatabaseService {
         data,
       );
       //TODO: Validar si el password es correcto: data.getGroupAccessFromLoginResponse.userpassword. Validar con Ivan validación MD5
+      this.validatePassword(
+        dto.password,
+        data.getGroupAccessFromLoginResponse.userpassword,
+      );
       data.isgActionAllowedResponse = await this.isgActionAllowed(data);
       return {
         status: data.isgActionAllowedResponse.status,
@@ -72,7 +76,7 @@ export class LoginService extends OracleDatabaseService {
         case LoginStatusConstants.SUCCESSFULL:
           return response;
         case LoginStatusConstants.INTERNAL_ERROR:
-          throw new GetGroupAccessFromLoginInternalErrorException();
+          throw new GetGroupAccessFromLoginInternalErrorException(result);
         case LoginStatusConstants.THERE_IS_NO_DATA:
           throw new GetGroupAccessFromLoginThereIsNoDataException();
         case LoginStatusConstants.NOT_FOUND:
@@ -82,9 +86,15 @@ export class LoginService extends OracleDatabaseService {
       }
     } catch (error) {
       super.exceptionHandler(error, data?.requestDto.userlogin);
-    } finally {
-      await this.closeConnection();
     }
+  }
+
+  private validatePassword(password: string, storedPassword: string): void {
+    console.log();
+    console.log('validatePassword');
+    console.log('password', password);
+    console.log('storedPassword', storedPassword);
+    return null;
   }
 
   private async isgActionAllowed(
@@ -111,7 +121,7 @@ export class LoginService extends OracleDatabaseService {
         case LoginActionStausConstants.SUCCESSFULL:
           return response;
         case LoginActionStausConstants.INTERNAL_ERROR:
-          throw new ISGActionAllowedException();
+          throw new ISGActionAllowedException(result);
         case LoginActionStausConstants.THERE_IS_NO_DATA:
           throw new ISGActionAllowedThereIsNoDataException();
         default:
@@ -119,8 +129,6 @@ export class LoginService extends OracleDatabaseService {
       }
     } catch (error) {
       super.exceptionHandler(error, data?.requestDto.userlogin);
-    } finally {
-      await this.closeConnection();
     }
   }
 }
