@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { GetGroupAccessFromLoginInternalErrorException } from './get-group-access-from-login/get-group-access-from-login-internal-error.exception';
+import { GetGroupAccessFromLoginThereIsNoDataException } from './get-group-access-from-login/get-group-access-from-login-there-is-no-data.exception';
+import { GetGroupAccessFromLoginNotFoundException } from './get-group-access-from-login/get-group-access-from-login-not-found.exception';
+import { HashService } from 'src/system/infrastructure/security/encryption/hash.service';
+import { IGetGroupAccessFromLoginResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
+import { IISGActionAllowedResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
+import { ILoginResponse } from './login-response.interface';
+import { InvalidPasswordException } from './invalid-password.exception';
+import { ISGActionAllowedException } from './isg-action-allowed/isg-action-allowed.exception';
+import { ISGActionAllowedThereIsNoDataException } from './isg-action-allowed/isg-action-allowed-there-is-no-data.exception';
+import {
+  LoginActionStausConstants,
+  LoginStatusConstants,
+} from './login.constans';
+import { LoginData } from './LOGIN-data';
 import { LoginRequestDto } from './login-request.dto';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { LoginData } from './LOGIN-data';
-import { IISGActionAllowedResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
-import {
-  LoginActionStausConstants,
-  LoginStatusConstants,
-} from './login.constans';
-import { GetGroupAccessFromLoginInternalErrorException } from './get-group-access-from-login/get-group-access-from-login-internal-error.exception';
-import { GetGroupAccessFromLoginThereIsNoDataException } from './get-group-access-from-login/get-group-access-from-login-there-is-no-data.exception';
-import { GetGroupAccessFromLoginNotFoundException } from './get-group-access-from-login/get-group-access-from-login-not-found.exception';
-import { IGetGroupAccessFromLoginResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
-import { ILoginResponse } from './login-response.interface';
-import { ISGActionAllowedThereIsNoDataException } from './isg-action-allowed/isg-action-allowed-there-is-no-data.exception';
-import { ISGActionAllowedException } from './isg-action-allowed/isg-action-allowed.exception';
-import { HashService } from 'src/system/infrastructure/security/encryption/hash.service';
 
 @Injectable()
 export class LoginService extends OracleDatabaseService {
@@ -39,11 +40,11 @@ export class LoginService extends OracleDatabaseService {
       //TODO: Validar si el password es correcto: data.getGroupAccessFromLoginResponse.userpassword. Validar con Ivan validación MD5
       this.validatePassword(
         dto.password,
-        data.getGroupAccessFromLoginResponse.userpassword,
+        data.getGroupAccessFromLoginResponse?.userpassword,
       );
       data.isgActionAllowedResponse = await this.isgActionAllowed(data);
       return {
-        status: data.isgActionAllowedResponse.status,
+        status: data.isgActionAllowedResponse?.status,
       };
     } catch (error) {
       super.exceptionHandler(error, `${dto?.userlogin}`);
@@ -99,7 +100,9 @@ export class LoginService extends OracleDatabaseService {
     console.log('hashedPassword', hashedPassword);
     console.log('isMatch', this.hashService.isMatch(password, storedPassword));
     console.log('storedPassword', storedPassword);
-    return null;
+    if (!this.hashService.isMatch(password, storedPassword)) {
+      throw new InvalidPasswordException();
+    }
   }
 
   private async isgActionAllowed(
