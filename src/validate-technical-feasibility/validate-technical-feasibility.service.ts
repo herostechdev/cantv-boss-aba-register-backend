@@ -11,6 +11,7 @@ import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30031Exception } from 'src/exceptions/error-3003-1.exception';
 import { Error30032Exception } from 'src/exceptions/error-3003-2.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
+import { Error30043Exception } from 'src/exceptions/error-3004-3.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
@@ -19,17 +20,20 @@ import { GetPortIdFromIpExecutionException } from './get-port-id-from-ip/get-por
 import { GetABADataConstants } from './get-aba-data/get-aba-data.constants';
 import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-execution-error.exception';
 import { GetABADataFromRequestsException } from './get-aba-data-from-requests/get-aba-data-from-requests.exception';
+
 import { GetABADataFromRequestsStatusConstants } from './get-aba-data-from-requests/get-aba-data-from-requests-status.constants';
 import { GetAndRegisterQualifOfServiceException } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service.exception';
 import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDataFromDSLAMPortIdThereIsNoDataException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-there-is-no-data.exception';
+import { GetDataFromRequestsThereIsNoDataException } from './get-data-from-requests/get-data-from-requests-there-is-no-data.exception';
 import { GetDataFromRequestsStatusConstants } from './get-data-from-requests/get-data-from-requests-status.constants';
 import { GetDataFromRequestsException } from './get-data-from-requests/get-data-from-requests.exception';
 import { GetDHCPDataService } from 'src/get-dhcp-data/get-dhcp.service';
 import { GetDownstreamFromPlanException } from './get-downstream-from-plan/get-downstream-from-plan.exception';
 import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
+import { GetDownstreamFromPlanThereIsNoDataException } from './get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
 import { GetInfoFromABARequestsException } from './get-info-from-aba-requests/get-info-from-aba-requests.exception';
 import { GetInfoFromABARequestsStatusConstants } from './get-info-from-aba-requests/get-info-from-aba-requests-status.constants';
 import { GetPortIdFromIpBadIpFormatException } from './get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
@@ -70,7 +74,11 @@ import { OracleConfigurationService } from 'src/system/configuration/oracle/orac
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ReadIABAOrderErrorCodeConstants } from './read-iaba-order/read-iaba-order-error_code.constants';
-import { ReadIABAOrderGeneralDatabaseEerrorException } from './read-iaba-order/read-iaba-order-general-database-error.exception';
+import { ReadIABAOrderGeneralDatabaseErrorException } from './read-iaba-order/read-iaba-order-general-database-error.exception';
+import { ReadIABAOrderAssignedPortException } from './read-iaba-order/read-iaba-order-assigned-port.exception';
+import { ReadIABAOrderOrderExistsException } from './read-iaba-order/read-iaba-order-order-exists.exception';
+import { ReadIABAOrderOrderIsOldException } from './read-iaba-order/read-iaba-order-order-is-old.exception';
+import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from './read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
 import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
 import { TheRecordAlreadyExistsException } from './insert-dsl-aba-registers/insert-dsl-aba-registers-the-record-already-exists.exception';
 import { ValidateTechnicalFeasibilityData } from './validate-technical-feasibility-data';
@@ -78,8 +86,6 @@ import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-fea
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from './verify-contract-by-phone/verify-contract-by-phone-status.constants';
-import { GetDataFromRequestsThereIsNoDataException } from './get-data-from-requests/get-data-from-requests-there-is-no-data.exception';
-import { GetDownstreamFromPlanThereIsNoDataException } from './get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -590,8 +596,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         // throw new GetPortIdFromIpDSLAMDataNotFoundException();
         return response;
       case GetPortIdFromIpConstants.IP_FORMAT_ERROR:
-        // throw new GetPortIdFromIpBadIpFormatException();
-        return response;
+        throw new GetPortIdFromIpBadIpFormatException();
+      // return response;
       default:
         throw new GetPortIdFromIpExecutionException();
     }
@@ -722,11 +728,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
+  // TODO: Determinar el origen del parámetro l_portid
   private async IsOccupiedPort(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IIsOccupiedPortResponse> {
     const parameters = {
-      i_nspip: OracleHelper.stringBindIn(data.requestDto.areaCode, 15),
+      l_portid: OracleHelper.numberBindIn(null),
       l_result: OracleHelper.numberBindOut(),
       o_status: OracleHelper.numberBindOut(),
     };
@@ -766,6 +773,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         16,
       ),
       abaipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 99),
+
       abadslamportid: OracleHelper.tableOfNumberBindOut(),
       abancc: OracleHelper.tableOfStringBindOut(532),
       abaclienttype: OracleHelper.tableOfStringBindOut(532),
@@ -813,7 +821,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Cerificar gestión de errores vs BPM. Hay excepciones que están siendo inhibidas por el flujo en el BPM.
+  // TODO: Certificar gestión de errores vs BPM. Hay excepciones que están siendo inhibidas por el flujo en el BPM.
   //TODO: Determinar origen del parámetro: abaportwithcontract
   private async checkIp(
     data: ValidateTechnicalFeasibilityData,
@@ -902,8 +910,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR:
         throw new GetDataFromDSLAMPortIdExecutionErrorException();
       case GetDataFromDSLAMPortIdStatusConstants.THERE_IS_NO_DATA:
-        // throw new GetDataFromDSLAMPortIdThereIsNoDataException();
-        return response;
+        throw new Error30043Exception();
       default:
         throw new GetDataFromDSLAMPortIdExecutionErrorException();
     }
@@ -919,9 +926,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IDeleteOrderResponse> {
     const parameters = {
-      abadslamportid: OracleHelper.stringBindIn(
-        String(data.getPortIdFromIpResponse.dslamportId),
-      ),
+      abadslamportid: data.getPortIdFromIpResponse.dslamportId,
       Status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
@@ -939,11 +944,11 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case DeleteOrderStatusConstants.EXECUTION_ERROR:
         throw new DeleteOrderExecutionErrorException();
       case DeleteOrderStatusConstants.THERE_IS_NO_DATA:
-        // throw new DeleteOrderThereIsNoDataException();
-        return response;
+        throw new DeleteOrderThereIsNoDataException();
+      // return response;
       case DeleteOrderStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
-        // throw new DeleteOrderThePortIsOccupiedByAnotherContractException();
-        return response;
+        throw new DeleteOrderThePortIsOccupiedByAnotherContractException();
+      // return response;
       default:
         throw new DeleteOrderExecutionErrorException();
     }
@@ -1048,21 +1053,17 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case ReadIABAOrderErrorCodeConstants.SUCCESSFULL:
         return response;
       case ReadIABAOrderErrorCodeConstants.ASSIGNED_PORT:
-        // throw new ReadIABAOrderAssignedPortException();
-        return response;
+        throw new ReadIABAOrderAssignedPortException();
       case ReadIABAOrderErrorCodeConstants.THE_ORDER_EXISTS:
-        // throw new ReadIABAOrderOrderExistsException();
-        return response;
+        throw new ReadIABAOrderOrderExistsException();
       case ReadIABAOrderErrorCodeConstants.THE_ORDER_ID_OLD:
-        // throw new ReadIABAOrderOrderIsOldException();
-        return response;
+        throw new ReadIABAOrderOrderIsOldException();
       case ReadIABAOrderErrorCodeConstants.THE_ORDER_ALREADY_EXISTS_IN_BOSS:
-        // throw new ReadIABAOrderTheOrderAlreadyExistsInBossException();
-        return response;
+        throw new ReadIABAOrderTheOrderAlreadyExistsInBossException();
       case ReadIABAOrderErrorCodeConstants.GENERAL_DATABASE_ERROR:
-        throw new ReadIABAOrderGeneralDatabaseEerrorException();
+        throw new ReadIABAOrderGeneralDatabaseErrorException();
       default:
-        throw new ReadIABAOrderGeneralDatabaseEerrorException();
+        throw new ReadIABAOrderGeneralDatabaseErrorException();
     }
   }
 }

@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class ReadIABAOrderGeneralDatabaseEerrorException extends CustomBadRequestException {
+export class ReadIABAOrderGeneralDatabaseErrorException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',
