@@ -17,11 +17,13 @@ import { IGetGroupAccessFromLoginResponse } from './isg-action-allowed/isg-actio
 import { ILoginResponse } from './login-response.interface';
 import { ISGActionAllowedThereIsNoDataException } from './isg-action-allowed/isg-action-allowed-there-is-no-data.exception';
 import { ISGActionAllowedException } from './isg-action-allowed/isg-action-allowed.exception';
+import { HashService } from 'src/system/infrastructure/security/encryption/hash.service';
 
 @Injectable()
 export class LoginService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
+    private readonly hashService: HashService,
   ) {
     super(oracleConfigurationService);
   }
@@ -93,6 +95,9 @@ export class LoginService extends OracleDatabaseService {
     console.log();
     console.log('validatePassword');
     console.log('password', password);
+    const hashedPassword = this.hashService.hashing(password);
+    console.log('hashedPassword', hashedPassword);
+    console.log('isMatch', this.hashService.isMatch(password, storedPassword));
     console.log('storedPassword', storedPassword);
     return null;
   }
