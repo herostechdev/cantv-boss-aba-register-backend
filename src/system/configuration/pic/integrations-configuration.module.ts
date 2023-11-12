@@ -13,6 +13,8 @@ import { IntegrationsConfigurationService } from './integrations-configuration.s
       validationSchema: Joi.object({
         PIC_GET_ASAP_ORDER_DETAIL_URL: Joi.string(),
         BOSS_GET_DHCP_DATA_URL: Joi.string(),
+        PIC_CUSTOMER_BY_PHONE_NUMBER_URL: Joi.string(),
+        PIC_CU594_GET_CUSTOMER: Joi.string(),
       }),
     }),
   ],

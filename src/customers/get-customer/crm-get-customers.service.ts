@@ -6,12 +6,14 @@ import { CRMGetCustomerRequestPayloadService } from './crm-get-customer-request-
 import { ICRMGetCustomerRequestBody } from './crm-get-customer-request-body.interface';
 import { ICRMGetCustomerResponse } from './crm-get-customer-response.interface';
 import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
+import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 
 @Injectable()
 export class CRMGetCustomersService extends SOAPRequestService<ICRMGetCustomerResponse> {
   constructor(
     private readonly httpService: HttpService,
     private readonly requestPayloadService: CRMGetCustomerRequestPayloadService,
+    private readonly integrationsConfigurationService: IntegrationsConfigurationService,
   ) {
     super();
   }
@@ -56,7 +58,7 @@ export class CRMGetCustomersService extends SOAPRequestService<ICRMGetCustomerRe
   }
 
   private get clientQueryUrl(): string {
-    return 'http://picprod04:8800/mule/services/CU594consultarCliente?wsdl=null';
+    return this.integrationsConfigurationService.cu594GetCustomerUrl;
   }
 
   private async invoke(

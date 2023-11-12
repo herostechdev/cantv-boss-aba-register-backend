@@ -12,4 +12,14 @@ export class IntegrationsConfigurationService {
   get getDHCPDataUrl(): string {
     return this.configService.get<string>('integrations.getDHCPDataUrl');
   }
+
+  get customerByPhoneNumberUrl(): string {
+    return this.configService.get<string>(
+      'integrations.customerByPhoneNumberUrl',
+    );
+  }
+
+  get cu594GetCustomerUrl(): string {
+    return this.configService.get<string>('integrations.cu594GetCustomerUrl');
+  }
 }
