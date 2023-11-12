@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class CRMGetCustomerInvalidQueryRequestException extends CustomBadRequestException {
+export class CRMCustomerInvalidQueryRequestException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',

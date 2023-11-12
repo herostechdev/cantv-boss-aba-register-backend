@@ -1,6 +1,6 @@
 import { IPICCommonResponse } from '../pic-common-response.interface';
 
-export interface ICRMGetCustomerResponse extends IPICCommonResponse {
+export interface ICRMCustomerResponse extends IPICCommonResponse {
   CUST_ID?: string;
   CTV_ID_PDR_KENAN?: string;
   CTV_ID_JRQ_KENAN?: string;

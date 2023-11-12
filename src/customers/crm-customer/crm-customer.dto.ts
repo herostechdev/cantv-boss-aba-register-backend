@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class CRMGetCustomerDto {
+export class CRMCustomerDto {
   @IsString()
   @IsOptional()
   customerId?: string;

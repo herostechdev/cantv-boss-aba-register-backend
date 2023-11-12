@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import * as xmlJsParser from 'xml-js';
-import { ICRMGetCustomerRequestBody } from './crm-get-customer-request-body.interface';
-import { ICRMGetCustomerRequestData } from './crm-get-customer-request-data.interface';
+import { ICRMCustomerRequestBody } from './crm-customer-request-body.interface';
+import { ICRMCustomerRequestData } from './crm-customer-request-data.interface';
 import { SOAPRequestPayloadService } from 'src/soap/requests/soap-request-payload.service';
 
 @Injectable()
-export class CRMGetCustomerRequestPayloadService extends SOAPRequestPayloadService<
-  ICRMGetCustomerRequestBody,
+export class CRMCustomerRequestPayloadService extends SOAPRequestPayloadService<
+  ICRMCustomerRequestBody,
   void
 > {
   protected getBody(
-    requestData: ICRMGetCustomerRequestData,
+    requestData: ICRMCustomerRequestData,
   ): xmlJsParser.Element | xmlJsParser.ElementCompact {
     return {
       ConsultarCliente: {
