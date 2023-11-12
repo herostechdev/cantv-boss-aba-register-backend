@@ -13,7 +13,7 @@ export class CustomerByPhoneNumberRequestPayloadService extends SOAPRequestPaylo
     requestData: ICustomerByPhoneNumberRequestData,
   ): xmlJsParser.Element | xmlJsParser.ElementCompact {
     return {
-      ConsultarCliente: {
+      consultaAbonadoActivoNumeroTelefono: {
         in0: requestData.body,
       },
     };
