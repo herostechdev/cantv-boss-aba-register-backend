@@ -3,12 +3,14 @@ import { IDeleteOrderResponse } from './delete-order/delete-order-response.inter
 import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests/get-aba-data-from-requests-response.interface';
 import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
+import { IGetASAPOrderDetailResponse } from 'src/get-asap-order-detail/get-asap-order-detail-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDataFromRequestsResponse } from './get-data-from-requests/get-data-from-requests-response.interface';
 import { IGetDHCPDataResponse } from 'src/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from './get-dsl-central-co-id-by-dslam-port-id/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
+import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
 import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
@@ -23,18 +25,15 @@ export class ValidateTechnicalFeasibilityData {
   getAndRegisterQualifOfServiceResponse: IGetAndRegisterQualifOfServiceResponse;
   verifyContractByPhoneResponse: IVerifiyContractByPhoneResponse;
   getDataFromRequestsResponse: IGetDataFromRequestsResponse;
-  // getInfoFromABARequestsResponse: IGetInfoFromABARequestsResponse;
   getDownstreamFromPlanResponse: IGetDownstreamFromPlanResponse;
   getABADataFromRequestsResponse: IGetABADataFromRequestsResponse;
   isValidIpAddressResponse: IIsValidIpAddressResponse;
   getPortIdFromIpResponse: IGetPortIdFromIpResponse;
   queryDHCPResponse: IGetDHCPDataResponse;
   getValidVPIResponse: string;
-  // TODO: DETERMINAR EL TIPO DE LA RESPUESTA DEL SP: getPortId
-  getPortIdResponse: any;
+  getPortIdResponse: IGetPortIdResponse;
   isOccupiedPortResponse: IIsOccupiedPortResponse;
-  // DETERMINAR ESTRUCTURA DE RESPUESTA DEL SERVICIO PIC QUE SUSTITUYE LA DLL snacom.dll
-  snacomDllResponse: any;
+  getASAPOrderDetailResponse: IGetASAPOrderDetailResponse;
   getABADataResponse: IGetABADataResponse;
   checkIpResponse: ICheckIpResponse;
   getDataFromDslamPortIdResponse: IGetDataFromDSLAMPortIdResponse;

@@ -20,10 +20,10 @@ import { GetPortIdFromIpExecutionException } from './get-port-id-from-ip/get-por
 import { GetABADataConstants } from './get-aba-data/get-aba-data.constants';
 import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-execution-error.exception';
 import { GetABADataFromRequestsException } from './get-aba-data-from-requests/get-aba-data-from-requests.exception';
-
 import { GetABADataFromRequestsStatusConstants } from './get-aba-data-from-requests/get-aba-data-from-requests-status.constants';
 import { GetAndRegisterQualifOfServiceException } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service.exception';
 import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
+import { GetASAPOrderDetailService } from 'src/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDataFromDSLAMPortIdThereIsNoDataException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-there-is-no-data.exception';
@@ -86,12 +86,14 @@ import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-fea
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from './verify-contract-by-phone/verify-contract-by-phone-status.constants';
+import { IGetASAPOrderDetailResponse } from 'src/get-asap-order-detail/get-asap-order-detail-response.interface';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
     private readonly getDHCPDataService: GetDHCPDataService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
+    private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
   ) {
     super(oracleConfigurationService);
@@ -136,7 +138,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           await this.getPortIdFlow(data);
         } else {
           await this.rbeDoesNotExistLog(data);
-          data.snacomDllResponse = await this.snacomDll(data);
+          data.getASAPOrderDetailResponse = await this.getASAPOrderDetail(data);
         }
       } else {
         await this.getPortIdFlow(data);
@@ -629,8 +631,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       ) {
         await this.rbeDoesNotExistLog(data);
       } else {
-        // SNACOM.DLL (dada Orden IABA) CONSUMIR SERVICIO PIC (Por definir)
-        data.snacomDllResponse = await this.snacomDll(data);
+        data.getASAPOrderDetailResponse = await this.getASAPOrderDetail(data);
       }
     } else {
       throw new Error30092Exception();
@@ -643,30 +644,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     await this.callAuditLog(data, 'RBE no existe');
   }
 
-  // TODO: Identificar y desarrollar servicio en el PIC. BLOCKING!!!
-  // SNACOM.DLL (dada Orden IABA) CONSUMIR SERVICIO PIC (Por definir)
-  private async snacomDll(
+  // TODO: Determinar origen del parametro orderId (CTVIDSRVORD)
+  private async getASAPOrderDetail(
     data: ValidateTechnicalFeasibilityData,
-  ): Promise<any> {
-    // TODO: copiar respuesta a: ValidateTechnicalFeasibilityData
-    const response: any = null;
-    if (
-      // [5199, 9406, 9500, 9408, 400, 530, 7, 030, 399].includes(response.status)
-      [
-        '5199',
-        '9406',
-        '9500',
-        '9408',
-        '400',
-        '530',
-        '7',
-        '030',
-        '399',
-      ].includes(response.status)
-    ) {
-      throw new ErrorSearchingASAPException();
-    }
-    return response;
+  ): Promise<IGetASAPOrderDetailResponse> {
+    return this.getASAPOrderDetailService.getASAPOrderDetail({
+      orderId: data.requestDto.ipAddress,
+    });
   }
 
   private queryDHCP(
