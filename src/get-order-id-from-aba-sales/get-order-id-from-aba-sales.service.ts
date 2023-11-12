@@ -8,6 +8,7 @@ import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 
 @Injectable()
 export class GetOrderIdFromABASalesService extends OracleDatabaseService {
@@ -33,23 +34,26 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
         OracleConstants.GET_ORDER_ID_FROM_ABA_SALES,
         parameters,
       );
-      const status = (OracleHelper.getFirstItem(result, 'str_status') ??
+      console.log();
+      console.log('result');
+      console.log(result);
+      const status = (result?.outBinds?.str_status ??
         GetOrderIdFromABASalesStatusConstants.ERROR) as GetOrderIdFromABASalesStatusConstants;
       const response: IGetOrderIdFromABASalesResponse = {
-        orderId: OracleHelper.getFirstItem(result, 'str_orderid'),
+        orderId: result?.outBinds?.str_orderid,
         status: status,
       };
       switch (response.status) {
         case GetOrderIdFromABASalesStatusConstants.SUCCESSFULL:
           return response;
         case GetOrderIdFromABASalesStatusConstants.ERROR:
-          throw new GetOrderIdFromABASalesException();
+          throw new GetOrderIdFromABASalesException(result);
         case GetOrderIdFromABASalesStatusConstants.PHONE_WITHOUT_PRE_ORDER:
           return response;
         case GetOrderIdFromABASalesStatusConstants.PRE_ORDER_NOT_ACCEPTED_OR_COMPLETED:
           throw new Error2002Exception();
         default:
-          throw new GetOrderIdFromABASalesException();
+          throw new GetOrderIdFromABASalesException(result);
       }
     } catch (error) {
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
