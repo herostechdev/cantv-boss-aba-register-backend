@@ -40,13 +40,13 @@ export class IsIPAllowedService extends OracleDatabaseService {
         case IsIpAllowedStatusConstants.SUCCESSFULL:
           return response;
         case IsIpAllowedStatusConstants.ERROR:
-          throw new IsIpAllowedException();
+          throw new IsIpAllowedException(result);
         case IsIpAllowedStatusConstants.INVALID_IP_FOR_REMOTE_REGISTRATION:
           return response;
         case IsIpAllowedStatusConstants.EXPIRED_IP:
           throw new ExpiredIpException();
         default:
-          throw new IsIpAllowedException();
+          throw new IsIpAllowedException(result);
       }
     } catch (error) {
       super.exceptionHandler(error, dto?.ipAddress);

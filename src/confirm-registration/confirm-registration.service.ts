@@ -173,9 +173,9 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       case CreateAndProvisioningCustomerStatusConstants.SUCCESSFULL:
         return response;
       case CreateAndProvisioningCustomerStatusConstants.INTERNAL_ERROR:
-        throw new CreateAndProvisioningCustomerInternalErrorException();
+        throw new CreateAndProvisioningCustomerInternalErrorException(result);
       default:
-        throw new CreateAndProvisioningCustomerInternalErrorException();
+        throw new CreateAndProvisioningCustomerInternalErrorException(result);
     }
   }
 
