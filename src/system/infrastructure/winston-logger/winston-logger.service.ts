@@ -19,7 +19,6 @@ export class Wlog {
 
   private getLogger(): winston.Logger {
     return createLogger({
-      level: 'info',
       // format: winston.format.json(),
       format: combine(
         label({ label: WinstonLogConstants.APPLICATION_NAME }),
@@ -60,6 +59,7 @@ export class Wlog {
         process.env.LOG_FOLDER,
         WinstonLogConstants.COMBINED_LOG_FILE_NAME,
       ),
+      level: WinstonLogConstants.DEBUG,
     });
   }
 
@@ -69,7 +69,7 @@ export class Wlog {
         process.env.LOG_FOLDER,
         WinstonLogConstants.ERROR_LOG_FILE_NAME,
       ),
-      level: 'error',
+      level: WinstonLogConstants.ERROR,
     });
   }
 
@@ -83,31 +83,31 @@ export class Wlog {
   //   });
   // }
 
-  public info(message: string, className: string, serviceName: string): void {
+  public info(message: string, clazz: string, method: string): void {
     this.logger.log(WinstonLogConstants.INFO, message, {
-      clazz: className,
-      method: serviceName,
+      clazz: clazz,
+      method: method,
     });
   }
 
-  public warn(message: string, className: string, serviceName: string): void {
+  public warn(message: string, clazz: string, method: string): void {
     this.logger.log(WinstonLogConstants.WARNING, message, {
-      clazz: className,
-      method: serviceName,
+      clazz: clazz,
+      method: method,
     });
   }
 
-  public debug(message: string, className: string, serviceName: string): void {
+  public debug(message: string, clazz: string, method: string): void {
     this.logger.log(WinstonLogConstants.DEBUG, message, {
-      clazz: className,
-      method: serviceName,
+      clazz: clazz,
+      method: method,
     });
   }
 
-  public error(message: string, className: string, serviceName: string): void {
+  public error(message: string, clazz: string, method: string): void {
     this.logger.log(WinstonLogConstants.ERROR, message, {
-      clazz: className,
-      method: serviceName,
+      clazz: clazz,
+      method: method,
     });
   }
 }
