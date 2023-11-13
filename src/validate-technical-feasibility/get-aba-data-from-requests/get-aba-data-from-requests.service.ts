@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Connection } from 'oracledb';
+
 import { GetABADataFromRequestsException } from './get-aba-data-from-requests.exception';
 import { GetABADataFromRequestsStatusConstants } from './get-aba-data-from-requests-status.constants';
 import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests-response.interface';
@@ -18,7 +20,13 @@ export class GetABADataFromRequestsService extends OracleDatabaseService {
 
   async getABADataFromRequests(
     data: IPhoneNumber,
+    dbConnection?: Connection,
   ): Promise<IGetABADataFromRequestsResponse> {
+    if (!dbConnection) {
+      await super.connect();
+    } else {
+      super.dbConnection = dbConnection;
+    }
     const parameters = {
       i_areacode: OracleHelper.stringBindIn(String(data.areaCode), 256),
       i_phonenumber: OracleHelper.stringBindIn(String(data.phoneNumber), 256),
