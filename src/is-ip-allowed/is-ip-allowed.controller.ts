@@ -18,6 +18,6 @@ export class IsIPAllowedController {
   isIPAllowed(
     @Body() dto: IsIPAllowedRequestDto,
   ): Promise<IIsIPAllowedRestrictedResponse> {
-    return this.service.isIPAllowed(dto);
+    return this.service.isIPAllowedFlow(dto);
   }
 }

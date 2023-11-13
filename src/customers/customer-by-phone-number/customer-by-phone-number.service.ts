@@ -23,27 +23,35 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
     dto: CustomerByPhoneNumberDto,
   ): Promise<ICustomerByPhoneNumberResponse> {
     try {
-      Wlog.instance.info('Inicio ', CustomerByPhoneNumberService.name, 'get');
-      Wlog.instance.info(
-        'Validando parámetros',
-        CustomerByPhoneNumberService.name,
-        'get',
-      );
+      Wlog.instance.info({
+        message: 'Inicio ',
+        clazz: CustomerByPhoneNumberService.name,
+        method: 'get',
+      });
+      Wlog.instance.info({
+        message: 'Validando parámetros',
+        clazz: CustomerByPhoneNumberService.name,
+        method: 'get',
+      });
       this.validateInput(dto);
-      Wlog.instance.info(
-        'Consultando',
-        CustomerByPhoneNumberService.name,
-        'get',
-      );
+      Wlog.instance.info({
+        message: 'Consultando',
+        clazz: CustomerByPhoneNumberService.name,
+        method: 'get',
+      });
       const response = await this.getCustomer(dto);
-      Wlog.instance.info('Fin', CustomerByPhoneNumberService.name, 'get');
+      Wlog.instance.info({
+        message: 'Fin',
+        clazz: CustomerByPhoneNumberService.name,
+        method: 'get',
+      });
       return response;
     } catch (error) {
-      Wlog.instance.error(
-        error?.message,
-        CustomerByPhoneNumberService.name,
-        'get',
-      );
+      Wlog.instance.error({
+        message: error?.message,
+        clazz: CustomerByPhoneNumberService.name,
+        method: 'get',
+      });
       this.exceptionHandler(error);
     }
   }

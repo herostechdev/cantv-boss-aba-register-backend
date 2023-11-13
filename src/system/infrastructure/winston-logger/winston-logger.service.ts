@@ -3,6 +3,7 @@ const { combine, timestamp, label, printf } = format;
 import * as path from 'path';
 import { WinstonLogConstants } from './winston-log.constants';
 import { StringBuilder } from '../helpers/string.builder';
+import { IWinstonLogInputData } from './winston-log-input-data.interface';
 // import DailyRotateFile from 'winston-daily-rotate-file';
 
 export class Wlog {
@@ -83,31 +84,31 @@ export class Wlog {
   //   });
   // }
 
-  public info(message: string, clazz: string, method: string): void {
-    this.logger.log(WinstonLogConstants.INFO, message, {
-      clazz: clazz,
-      method: method,
+  public info(data: IWinstonLogInputData): void {
+    this.logger.log(WinstonLogConstants.INFO, data.message, {
+      clazz: data.clazz,
+      method: data.method,
     });
   }
 
-  public warn(message: string, clazz: string, method: string): void {
-    this.logger.log(WinstonLogConstants.WARNING, message, {
-      clazz: clazz,
-      method: method,
+  public warn(data: IWinstonLogInputData): void {
+    this.logger.log(WinstonLogConstants.WARNING, data.message, {
+      clazz: data.clazz,
+      method: data.method,
     });
   }
 
-  public debug(message: string, clazz: string, method: string): void {
-    this.logger.log(WinstonLogConstants.DEBUG, message, {
-      clazz: clazz,
-      method: method,
+  public debug(data: IWinstonLogInputData): void {
+    this.logger.log(WinstonLogConstants.DEBUG, data.message, {
+      clazz: data.clazz,
+      method: data.method,
     });
   }
 
-  public error(message: string, clazz: string, method: string): void {
-    this.logger.log(WinstonLogConstants.ERROR, message, {
-      clazz: clazz,
-      method: method,
+  public error(data: IWinstonLogInputData): void {
+    this.logger.log(WinstonLogConstants.ERROR, data.message, {
+      clazz: data.clazz,
+      method: data.method,
     });
   }
 }
