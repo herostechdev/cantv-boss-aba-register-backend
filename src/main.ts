@@ -39,8 +39,8 @@ const spTest = async (app: INestApplication) => {
     GetABADataFromRequestsService,
   );
   const response = await service.getABADataFromRequests({
-    areaCode: '274',
-    phoneNumber: '2661451',
+    areaCode: '212',
+    phoneNumber: '9885176',
   });
   console.log();
   console.log('response');

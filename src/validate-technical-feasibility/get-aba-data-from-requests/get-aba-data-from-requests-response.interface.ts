@@ -9,7 +9,6 @@ export interface IGetABADataFromRequestsResponse
   desiredPlan: string;
   descriptionPlan: string;
   medioP: string;
-  abaRequestsRow: any;
-  abaAcceptedRequestsRow: any;
-  abaRequestsRegistersRow: any;
+  requesterId: number;
+  requesterClassName: string;
 }

@@ -9,6 +9,7 @@ import {
   DB_TYPE_DATE,
   DB_TYPE_RAW,
   DB_TYPE_CURSOR,
+  DB_TYPE_OBJECT,
 } from 'oracledb';
 import { ArrayHelper } from 'src/system/infrastructure/helpers/array.helper';
 
@@ -87,6 +88,13 @@ export class OracleHelper {
     return {
       dir: BIND_OUT,
       type: DB_TYPE_CURSOR,
+    };
+  }
+
+  public static objectBindOut(): BindParameters {
+    return {
+      dir: BIND_OUT,
+      type: DB_TYPE_OBJECT,
     };
   }
 
