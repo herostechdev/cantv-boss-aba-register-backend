@@ -19,8 +19,6 @@ export abstract class SOAPRequestPayloadService<B, H> extends CommonService {
   protected getEnvelope(
     requestData: ISOAPRequestData<B, H>,
   ): xmlJsParser.Element | xmlJsParser.ElementCompact {
-    console.log('body');
-    console.log(this.getBody(requestData));
     return {
       'soapenv:Envelope': {
         _attributes: {

@@ -38,4 +38,8 @@ export class ApplicationConfigurationService {
       this.configService.get<number>('application.maxConcurrentProcess'),
     );
   }
+
+  get logFolder(): string {
+    return this.configService.get<string>('application.logFolder');
+  }
 }

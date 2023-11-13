@@ -33,6 +33,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+
     ThrottlerModule.forRootAsync({
       imports: [ThrottlerConfigurationModule],
       useFactory: async (configService: ThrottlerConfigurationService) => ({

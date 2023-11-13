@@ -7,6 +7,7 @@ import { ICustomerByPhoneNumberRequestBody } from './customer-by-phone-number-re
 import { ICustomerByPhoneNumberResponse } from './customer-by-phone-number-response.interface';
 import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerByPhoneNumberResponse> {
@@ -22,9 +23,27 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
     dto: CustomerByPhoneNumberDto,
   ): Promise<ICustomerByPhoneNumberResponse> {
     try {
+      Wlog.instance.info('Inicio ', CustomerByPhoneNumberService.name, 'get');
+      Wlog.instance.info(
+        'Validando parámetros',
+        CustomerByPhoneNumberService.name,
+        'get',
+      );
       this.validateInput(dto);
-      return await this.getCustomer(dto);
+      Wlog.instance.info(
+        'Consultando',
+        CustomerByPhoneNumberService.name,
+        'get',
+      );
+      const response = await this.getCustomer(dto);
+      Wlog.instance.info('Fin', CustomerByPhoneNumberService.name, 'get');
+      return response;
     } catch (error) {
+      Wlog.instance.error(
+        error?.message,
+        CustomerByPhoneNumberService.name,
+        'get',
+      );
       this.exceptionHandler(error);
     }
   }

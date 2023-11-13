@@ -9,4 +9,5 @@ export default registerAs('application', () => ({
   routesFilter: process.env.APP_REQUEST_FILTER,
   routesLimit: process.env.APP_REQUEST_LIMIT,
   maxConcurrentProcess: process.env.APP_MAX_CONCURRENT_PROCESS,
+  logFolder: process.env.LOG_FOLDER,
 }));

@@ -1,6 +1,8 @@
+import { IStatusResponse } from 'src/responses/status-response.interface';
 import { GetABADataConstants } from './get-aba-data.constants';
 
-export interface IGetABADataResponse {
+export interface IGetABADataResponse
+  extends IStatusResponse<GetABADataConstants> {
   abadslamportid: number;
   abancc: string;
   abaclienttype: string;
@@ -13,5 +15,4 @@ export interface IGetABADataResponse {
   abaposition: number;
   abavci: number;
   abacontractid: number;
-  status: GetABADataConstants;
 }
