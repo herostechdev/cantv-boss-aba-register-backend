@@ -36,9 +36,9 @@ export class GetABADataFromRequestsService extends OracleDatabaseService {
       sz_PlanDesired: OracleHelper.stringBindOut(32),
       sz_PlanDescription: OracleHelper.stringBindOut(256),
       sz_MedioP: OracleHelper.stringBindOut(32),
-      abarequests_row: OracleHelper.stringBindOut(10),
-      abaacceptedrequests_row: OracleHelper.stringBindOut(10),
-      abarequestsregistes_row: OracleHelper.stringBindOut(10),
+      abarequests_row: OracleHelper.cursorBindOut(),
+      abaacceptedrequests_row: OracleHelper.cursorBindOut(),
+      abarequestsregistes_row: OracleHelper.cursorBindOut(),
       Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
