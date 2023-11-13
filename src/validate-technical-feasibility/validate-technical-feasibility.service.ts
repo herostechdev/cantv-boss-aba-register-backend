@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
+
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-error.exception';
 import { CheckIpStatusConstants } from './check-ip/check-ip-status.constants';
 import { DeleteOrderStatusConstants } from './delete-order/delete-order-status.constants';
@@ -15,38 +17,31 @@ import { Error30043Exception } from 'src/exceptions/error-3004-3.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
-import { ErrorSearchingASAPException } from './exceptions/error-searching-asap.exception ';
 import { GetPortIdFromIpExecutionException } from './get-port-id-from-ip/get-port-id-from-ip-execution.exception';
 import { GetABADataConstants } from './get-aba-data/get-aba-data.constants';
 import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-execution-error.exception';
-import { GetABADataFromRequestsException } from './get-aba-data-from-requests/get-aba-data-from-requests.exception';
-import { GetABADataFromRequestsStatusConstants } from './get-aba-data-from-requests/get-aba-data-from-requests-status.constants';
+import { GetABADataFromRequestsService } from './get-aba-data-from-requests/get-aba-data-from-requests.service';
 import { GetAndRegisterQualifOfServiceException } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service.exception';
 import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
 import { GetASAPOrderDetailService } from 'src/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
-import { GetDataFromDSLAMPortIdThereIsNoDataException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-there-is-no-data.exception';
 import { GetDataFromRequestsThereIsNoDataException } from './get-data-from-requests/get-data-from-requests-there-is-no-data.exception';
 import { GetDataFromRequestsStatusConstants } from './get-data-from-requests/get-data-from-requests-status.constants';
 import { GetDataFromRequestsException } from './get-data-from-requests/get-data-from-requests.exception';
 import { GetDHCPDataService } from 'src/get-dhcp-data/get-dhcp.service';
-import { GetDownstreamFromPlanException } from './get-downstream-from-plan/get-downstream-from-plan.exception';
 import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
 import { GetDownstreamFromPlanThereIsNoDataException } from './get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
 import { GetInfoFromABARequestsException } from './get-info-from-aba-requests/get-info-from-aba-requests.exception';
-import { GetInfoFromABARequestsStatusConstants } from './get-info-from-aba-requests/get-info-from-aba-requests-status.constants';
 import { GetPortIdFromIpBadIpFormatException } from './get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
 import { GetPortIdFromIpConstants } from './get-port-id-from-ip/get-port-id-from-ip.constants';
-import { GetPortIdFromIpDSLAMDataNotFoundException } from './get-port-id-from-ip/get-port-id-from-ip-dslam-data-not-found.exception';
 import { GetPortIdStatusConstants } from './get-port-id/get-port-id-status.constants';
 import { GetPortIdException } from './get-port-id/get-port-id.exception';
 import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
 import { IDeleteOrderResponse } from './delete-order/delete-order-response.interface';
-import { IGetInfoFromABARequestsResponse } from './get-info-from-aba-requests/get-info-from-aba-requests-response.interface';
 import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interface';
-import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests/get-aba-data-from-requests-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
+import { IGetASAPOrderDetailResponse } from 'src/get-asap-order-detail/get-asap-order-detail-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from './get-dsl-central-co-id-by-dslam-port-id/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/get-dhcp-data/get-dhcp-data-response.interface';
@@ -86,17 +81,16 @@ import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-fea
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from './verify-contract-by-phone/verify-contract-by-phone-status.constants';
-import { IGetASAPOrderDetailResponse } from 'src/get-asap-order-detail/get-asap-order-detail-response.interface';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
+    private readonly dslAuditLogsService: DSLAuditLogsService,
+    private readonly getABADataFromRequestsService: GetABADataFromRequestsService,
+    private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly getDHCPDataService: GetDHCPDataService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
-    private readonly dslAuditLogsService: DSLAuditLogsService,
   ) {
     super(oracleConfigurationService);
   }
@@ -169,9 +163,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
-      data.getABADataFromRequestsResponse = await this.getABADataFromRequests(
-        data,
-      );
+      data.getABADataFromRequestsResponse =
+        await this.getABADataFromRequestsService.getABADataFromRequests(dto);
       if (data.verifyContractByPhoneResponse.status === 0) {
         throw new VerifyContractByPhoneException();
       }
@@ -490,56 +483,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // private async getInfoFromABARequests(
-  //   data: ValidateTechnicalFeasibilityData,
-  // ): Promise<IGetInfoFromABARequestsResponse> {
-  //   const parameters = {
-  //     i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
-  //     i_phonenumber: OracleHelper.stringBindIn(
-  //       data.requestDto.phoneNumber,
-  //       256,
-  //     ),
-  //     sz_Fecha1: OracleHelper.stringBindOut(10),
-  //     sz_Fecha2: OracleHelper.stringBindOut(10),
-  //     sz_Fecha3: OracleHelper.stringBindOut(10),
-  //     sz_PlanDesired: OracleHelper.stringBindOut(32),
-  //     sz_PlanDescription: OracleHelper.stringBindOut(256),
-  //     sz_MedioP: OracleHelper.stringBindOut(32),
-  //     abarequests_row: OracleHelper.stringBindOut(10),
-  //     abaacceptedrequests_row: OracleHelper.stringBindOut(10),
-  //     abarequestsregistes_row: OracleHelper.stringBindOut(10),
-  //     Status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     OracleConstants.ACT_PACKAGE,
-  //     OracleConstants.GET_INFO_FROM_ABA_REQUESTS,
-  //     parameters,
-  //   );
-  //   const status = (result?.outBinds?.Status ??
-  //     GetInfoFromABARequestsStatusConstants.EXECUTION_ERROR) as GetInfoFromABARequestsStatusConstants;
-  //   const response: IGetInfoFromABARequestsResponse = {
-  //     date1: result?.outBinds?.sz_Fecha1,
-  //     date2: result?.outBinds?.sz_Fecha2,
-  //     date3: result?.outBinds?.sz_Fecha3,
-  //     desiredPlan: result?.outBinds?.sz_PlanDesired,
-  //     descriptionPlan: result?.outBinds?.sz_PlanDescription,
-  //     medioP: result?.outBinds?.sz_MedioP,
-  //     abaRequestsRow: result?.outBinds?.abarequests_row,
-  //     abaAcceptedRequestsRow: result?.outBinds?.abaacceptedrequests_row,
-  //     abaRequestsRegistersRow: result?.outBinds?.abarequestsregistes_row,
-  //     status: status,
-  //   };
-  //   switch (status) {
-  //     case GetInfoFromABARequestsStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetInfoFromABARequestsStatusConstants.EXECUTION_ERROR:
-  //       throw new GetInfoFromABARequestsException();
-  //     case GetInfoFromABARequestsStatusConstants.THERE_IS_NO_DATA:
-  //       return response;
-  //     default:
-  //       throw new GetInfoFromABARequestsException();
-  //   }
-  // }
   private async getDataFromRequests(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDataFromRequestsResponse> {
@@ -614,57 +557,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         throw new GetInfoFromABARequestsException();
       case GetDownstreamFromPlanStatusConstants.THERE_IS_NO_DATA:
         throw new GetDownstreamFromPlanThereIsNoDataException();
-      default:
-        throw new GetInfoFromABARequestsException();
-    }
-  }
-
-  private async getABADataFromRequests(
-    data: ValidateTechnicalFeasibilityData,
-  ): Promise<IGetABADataFromRequestsResponse> {
-    const parameters = {
-      i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
-      i_phonenumber: OracleHelper.stringBindIn(
-        data.requestDto.phoneNumber,
-        256,
-      ),
-      sz_Fecha1: OracleHelper.stringBindOut(10),
-      sz_Fecha2: OracleHelper.stringBindOut(10),
-      sz_Fecha3: OracleHelper.stringBindOut(10),
-      sz_PlanDesired: OracleHelper.stringBindOut(32),
-      sz_PlanDescription: OracleHelper.stringBindOut(256),
-      sz_MedioP: OracleHelper.stringBindOut(32),
-      abarequests_row: OracleHelper.stringBindOut(10),
-      abaacceptedrequests_row: OracleHelper.stringBindOut(10),
-      abarequestsregistes_row: OracleHelper.stringBindOut(10),
-      Status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_ABA_DATA_FROM_REQUESTS,
-      parameters,
-    );
-    const status = (result?.outBinds?.Status ??
-      GetABADataFromRequestsStatusConstants.EXECUTION_ERROR) as GetABADataFromRequestsStatusConstants;
-    const response: IGetABADataFromRequestsResponse = {
-      date1: result?.outBinds?.sz_Fecha1,
-      date2: result?.outBinds?.sz_Fecha2,
-      date3: result?.outBinds?.sz_Fecha3,
-      desiredPlan: result?.outBinds?.sz_PlanDesired,
-      descriptionPlan: result?.outBinds?.sz_PlanDescription,
-      medioP: result?.outBinds?.sz_MedioP,
-      abaRequestsRow: result?.outBinds?.abarequests_row,
-      abaAcceptedRequestsRow: result?.outBinds?.abaacceptedrequests_row,
-      abaRequestsRegistersRow: result?.outBinds?.abarequestsregistes_row,
-      status: status,
-    };
-    switch (status) {
-      case GetABADataFromRequestsStatusConstants.SUCCESSFULL:
-        return response;
-      case GetABADataFromRequestsStatusConstants.EXECUTION_ERROR:
-        throw new GetInfoFromABARequestsException();
-      case GetABADataFromRequestsStatusConstants.THERE_IS_NO_DATA:
-        return response;
       default:
         throw new GetInfoFromABARequestsException();
     }

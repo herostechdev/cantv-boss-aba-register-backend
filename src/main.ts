@@ -10,10 +10,11 @@ import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
-// import { HashService } from './system/infrastructure/security/encryption/hash.service';
-// import { IsIPAllowedService } from './is-ip-allowed/is-ip-allowed.service';
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from './oracle/oracle.constants';
+
+import { GetABADataFromRequestsService } from './validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests.service';
+// import { HashService } from './system/infrastructure/security/encryption/hash.service';
 
 // const test = (app: INestApplication) => {
 //   const hashService: HashService = app.get(HashService);
@@ -33,10 +34,18 @@ import { OracleConstants } from './oracle/oracle.constants';
 //   );
 // };
 
-// const spTest = async (app: INestApplication) => {
-//   const service: IsIPAllowedService = app.get(IsIPAllowedService);
-//   await service.isIPAllowed({ ipAddress: '124.47.3.5' });
-// };
+const spTest = async (app: INestApplication) => {
+  const service: GetABADataFromRequestsService = app.get(
+    GetABADataFromRequestsService,
+  );
+  const response = await service.getABADataFromRequests({
+    areaCode: '274',
+    phoneNumber: '2661451',
+  });
+  console.log();
+  console.log('response');
+  console.log(response);
+};
 
 const initializePipes = (app: INestApplication) => {
   app.useGlobalPipes(
@@ -87,7 +96,7 @@ const bootstrap = async () => {
   initializePipes(app);
   await initializeOracleDatabaseClient(app);
   // test(app);
-  // await spTest(app);
+  await spTest(app);
   await startServer(app);
 };
 
