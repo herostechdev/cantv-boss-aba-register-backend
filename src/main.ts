@@ -96,7 +96,7 @@ const bootstrap = async () => {
   initializePipes(app);
   await initializeOracleDatabaseClient(app);
   // test(app);
-  await spTest(app);
+  // await spTest(app);
   await startServer(app);
 };
 
