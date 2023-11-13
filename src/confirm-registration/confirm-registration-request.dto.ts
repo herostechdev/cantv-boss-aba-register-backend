@@ -1,6 +1,7 @@
 import { IsIP, IsInt, IsOptional, IsString } from 'class-validator';
+import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
-export class ConfirmRegistrationRequestDto {
+export class ConfirmRegistrationRequestDto implements IPhoneNumber {
   @IsIP(4, { message: 'La IP es inválida' })
   ipAddress: string;
 

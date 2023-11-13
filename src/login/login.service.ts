@@ -19,6 +19,7 @@ import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class LoginService extends OracleDatabaseService {
@@ -31,22 +32,54 @@ export class LoginService extends OracleDatabaseService {
 
   async login(dto: LoginRequestDto): Promise<ILoginResponse> {
     try {
+      Wlog.instance.info({
+        message: 'Inicio',
+        bindingData: dto.userlogin,
+        clazz: LoginService.name,
+        method: 'login',
+      });
       const data = new LoginData();
       data.requestDto = dto;
       await super.connect();
+      Wlog.instance.info({
+        message: 'Obtener permisología del usuario',
+        bindingData: dto.userlogin,
+        clazz: LoginService.name,
+        method: 'login',
+      });
       data.getGroupAccessFromLoginResponse = await this.getGroupAccessFromLogin(
         data,
       );
       //TODO: Validar si el password es correcto: data.getGroupAccessFromLoginResponse.userpassword. Validar con Ivan validación MD5
+      Wlog.instance.info({
+        message: 'Validar contraseña',
+        bindingData: dto.userlogin,
+        clazz: LoginService.name,
+        method: 'login',
+      });
       this.validatePassword(
         dto.password,
         data.getGroupAccessFromLoginResponse?.userpassword,
       );
+      Wlog.instance.info({
+        message: 'Validar permisos',
+        bindingData: dto.userlogin,
+        clazz: LoginService.name,
+        method: 'login',
+      });
       data.isgActionAllowedResponse = await this.isgActionAllowed(data);
       return {
         status: data.isgActionAllowedResponse?.status,
       };
     } catch (error) {
+      Wlog.instance.error({
+        message: error?.message,
+        bindingData: dto.userlogin,
+        clazz: LoginService.name,
+        method: 'login',
+        error: error,
+        stack: error?.stack,
+      });
       super.exceptionHandler(error, `${dto?.userlogin}`);
     } finally {
       await this.closeConnection();

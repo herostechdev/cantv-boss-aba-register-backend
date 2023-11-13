@@ -87,6 +87,8 @@ import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.h
 import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from './verify-contract-by-phone/verify-contract-by-phone-status.constants';
 import { IGetASAPOrderDetailResponse } from 'src/get-asap-order-detail/get-asap-order-detail-response.interface';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -103,56 +105,155 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     dto: ValidateTechnicalFeasibilityRequestDto,
   ): Promise<ValidateTechnicalFeasibilityData> {
     try {
+      Wlog.instance.info({
+        message: 'Inicio',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       const data = new ValidateTechnicalFeasibilityData();
       data.requestDto = dto;
       await super.connect();
+      Wlog.instance.info({
+        message: 'insertDslAbaRegisters',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.insertDslAbaRegistersResponse = await this.insertDslAbaRegisters(
         data,
       );
+      Wlog.instance.info({
+        message: 'isPrepaidVoiceLine',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.isPrepaidVoiceLine = await this.isPrepaidVoiceLine(data);
+      Wlog.instance.info({
+        message: 'getAndRegisterQualifOfService',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.getAndRegisterQualifOfServiceResponse =
         await this.getAndRegisterQualifOfService(data);
+      Wlog.instance.info({
+        message: 'verifyContractByPhone',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.verifyContractByPhoneResponse = await this.verifyContractByPhone(
         data,
       );
+      Wlog.instance.info({
+        message: 'getDataFromRequests',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.getDataFromRequestsResponse = await this.getDataFromRequests(data);
-      // data.getInfoFromABARequestsResponse = await this.getInfoFromABARequests(
-      //   data,
-      // );
+      Wlog.instance.info({
+        message: 'getDownstreamFromPlan',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
         data,
       );
+      Wlog.instance.info({
+        message: 'getABADataFromRequests',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.getABADataFromRequestsResponse = await this.getABADataFromRequests(
         data,
       );
       if (data.verifyContractByPhoneResponse.status === 0) {
         throw new VerifyContractByPhoneException();
       }
+      Wlog.instance.info({
+        message: 'isValidIpAddress',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.isValidIpAddressResponse = await this.isValidIpAddress(data);
+      Wlog.instance.info({
+        message: 'getPortIdFromIp',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.getPortIdFromIpResponse = await this.getPortIdFromIp(data);
       if (
         ValidationHelper.isDefined(data.getPortIdFromIpResponse.dslamportId)
       ) {
+        Wlog.instance.info({
+          message: 'IsOccupiedPort',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateTechnicalFeasibilityService.name,
+          method: 'validateTechnicalFeasibility',
+        });
         data.isOccupiedPortResponse = await this.IsOccupiedPort(data);
         if (data.isOccupiedPortResponse.result > 0) {
+          Wlog.instance.info({
+            message: 'getPortIdFlow',
+            bindingData: BossHelper.getPhoneNumber(dto),
+            clazz: ValidateTechnicalFeasibilityService.name,
+            method: 'validateTechnicalFeasibility',
+          });
           await this.getPortIdFlow(data);
         } else {
+          Wlog.instance.info({
+            message: 'getASAPOrderDetail',
+            bindingData: BossHelper.getPhoneNumber(dto),
+            clazz: ValidateTechnicalFeasibilityService.name,
+            method: 'validateTechnicalFeasibility',
+          });
           await this.rbeDoesNotExistLog(data);
           data.getASAPOrderDetailResponse = await this.getASAPOrderDetail(data);
         }
       } else {
+        Wlog.instance.info({
+          message: 'getPortIdFlow',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateTechnicalFeasibilityService.name,
+          method: 'validateTechnicalFeasibility',
+        });
         await this.getPortIdFlow(data);
       }
+      Wlog.instance.info({
+        message: 'getABAData',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
       data.getABADataResponse = await this.getABAData(data);
       if (data.getABADataResponse.status === 0) {
         if (ValidationHelper.isDefined(data.getABADataResponse.abacontractid)) {
           throw new TheClientAlreadyHasABAServiceException();
         } else {
+          Wlog.instance.info({
+            message: 'checkIp',
+            bindingData: BossHelper.getPhoneNumber(dto),
+            clazz: ValidateTechnicalFeasibilityService.name,
+            method: 'validateTechnicalFeasibility',
+          });
           data.checkIpResponse = await this.checkIp(data);
           // TODO: Revisar las condiciones del flujo porque SOLO contemplan los CheckIpStatusConstants 10 Y 6
           // if(data.checkIpResponse.status === CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT)
         }
       } else {
+        Wlog.instance.info({
+          message: 'getDataFromDslamPortId',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateTechnicalFeasibilityService.name,
+          method: 'validateTechnicalFeasibility',
+        });
         data.getDataFromDslamPortIdResponse = await this.getDataFromDslamPortId(
           data,
         );
@@ -160,17 +261,47 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           data.getDataFromDslamPortIdResponse.status ===
           GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL
         ) {
+          Wlog.instance.info({
+            message: 'modifyNetworkAccessLog',
+            bindingData: BossHelper.getPhoneNumber(dto),
+            clazz: ValidateTechnicalFeasibilityService.name,
+            method: 'validateTechnicalFeasibility',
+          });
           await this.modifyNetworkAccessLog(data);
         }
+        Wlog.instance.info({
+          message: 'deleteOrder',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateTechnicalFeasibilityService.name,
+          method: 'validateTechnicalFeasibility',
+        });
         data.deleteOrderResponse = await this.deleteOrder(data);
         // TODO: Agregar llamada al SP GETDSLCENTRALCOIDBYDSLAMPORTID
+        Wlog.instance.info({
+          message: 'getDSLCentralCoIdByDSLAMPortId',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateTechnicalFeasibilityService.name,
+          method: 'validateTechnicalFeasibility',
+        });
         data.getDSLCentralCoIdByDSLAMPortIdResponse =
           await this.getDSLCentralCoIdByDSLAMPortId(data);
+        Wlog.instance.info({
+          message: 'readIABAOrder',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateTechnicalFeasibilityService.name,
+          method: 'validateTechnicalFeasibility',
+        });
         data.readIABAOrderResponse = await this.readIABAOrder(data);
         if (
           data.readIABAOrderResponse.errorCode ===
           ReadIABAOrderErrorCodeConstants.SUCCESSFULL
         ) {
+          Wlog.instance.info({
+            message: 'getABAData',
+            bindingData: BossHelper.getPhoneNumber(dto),
+            clazz: ValidateTechnicalFeasibilityService.name,
+            method: 'validateTechnicalFeasibility',
+          });
           data.getABADataResponse = await this.getABAData(data);
           if (
             data.getABADataResponse.status !== GetABADataConstants.SUCCESSFULL
@@ -185,6 +316,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       }
       return data;
     } catch (error) {
+      Wlog.instance.error({
+        message: error?.message,
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+        error: error,
+        stack: error?.stack,
+      });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
       await this.closeConnection();

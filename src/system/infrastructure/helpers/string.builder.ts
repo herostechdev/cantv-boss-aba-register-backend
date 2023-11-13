@@ -29,11 +29,7 @@ export class StringBuilder {
     return this;
   }
 
-  toArrayString(delimeter: string): string {
-    return this.data.join(delimeter);
-  }
-
-  toString(): string {
-    return this.data.join('');
+  toString(delimeter?: string): string {
+    return this.data.join(delimeter ?? ' ');
   }
 }

@@ -9,6 +9,7 @@ import { OracleConfigurationService } from 'src/system/configuration/oracle/orac
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetOrderIdFromABASalesService extends OracleDatabaseService {
@@ -18,10 +19,16 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  async GetOrderIdFromABASales(
+  async getOrderIdFromABASales(
     dto: GetOrderIdFromABASalesRequestDto,
   ): Promise<IGetOrderIdFromABASalesResponse> {
     try {
+      Wlog.instance.info({
+        message: 'Invocando GetOrderidFromAbaSales',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: GetOrderIdFromABASalesService.name,
+        method: 'getOrderIdFromABASales',
+      });
       await super.connect();
       const parameters = {
         str_areacode: OracleHelper.stringBindIn(dto.areaCode),
@@ -34,9 +41,6 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
         OracleConstants.GET_ORDER_ID_FROM_ABA_SALES,
         parameters,
       );
-      console.log();
-      console.log('result');
-      console.log(result);
       const status = (result?.outBinds?.str_status ??
         GetOrderIdFromABASalesStatusConstants.ERROR) as GetOrderIdFromABASalesStatusConstants;
       const response: IGetOrderIdFromABASalesResponse = {
@@ -56,6 +60,14 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
           throw new GetOrderIdFromABASalesException(result);
       }
     } catch (error) {
+      Wlog.instance.error({
+        message: 'Invocando GetOrderidFromAbaSales',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: GetOrderIdFromABASalesService.name,
+        method: 'getOrderIdFromABASales',
+        error: error,
+        stack: error?.stack,
+      });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
       await this.closeConnection();

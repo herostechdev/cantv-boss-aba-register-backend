@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CustomerExistsStatusConstants } from './customer-exists-status.constants';
 import { CustomerExistsInternalErrorException } from './customer-exists-internal-error.exception';
-import { CustomerExistsThereIsNoDataException } from './customer-exists-there-is-no-data.exception';
 import { ICustomerExistsResponse } from './customer-exists-response.interface';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';

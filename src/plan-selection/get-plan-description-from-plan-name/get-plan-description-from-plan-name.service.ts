@@ -7,6 +7,8 @@ import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 
 @Injectable()
 export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService {
@@ -21,6 +23,12 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
     dto: GetPlanDescriptionFromPlanNameRequestDto,
   ): Promise<IGetPlanDescriptionFromPlanNameResponse> {
     try {
+      Wlog.instance.info({
+        message: 'Inicio',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: GetPlanDescriptionFromPlanNameService.name,
+        method: 'getPlanDescriptionFromPlanName',
+      });
       await super.connect();
       const parameters = {
         sz_PlanName: OracleHelper.stringBindIn(dto.planName),
@@ -49,6 +57,14 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
           throw new GetPlanDFescriptionFromPlanNameException();
       }
     } catch (error) {
+      Wlog.instance.error({
+        message: error?.message,
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: GetPlanDescriptionFromPlanNameService.name,
+        method: 'getPlanDescriptionFromPlanName',
+        error: error,
+        stack: error?.stack,
+      });
       super.exceptionHandler(error);
     } finally {
       await this.closeConnection();

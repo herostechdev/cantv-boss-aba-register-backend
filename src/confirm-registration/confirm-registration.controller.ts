@@ -18,6 +18,6 @@ export class ConfirmRegistrationController {
   ConfirmRegistration(
     @Body() dto: ConfirmRegistrationRequestDto,
   ): Promise<ConfirmRegistrationData> {
-    return this.service.confirmRegistration(dto);
+    return this.service.confirmRegistrationFlow(dto);
   }
 }

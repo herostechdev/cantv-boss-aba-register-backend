@@ -18,6 +18,6 @@ export class GetOrderIdFromABASalesController {
   GetOrderIdFromABASales(
     @Body() dto: GetOrderIdFromABASalesRequestDto,
   ): Promise<IGetOrderIdFromABASalesResponse> {
-    return this.service.GetOrderIdFromABASales(dto);
+    return this.service.getOrderIdFromABASales(dto);
   }
 }

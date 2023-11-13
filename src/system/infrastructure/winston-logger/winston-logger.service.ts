@@ -1,9 +1,11 @@
 import winston, { createLogger, format, transports } from 'winston';
 const { combine, timestamp, label, printf } = format;
 import * as path from 'path';
-import { WinstonLogConstants } from './winston-log.constants';
-import { StringBuilder } from '../helpers/string.builder';
+
+import { IWinstonLog } from './winston-log.interface';
 import { IWinstonLogInputData } from './winston-log-input-data.interface';
+import { StringBuilder } from '../helpers/string.builder';
+import { WinstonLogConstants } from './winston-log.constants';
 // import DailyRotateFile from 'winston-daily-rotate-file';
 
 export class Wlog {
@@ -27,7 +29,7 @@ export class Wlog {
         format.metadata({
           fillExcept: ['message', 'level', 'timestamp', 'label'],
         }),
-        printf((info) => this.logFormat(info)),
+        printf((info) => this.stringFormat(info)),
       ),
       transports: [
         this.getCombinedFileTransport(),
@@ -37,21 +39,40 @@ export class Wlog {
     });
   }
 
-  private logFormat(info: winston.Logform.TransformableInfo): string {
+  private stringFormat(info: winston.Logform.TransformableInfo): string {
     const rowLog = new StringBuilder();
-    rowLog.append(`[${info.label}] ${info.timestamp}`);
+    rowLog.append(`[${info.label}]`);
+    rowLog.append(`${info.timestamp}`);
     if (info.metadata.clazz) {
       const method = info.metadata.method ? `.${info.metadata.method}` : '';
-      rowLog.append(`  [${info.metadata.clazz}${method}]`);
+      rowLog.append(`[${info.metadata.clazz}${method}]`);
     }
-    rowLog.append(`  ${info.level.toUpperCase()}  ${info.message}`);
+    rowLog.append(`${info.level.toUpperCase()}`);
+    if (info.metadata.bindingData) {
+      rowLog.append(`${info.metadata.bindingData}  |`);
+    }
+    rowLog.append(`${info.message}`);
     if (info.metadata.error) {
-      rowLog.append(`  ${info.metadata.error}`);
+      rowLog.append(`${info.metadata.error}`);
       if (info.metadata.error.stack) {
-        rowLog.append(`  ${info.metadata.error.stack}`);
+        rowLog.append(`${info.metadata.error.stack}`);
       }
     }
     return rowLog.toString();
+  }
+
+  private objectFormat(info: winston.Logform.TransformableInfo): IWinstonLog {
+    return {
+      label: info.label,
+      timestamp: info.timestamp,
+      clazz: info.metadata?.clazz,
+      method: info.metadata?.method,
+      level: info.level,
+      bindingData: info.metadata?.bindingData,
+      message: info.message,
+      error: info.metadata?.error,
+      stack: info.metadata?.error.stack,
+    };
   }
 
   private getCombinedFileTransport(): winston.transport {
@@ -86,6 +107,7 @@ export class Wlog {
 
   public info(data: IWinstonLogInputData): void {
     this.logger.log(WinstonLogConstants.INFO, data.message, {
+      bindingData: data.bindingData,
       clazz: data.clazz,
       method: data.method,
     });
@@ -93,6 +115,7 @@ export class Wlog {
 
   public warn(data: IWinstonLogInputData): void {
     this.logger.log(WinstonLogConstants.WARNING, data.message, {
+      bindingData: data.bindingData,
       clazz: data.clazz,
       method: data.method,
     });
@@ -100,6 +123,7 @@ export class Wlog {
 
   public debug(data: IWinstonLogInputData): void {
     this.logger.log(WinstonLogConstants.DEBUG, data.message, {
+      bindingData: data.bindingData,
       clazz: data.clazz,
       method: data.method,
     });
@@ -107,8 +131,11 @@ export class Wlog {
 
   public error(data: IWinstonLogInputData): void {
     this.logger.log(WinstonLogConstants.ERROR, data.message, {
+      bindingData: data.bindingData,
       clazz: data.clazz,
       method: data.method,
+      error: data.error,
+      stack: data.stack,
     });
   }
 }

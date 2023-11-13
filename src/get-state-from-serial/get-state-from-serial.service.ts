@@ -8,6 +8,7 @@ import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetStateFromSerialService extends OracleDatabaseService {
@@ -21,6 +22,12 @@ export class GetStateFromSerialService extends OracleDatabaseService {
     dto: GetStateFromSerialRequestDto,
   ): Promise<IGetStateFromSerialResponse> {
     try {
+      Wlog.instance.info({
+        message: 'Invocando GetOrderidFromAbaSales',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: GetStateFromSerialService.name,
+        method: 'getGetStateFromSerial',
+      });
       await super.connect();
       const parameters = {
         i_areacode: OracleHelper.numberBindIn(dto.areaCode),
@@ -51,6 +58,14 @@ export class GetStateFromSerialService extends OracleDatabaseService {
           throw new GetStateFromSerialException();
       }
     } catch (error) {
+      Wlog.instance.error({
+        message: 'Invocando GetOrderidFromAbaSales',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: GetStateFromSerialService.name,
+        method: 'getGetStateFromSerial',
+        error: error,
+        stack: error?.stack,
+      });
       super.exceptionHandler(error);
     } finally {
       await this.closeConnection();

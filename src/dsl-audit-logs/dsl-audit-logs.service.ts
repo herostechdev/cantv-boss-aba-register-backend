@@ -7,6 +7,8 @@ import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 
 @Injectable()
 export class DSLAuditLogsService extends OracleDatabaseService {
@@ -18,6 +20,12 @@ export class DSLAuditLogsService extends OracleDatabaseService {
 
   async log(dto: DSLAuditLogsRequestDto): Promise<IDSLAuditLogsResponse> {
     try {
+      Wlog.instance.info({
+        message: 'Invocando DSLAuditLogsService',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: DSLAuditLogsService.name,
+        method: 'log',
+      });
       await super.connect();
       const parameters = {
         i_areacode: OracleHelper.stringBindIn(dto.areaCode, 3),
@@ -52,6 +60,14 @@ export class DSLAuditLogsService extends OracleDatabaseService {
           throw new DSLAuditLogsErrorException();
       }
     } catch (error) {
+      Wlog.instance.error({
+        message: error?.message,
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: DSLAuditLogsService.name,
+        method: 'isIPAllowed',
+        error: error,
+        stack: error?.stack,
+      });
       super.exceptionHandler(error, `${dto?.areaCode}-${dto?.phoneNumber}`);
     } finally {
       await this.closeConnection();

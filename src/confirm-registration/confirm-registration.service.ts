@@ -15,6 +15,7 @@ import { CreateAndProvisioningMasterActStatusConstants } from './create-and-prov
 import { CreateAndProvisioningMasterActInternalErrorException } from './create-and-provisioning-master-act/create-and-provisioning-master-act-internal-error.exception';
 import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
 import { CustomerExistsStatusConstants } from 'src/customer-exists/customer-exists-status.constants';
+import { Error10023Exception } from 'src/exceptions/error-1002-3.exception';
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
 import { IABARegisterResponse } from './aba-register/aba-register-response.interface';
 import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
@@ -45,7 +46,8 @@ import { CreatingPaymentInstanceException } from './create-and-provisioning-mast
 import { CreatingSubaccountException } from './create-and-provisioning-master-act/creating-subaccount.exception';
 import { ObtainingInstanceFromAttributeListException } from './create-and-provisioning-master-act/obtaining-instance-from-attribute-list.exception';
 import { ThereIsNoDataException } from './create-and-provisioning-master-act/there-is-no-data.exception';
-import { Error10023Exception } from 'src/exceptions/error-1002-3.exception';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 
 @Injectable()
 export class ConfirmRegistrationService extends OracleDatabaseService {
@@ -56,20 +58,44 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  async confirmRegistration(
+  async confirmRegistrationFlow(
     dto: ConfirmRegistrationRequestDto,
   ): Promise<ConfirmRegistrationData> {
     try {
+      Wlog.instance.info({
+        message: 'Inicio',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
       const data = new ConfirmRegistrationData();
       data.requestDto = dto;
       await super.connect();
+      Wlog.instance.info({
+        message: 'getPlanAbaFromKenan',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
       data.getPlanAbaFromKenanResponse = await this.getPlanAbaFromKenan(data);
+      Wlog.instance.info({
+        message: 'Verifica que el cliente existe',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
       data.customerExistsResponse =
         await this.customerExistsService.clientExists(null, null);
       if (
         data.customerExistsResponse.status ===
         CustomerExistsStatusConstants.SUCCESSFULL
       ) {
+        Wlog.instance.info({
+          message: 'createAndProvisioningMasterAct',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ConfirmRegistrationService.name,
+          method: 'confirmRegistrationFlow',
+        });
         data.createAndProvisioningMasterActResponse =
           await this.createAndProvisioningMasterAct(data);
         if (
@@ -79,6 +105,12 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
           throw new Error10041Exception();
         }
       } else {
+        Wlog.instance.info({
+          message: 'createAndProvisioningCustomer',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ConfirmRegistrationService.name,
+          method: 'confirmRegistrationFlow',
+        });
         data.createAndProvisioningCustomerResponse =
           await this.createAndProvisioningCustomer(data);
         if (
@@ -88,25 +120,43 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
           throw new Error10041Exception();
         }
       }
-
-      // ESTA PARTE DEL FLUJO NO SE VA A INVOCAR (CONSULTAR BPM)
-      // // TODO: Determinar  atributos cliente PENDIENTE
-      // // TODO: Determinar parámetros del SP insertModifyCustomerAttribute
-      // data.insertModifyCustomerAttributeResponse =
-      //   await this.insertModifyCustomerAttribute(null, null, null);
-      // if (
-      //   data.insertModifyCustomerAttributeResponse.status ===
-      //   InsertModifyCustomerAttributeStatusConstants.SUCCESSFULL
-      // ) {
-      //   throw new Error10022Exception();
-      // }
+      Wlog.instance.info({
+        message: 'isReservedLogin',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
       data.isReservedLoginResponse = await this.isReservedLogin(data);
+      Wlog.instance.info({
+        message: 'abaRegister',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
       data.abaRegisterResponse = await this.abaRegister(data);
+      Wlog.instance.info({
+        message: 'cancelABAInstallation',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
       data.cancelABAInstallationResponse = await this.cancelABAInstallation(
         data,
       );
+      Wlog.instance.info({
+        message: 'Fin',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
       return data;
     } catch (error) {
+      Wlog.instance.info({
+        message: error?.message,
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
       await this.closeConnection();

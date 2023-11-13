@@ -32,6 +32,8 @@ import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers
 import { UpdateDslAbaRegistersInternalErrorException } from './update-dsl-aba-registers/update-dsl-aba-registers-internal-error.exception';
 import { ValidateCustomerData } from './validate-customer-data';
 import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class ValidateCustomerService extends OracleDatabaseService {
@@ -48,12 +50,24 @@ export class ValidateCustomerService extends OracleDatabaseService {
     dto: ValidateCustomerRequestDto,
   ): Promise<ValidateCustomerData> {
     try {
+      Wlog.instance.info({
+        message: 'Inicio',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateCustomerService.name,
+        method: 'validateCustomer',
+      });
       const data = new ValidateCustomerData();
       data.requestDto = dto;
       await super.connect();
       // TODO: Validar condición: Si IDENTIFICADOR DE CLIENTE ES CEDULA
       if ('Validar condición: Si IDENTIFICADOR DE CLIENTE ES CEDULA') {
         // TODO: Determinar que información se envía
+        Wlog.instance.info({
+          message: 'getClientClassNameFromIdValue',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateCustomerService.name,
+          method: 'validateCustomer',
+        });
         data.getClientClassNameFromIdValueResponse =
           await this.getClientClassNameFromIdValue(null, null);
         if (
@@ -64,6 +78,12 @@ export class ValidateCustomerService extends OracleDatabaseService {
           // TODO: Eliminar los ceros a la izquierda del Campo Identificador de Cliente
           // TODO: Cuál es el Campo Identificador de Cliente
         }
+        Wlog.instance.info({
+          message: 'getFirstLetterFromABARequest',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateCustomerService.name,
+          method: 'validateCustomer',
+        });
         data.getFirstLetterFromABARequestResponse =
           await this.getFirstLetterFromABARequest(data);
         if (
@@ -76,6 +96,12 @@ export class ValidateCustomerService extends OracleDatabaseService {
       } else {
         // TODO: Determinar origen del parámetro: attributeName
         // TODO: Determinar origen del parámetro: attributeValue
+        Wlog.instance.info({
+          message: 'clientExists',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateCustomerService.name,
+          method: 'validateCustomer',
+        });
         data.clientExistsResponse = await this.clientExistsService.clientExists(
           null,
           null,
@@ -89,6 +115,12 @@ export class ValidateCustomerService extends OracleDatabaseService {
         }
       }
       // TODO: Cuáles son los datos para invocar el SP GetAllValuesFromCltvalues
+      Wlog.instance.info({
+        message: 'getAllValuesFromClientValues',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateCustomerService.name,
+        method: 'validateCustomer',
+      });
       data.getAllValuesFromClientValuesResponse =
         await this.getAllValuesFromClientValues(null, null, null);
       if (
@@ -96,6 +128,12 @@ export class ValidateCustomerService extends OracleDatabaseService {
         GetAllValuesFromClientValuesStatusConstants.SUCCESSFULL
       ) {
         // TODO: Cuáles son los datos para invocar el SP GetCltInstanceidFromIdValue
+        Wlog.instance.info({
+          message: 'getClientInstanceIdFromIdValue',
+          bindingData: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateCustomerService.name,
+          method: 'validateCustomer',
+        });
         data.getClientInstanceIdFromIdValueResponse =
           await this.getClientInstanceIdFromIdValue(null, null);
         if (
@@ -103,12 +141,24 @@ export class ValidateCustomerService extends OracleDatabaseService {
           GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL
         ) {
           // TODO: Cuáles son los datos para invocar el SP GetDebtFromClient
+          Wlog.instance.info({
+            message: 'getDebtFromClient',
+            bindingData: BossHelper.getPhoneNumber(dto),
+            clazz: ValidateCustomerService.name,
+            method: 'validateCustomer',
+          });
           data.getDebtFromClientResponse = await this.getDebtFromClient(null);
           if (
             data.getDebtFromClientResponse.status ===
             GetDebtFromCustomerStatusConstants.SUCCESSFULL
           ) {
             // TODO: UpdateDSLAbaRegister a NO PROCESADO
+            Wlog.instance.info({
+              message: 'updateDslABARegisters',
+              bindingData: BossHelper.getPhoneNumber(dto),
+              clazz: ValidateCustomerService.name,
+              method: 'validateCustomer',
+            });
             data.updateDslABARegistersResponse =
               await this.updateDslABARegisters(data);
             throw new Error30101Exception();
@@ -120,6 +170,12 @@ export class ValidateCustomerService extends OracleDatabaseService {
           GetAllValuesFromClientValuesStatusConstants.THERE_IS_NO_DATA
         ) {
           // TODO: UpdateDSLAbaRegister a NO PROCESADO
+          Wlog.instance.info({
+            message: 'updateDslABARegisters',
+            bindingData: BossHelper.getPhoneNumber(dto),
+            clazz: ValidateCustomerService.name,
+            method: 'validateCustomer',
+          });
           data.updateDslABARegistersResponse = await this.updateDslABARegisters(
             data,
           );
@@ -128,6 +184,14 @@ export class ValidateCustomerService extends OracleDatabaseService {
       }
       return data;
     } catch (error) {
+      Wlog.instance.error({
+        message: error?.message,
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateCustomerService.name,
+        method: 'validateCustomer',
+        error: error,
+        stack: error?.stack,
+      });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
       await this.closeConnection();
