@@ -3,7 +3,7 @@ import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-c
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { PlanByClassClientService } from './plan-by-class-client.service';
 import { PlanByClassClientRequestDto } from './plan-by-class-client-request.dto';
-import { IPlanByClassClientResponse } from './plan-by-class-client-response.interface';
+import { IPlanByClassClientRawResponse } from './plan-by-class-client-raw-response.interface';
 
 @Controller({
   path: 'getPlanByClassClient',
@@ -17,7 +17,7 @@ export class PlanByClassClientController {
   @UseFilters(new HttpExceptionFilter())
   ConfirmRegistration(
     @Body() dto: PlanByClassClientRequestDto,
-  ): Promise<IPlanByClassClientResponse> {
+  ): Promise<IPlanByClassClientRawResponse> {
     return this.service.getPlanByClassClient(dto);
   }
 }

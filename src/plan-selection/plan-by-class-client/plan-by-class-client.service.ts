@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { IPlanByClassClientRawResponse } from './plan-by-class-client-raw-response.interface';
+import { IPlanByClassClientListResponse } from './plan-by-class-client-list-response.interface';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
@@ -6,7 +8,7 @@ import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle
 import { PlanByClassClientRequestDto } from './plan-by-class-client-request.dto';
 import { PlanByClassClientStatusConstants } from './plan-by-class-client-status.constants';
 import { PlanByClassClientException } from './plan-by-class-client.exception';
-import { IPlanByClassClientResponse } from './plan-by-class-client-response.interface';
+import { ArrayHelper } from 'src/system/infrastructure/helpers/array.helper';
 
 @Injectable()
 export class PlanByClassClientService extends OracleDatabaseService {
@@ -19,7 +21,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
   // TODO: Determinar origen de todos los parámetros de entrada (DTO)
   async getPlanByClassClient(
     dto: PlanByClassClientRequestDto,
-  ): Promise<IPlanByClassClientResponse> {
+  ): Promise<IPlanByClassClientListResponse> {
     try {
       await super.connect();
       const parameters = {
@@ -50,8 +52,15 @@ export class PlanByClassClientService extends OracleDatabaseService {
         OracleConstants.PLAN_BY_CUSTOMER_CLASS,
         parameters,
       );
-      const response: IPlanByClassClientResponse = {
-        plan: OracleHelper.getFirstItem(result, 'O_PLAN'),
+      const rawResponse: IPlanByClassClientRawResponse = {
+        // plan: OracleHelper.getFirstItem(result, 'O_PLAN'),
+        // planDesired: OracleHelper.getFirstItem(result, 'O_PLANDESIRED'),
+        // shortName: OracleHelper.getFirstItem(result, 'O_SHORTNAME'),
+        // monthlyFee: OracleHelper.getFirstItem(result, 'O_MONTHLYFEE'),
+        // downStream: OracleHelper.getFirstItem(result, 'O_DOWNSTREAM'),
+        // limit: OracleHelper.getFirstItem(result, 'O_LIMITE'),
+        // additionalMB: OracleHelper.getFirstItem(result, 'O_MB_ADICIONAL'),
+        plan: OracleHelper.getItems(result, 'O_PLAN'),
         planDesired: OracleHelper.getFirstItem(result, 'O_PLANDESIRED'),
         shortName: OracleHelper.getFirstItem(result, 'O_SHORTNAME'),
         monthlyFee: OracleHelper.getFirstItem(result, 'O_MONTHLYFEE'),
@@ -61,6 +70,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
         status: (result?.outBinds?.status ??
           PlanByClassClientStatusConstants.ERROR) as PlanByClassClientStatusConstants,
       };
+      const response = this.rawToListResponse(rawResponse);
       switch (response.status) {
         case PlanByClassClientStatusConstants.SUCCESSFULL:
           return response;
@@ -76,5 +86,46 @@ export class PlanByClassClientService extends OracleDatabaseService {
     } finally {
       await this.closeConnection();
     }
+  }
+
+  private rawToListResponse(
+    rawResponse: IPlanByClassClientRawResponse,
+  ): IPlanByClassClientListResponse {
+    const response: IPlanByClassClientListResponse = {
+      items: [],
+      count: 0,
+      status: 0,
+    };
+    if (
+      !rawResponse ||
+      !ArrayHelper.isArrayWithItems(rawResponse.plan) ||
+      rawResponse.plan.length === 0
+    ) {
+      return response;
+    }
+    response.status = rawResponse.status;
+    for (let index = 0; index < rawResponse.plan.length; index++) {
+      response.items.push({
+        plan: this.getValue(rawResponse.plan, index),
+        planDesired: this.getValue(rawResponse.planDesired, index),
+        shortName: this.getValue(rawResponse.shortName, index),
+        monthlyFee: this.getValue(rawResponse.monthlyFee, index),
+        downStream: this.getValue(rawResponse.downStream, index),
+        limit: this.getValue(rawResponse.limit, index),
+        additionalMB: this.getValue(rawResponse.additionalMB, index),
+      });
+      response.count = response.items.length;
+    }
+    rawResponse.plan.length;
+  }
+
+  private getValue(values: string[], index: number): string {
+    if (!Array.isArray(values) || values.length === 0) {
+      return '';
+    }
+    if (index >= 0 && values.length > index) {
+      return values[index];
+    }
+    return '';
   }
 }

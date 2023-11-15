@@ -1,8 +1,4 @@
-import { IStatusResponse } from 'src/responses/status-response.interface';
-import { PlanByClassClientStatusConstants } from './plan-by-class-client-status.constants';
-
-export interface IPlanByClassClientResponse
-  extends IStatusResponse<PlanByClassClientStatusConstants> {
+export interface IPlanByClassClientResponse {
   plan: string;
   planDesired: string;
   shortName: string;
