@@ -7,7 +7,7 @@ export class CRMCustomerDto {
 
   @IsString()
   @IsOptional()
-  identificacionDocument?: string;
+  identificationDocument?: string;
 
   @IsString()
   @IsOptional()

@@ -30,7 +30,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
       });
       await super.connect();
       const parameters = {
-        i_areacode: OracleHelper.numberBindIn(dto.areaCode),
+        i_areacode: OracleHelper.numberBindIn(Number(dto.areaCode)),
         i_serial: OracleHelper.numberBindIn(
           Number(BossHelper.getSerial(dto.phoneNumber)),
         ),

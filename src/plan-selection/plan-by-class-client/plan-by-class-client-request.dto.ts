@@ -1,6 +1,13 @@
 import { IsInt, IsString } from 'class-validator';
+import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
-export class PlanByClassClientRequestDto {
+export class PlanByClassClientRequestDto implements IPhoneNumber {
+  @IsString()
+  areaCode: string;
+
+  @IsString()
+  phoneNumber: string;
+
   @IsString()
   customerClassName: string;
 
@@ -30,10 +37,4 @@ export class PlanByClassClientRequestDto {
 
   @IsString()
   loginInstalador: string;
-
-  @IsString()
-  areaCode: string;
-
-  @IsString()
-  phoneNumber: string;
 }

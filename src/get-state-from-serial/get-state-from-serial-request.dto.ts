@@ -1,10 +1,10 @@
-import { IsInt } from 'class-validator';
+import { IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
 export class GetStateFromSerialRequestDto implements IPhoneNumber {
-  @IsInt()
-  areaCode: number;
+  @IsString()
+  areaCode: string;
 
-  @IsInt()
-  phoneNumber: number;
+  @IsString()
+  phoneNumber: string;
 }

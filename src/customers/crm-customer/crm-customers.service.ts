@@ -23,9 +23,9 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
       this.validateInput(dto);
       if (dto.customerId)
         return await this.getClientByCustomerId(dto.customerId);
-      if (dto.identificacionDocument)
+      if (dto.identificationDocument)
         return await this.getClientByIdentificationDocument(
-          dto.identificacionDocument,
+          dto.identificationDocument,
         );
       return await this.getClientByFiscalNumber(dto.fiscalNumber);
     } catch (error) {
@@ -36,7 +36,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
   private validateInput(dto: CRMCustomerDto): void {
     if (
       !dto ||
-      (!dto.customerId && !dto.identificacionDocument && !dto.fiscalNumber)
+      (!dto.customerId && !dto.identificationDocument && !dto.fiscalNumber)
     )
       throw new CRMCustomerInvalidQueryRequestException();
   }
