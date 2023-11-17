@@ -1,9 +1,9 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
+import { IPlanByClassClientListResponse } from './plan-by-class-client-list-response.interface';
 import { PlanByClassClientService } from './plan-by-class-client.service';
 import { PlanByClassClientRequestDto } from './plan-by-class-client-request.dto';
-import { IPlanByClassClientRawResponse } from './plan-by-class-client-raw-response.interface';
 
 @Controller({
   path: 'getPlanByClassClient',
@@ -17,7 +17,7 @@ export class PlanByClassClientController {
   @UseFilters(new HttpExceptionFilter())
   ConfirmRegistration(
     @Body() dto: PlanByClassClientRequestDto,
-  ): Promise<IPlanByClassClientRawResponse> {
+  ): Promise<IPlanByClassClientListResponse> {
     return this.service.getPlanByClassClient(dto);
   }
 }
