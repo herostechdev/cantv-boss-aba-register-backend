@@ -48,7 +48,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
         O_STATUS: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.ACT_PACKAGE,
+        OracleConstants.BOSS_PACKAGE,
         OracleConstants.PLAN_BY_CUSTOMER_CLASS,
         parameters,
       );

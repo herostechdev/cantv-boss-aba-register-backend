@@ -28,4 +28,10 @@ export interface ICRMCustomerResponse extends IPICCommonResponse {
   ADDRESS2?: string;
   ADDRESS3?: string;
   COUNTY?: string;
+  CTV_TYPE?: string;
+  TAXPAYER_ID?: string;
+  NATIONAL_ID?: string;
+  POSTAL?: string;
+  CTV_ROW_ADDED_DTTM?: string;
+  BUSINESS?: string;
 }

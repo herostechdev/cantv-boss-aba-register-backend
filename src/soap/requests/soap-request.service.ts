@@ -28,4 +28,11 @@ export abstract class SOAPRequestService<
         guid: 'bb8e0f0a-accd-45aa-9d31-a566373bcbdf',
       });
   }
+
+  protected getString(source: any, attributeName: string): string {
+    if (source.hasOwnProperty(attributeName)) {
+      return source[attributeName]?._text ?? null;
+    }
+    return null;
+  }
 }
