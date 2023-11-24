@@ -25,7 +25,7 @@ import { IGetDebtFromCustomerResponse } from './get-debt-from-client/get-debt-fr
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers/update-dsl-aba-registers-status.constants';
@@ -233,8 +233,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.SIGS_PACKAGE,
-      OracleConstants.GET_ALL_VALUES_FROM_CUSTOMER_VALUES,
+      BossConstants.SIGS_PACKAGE,
+      BossConstants.GET_ALL_VALUES_FROM_CUSTOMER_VALUES,
       parameters,
     );
     const response: IGetAllValuesFromClientValuesResponse = {
@@ -269,8 +269,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       o_status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE,
       parameters,
     );
     const response: IGetCustomerClassNameFromIdValueResponse = {
@@ -304,8 +304,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_CUSTOMER_INSTANCE_ID_FROM_ID_VALUE,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.GET_CUSTOMER_INSTANCE_ID_FROM_ID_VALUE,
       parameters,
     );
     const response: IGetCustomerInstanceIdFromIdValueResponse = {
@@ -339,8 +339,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       o_status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_FIRST_LETTER_FROM_ABA_REQUEST,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.GET_FIRST_LETTER_FROM_ABA_REQUEST,
       parameters,
     );
     const response: IGetFirstLetterFromABARequestResponse = {
@@ -371,8 +371,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_DEBT_FROM_CUSTOMER,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.GET_DEBT_FROM_CUSTOMER,
       parameters,
     );
     const response: IGetDebtFromCustomerResponse = {
@@ -404,8 +404,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ABA_PACKAGE,
-      OracleConstants.UPDATE_DSL_ABA_REGISTERS,
+      BossConstants.ABA_PACKAGE,
+      BossConstants.UPDATE_DSL_ABA_REGISTERS,
       parameters,
     );
     const response: IUpdateDslAbaRegistersResponse = {

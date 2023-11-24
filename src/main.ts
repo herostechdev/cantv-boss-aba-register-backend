@@ -11,9 +11,9 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from './oracle/oracle.constants';
 
 import { GetABADataFromRequestsService } from './validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests.service';
+import { OracleConstants } from './oracle/oracle.constants';
 // import { HashService } from './system/infrastructure/security/encryption/hash.service';
 
 // const test = (app: INestApplication) => {

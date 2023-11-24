@@ -66,7 +66,7 @@ import { IsValidIpAddressConstants } from './is-valid-ip-address/is-valid-ip-add
 import { IVerifiyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ReadIABAOrderErrorCodeConstants } from './read-iaba-order/read-iaba-order-error_code.constants';
 import { ReadIABAOrderGeneralDatabaseErrorException } from './read-iaba-order/read-iaba-order-general-database-error.exception';
@@ -359,8 +359,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ABA_PACKAGE,
-      OracleConstants.INSERT_DSL_ABA_REGISTERS,
+      BossConstants.ABA_PACKAGE,
+      BossConstants.INSERT_DSL_ABA_REGISTERS,
       parameters,
     );
     const status = (result?.outBinds?.status ??
@@ -392,8 +392,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       oStatus: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.IS_PREPAID,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.IS_PREPAID,
       parameters,
     );
     const response: IIsPrepaidVoiceLineResponse = {
@@ -430,7 +430,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       null,
-      OracleConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
+      BossConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
       parameters,
     );
     const status = (result?.outBinds?.Status ??
@@ -464,8 +464,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       o_status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.VERIFY_CONTRACT_BY_PHONE,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.VERIFY_CONTRACT_BY_PHONE,
       parameters,
     );
     const status = (result?.outBinds?.o_status ??
@@ -501,8 +501,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.GET_DATA_FROM_REQUESTS,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.GET_DATA_FROM_REQUESTS,
       parameters,
     );
     const status = (result?.outBinds?.Status ??
@@ -542,7 +542,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       null,
-      OracleConstants.GET_DOWNSTREAM_FROM_PLAN,
+      BossConstants.GET_DOWNSTREAM_FROM_PLAN,
       parameters,
     );
     const status = (result?.outBinds?.o_status ??
@@ -576,8 +576,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.IS_VALID_IP_ADDRESS,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.IS_VALID_IP_ADDRESS,
       parameters,
     );
     const status = (result?.outBinds?.status ??
@@ -610,8 +610,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       o_status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.GET_PORT_ID_FROM_IP,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.GET_PORT_ID_FROM_IP,
       parameters,
     );
     const dslamportId = result?.outBinds?.o_dslamportid ?? 1;
@@ -702,8 +702,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       i_invalidvpi: OracleHelper.numberBindIn(0),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.UTL_PACKAGE,
-      OracleConstants.GET_VALID_VPI,
+      BossConstants.UTL_PACKAGE,
+      BossConstants.GET_VALID_VPI,
       parameters,
     );
     return result;
@@ -722,8 +722,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       status: OracleHelper.tableOfNumberBindOut(0),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.GET_PORT_ID,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.GET_PORT_ID,
       parameters,
     );
     const status = (result?.outBinds?.status ??
@@ -754,12 +754,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       o_status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.IS_OCCUPIED_PORT,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.IS_OCCUPIED_PORT,
       parameters,
     );
     const response: IIsOccupiedPortResponse = {
-      result: result?.outBinds?.l_result ?? OracleConstants.OCCUPIED_PORT,
+      result: result?.outBinds?.l_result ?? BossConstants.OCCUPIED_PORT,
       status: (result?.outBinds?.status ??
         IsOccupiedPortConstants.INTERNAL_ERROR) as IsOccupiedPortConstants,
     };
@@ -805,8 +805,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_ABA_DATA,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.GET_ABA_DATA,
       parameters,
     );
     const response: IGetABADataResponse = {
@@ -853,8 +853,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.CHECK_IP,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.CHECK_IP,
       parameters,
     );
     const response: ICheckIpResponse = {
@@ -904,8 +904,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.GET_DATA_FROM_DSLAM_PORT_ID,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.GET_DATA_FROM_DSLAM_PORT_ID,
       parameters,
     );
     const response: IGetDataFromDSLAMPortIdResponse = {
@@ -946,8 +946,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       Status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.DELETE_ORDER,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.DELETE_ORDER,
       parameters,
     );
     const response: IDeleteOrderResponse = {
@@ -980,7 +980,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       null,
-      OracleConstants.GET_DSL_CENTRAL_CO_ID_BY_DSLAM_PORT_ID,
+      BossConstants.GET_DSL_CENTRAL_CO_ID_BY_DSLAM_PORT_ID,
       parameters,
     );
     const response: IGetDSLCentralCoIdByDSLAMPortIdResponse = {
@@ -1057,8 +1057,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       l_errorcode: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.UTL_PACKAGE,
-      OracleConstants.READ_IABA_ORDER,
+      BossConstants.UTL_PACKAGE,
+      BossConstants.READ_IABA_ORDER,
       parameters,
     );
     const response: IReadIABAOrderResponse = {

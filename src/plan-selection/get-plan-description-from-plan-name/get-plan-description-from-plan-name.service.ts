@@ -3,7 +3,7 @@ import { GetPlanDescriptionFromPlanNameStatusConstants } from './get-plan-descri
 import { GetPlanDescriptionFromPlanNameRequestDto } from './get-plan-description-from-plan-name-request.dto';
 import { GetPlanDFescriptionFromPlanNameException } from './get-plan-description-from-plan-name.exception';
 import { IGetPlanDescriptionFromPlanNameResponse } from './get-plan-description-from-plan-name-response.interface';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
@@ -36,8 +36,8 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
         status: OracleHelper.numberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.ACT_PACKAGE,
-        OracleConstants.GET_PLAN_DESCRIPTION_FROM_PLAN_NAME,
+        BossConstants.ACT_PACKAGE,
+        BossConstants.GET_PLAN_DESCRIPTION_FROM_PLAN_NAME,
         parameters,
       );
       const response: IGetPlanDescriptionFromPlanNameResponse = {

@@ -32,7 +32,7 @@ import { IsReservedLoginThereIsNoDataException } from './is-reserved-login/is-re
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { BillingException } from './create-and-provisioning-master-act/billing.exception';
 import { ContactAdministratorException } from './create-and-provisioning-master-act/contact-administrator.exception';
 import { CreateUserInstanceException } from './create-and-provisioning-master-act/create-user-instance.exception';
@@ -172,7 +172,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     };
     const result = await super.executeStoredProcedure(
       null,
-      OracleConstants.GET_PLAN_ABA_FROM_KENAN,
+      BossConstants.GET_PLAN_ABA_FROM_KENAN,
       parameters,
     );
     const response: IGetPlanABAFromKenanResponse = {
@@ -211,8 +211,8 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       STATUS: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.SIGS_PACKAGE,
-      OracleConstants.CREATE_AND_PROVISIONING_CUSTOMER,
+      BossConstants.SIGS_PACKAGE,
+      BossConstants.CREATE_AND_PROVISIONING_CUSTOMER,
       parameters,
     );
     const response: ICreateAndProvisioningCustomerResponse = {
@@ -258,8 +258,8 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       STATUS: OracleHelper.tableOfNumberBindOut(2),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.SIGS_PACKAGE,
-      OracleConstants.CREATE_AND_PROVISIONING_MASTER_ACT,
+      BossConstants.SIGS_PACKAGE,
+      BossConstants.CREATE_AND_PROVISIONING_MASTER_ACT,
       parameters,
     );
     const response: ICreateAndProvisioningMasterActResponse = {
@@ -314,8 +314,8 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       status: OracleHelper.tableOfNumberBindOut(2),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.INSERT_MODIFY_CUSTOMER_ATTRIBUTE,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.INSERT_MODIFY_CUSTOMER_ATTRIBUTE,
       parameters,
     );
     const response: IInsertModifyCustomerAttributeResponse = {
@@ -341,8 +341,8 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       o_status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.IS_RESERVED_LOGIN,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.IS_RESERVED_LOGIN,
       parameters,
     );
     const response: IIsReservedLoginResponse = {
@@ -375,8 +375,8 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       tstatus: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.ABA_REGISTER,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.ABA_REGISTER,
       parameters,
     );
 
@@ -411,8 +411,8 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.CANCEL_ABA_INSTALLATION,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.CANCEL_ABA_INSTALLATION,
       parameters,
     );
     const response: ICancelABAInstallationResponse = {

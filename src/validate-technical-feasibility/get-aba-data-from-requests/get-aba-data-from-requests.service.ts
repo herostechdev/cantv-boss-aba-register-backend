@@ -6,7 +6,7 @@ import { GetABADataFromRequestsStatusConstants } from './get-aba-data-from-reque
 import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests-response.interface';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 
@@ -95,8 +95,8 @@ export class GetABADataFromRequestsService extends OracleDatabaseService {
       o_Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.GET_ABA_DATA_FROM_REQUESTS,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.GET_ABA_DATA_FROM_REQUESTS,
       parameters,
     );
     const status = (result?.outBinds?.o_Status ??

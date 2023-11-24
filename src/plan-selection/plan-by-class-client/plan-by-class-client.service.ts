@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IPlanByClassClientRawResponse } from './plan-by-class-client-raw-response.interface';
 import { IPlanByClassClientListResponse } from './plan-by-class-client-list-response.interface';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
@@ -48,8 +48,8 @@ export class PlanByClassClientService extends OracleDatabaseService {
         O_STATUS: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.BOSS_PACKAGE,
-        OracleConstants.PLAN_BY_CUSTOMER_CLASS,
+        BossConstants.BOSS_PACKAGE,
+        BossConstants.PLAN_BY_CUSTOMER_CLASS,
         parameters,
       );
       const rawResponse: IPlanByClassClientRawResponse = {

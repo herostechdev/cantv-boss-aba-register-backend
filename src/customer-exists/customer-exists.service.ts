@@ -4,7 +4,7 @@ import { CustomerExistsInternalErrorException } from './customer-exists-internal
 import { ICustomerExistsResponse } from './customer-exists-response.interface';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 
 @Injectable()
@@ -31,8 +31,8 @@ export class CustomerExistsService extends OracleDatabaseService {
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.ACT_PACKAGE,
-      OracleConstants.CUSTOMER_EXISTS,
+      BossConstants.ACT_PACKAGE,
+      BossConstants.CUSTOMER_EXISTS,
       parameters,
     );
     const response: ICustomerExistsResponse = {

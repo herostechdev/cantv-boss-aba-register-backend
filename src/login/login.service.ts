@@ -17,7 +17,7 @@ import { LoginData } from './LOGIN-data';
 import { LoginRequestDto } from './login-request.dto';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
@@ -98,8 +98,8 @@ export class LoginService extends OracleDatabaseService {
         status: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.SIGS_PACKAGE,
-        OracleConstants.GET_GROUP_ACCESS_FROM_LOGIN,
+        BossConstants.SIGS_PACKAGE,
+        BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
         parameters,
       );
       const response: IGetGroupAccessFromLoginResponse = {
@@ -147,12 +147,12 @@ export class LoginService extends OracleDatabaseService {
         groupname: OracleHelper.stringBindIn(
           data.getGroupAccessFromLoginResponse.accessgroup,
         ),
-        action: OracleHelper.stringBindIn(OracleConstants.INSTALL_ABA),
+        action: OracleHelper.stringBindIn(BossConstants.INSTALL_ABA),
         status: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.SIGS_PACKAGE,
-        OracleConstants.ISG_ACTION_ALLOWED,
+        BossConstants.SIGS_PACKAGE,
+        BossConstants.ISG_ACTION_ALLOWED,
         parameters,
       );
       const response = {

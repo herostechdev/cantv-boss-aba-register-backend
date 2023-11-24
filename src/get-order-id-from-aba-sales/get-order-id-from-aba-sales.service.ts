@@ -6,7 +6,7 @@ import { GetOrderIdFromABASalesException } from './get-order-id-from-aba-sales.e
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
@@ -37,8 +37,8 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
         str_status: OracleHelper.numberBindOut(),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.ACT_PACKAGE,
-        OracleConstants.GET_ORDER_ID_FROM_ABA_SALES,
+        BossConstants.ACT_PACKAGE,
+        BossConstants.GET_ORDER_ID_FROM_ABA_SALES,
         parameters,
       );
       const status = (result?.outBinds?.str_status ??

@@ -3,7 +3,7 @@ import { GetStateFromSerialRequestDto } from './get-state-from-serial-request.dt
 import { GetStateFromSerialStatusConstants } from './get-state-from-serial-status.constants';
 import { GetStateFromSerialException } from './get-state-from-serial.exception';
 import { IGetStateFromSerialResponse } from './get-state-from-serial-response.interface';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
@@ -38,8 +38,8 @@ export class GetStateFromSerialService extends OracleDatabaseService {
         o_status: OracleHelper.tableOfStringBindOut(532),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.BOSS_PACKAGE,
-        OracleConstants.GET_STATE_FROM_SERIAL,
+        BossConstants.BOSS_PACKAGE,
+        BossConstants.GET_STATE_FROM_SERIAL,
         parameters,
       );
       const response: IGetStateFromSerialResponse = {

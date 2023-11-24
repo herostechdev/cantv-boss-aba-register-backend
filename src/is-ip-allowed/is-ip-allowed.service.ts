@@ -6,7 +6,7 @@ import {
 } from './is-ip-allowed-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { IsIpAllowedStatusConstants } from './is-ip-allowed-status.constants';
 import { IsIpAllowedException } from './is-ip-allowed.exception';
@@ -68,8 +68,8 @@ export class IsIPAllowedService extends OracleDatabaseService {
       o_status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
-      OracleConstants.BOSS_PACKAGE,
-      OracleConstants.GET_IF_REMOTE_INSTALLER_IP,
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.GET_IF_REMOTE_INSTALLER_IP,
       parameters,
     );
     const fullResponse: IIsIPAllowedResponse = {

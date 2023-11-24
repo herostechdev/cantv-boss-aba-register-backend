@@ -5,7 +5,7 @@ import { DSLAuditLogsStatusConstants } from './dsl-audit-logs-status.constants';
 import { IDSLAuditLogsResponse } from './dsl-audit-logs-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle/oracle.constants';
+import { BossConstants } from 'src/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
@@ -42,8 +42,8 @@ export class DSLAuditLogsService extends OracleDatabaseService {
         o_message: OracleHelper.tableOfStringBindOut(30),
       };
       const result = await super.executeStoredProcedure(
-        OracleConstants.UTL_PACKAGE,
-        OracleConstants.DSL_AUDIT_LOGS,
+        BossConstants.UTL_PACKAGE,
+        BossConstants.DSL_AUDIT_LOGS,
         parameters,
       );
       const response: IDSLAuditLogsResponse = {
