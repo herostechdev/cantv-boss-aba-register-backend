@@ -8,9 +8,7 @@ export interface ICustomerByPhoneNumberResponse extends IPICCommonResponse {
   NOMBRE_CLIENTE?: string;
   UNIDAD_NEGOCIOS?: string;
   SERVICIO_ABA?: string;
-  INTENER_EQUIPADO?: string;
-  CODERROR?: string;
-  DESCERROR?: string;
+  INTENET_EQUIPADO?: string;
   OPERADOR_LDI?: string;
   OPERADOR_LDN?: string;
   CEDULA_RIF?: string;

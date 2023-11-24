@@ -20,8 +20,17 @@ export abstract class SOAPRequestService<
     };
   }
 
-  protected validateResponse(response: RESPONSE, errorMessage: string) {
-    if (!response || !response.ERROR_MESSAGE || response.ERROR_CODE !== '000')
+  protected validateResponse(
+    response: RESPONSE,
+    errorMessage: string,
+    okErrorCode = '000',
+  ) {
+    okErrorCode = okErrorCode ?? '000';
+    if (
+      !response ||
+      !response.ERROR_MESSAGE ||
+      response.ERROR_CODE !== okErrorCode
+    )
       throw new CustomBadRequestException({
         code: response.ERROR_CODE,
         descriptionOrOptions: errorMessage,

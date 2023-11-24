@@ -124,6 +124,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
       ERROR_MESSAGE: super.getString(source, 'ERROR_MESSAGE'),
     };
   }
+
   private getBodyPayload(bodyPayload: ICRMCustomerRequestBody): any {
     return this.requestPayloadService.get({
       functionName: 'obtenerclienteCRM',
