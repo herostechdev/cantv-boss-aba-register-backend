@@ -6,6 +6,9 @@ export class BossConstants {
   public static SIGS_PACKAGE = 'SIGS_PACKAGE';
   public static UTL_PACKAGE = 'UTL_PACKAGE';
 
+  // PIC ERROR CODES
+  public static PIC_OK_DEFAULT_ERROR_CODE = '000';
+
   // STORED PROCEDURES
   public static ABA_REGISTER = 'AbaRegister';
   public static CANCEL_ABA_INSTALLATION = 'CancelABAInstallation';
