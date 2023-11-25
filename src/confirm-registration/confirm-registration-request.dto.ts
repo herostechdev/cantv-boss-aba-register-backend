@@ -12,7 +12,7 @@ export class ConfirmRegistrationRequestDto implements IPhoneNumber {
   phoneNumber: string;
 
   @IsString()
-  customerClassName: string; // NATURALES o RIF
+  customerClassName: string; // NATURALES o RIF  >> Obtenido desde GetCltClassNameFromIdValue Procedimiento 12 o ClientExist Procedimiento 53
 
   @IsString()
   customerIdentificationDocument: string; // Cédula o RIF
@@ -49,8 +49,4 @@ export class ConfirmRegistrationRequestDto implements IPhoneNumber {
   @IsString()
   @IsOptional()
   installerLogin?: string;
-
-  @IsString()
-  @IsOptional()
-  contractLogin?: string;
 }

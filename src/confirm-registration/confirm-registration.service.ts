@@ -454,7 +454,11 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
   ): Promise<ICancelABAInstallationResponse> {
     const parameters = {
       contractlogin: OracleHelper.stringBindIn(
-        data.requestDto.contractLogin,
+        BossHelper.getAutomaticCustomerUserName(
+          data.requestDto.areaCode,
+          data.requestDto.phoneNumber,
+          data.requestDto.customerIdentificationDocument,
+        ),
         32,
       ),
       installerlogin: OracleHelper.stringBindIn(

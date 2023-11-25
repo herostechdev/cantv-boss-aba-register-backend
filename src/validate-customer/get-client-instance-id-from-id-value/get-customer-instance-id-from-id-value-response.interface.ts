@@ -3,5 +3,5 @@ import { GetCustomerInstanceIdFromIdValueStatusConstants } from './get-customer-
 
 export interface IGetCustomerInstanceIdFromIdValueResponse
   extends IStatusResponse<GetCustomerInstanceIdFromIdValueStatusConstants> {
-  clientInstanceId: number;
+  customerInstanceId: number;
 }

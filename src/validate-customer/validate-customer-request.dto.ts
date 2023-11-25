@@ -11,7 +11,11 @@ export class ValidateCustomerRequestDto implements IPhoneNumber {
   @IsString()
   phoneNumber: string;
 
-  customerType: string;
+  @IsString()
+  customerClassName: string;
+
+  @IsString()
+  customerIdentificationDocument: string; // Cédula o RIF
 
   @IsInt()
   @IsOptional()

@@ -7,16 +7,12 @@ import { GetAllValuesFromClientValuesStatusConstants } from './get-all-values-fr
 import { GetAllValuesFromClientvaluesInternalErrorException } from './get-all-values-from-client-values/get-all-values-from-client-values-internal-error.exception';
 import { GetCustomerClassNameFromIdValueInternalErrorException } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-internal-error.exception';
 import { GetCustomerClassNameFromIdValueStatusConstants } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
-import { GetCustomerClassNameFromIdValueThereIsNoDataException } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-there-is-no-data.exception';
 import { GetCustomerInstanceIdFromIdValueStatusConstants } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
 import { GetCustomerInstanceIdFromIdValueInternalErrorException } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-internal-error.exception';
-import { GetCustomerInstanceIdFromIdValueThereIsNoDataException } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-there-is-no-data.exception';
 import { GetDebtFromCustomerInternalErrorException } from './get-debt-from-client/get-debt-from-customer-internal-error.exception';
 import { GetDebtFromCustomerStatusConstants } from './get-debt-from-client/get-debt-from-customer-status.constants';
-import { GetDebtFromCustomerThereIsNoDataException } from './get-debt-from-client/get-debt-from-customer-there-is-no-data.exception';
 import { GetFirstLetterFromABARequestStatusConstants } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
 import { GetFirstLetterFromABARequestInternalErrorException } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-internal-error.exception';
-import { GetFirstLetterFromABARequestThereIsNoDataException } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-there-is-no-data.exception';
 import { GetOrderIdFromABASalesService } from 'src/get-order-id-from-aba-sales/get-order-id-from-aba-sales.service';
 import { IGetAllValuesFromClientValuesResponse } from './get-all-values-from-client-values/get-all-values-from-client-values-response.interface';
 import { IGetCustomerClassNameFromIdValueResponse } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
@@ -34,6 +30,7 @@ import { ValidateCustomerData } from './validate-customer-data';
 import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { CustomerExistsStatusConstants } from 'src/customer-exists/customer-exists-status.constants';
 
 @Injectable()
 export class ValidateCustomerService extends OracleDatabaseService {
@@ -59,15 +56,14 @@ export class ValidateCustomerService extends OracleDatabaseService {
       const data = new ValidateCustomerData();
       data.requestDto = dto;
       await super.connect();
-      // TODO: Validar condición: Si IDENTIFICADOR DE CLIENTE ES CEDULA
-      if ('Validar condición: Si IDENTIFICADOR DE CLIENTE ES CEDULA') {
-        // TODO: Determinar que información se envía
+      if (BossHelper.isNaturalPerson(dto.customerClassName)) {
         Wlog.instance.info({
           message: 'getClientClassNameFromIdValue',
           bindingData: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
+        // TODO: Determinar que información se envía
         data.getClientClassNameFromIdValueResponse =
           await this.getCustomerClassNameFromIdValue(null, null);
         if (
@@ -91,11 +87,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
           GetFirstLetterFromABARequestStatusConstants.SUCCESSFULL
         ) {
           // TODO: Asignar código tipo documento (Procedimiento24.PENDIENTE) al inicio  del identificador del cliente
-          // TODO: Cuál es el Campo Identificador de Cliente
         }
       } else {
-        // TODO: Determinar origen del parámetro: attributeName
-        // TODO: Determinar origen del parámetro: attributeValue
         Wlog.instance.info({
           message: 'clientExists',
           bindingData: BossHelper.getPhoneNumber(dto),
@@ -104,32 +97,40 @@ export class ValidateCustomerService extends OracleDatabaseService {
         });
         data.clientExistsResponse = await this.clientExistsService.clientExists(
           {
-            attributeName: null,
-            attributeValue: null,
+            attributeName: BossHelper.getIdentificationDocumentType(
+              dto.customerClassName,
+            ),
+            attributeValue: dto.customerIdentificationDocument,
           },
         );
-        // TODO: VALIDAR CONDICIÓN: ClientExists tiene datos
-        if (data.clientExistsResponse) {
-          // TODO: En qué consiste: Clase de Cliente igual a resultado de Procedimiento53
+        if (
+          data.clientExistsResponse.status ===
+          CustomerExistsStatusConstants.SUCCESSFULL
+        ) {
+          dto.customerClassName = data.clientExistsResponse.customerClassName;
         } else {
-          // TODO: En qué consiste: Calcular Clase de Cliente con Datos de PreOrden
-          // TODO: ValidarRifEnSeniat - URL. Invocar SENIAT para validar SOLO RIF. Si falla ignorar el error y cont.
+          // TODO: CANTV informa que no se debe llamar esta API. Solo dejar comentario
+          // ValidarRifEnSeniat - URL. Invocar SENIAT para validar SOLO RIF. Si falla ignorar el error y cont.
         }
       }
-      // TODO: Cuáles son los datos para invocar el SP GetAllValuesFromCltvalues
       Wlog.instance.info({
         message: 'getAllValuesFromClientValues',
         bindingData: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
         method: 'validateCustomer',
       });
+      // TODO: Cuáles son los datos para invocar el SP GetAllValuesFromCltvalues
+      // Validar los datos asignados segun información de mapeo
       data.getAllValuesFromClientValuesResponse =
-        await this.getAllValuesFromClientValues(null, null, null);
+        await this.getAllValuesFromClientValues(
+          dto.customerClassName,
+          BossHelper.getIdentificationDocumentType(dto.customerClassName),
+          dto.customerIdentificationDocument,
+        );
       if (
         data.getAllValuesFromClientValuesResponse.status ===
         GetAllValuesFromClientValuesStatusConstants.SUCCESSFULL
       ) {
-        // TODO: Cuáles son los datos para invocar el SP GetCltInstanceidFromIdValue
         Wlog.instance.info({
           message: 'getClientInstanceIdFromIdValue',
           bindingData: BossHelper.getPhoneNumber(dto),
@@ -137,19 +138,23 @@ export class ValidateCustomerService extends OracleDatabaseService {
           method: 'validateCustomer',
         });
         data.getClientInstanceIdFromIdValueResponse =
-          await this.getClientInstanceIdFromIdValue(null, null);
+          await this.getClientInstanceIdFromIdValue(
+            BossHelper.getIdentificationDocumentType(dto.customerClassName),
+            dto.customerIdentificationDocument,
+          );
         if (
           data.getClientInstanceIdFromIdValueResponse.status ===
           GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL
         ) {
-          // TODO: Cuáles son los datos para invocar el SP GetDebtFromClient
           Wlog.instance.info({
             message: 'getDebtFromClient',
             bindingData: BossHelper.getPhoneNumber(dto),
             clazz: ValidateCustomerService.name,
             method: 'validateCustomer',
           });
-          data.getDebtFromClientResponse = await this.getDebtFromClient(null);
+          data.getDebtFromClientResponse = await this.getDebtFromClient(
+            data.getClientInstanceIdFromIdValueResponse.customerInstanceId,
+          );
           if (
             data.getDebtFromClientResponse.status ===
             GetDebtFromCustomerStatusConstants.SUCCESSFULL
@@ -262,11 +267,14 @@ export class ValidateCustomerService extends OracleDatabaseService {
   // TODO: Determinar origen del parámetro: attributeName
   private async getCustomerClassNameFromIdValue(
     idValue: string,
-    clientAttributeName: string,
+    customerAttributeName: string,
   ): Promise<IGetCustomerClassNameFromIdValueResponse> {
     const parameters = {
       sz_IdValue: OracleHelper.stringBindIn(idValue, 256),
-      sz_Cltattributename: OracleHelper.stringBindIn(clientAttributeName, 256),
+      sz_Cltattributename: OracleHelper.stringBindIn(
+        customerAttributeName,
+        256,
+      ),
       sz_Cltclassname: OracleHelper.stringBindOut(1),
       o_status: OracleHelper.numberBindOut(),
     };
@@ -293,15 +301,16 @@ export class ValidateCustomerService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Determinar origen del parámetro: idValue
-  // TODO: Determinar origen del parámetro: attributeName
   private async getClientInstanceIdFromIdValue(
-    idValue: string,
-    clientAttributeName: string,
+    customerAttributeName: string,
+    value: string,
   ): Promise<IGetCustomerInstanceIdFromIdValueResponse> {
     const parameters = {
-      sz_IdValue: OracleHelper.stringBindIn(idValue, 256),
-      sz_Cltattributename: OracleHelper.stringBindIn(clientAttributeName, 256),
+      sz_IdValue: OracleHelper.stringBindIn(value, 256),
+      sz_Cltattributename: OracleHelper.stringBindIn(
+        customerAttributeName,
+        256,
+      ),
       l_cltinstanceid: OracleHelper.numberBindOut(),
       status: OracleHelper.numberBindOut(),
     };
@@ -311,7 +320,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       parameters,
     );
     const response: IGetCustomerInstanceIdFromIdValueResponse = {
-      clientInstanceId: result?.outBinds?.l_cltinstanceid,
+      customerInstanceId: result?.outBinds?.l_cltinstanceid,
       status: (result?.outBinds?.status ??
         GetCustomerInstanceIdFromIdValueStatusConstants.INTERNAL_ERROR) as GetCustomerInstanceIdFromIdValueStatusConstants,
     };
