@@ -62,12 +62,15 @@ export class BossConstants {
   public static FISCAL_IDENTIFICATION_DOCUMENT_TYPE = 'NO_RIF';
   public static INSTALL_ABA = 'INSTALAR_ABA';
   public static INTERNET_ACCESS = 'Acceso Internet';
+  public static IN_PROGRESS = 'EN_PROCESO';
   public static NATIONAL_IDENTIFICATION_DOCUMENT_TYPE = 'CEDULA_IDENTIDAD';
   public static NATURAL_PERSON = 'NATURALES';
   public static NORMAL = 'NORMAL';
+  public static NOT_PROCESSED = 'NO_PROCESADO';
   public static NULL = 'NULL';
   public static NOT_AVAILABLE = 'NO_DISPONIBLE';
   public static OCCUPIED_PORT = 1;
+  public static PROCESSED = 'PROCESADO';
   public static REGISTER = 'Registro';
   public static USERS = 'USUARIOS';
   public static VENEZUELA = 'VENEZUELA';

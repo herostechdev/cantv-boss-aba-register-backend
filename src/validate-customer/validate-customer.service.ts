@@ -65,7 +65,10 @@ export class ValidateCustomerService extends OracleDatabaseService {
         });
         // TODO: Determinar que información se envía
         data.getClientClassNameFromIdValueResponse =
-          await this.getCustomerClassNameFromIdValue(null, null);
+          await this.getCustomerClassNameFromIdValue(
+            BossHelper.getIdentificationDocumentType(dto.customerClassName),
+            dto.customerIdentificationDocument,
+          );
         if (
           data.getClientClassNameFromIdValueResponse.status !==
           GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL
@@ -159,7 +162,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
             data.getDebtFromClientResponse.status ===
             GetDebtFromCustomerStatusConstants.SUCCESSFULL
           ) {
-            // TODO: UpdateDSLAbaRegister a NO PROCESADO
             Wlog.instance.info({
               message: 'updateDslABARegisters',
               bindingData: BossHelper.getPhoneNumber(dto),
@@ -167,7 +169,10 @@ export class ValidateCustomerService extends OracleDatabaseService {
               method: 'validateCustomer',
             });
             data.updateDslABARegistersResponse =
-              await this.updateDslABARegisters(data);
+              await this.updateDslABARegisters(
+                data,
+                BossConstants.NOT_PROCESSED,
+              );
             throw new Error30101Exception();
           }
         }
@@ -176,7 +181,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
           data.getAllValuesFromClientValuesResponse.status !==
           GetAllValuesFromClientValuesStatusConstants.THERE_IS_NO_DATA
         ) {
-          // TODO: UpdateDSLAbaRegister a NO PROCESADO
           Wlog.instance.info({
             message: 'updateDslABARegisters',
             bindingData: BossHelper.getPhoneNumber(dto),
@@ -185,6 +189,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           });
           data.updateDslABARegistersResponse = await this.updateDslABARegisters(
             data,
+            BossConstants.NOT_PROCESSED,
           );
           throw new Error1002Exception();
         }
@@ -223,9 +228,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
     });
   }
 
-  //TODO: Determinar origen del parámetro: classname
-  //TODO: Determinar origen del parámetro: attrname
-  //TODO: Determinar origen del parámetro: avalue
   private async getAllValuesFromClientValues(
     className: string,
     attributeName: string,
@@ -263,14 +265,12 @@ export class ValidateCustomerService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Determinar origen del parámetro: idValue
-  // TODO: Determinar origen del parámetro: attributeName
   private async getCustomerClassNameFromIdValue(
-    idValue: string,
     customerAttributeName: string,
+    value: string,
   ): Promise<IGetCustomerClassNameFromIdValueResponse> {
     const parameters = {
-      sz_IdValue: OracleHelper.stringBindIn(idValue, 256),
+      sz_IdValue: OracleHelper.stringBindIn(value, 256),
       sz_Cltattributename: OracleHelper.stringBindIn(
         customerAttributeName,
         256,
@@ -404,14 +404,14 @@ export class ValidateCustomerService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Determinar origen del campo: iRegisterStatus
   private async updateDslABARegisters(
     data: ValidateCustomerData,
+    registerStatus: string,
   ): Promise<IUpdateDslAbaRegistersResponse> {
     const parameters = {
       iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
       iPhoneNumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber, 7),
-      iRegisterStatus: OracleHelper.stringBindIn(null, 16),
+      iRegisterStatus: OracleHelper.stringBindIn(registerStatus, 16),
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
