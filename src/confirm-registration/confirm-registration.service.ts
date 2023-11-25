@@ -168,15 +168,20 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
   ): Promise<IGetPlanABAFromKenanResponse> {
     const parameters = {
       abaplan: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      abaPlanCode: OracleHelper.stringBindOut(),
     };
     const result = await super.executeStoredProcedure(
       null,
       BossConstants.GET_PLAN_ABA_FROM_KENAN,
       parameters,
     );
+    console.log();
+    console.log('getPlanAbaFromKenan');
+    console.log('result');
+    console.log(result);
+    console.log();
     const response: IGetPlanABAFromKenanResponse = {
-      abaPlanCode: result?.outBinds?.abaPlanCode,
+      // abaPlanCode: result?.outBinds?.abaPlanCode,
+      abaPlanCode: result,
     };
     return response;
   }
@@ -192,7 +197,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       IDVALUE: OracleHelper.stringBindIn(data.requestDto.abaPlan),
       LOGIN: OracleHelper.stringBindIn(data.requestDto.abaPlan),
       PASSWORD: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      PLAN: OracleHelper.stringBindIn(data.requestDto.abaPlan),
+      PLAN: OracleHelper.stringBindIn(data.requestDto.abaPlan), // PlansByClassClient.O_PLANDESIRED
       PAYCLASS: OracleHelper.stringBindIn(data.requestDto.abaPlan),
       PAYATTRVALUES: OracleHelper.stringBindIn(data.requestDto.abaPlan),
       DISCOUNTCATEGORY: OracleHelper.stringBindIn(data.requestDto.abaPlan),

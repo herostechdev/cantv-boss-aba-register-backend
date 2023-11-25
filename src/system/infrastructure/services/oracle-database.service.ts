@@ -53,9 +53,8 @@ export abstract class OracleDatabaseService extends CommonService {
     parameters?: any,
   ): string {
     dbPackage = dbPackage ? `${dbPackage}.` : '';
-    return `BEGIN ${dbPackage}${storedProcedure}(${this.getParameterNames(
-      parameters,
-    )}); END;`;
+    parameters = this.getParameterNames(parameters);
+    return `BEGIN ${dbPackage}${storedProcedure}(${parameters}); END;`;
   }
 
   private getParameterNames(parameters?: any): string {
