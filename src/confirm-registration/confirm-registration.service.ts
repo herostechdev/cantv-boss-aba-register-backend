@@ -1,18 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { BIND_OUT, STRING } from 'oracledb';
 import { ABARegisterStatusConstants } from './aba-register/aba-register-status.constants';
 import { ABARegisterInternalErrorException } from './aba-register/aba-register-internal-error.exception';
-import { ABARegisterThereIsNoDataException } from './aba-register/aba-register-there-is-no-data.exception';
-import { ABARegisterOccupiedPortException } from './aba-register/aba-register-occupied-port.exception';
+import { BillingException } from './create-and-provisioning-master-act/billing.exception';
+import { BossConstants } from 'src/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CancelABAInstallationStatusConstants } from './cancel-aba-installation/cancel-aba-installation-status.constants';
 import { CancelABAInstallationInternalErrorException } from './cancel-aba-installation/cancel-aba-installation-internal-error.exception';
 import { CancelABAInstallationThereIsNoDataException } from './cancel-aba-installation/cancel-aba-installation-there-is-no-data.exception';
-import { CancelABAInstallationOccupiedPortException } from './cancel-aba-installation/cancel-aba-installation-occupied-port.exception';
 import { ConfirmRegistrationRequestDto } from './confirm-registration-request.dto';
 import { ConfirmRegistrationData } from './confirm-registration-data';
+import { ContactAdministratorException } from './create-and-provisioning-master-act/contact-administrator.exception';
 import { CreateAndProvisioningCustomerStatusConstants } from './create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
 import { CreateAndProvisioningCustomerInternalErrorException } from './create-and-provisioning-customer/create-and-provisioning-customer-internal-error.exception';
 import { CreateAndProvisioningMasterActStatusConstants } from './create-and-provisioning-master-act/create-and-provisioning-master-act-status.constants';
 import { CreateAndProvisioningMasterActInternalErrorException } from './create-and-provisioning-master-act/create-and-provisioning-master-act-internal-error.exception';
+import { CreateUserInstanceException } from './create-and-provisioning-master-act/create-user-instance.exception';
+import { CreatingAccountStatementException } from './create-and-provisioning-master-act/creating-account-statement.exception';
+import { CreatingBillingChargeException } from './create-and-provisioning-master-act/creating-billing-charge.exception';
+import { CreatingContractException } from './create-and-provisioning-master-act/creating-contract.exception';
+import { CreatingDiscountException } from './create-and-provisioning-master-act/creating-discount.exception';
+import { CreatingHostingChargeException } from './create-and-provisioning-master-act/creating-hosting-charge.exception';
+import { CreatingMasterAccountException } from './create-and-provisioning-master-act/creating-master-account.exception';
+import { CreatingPaymentInstanceException } from './create-and-provisioning-master-act/creating-payment-instance.exception';
+import { CreatingSubaccountException } from './create-and-provisioning-master-act/creating-subaccount.exception';
 import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
 import { CustomerExistsStatusConstants } from 'src/customer-exists/customer-exists-status.constants';
 import { Error10023Exception } from 'src/exceptions/error-1002-3.exception';
@@ -29,25 +40,12 @@ import { InsertModifyCustomerAttributeInternalErrorException } from './insert-mo
 import { IsReservedLoginStatusConstants } from './is-reserved-login/is-reserved-login-status.constants';
 import { IsReservedLoginInternalErrorException } from './is-reserved-login/is-reserved-login-internal-error.exception';
 import { IsReservedLoginThereIsNoDataException } from './is-reserved-login/is-reserved-login-there-is-no-data.exception';
+import { ObtainingInstanceFromAttributeListException } from './create-and-provisioning-master-act/obtaining-instance-from-attribute-list.exception';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { BossConstants } from 'src/boss.constants';
-import { BillingException } from './create-and-provisioning-master-act/billing.exception';
-import { ContactAdministratorException } from './create-and-provisioning-master-act/contact-administrator.exception';
-import { CreateUserInstanceException } from './create-and-provisioning-master-act/create-user-instance.exception';
-import { CreatingAccountStatementException } from './create-and-provisioning-master-act/creating-account-statement.exception';
-import { CreatingBillingChargeException } from './create-and-provisioning-master-act/creating-billing-charge.exception';
-import { CreatingContractException } from './create-and-provisioning-master-act/creating-contract.exception';
-import { CreatingDiscountException } from './create-and-provisioning-master-act/creating-discount.exception';
-import { CreatingHostingChargeException } from './create-and-provisioning-master-act/creating-hosting-charge.exception';
-import { CreatingMasterAccountException } from './create-and-provisioning-master-act/creating-master-account.exception';
-import { CreatingPaymentInstanceException } from './create-and-provisioning-master-act/creating-payment-instance.exception';
-import { CreatingSubaccountException } from './create-and-provisioning-master-act/creating-subaccount.exception';
-import { ObtainingInstanceFromAttributeListException } from './create-and-provisioning-master-act/obtaining-instance-from-attribute-list.exception';
 import { ThereIsNoDataException } from './create-and-provisioning-master-act/there-is-no-data.exception';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
 
 @Injectable()
 export class ConfirmRegistrationService extends OracleDatabaseService {
@@ -163,27 +161,49 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     }
   }
 
+  // private async getPlanAbaFromKenan(
+  //   data: ConfirmRegistrationData,
+  // ): Promise<IGetPlanABAFromKenanResponse> {
+  //   console.log();
+  //   console.log('getPlanAbaFromKenan');
+  //   const parameters = {
+  //     abaplan: OracleHelper.stringBindIn(data.requestDto.abaPlan),
+  //   };
+  //   console.log('execute function');
+  //   const result = await super.executeFunction(
+  //     BossConstants.GET_PLAN_ABA_FROM_KENAN,
+  //     null,
+  //     parameters,
+  //   );
+  //   console.log('result');
+  //   console.log(JSON.stringify(result));
+  //   const response: IGetPlanABAFromKenanResponse = {
+  //     // abaPlanCode: result?.outBinds?.abaPlanCode,
+  //     abaPlanCode: result,
+  //   };
+  //   console.log('response');
+  //   console.log(response);
+  //   return response;
+  // }
+
   private async getPlanAbaFromKenan(
     data: ConfirmRegistrationData,
   ): Promise<IGetPlanABAFromKenanResponse> {
-    const parameters = {
-      abaplan: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-    };
-    const result = await super.executeStoredProcedure(
-      null,
-      BossConstants.GET_PLAN_ABA_FROM_KENAN,
-      parameters,
-    );
     console.log();
     console.log('getPlanAbaFromKenan');
+    const result = await this.dbConnection.execute(
+      `BEGIN
+         :result := GetPlanAbaFromKenan(:abaplan);
+       END;`,
+      {
+        result: { dir: BIND_OUT, type: STRING, maxSize: 500 },
+        // Agrega tus parámetros aquí, por ejemplo:
+        abaplan: 'ABA_PLAN',
+      },
+    );
     console.log('result');
-    console.log(result);
-    console.log();
-    const response: IGetPlanABAFromKenanResponse = {
-      // abaPlanCode: result?.outBinds?.abaPlanCode,
-      abaPlanCode: result,
-    };
-    return response;
+    console.log(result.outBinds['result']);
+    return null;
   }
 
   // TODO: Determinar origen de los parámetros de entrada

@@ -10,6 +10,7 @@ import {
   DB_TYPE_RAW,
   DB_TYPE_CURSOR,
   DB_TYPE_OBJECT,
+  DB_TYPE_BOOLEAN,
 } from 'oracledb';
 import { ArrayHelper } from 'src/system/infrastructure/helpers/array.helper';
 
@@ -38,6 +39,14 @@ export class OracleHelper {
     return {
       val: value,
       type: NUMBER,
+      dir: BIND_IN,
+    };
+  }
+
+  public static booleanBindIn(value: number): BindParameters {
+    return {
+      val: value,
+      type: DB_TYPE_BOOLEAN,
       dir: BIND_IN,
     };
   }

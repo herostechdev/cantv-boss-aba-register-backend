@@ -1,4 +1,11 @@
-import { getConnection, Connection } from 'oracledb';
+import {
+  getConnection,
+  Connection,
+  BindParameter,
+  NUMBER,
+  DB_TYPE_BOOLEAN,
+} from 'oracledb';
+import { DateTime } from 'luxon';
 import { CommonService } from './common.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
@@ -21,44 +28,83 @@ export abstract class OracleDatabaseService extends CommonService {
   }
 
   protected async executeStoredProcedure(
-    dbPackage: string,
+    packageName: string,
     storedProcedure: string,
     parameters?: any,
   ): Promise<any> {
     const sql = this.getStoredProcedureStatement(
-      dbPackage,
+      packageName,
       storedProcedure,
       parameters,
     );
     return await this.dbConnection.execute(sql, parameters);
   }
 
-  protected async executeStoredProcedureByPosition(
-    dbPackage: string,
-    storedProcedure: string,
-    parameters: any,
-  ): Promise<any> {
-    const sql = this.getStoredProcedureStatement(
-      dbPackage,
-      storedProcedure,
-      parameters,
-    );
-    const data = Object.keys(parameters).map((key) => parameters[key]);
-    return await this.dbConnection.execute(sql, data);
-  }
-
   private getStoredProcedureStatement(
-    dbPackage: string,
+    packageName: string,
     storedProcedure: string,
     parameters?: any,
   ): string {
-    dbPackage = dbPackage ? `${dbPackage}.` : '';
+    packageName = this.getPackage(packageName);
     parameters = this.getParameterNames(parameters);
-    return `BEGIN ${dbPackage}${storedProcedure}(${parameters}); END;`;
+    return `BEGIN ${packageName}${storedProcedure}(${parameters}); END;`;
+  }
+
+  protected async executeFunction(
+    functionName: string,
+    packageName?: string,
+    parameters?: any,
+  ): Promise<any> {
+    console.log();
+    console.log('executeFunction');
+    const sql = this.getFunctionStatement(
+      functionName,
+      packageName,
+      parameters,
+    );
+    console.log('sql');
+    console.log(sql);
+    return await this.dbConnection.execute(sql, parameters);
+  }
+
+  private getFunctionStatement(
+    functionName: string,
+    packageName?: string,
+    parameters?: any,
+  ): string {
+    packageName = this.getPackage(packageName);
+    parameters = this.getParameterValues(parameters);
+    // return `SELECT ${packageName}${functionName}(${parameters}) FROM DUAL;`;
+    return `BEGIN :result := ${packageName}${functionName}(${parameters}); END;`;
+  }
+
+  private getPackage(packageName?: string): string {
+    return packageName ? `${packageName}.` : '';
   }
 
   private getParameterNames(parameters?: any): string {
     if (!parameters) return '';
     return `:${Object.keys(parameters).join(', :')}`;
+  }
+
+  private getParameterValues(parameters?: any): string {
+    if (!parameters) return '';
+    const keys = Object.keys(parameters);
+    return keys
+      .map((key) => {
+        const bindParameter = parameters[key] as BindParameter;
+        console.log();
+        console.log('bindParameter');
+        console.log(bindParameter);
+        if (
+          bindParameter.type === NUMBER ||
+          bindParameter.type === DB_TYPE_BOOLEAN
+        ) {
+          return bindParameter.val;
+        }
+        return `'${bindParameter.val}'`;
+      })
+      .join(', ')
+      .trim();
   }
 }
