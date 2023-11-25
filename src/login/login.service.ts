@@ -17,7 +17,7 @@ import { LoginData } from './LOGIN-data';
 import { LoginRequestDto } from './login-request.dto';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { BossConstants } from 'src/boss.constants';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 

@@ -3,7 +3,7 @@ import { GetStateFromSerialRequestDto } from './get-state-from-serial-request.dt
 import { GetStateFromSerialStatusConstants } from './get-state-from-serial-status.constants';
 import { GetStateFromSerialException } from './get-state-from-serial.exception';
 import { IGetStateFromSerialResponse } from './get-state-from-serial-response.interface';
-import { BossConstants } from 'src/boss.constants';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';

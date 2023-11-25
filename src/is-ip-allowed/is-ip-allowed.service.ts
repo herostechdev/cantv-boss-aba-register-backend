@@ -6,7 +6,7 @@ import {
 } from './is-ip-allowed-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { BossConstants } from 'src/boss.constants';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { IsIpAllowedStatusConstants } from './is-ip-allowed-status.constants';
 import { IsIpAllowedException } from './is-ip-allowed.exception';

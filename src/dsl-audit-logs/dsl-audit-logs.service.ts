@@ -5,7 +5,7 @@ import { DSLAuditLogsStatusConstants } from './dsl-audit-logs-status.constants';
 import { IDSLAuditLogsResponse } from './dsl-audit-logs-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { BossConstants } from 'src/boss.constants';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 import { BossHelper } from 'src/boss-helpers/boss.helper';

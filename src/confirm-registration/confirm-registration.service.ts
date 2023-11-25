@@ -3,7 +3,7 @@ import { BIND_OUT, STRING } from 'oracledb';
 import { ABARegisterStatusConstants } from './aba-register/aba-register-status.constants';
 import { ABARegisterInternalErrorException } from './aba-register/aba-register-internal-error.exception';
 import { BillingException } from './create-and-provisioning-master-act/billing.exception';
-import { BossConstants } from 'src/boss.constants';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CancelABAInstallationStatusConstants } from './cancel-aba-installation/cancel-aba-installation-status.constants';
 import { CancelABAInstallationInternalErrorException } from './cancel-aba-installation/cancel-aba-installation-internal-error.exception';

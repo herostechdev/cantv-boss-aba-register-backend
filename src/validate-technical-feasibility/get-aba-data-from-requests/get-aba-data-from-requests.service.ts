@@ -6,7 +6,7 @@ import { GetABADataFromRequestsStatusConstants } from './get-aba-data-from-reque
 import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests-response.interface';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { BossConstants } from 'src/boss.constants';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IPlanByClassClientRawResponse } from './plan-by-class-client-raw-response.interface';
 import { IPlanByClassClientListResponse } from './plan-by-class-client-list-response.interface';
-import { BossConstants } from 'src/boss.constants';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
