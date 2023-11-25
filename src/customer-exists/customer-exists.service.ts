@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CustomerExistsStatusConstants } from './customer-exists-status.constants';
+import { BossConstants } from 'src/boss.constants';
 import { CustomerExistsInternalErrorException } from './customer-exists-internal-error.exception';
+import { CustomerExistsRequestDto } from './customer-exists-request.dto';
+import { CustomerExistsStatusConstants } from './customer-exists-status.constants';
 import { ICustomerExistsResponse } from './customer-exists-response.interface';
+import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
-import { BossConstants } from 'src/boss.constants';
-import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 
 @Injectable()
 export class CustomerExistsService extends OracleDatabaseService {
@@ -21,12 +22,11 @@ export class CustomerExistsService extends OracleDatabaseService {
 
   // respuesta segun flujo bpm
   async clientExists(
-    attributeName: string,
-    attributeValue: string,
+    dto: CustomerExistsRequestDto,
   ): Promise<ICustomerExistsResponse> {
     const parameters = {
-      sz_attributename: OracleHelper.stringBindIn(attributeName),
-      sz_attributevalue: OracleHelper.stringBindIn(attributeValue),
+      sz_attributename: OracleHelper.stringBindIn(dto.attributeName),
+      sz_attributevalue: OracleHelper.stringBindIn(dto.attributeValue),
       sz_cltclassname: OracleHelper.stringBindOut(),
       status: OracleHelper.numberBindOut(),
     };
