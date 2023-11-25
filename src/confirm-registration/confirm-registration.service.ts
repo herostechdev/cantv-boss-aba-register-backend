@@ -82,8 +82,12 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
+      // TODO: source of attributeName and attributeValue parameters
       data.customerExistsResponse =
-        await this.customerExistsService.clientExists(null, null);
+        await this.customerExistsService.clientExists({
+          attributeName: null,
+          attributeValue: null,
+        });
       if (
         data.customerExistsResponse.status ===
         CustomerExistsStatusConstants.SUCCESSFULL

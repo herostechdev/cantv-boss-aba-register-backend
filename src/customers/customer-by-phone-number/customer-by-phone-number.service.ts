@@ -9,6 +9,7 @@ import { ICustomerByPhoneNumberResponse } from './customer-by-phone-number-respo
 import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { PICConstants } from 'src/boss-helpers/pic.constants';
 
 @Injectable()
 export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerByPhoneNumberResponse> {
@@ -85,7 +86,7 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
     super.validateResponse(
       customerResponse,
       'Error al consultar el cliente por número de teléfono',
-      '0000',
+      PICConstants.PIC_OK_4_ZEROS_ERROR_CODE,
     );
     return customerResponse;
   }

@@ -103,8 +103,10 @@ export class ValidateCustomerService extends OracleDatabaseService {
           method: 'validateCustomer',
         });
         data.clientExistsResponse = await this.clientExistsService.clientExists(
-          null,
-          null,
+          {
+            attributeName: null,
+            attributeValue: null,
+          },
         );
         // TODO: VALIDAR CONDICIÓN: ClientExists tiene datos
         if (data.clientExistsResponse) {

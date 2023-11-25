@@ -3,6 +3,7 @@ import { CommonService } from 'src/system/infrastructure/services/common.service
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 import { HttpConstants } from 'src/system/infrastructure/http/http-constants';
 import { ISOAPCommonResponse } from './soap-common-response.interface';
+import { PICConstants } from 'src/boss-helpers/pic.constants';
 
 export abstract class SOAPRequestService<
   RESPONSE extends ISOAPCommonResponse,
@@ -23,9 +24,9 @@ export abstract class SOAPRequestService<
   protected validateResponse(
     response: RESPONSE,
     errorMessage: string,
-    okErrorCode = '000',
+    okErrorCode = PICConstants.PIC_OK_DEFAULT_ERROR_CODE,
   ) {
-    okErrorCode = okErrorCode ?? '000';
+    okErrorCode = okErrorCode ?? PICConstants.PIC_OK_DEFAULT_ERROR_CODE;
     if (
       !response ||
       !response.ERROR_MESSAGE ||
