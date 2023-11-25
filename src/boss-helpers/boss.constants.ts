@@ -58,6 +58,17 @@ export class BossConstants {
   public static VERIFY_CONTRACT_BY_PHONE = 'verifycontracbyphone';
 
   // GENERAL
+  public static CANTV_BILLING = 'FACTURA_CANTV';
+  public static FISCAL_IDENTIFICATION_DOCUMENT_TYPE = 'NO_RIF';
   public static INSTALL_ABA = 'INSTALAR_ABA';
+  public static INTERNET_ACCESS = 'Acceso Internet';
+  public static NATIONAL_IDENTIFICATION_DOCUMENT_TYPE = 'CEDULA_IDENTIDAD';
+  public static NATURAL_PERSON = 'NATURALES';
+  public static NORMAL = 'NORMAL';
+  public static NULL = 'NULL';
+  public static NOT_AVAILABLE = 'NO_DISPONIBLE';
   public static OCCUPIED_PORT = 1;
+  public static REGISTER = 'Registro';
+  public static USERS = 'USUARIOS';
+  public static VENEZUELA = 'VENEZUELA';
 }

@@ -69,7 +69,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           method: 'validateCustomer',
         });
         data.getClientClassNameFromIdValueResponse =
-          await this.getClientClassNameFromIdValue(null, null);
+          await this.getCustomerClassNameFromIdValue(null, null);
         if (
           data.getClientClassNameFromIdValueResponse.status !==
           GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL
@@ -260,7 +260,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
 
   // TODO: Determinar origen del parámetro: idValue
   // TODO: Determinar origen del parámetro: attributeName
-  private async getClientClassNameFromIdValue(
+  private async getCustomerClassNameFromIdValue(
     idValue: string,
     clientAttributeName: string,
   ): Promise<IGetCustomerClassNameFromIdValueResponse> {

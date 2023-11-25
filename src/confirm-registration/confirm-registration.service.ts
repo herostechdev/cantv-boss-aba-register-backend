@@ -215,28 +215,40 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     data: ConfirmRegistrationData,
   ): Promise<ICreateAndProvisioningCustomerResponse> {
     const parameters = {
-      CLASSNAME: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      ATTRVALUES: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      IDATTRIBUTE: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      IDVALUE: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      LOGIN: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      PASSWORD: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      PLAN: OracleHelper.stringBindIn(data.requestDto.abaPlan), // PlansByClassClient.O_PLANDESIRED
-      PAYCLASS: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      PAYATTRVALUES: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      DISCOUNTCATEGORY: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      TAXCATEGORY: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      SERVICETYPENAME: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      USERCLASSNAME: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      USERVALUES: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      DIRECTION1: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      DIRECTION2: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      CITY: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      STATE: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      ZIPCODE: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      COUNTRY: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      CREATEDBY: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      PAYINST: OracleHelper.stringBindIn(data.requestDto.abaPlan),
+      CLASSNAME: OracleHelper.stringBindIn(data.requestDto.customerClassName),
+      ATTRVALUES: OracleHelper.stringBindIn(data.requestDto.attributeValues),
+      IDATTRIBUTE: OracleHelper.stringBindIn(
+        BossHelper.getIdentificationDocumentType(
+          data.requestDto.customerClassName,
+        ),
+      ),
+      IDVALUE: OracleHelper.stringBindIn(
+        data.requestDto.customerIdentificationDocument,
+      ),
+      LOGIN: OracleHelper.stringBindIn(
+        BossHelper.getAutomaticCustomerUserName(
+          data.requestDto.areaCode,
+          data.requestDto.phoneNumber,
+          data.requestDto.customerIdentificationDocument,
+        ),
+      ),
+      PASSWORD: OracleHelper.stringBindIn(BossConstants.NOT_AVAILABLE),
+      PLAN: OracleHelper.stringBindIn(data.requestDto.technicalPlanName), // PlansByClassClient.O_PLANDESIRED
+      PAYCLASS: OracleHelper.stringBindIn(BossConstants.CANTV_BILLING),
+      PAYATTRVALUES: OracleHelper.stringBindIn(null), // TODO: PENDIENTE DEFINICION
+      DISCOUNTCATEGORY: OracleHelper.stringBindIn(BossConstants.NORMAL),
+      TAXCATEGORY: OracleHelper.stringBindIn(BossConstants.NORMAL),
+      SERVICETYPENAME: OracleHelper.stringBindIn(BossConstants.INTERNET_ACCESS),
+      USERCLASSNAME: OracleHelper.stringBindIn(BossConstants.USERS),
+      USERVALUES: OracleHelper.stringBindIn(null), // TODO: PENDIENTE DEFINICION
+      DIRECTION1: OracleHelper.stringBindIn(data.requestDto.customerAddress1),
+      DIRECTION2: OracleHelper.stringBindIn(data.requestDto.customerAddress2),
+      CITY: OracleHelper.stringBindIn(data.requestDto.customerCity),
+      STATE: OracleHelper.stringBindIn(data.requestDto.customerState),
+      ZIPCODE: OracleHelper.stringBindIn(null), // TODO: PENDIENTE DEFINICION
+      COUNTRY: OracleHelper.stringBindIn(BossConstants.VENEZUELA),
+      CREATEDBY: OracleHelper.stringBindIn(BossConstants.REGISTER),
+      PAYINST: OracleHelper.stringBindIn(BossConstants.NULL),
       STATUS: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
@@ -263,27 +275,39 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     data: ConfirmRegistrationData,
   ): Promise<ICreateAndProvisioningMasterActResponse> {
     const parameters = {
-      CLASSNAME: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      IDATTRIBUTE: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      IDVALUE: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      LOGIN: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      PASSWORD: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      PLAN: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      PAYCLASS: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      ATTRVALUES: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      TAXCATEGORYDSC: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      DISCOUNTCATEGORYDSC: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      SERVICETYPENAME: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      USERCLASSNAME: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      USERVALUES: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      DIRECTION1: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      DIRECTION2: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      CITY: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      STATE: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      ZIPCODE: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      COUNTRY: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      CREATEDBY: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-      PAYINST: OracleHelper.stringBindIn(data.requestDto.abaPlan),
+      CLASSNAME: OracleHelper.stringBindIn(data.requestDto.customerClassName),
+      IDATTRIBUTE: OracleHelper.stringBindIn(
+        BossHelper.getIdentificationDocumentType(
+          data.requestDto.customerClassName,
+        ),
+      ),
+      IDVALUE: OracleHelper.stringBindIn(
+        data.requestDto.customerIdentificationDocument,
+      ),
+      LOGIN: OracleHelper.stringBindIn(
+        BossHelper.getAutomaticCustomerUserName(
+          data.requestDto.areaCode,
+          data.requestDto.phoneNumber,
+          data.requestDto.customerIdentificationDocument,
+        ),
+      ),
+      PASSWORD: OracleHelper.stringBindIn(BossConstants.NOT_AVAILABLE),
+      PLAN: OracleHelper.stringBindIn(data.requestDto.technicalPlanName), // PlansByClassClient.O_PLANDESIRED
+      PAYCLASS: OracleHelper.stringBindIn(BossConstants.CANTV_BILLING),
+      ATTRVALUES: OracleHelper.stringBindIn(data.requestDto.attributeValues),
+      TAXCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
+      DISCOUNTCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
+      SERVICETYPENAME: OracleHelper.stringBindIn(BossConstants.INTERNET_ACCESS),
+      USERCLASSNAME: OracleHelper.stringBindIn(BossConstants.USERS),
+      USERVALUES: OracleHelper.stringBindIn(null), // TODO: PENDIENTE DEFINICION
+      DIRECTION1: OracleHelper.stringBindIn(data.requestDto.customerAddress1),
+      DIRECTION2: OracleHelper.stringBindIn(data.requestDto.customerAddress2),
+      CITY: OracleHelper.stringBindIn(data.requestDto.customerCity),
+      STATE: OracleHelper.stringBindIn(data.requestDto.customerState),
+      ZIPCODE: OracleHelper.stringBindIn(null), // TODO: PENDIENTE DEFINICION
+      COUNTRY: OracleHelper.stringBindIn(BossConstants.VENEZUELA),
+      CREATEDBY: OracleHelper.stringBindIn(BossConstants.REGISTER),
+      PAYINST: OracleHelper.stringBindIn(BossConstants.NULL),
       STATUS: OracleHelper.tableOfNumberBindOut(2),
     };
     const result = await super.executeStoredProcedure(
