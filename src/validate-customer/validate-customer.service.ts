@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
+import { CustomerExistsStatusConstants } from 'src/customer-exists/customer-exists-status.constants';
 import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1002Exception } from 'src/exceptions/error-1002.exception';
 import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
@@ -21,16 +24,13 @@ import { IGetDebtFromCustomerResponse } from './get-debt-from-client/get-debt-fr
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers/update-dsl-aba-registers-status.constants';
 import { UpdateDslAbaRegistersInternalErrorException } from './update-dsl-aba-registers/update-dsl-aba-registers-internal-error.exception';
 import { ValidateCustomerData } from './validate-customer-data';
 import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { CustomerExistsStatusConstants } from 'src/customer-exists/customer-exists-status.constants';
 
 @Injectable()
 export class ValidateCustomerService extends OracleDatabaseService {
@@ -372,7 +372,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Determinar origen del parámetro: customerInstanceId
   private async getDebtFromClient(
     customerInstanceId: number,
   ): Promise<IGetDebtFromCustomerResponse> {
