@@ -57,7 +57,13 @@ export class BossConstants {
   public static UPDATE_DSL_ABA_REGISTERS = 'UpdateDslAbaRegisters';
   public static VERIFY_CONTRACT_BY_PHONE = 'verifycontracbyphone';
 
+  // NUMBERS
+
+  public static ZERO = 0;
+  public static ONE = 1;
+
   // GENERAL
+  public static ADSL = 'ADSL';
   public static CANTV_BILLING = 'FACTURA_CANTV';
   public static FISCAL_IDENTIFICATION_DOCUMENT_TYPE = 'NO_RIF';
   public static INSTALL_ABA = 'INSTALAR_ABA';

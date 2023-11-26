@@ -41,7 +41,6 @@
 //     this.log(dto);
 //   }
 
-//   // TODO: only show console when in DEVELOPMENT mode
 //   private showConsole(dto: CreateLogDto): void {
 //     if (!this._showInConsole) return;
 //     let message = '';

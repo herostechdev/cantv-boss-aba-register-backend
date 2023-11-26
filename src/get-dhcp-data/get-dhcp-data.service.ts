@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
+import { GetDHCPDataException } from './get-dhcp-data.exception';
+import { GetDHCPDataInvalidResponseException } from './get-dhcp-data-invalid-response.exception';
 import { GetDHCPDataRequestDto } from './get-dhcp-data-request.dto';
+import { HttpConstants } from 'src/system/infrastructure/http/http-constants';
 import { HttpService } from '@nestjs/axios';
 import { IGetDHCPDataResponse } from './get-dhcp-data-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
-import { HttpConstants } from 'src/system/infrastructure/http/http-constants';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
-import { GetDHCPDataException } from './get-dhcp-data.exception';
 
 @Injectable()
 export class GetDHCPDataService extends ExceptionsService {
@@ -29,15 +30,11 @@ export class GetDHCPDataService extends ExceptionsService {
           },
         });
       if (!ValidationHelper.isDefined(response.data)) {
-        // TODO: throw exception
-        throw new Error('Parámetros de entrada inválidos');
+        throw new GetDHCPDataInvalidResponseException(JSON.stringify(response));
       }
       const parts = String(response.data).split('|');
       if (!ValidationHelper.isArrayWithItems(parts) || parts.length < 3) {
-        // TODO: throw exception
-        throw new Error(
-          'Respuesta incorrecta del servicio de consulta de datos del DHCP',
-        );
+        throw new GetDHCPDataInvalidResponseException(JSON.stringify(response));
       }
       return {
         vpi: parts[0],

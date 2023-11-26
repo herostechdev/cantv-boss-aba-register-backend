@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-error.exception';
 import { CheckIpStatusConstants } from './check-ip/check-ip-status.constants';
@@ -29,7 +30,7 @@ import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-por
 import { GetDataFromRequestsThereIsNoDataException } from './get-data-from-requests/get-data-from-requests-there-is-no-data.exception';
 import { GetDataFromRequestsStatusConstants } from './get-data-from-requests/get-data-from-requests-status.constants';
 import { GetDataFromRequestsException } from './get-data-from-requests/get-data-from-requests.exception';
-import { GetDHCPDataService } from 'src/get-dhcp-data/get-dhcp.service';
+import { GetDHCPDataService } from 'src/get-dhcp-data/get-dhcp-data.service';
 import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
 import { GetDownstreamFromPlanThereIsNoDataException } from './get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
 import { GetInfoFromABARequestsException } from './get-info-from-aba-requests/get-info-from-aba-requests.exception';
@@ -66,7 +67,6 @@ import { IsValidIpAddressConstants } from './is-valid-ip-address/is-valid-ip-add
 import { IVerifiyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ReadIABAOrderErrorCodeConstants } from './read-iaba-order/read-iaba-order-error_code.constants';
 import { ReadIABAOrderGeneralDatabaseErrorException } from './read-iaba-order/read-iaba-order-general-database-error.exception';
@@ -269,7 +269,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           method: 'validateTechnicalFeasibility',
         });
         data.deleteOrderResponse = await this.deleteOrder(data);
-        // TODO: Agregar llamada al SP GETDSLCENTRALCOIDBYDSLAMPORTID
         Wlog.instance.info({
           message: 'getDSLCentralCoIdByDSLAMPortId',
           bindingData: BossHelper.getPhoneNumber(dto),
@@ -643,7 +642,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data.queryDHCPResponse = await this.queryDHCP(data);
     data.getValidVPIResponse = await this.getValidVPI(data);
     data.getPortIdResponse = await this.getPortId(data);
-    // TODO: CONSIDERAR SI LA RESPUESTA DEL SP getPortId tiene múltiples campos
     if (ValidationHelper.isDefined(data.getPortIdResponse)) {
       await this.dslAuditLogsService.log({
         areaCode: data.requestDto.areaCode,
@@ -693,13 +691,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     });
   }
 
-  // TODO: Investigar y capturar el valor del parametro de entrada i_invalidvpi
   private async getValidVPI(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<string> {
     const parameters = {
-      i_nspip: OracleHelper.stringBindIn(data.requestDto.areaCode, 15),
-      i_invalidvpi: OracleHelper.numberBindIn(0),
+      i_nspip: OracleHelper.stringBindIn(data.requestDto.nsp),
+      i_invalidvpi: OracleHelper.numberBindIn(data.requestDto.vpi),
     };
     const result = await super.executeStoredProcedure(
       BossConstants.UTL_PACKAGE,
@@ -709,14 +706,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     return result;
   }
 
-  // TODO: MAPEO DE PARAMETROS DE ENTRADA
   private async getPortId(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetPortIdResponse> {
     const parameters = {
-      s_nspip: OracleHelper.stringBindIn(null),
-      n_vpi: OracleHelper.numberBindIn(null),
-      n_vci: OracleHelper.numberBindIn(null),
+      s_nspip: OracleHelper.stringBindIn(data.requestDto.nsp),
+      n_vpi: OracleHelper.numberBindIn(data.requestDto.vpi),
+      n_vci: OracleHelper.numberBindIn(data.requestDto.vci),
       I_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress),
       t_portid: OracleHelper.tableOfNumberBindOut(0),
       status: OracleHelper.tableOfNumberBindOut(0),
@@ -838,7 +834,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   // TODO: Certificar gestión de errores vs BPM. Hay excepciones que están siendo inhibidas por el flujo en el BPM.
-  //TODO: Determinar origen del parámetro: abaportwithcontract
   private async checkIp(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<ICheckIpResponse> {
@@ -849,7 +844,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
       abaphonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
       abauserlogin: OracleHelper.stringBindIn(data.requestDto.loginInstall),
-      abaportwithcontract: OracleHelper.numberBindIn(null),
+      abaportwithcontract: OracleHelper.numberBindIn(BossConstants.ZERO),
       Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
@@ -989,6 +984,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     return response;
   }
 
+  // TODO: Determina cuál es la condición que indica que la orden está en BOSS
   // TODO: determinar origen del parametro: sz_ncc
   // TODO: determinar origen del parametro: sz_office
   // TODO: determinar origen del parametro: sz_createdby
@@ -1048,12 +1044,16 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         data.getDataFromDslamPortIdResponse.abaprovider,
         16,
       ),
-      sz_room: OracleHelper.stringBindIn(null, 32),
-      n_recursive: OracleHelper.numberBindIn(null),
+      sz_room: OracleHelper.stringBindIn(BossConstants.ADSL, 32),
+      n_recursive: OracleHelper.numberBindIn(BossConstants.ZERO),
       sz_sistema: OracleHelper.stringBindIn(null),
       iCoid: OracleHelper.stringBindIn(null, 10),
       i_executiondate: OracleHelper.stringBindIn(null),
-      i_autoinstall: OracleHelper.numberBindIn(null),
+      i_autoinstall: OracleHelper.numberBindIn(
+        data.requestDto.isAutoInstallation
+          ? BossConstants.ONE
+          : BossConstants.ZERO,
+      ),
       l_errorcode: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(

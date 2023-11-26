@@ -210,7 +210,6 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     return null;
   }
 
-  // TODO: Determinar origen de los parámetros de entrada
   private async createAndProvisioningCustomer(
     data: ConfirmRegistrationData,
   ): Promise<ICreateAndProvisioningCustomerResponse> {
@@ -270,7 +269,6 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Determinar origen de los parámetros de entrada
   private async createAndProvisioningMasterAct(
     data: ConfirmRegistrationData,
   ): Promise<ICreateAndProvisioningMasterActResponse> {

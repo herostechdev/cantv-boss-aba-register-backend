@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseFilters } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { GetDHCPDataRequestDto } from './get-dhcp-data-request.dto';
-import { GetDHCPDataService } from './get-dhcp.service';
+import { GetDHCPDataService } from './get-dhcp-data.service';
 import { IGetDHCPDataResponse } from './get-dhcp-data-response.interface';
 
 @Controller('v1/dhcp')

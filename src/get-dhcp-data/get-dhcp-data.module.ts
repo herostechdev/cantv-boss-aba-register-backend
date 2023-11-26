@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { GetDHCPDataService } from './get-dhcp.service';
+import { GetDHCPDataService } from './get-dhcp-data.service';
 import { GetDHCPDataController } from './get-dhcp-data.controller';
 
 @Module({

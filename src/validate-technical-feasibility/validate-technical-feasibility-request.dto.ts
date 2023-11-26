@@ -1,4 +1,11 @@
-import { IsDate, IsIP, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsIP,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
 export class ValidateTechnicalFeasibilityRequestDto implements IPhoneNumber {
@@ -26,4 +33,16 @@ export class ValidateTechnicalFeasibilityRequestDto implements IPhoneNumber {
   @IsInt()
   @IsOptional()
   orderId?: number;
+
+  @IsString()
+  nsp: string;
+
+  @IsInt()
+  vpi: number;
+
+  @IsInt()
+  vci: number;
+
+  @IsBoolean()
+  isAutoInstallation: boolean;
 }

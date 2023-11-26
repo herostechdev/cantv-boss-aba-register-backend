@@ -18,7 +18,6 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
     super(oracleConfigurationService);
   }
 
-  // TODO: Revisar que el parámetro de entrada indica que es NUMBER, pero el y nombre y la descripción en el documento de especificacion indican que STRING
   async getPlanDescriptionFromPlanName(
     dto: GetPlanDescriptionFromPlanNameRequestDto,
   ): Promise<IGetPlanDescriptionFromPlanNameResponse> {
