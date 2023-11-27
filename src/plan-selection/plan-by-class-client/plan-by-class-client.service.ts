@@ -27,13 +27,13 @@ export class PlanByClassClientService extends OracleDatabaseService {
       const parameters = {
         I_CLASSCLIENT: OracleHelper.stringBindIn(dto.customerClassName),
         I_DSLAMPORTID: OracleHelper.numberBindIn(dto.dslamPortId),
-        I_WSCONTRACT: OracleHelper.numberBindIn(dto.wsContract),
-        I_WS3CONTRACT: OracleHelper.stringBindIn(dto.ws3Contract),
-        I_LOGINDIALUP: OracleHelper.stringBindIn(dto.loginDialup),
-        I_SAMPLING: OracleHelper.stringBindIn(dto.sampling),
-        I_UNETEALMEGA: OracleHelper.stringBindIn(dto.uneteAlMega),
-        I_SPECIALCASE: OracleHelper.stringBindIn(dto.specialCase),
-        I_INTERNETEQUIPADO: OracleHelper.stringBindIn(dto.internetEquipado),
+        I_WSCONTRACT: OracleHelper.numberBindIn(dto.wsContract), // FIXME: PENDIENTE DEFINICION
+        I_WS3CONTRACT: OracleHelper.stringBindIn(dto.ws3Contract), // FIXME: PENDIENTE DEFINICION
+        I_LOGINDIALUP: OracleHelper.stringBindIn(dto.loginDialup), // FIXME: PENDIENTE DEFINICION
+        I_SAMPLING: OracleHelper.stringBindIn(dto.sampling), // FIXME: PENDIENTE DEFINICION
+        I_UNETEALMEGA: OracleHelper.stringBindIn(dto.uneteAlMega), // FIXME: PENDIENTE DEFINICION
+        I_SPECIALCASE: OracleHelper.stringBindIn(dto.specialCase), // FIXME: PENDIENTE DEFINICION
+        I_INTERNETEQUIPADO: OracleHelper.stringBindIn(dto.internetEquipado), // FIXME: PENDIENTE DEFINICION
         I_LOGININSTALADOR: OracleHelper.stringBindIn(dto.loginDialup),
         I_AREACODE: OracleHelper.stringBindIn(dto.areaCode),
         I_PHONENUMBER: OracleHelper.stringBindIn(dto.phoneNumber),

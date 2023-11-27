@@ -64,7 +64,7 @@ export class BossConstants {
 
   // DATES
 
-  public static DEFAULT_DATE_FORMAT = 'dd-MM-yyyy';
+  public static DEFAULT_DATE_FORMAT = 'dd/MM/yyyy';
 
   // GENERAL
   public static ADSL = 'ADSL';

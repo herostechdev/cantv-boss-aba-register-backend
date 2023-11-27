@@ -679,7 +679,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     await this.callAuditLog(data, 'RBE no existe');
   }
 
-  // TODO: Determinar origen del parametro orderId (CTVIDSRVORD)
+  // FIXME: Determinar origen del parametro orderId (CTVIDSRVORD)  >> CORRESPONDE A LA ORDEN DE SERVICIO SUMINISTRADA POR EL CLIENTE EN LA VENTANA DONDE SE SOLICITA EL NUMERO DE TELEFONO
   private async getASAPOrderDetail(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetASAPOrderDetailResponse> {
@@ -745,7 +745,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Determinar el origen del parámetro l_portid
+  // FIXME: Determinar el origen del parámetro l_portid  >>  GetPortIdFromIp.o_dslamportid
   private async IsOccupiedPort(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IIsOccupiedPortResponse> {
@@ -838,7 +838,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Certificar gestión de errores vs BPM. Hay excepciones que están siendo inhibidas por el flujo en el BPM.
   private async checkIp(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<ICheckIpResponse> {
@@ -970,7 +969,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // TODO: Origen del parámetro l_dslamportid
+  // FIXME: Origen del parámetro l_dslamportid   >>  GetPortIdFromIp.o_dslamportid   O GetPortId
   private async getDSLCentralCoIdByDSLAMPortId(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDSLCentralCoIdByDSLAMPortIdResponse> {

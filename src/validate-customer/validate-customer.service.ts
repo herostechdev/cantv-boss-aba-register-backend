@@ -63,7 +63,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
-        // TODO: Determinar que información se envía
         data.getClientClassNameFromIdValueResponse =
           await this.getCustomerClassNameFromIdValue(
             BossHelper.getIdentificationDocumentType(dto.customerClassName),
@@ -75,7 +74,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
         ) {
           // TODO: qué significa: Actualizar en la información de clientes en memoria en el frontend el campo de clase NATURAL
           // TODO: Eliminar los ceros a la izquierda del Campo Identificador de Cliente
-          // TODO: Cuál es el Campo Identificador de Cliente
         }
         Wlog.instance.info({
           message: 'getFirstLetterFromABARequest',
@@ -89,7 +87,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           data.getFirstLetterFromABARequestResponse.status ===
           GetFirstLetterFromABARequestStatusConstants.SUCCESSFULL
         ) {
-          // TODO: Asignar código tipo documento (Procedimiento24.PENDIENTE) al inicio  del identificador del cliente
+          // FIXME: Asignar código tipo documento (Procedimiento24.PENDIENTE) al inicio  del identificador del cliente
         }
       } else {
         Wlog.instance.info({
@@ -122,8 +120,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
         clazz: ValidateCustomerService.name,
         method: 'validateCustomer',
       });
-      // TODO: Cuáles son los datos para invocar el SP GetAllValuesFromCltvalues
-      // Validar los datos asignados segun información de mapeo
       data.getAllValuesFromClientValuesResponse =
         await this.getAllValuesFromClientValues(
           dto.customerClassName,
