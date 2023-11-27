@@ -62,6 +62,10 @@ export class BossConstants {
   public static ZERO = 0;
   public static ONE = 1;
 
+  // DATES
+
+  public static DEFAULT_DATE_FORMAT = 'dd-MM-yyyy';
+
   // GENERAL
   public static ADSL = 'ADSL';
   public static CANTV_BILLING = 'FACTURA_CANTV';

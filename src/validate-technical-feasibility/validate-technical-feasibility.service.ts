@@ -343,10 +343,15 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   private async insertDslAbaRegisters(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<number> {
+    const registerDate = DateTime.fromFormat(
+      data.requestDto.registerDate,
+      BossConstants.DEFAULT_DATE_FORMAT,
+    ).toJSDate();
+    // .toFormat(BossConstants.DEFAULT_DATE_FORMAT);
     const parameters = {
       iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
       iPhoneNumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber, 7),
-      iRegisterDate: OracleHelper.dateBindIn(data.requestDto.registerDate),
+      iRegisterDate: OracleHelper.dateBindIn(registerDate),
       iRegisterStatus: OracleHelper.stringBindIn(
         data.requestDto.registerStatus,
         16,
