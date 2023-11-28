@@ -12,29 +12,8 @@ export class PlanByClassClientRequestDto implements IPhoneNumber {
   customerClassName: string;
 
   @IsInt()
-  dslamPortId: number;
-
-  @IsInt()
-  wsContract: number;
+  dslamPortId: number; // GetPortidFromIp o GetPortId
 
   @IsString()
-  ws3Contract: string;
-
-  @IsString()
-  loginDialup: string;
-
-  @IsString()
-  sampling: string;
-
-  @IsString()
-  uneteAlMega: string;
-
-  @IsString()
-  specialCase: string;
-
-  @IsString()
-  internetEquipado: string;
-
-  @IsString()
-  loginInstalador: string;
+  installerLogin: string;
 }

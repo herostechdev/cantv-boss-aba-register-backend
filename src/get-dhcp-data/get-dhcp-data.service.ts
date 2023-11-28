@@ -18,8 +18,7 @@ export class GetDHCPDataService extends ExceptionsService {
     super();
   }
 
-  // TODO: Verificar Método GET
-  // TODO: Verificar parámetro en la URL
+  // TODO: Solicitar permisos para el usuario VPN para tener acceso a BossProv
   public async get(dto: GetDHCPDataRequestDto): Promise<IGetDHCPDataResponse> {
     try {
       const url = `${this.integrationsConfigurationService.getDHCPDataUrl}?${dto.ipAddress}`;

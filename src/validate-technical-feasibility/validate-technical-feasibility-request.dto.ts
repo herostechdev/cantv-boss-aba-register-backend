@@ -1,11 +1,4 @@
-import {
-  IsBoolean,
-  IsDate,
-  IsIP,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsIP, IsInt, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
 export class ValidateTechnicalFeasibilityRequestDto implements IPhoneNumber {
@@ -19,20 +12,19 @@ export class ValidateTechnicalFeasibilityRequestDto implements IPhoneNumber {
   phoneNumber: string;
 
   @IsString()
-  @IsOptional()
-  registerDate?: string;
+  registerDate: string;
 
   @IsString()
-  @IsOptional()
-  registerStatus?: string;
+  registerStatus: string;
 
   @IsString()
-  @IsOptional()
-  loginInstall?: string;
+  loginInstall: string;
 
   @IsInt()
-  @IsOptional()
-  orderId?: number;
+  orderId: number; // Origen del parametro orderId (CTVIDSRVORD)  >> CORRESPONDE A LA ORDEN DE SERVICIO SUMINISTRADA POR EL CLIENTE EN LA VENTANA DONDE SE SOLICITA EL NUMERO DE TELEFONO
+
+  @IsInt()
+  dslamPortId: number; // Origen del parámetro l_dslamportid   >>  GetPortIdFromIp.o_dslamportid   O GetPortId.t_portid
 
   @IsString()
   nsp: string;

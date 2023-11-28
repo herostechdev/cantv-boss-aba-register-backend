@@ -1,4 +1,4 @@
-import { IsIP, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsIP, IsInt, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
 export class ConfirmRegistrationRequestDto implements IPhoneNumber {
@@ -43,10 +43,11 @@ export class ConfirmRegistrationRequestDto implements IPhoneNumber {
   technicalPlanName: string; // PlansByClassClient.O_PLANDESIRED
 
   @IsInt()
-  @IsOptional()
-  orderId?: number;
+  orderId: number;
 
   @IsString()
-  @IsOptional()
-  installerLogin?: string;
+  installerLogin: string;
+
+  @IsString()
+  zipCode: string;
 }

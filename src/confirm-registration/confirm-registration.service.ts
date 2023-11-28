@@ -82,11 +82,12 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      // TODO: source of attributeName and attributeValue parameters
       data.customerExistsResponse =
         await this.customerExistsService.clientExists({
-          attributeName: null,
-          attributeValue: null,
+          attributeName: BossHelper.getIdentificationDocumentType(
+            data.requestDto.customerClassName,
+          ),
+          attributeValue: data.requestDto.customerIdentificationDocument,
         });
       if (
         data.customerExistsResponse.status ===
@@ -244,12 +245,12 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       TAXCATEGORY: OracleHelper.stringBindIn(BossConstants.NORMAL),
       SERVICETYPENAME: OracleHelper.stringBindIn(BossConstants.INTERNET_ACCESS),
       USERCLASSNAME: OracleHelper.stringBindIn(BossConstants.USERS),
-      USERVALUES: OracleHelper.stringBindIn(null), // FIXME: PENDIENTE DEFINICION  >>       ‘CEDULA_IDENTIDAD:13456789,PRIMERA_LETRA_CEDULA:V,CIUDAD:CARACAS,ESTADO:DISTRITO CAPITAL,FECHA_NACIMIENTO:13/10/1990,PRIMER_NOMBRE:JESUS,PRIMER_APELLIDO:PEREZ’
+      USERVALUES: OracleHelper.stringBindIn(data.requestDto.attributeValues),
       DIRECTION1: OracleHelper.stringBindIn(data.requestDto.customerAddress1),
       DIRECTION2: OracleHelper.stringBindIn(data.requestDto.customerAddress2),
       CITY: OracleHelper.stringBindIn(data.requestDto.customerCity),
       STATE: OracleHelper.stringBindIn(data.requestDto.customerState),
-      ZIPCODE: OracleHelper.stringBindIn(null), // FIXME: PENDIENTE DEFINICION SE SOLICITA EN LOS DATOS DE IDENTIFICACIÓN DEL CLIENTE
+      ZIPCODE: OracleHelper.stringBindIn(data.requestDto.zipCode),
       COUNTRY: OracleHelper.stringBindIn(BossConstants.VENEZUELA),
       CREATEDBY: OracleHelper.stringBindIn(BossConstants.REGISTER),
       PAYINST: OracleHelper.stringBindIn(null),
@@ -302,12 +303,12 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       DISCOUNTCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
       SERVICETYPENAME: OracleHelper.stringBindIn(BossConstants.INTERNET_ACCESS),
       USERCLASSNAME: OracleHelper.stringBindIn(BossConstants.USERS),
-      USERVALUES: OracleHelper.stringBindIn(null), // FIXME: PENDIENTE DEFINICION  >>       ‘CEDULA_IDENTIDAD:13456789,PRIMERA_LETRA_CEDULA:V,CIUDAD:CARACAS,ESTADO:DISTRITO CAPITAL,FECHA_NACIMIENTO:13/10/1990,PRIMER_NOMBRE:JESUS,PRIMER_APELLIDO:PEREZ’
+      USERVALUES: OracleHelper.stringBindIn(data.requestDto.attributeValues),
       DIRECTION1: OracleHelper.stringBindIn(data.requestDto.customerAddress1),
       DIRECTION2: OracleHelper.stringBindIn(data.requestDto.customerAddress2),
       CITY: OracleHelper.stringBindIn(data.requestDto.customerCity),
       STATE: OracleHelper.stringBindIn(data.requestDto.customerState),
-      ZIPCODE: OracleHelper.stringBindIn(null), // FIXME: PENDIENTE DEFINICION SE SOLICITA EN LOS DATOS DE IDENTIFICACIÓN DEL CLIENTE
+      ZIPCODE: OracleHelper.stringBindIn(data.requestDto.zipCode),
       COUNTRY: OracleHelper.stringBindIn(BossConstants.VENEZUELA),
       CREATEDBY: OracleHelper.stringBindIn(BossConstants.REGISTER),
       PAYINST: OracleHelper.stringBindIn(null),

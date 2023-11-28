@@ -679,12 +679,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     await this.callAuditLog(data, 'RBE no existe');
   }
 
-  // FIXME: Determinar origen del parametro orderId (CTVIDSRVORD)  >> CORRESPONDE A LA ORDEN DE SERVICIO SUMINISTRADA POR EL CLIENTE EN LA VENTANA DONDE SE SOLICITA EL NUMERO DE TELEFONO
+  // Origen del parametro orderId (CTVIDSRVORD)  >> CORRESPONDE A LA ORDEN DE SERVICIO SUMINISTRADA POR EL CLIENTE EN LA VENTANA DONDE SE SOLICITA EL NUMERO DE TELEFONO
   private async getASAPOrderDetail(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetASAPOrderDetailResponse> {
     return this.getASAPOrderDetailService.getASAPOrderDetail({
-      orderId: data.requestDto.ipAddress,
+      orderId: String(data.requestDto.orderId),
     });
   }
 
@@ -745,12 +745,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // FIXME: Determinar el origen del parámetro l_portid  >>  GetPortIdFromIp.o_dslamportid
+  // Origen del parámetro l_portid  >>  GetPortIdFromIp.o_dslamportid
   private async IsOccupiedPort(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IIsOccupiedPortResponse> {
     const parameters = {
-      l_portid: OracleHelper.numberBindIn(null),
+      l_portid: OracleHelper.numberBindIn(data.requestDto.dslamPortId),
       l_result: OracleHelper.numberBindOut(),
       o_status: OracleHelper.numberBindOut(),
     };
@@ -969,12 +969,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // FIXME: Origen del parámetro l_dslamportid   >>  GetPortIdFromIp.o_dslamportid   O GetPortId
+  // Origen del parámetro l_dslamportid   >>  GetPortIdFromIp.o_dslamportid   O GetPortId
   private async getDSLCentralCoIdByDSLAMPortId(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDSLCentralCoIdByDSLAMPortIdResponse> {
     const parameters = {
-      l_dslamportid: OracleHelper.numberBindIn(null),
+      l_dslamportid: OracleHelper.numberBindIn(data.requestDto.dslamPortId),
       sz_Coid: OracleHelper.stringBindOut(),
     };
     const result = await super.executeStoredProcedure(
