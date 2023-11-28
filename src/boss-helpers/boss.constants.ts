@@ -30,6 +30,7 @@ export class BossConstants {
   public static GET_DATA_FROM_REQUESTS = 'GetDataFromRequests';
   public static GET_DEBT_FROM_CUSTOMER = 'GetDebtFromClient';
   public static GET_DOWNSTREAM_FROM_PLAN = 'GETDOWNSTREAMFROMPLAN';
+  public static GET_DSL_AREA_CODES = 'GETDSLAREACODES';
   public static GET_DSL_CENTRAL_CO_ID_BY_DSLAM_PORT_ID =
     'GETDSLCENTRALCOIDBYDSLAMPORTID';
   public static GET_FIRST_LETTER_FROM_ABA_REQUEST =

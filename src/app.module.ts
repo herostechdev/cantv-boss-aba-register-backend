@@ -17,6 +17,7 @@ import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { GetASAPOrderDetailModule } from './get-asap-order-detail/get-asap-order-detail.module';
 import { GetDHCPDataModule } from './get-dhcp-data/get-dhcp-data.module';
+import { GetDSLAreaCodesModule } from './get-dsl-area-codes/get-dsl-area-codes.module';
 import { GetLegalDocumentsModule } from './get-legal-documents/get-legal-documents.module';
 import { GetOrderIdFromABASalesModule } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales.module';
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
@@ -52,6 +53,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     EncryptionModule,
     GetASAPOrderDetailModule,
     GetDHCPDataModule,
+    GetDSLAreaCodesModule,
     GetLegalDocumentsModule,
     GetOrderIdFromABASalesModule,
     GetPlanDescriptionFromPlanNameModule,
