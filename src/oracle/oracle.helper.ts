@@ -44,11 +44,25 @@ export class OracleHelper {
     };
   }
 
+  public static numberBindOut(): BindParameters {
+    return {
+      type: NUMBER,
+      dir: BIND_OUT,
+    };
+  }
+
   public static booleanBindIn(value: number): BindParameters {
     return {
       val: value,
       type: DB_TYPE_BOOLEAN,
       dir: BIND_IN,
+    };
+  }
+
+  public static booleanBindOut(): BindParameters {
+    return {
+      type: DB_TYPE_BOOLEAN,
+      dir: BIND_OUT,
     };
   }
 
@@ -60,9 +74,9 @@ export class OracleHelper {
     };
   }
 
-  public static numberBindOut(): BindParameters {
+  public static dateBindOut(): BindParameters {
     return {
-      type: NUMBER,
+      type: DB_TYPE_DATE,
       dir: BIND_OUT,
     };
   }
@@ -108,19 +122,6 @@ export class OracleHelper {
     };
   }
 
-  public static getFirstItem(result: any, itemName: string): any {
-    if (
-      !result ||
-      !result.hasOwnProperty('outBinds') ||
-      !result.outBinds.hasOwnProperty(itemName)
-    ) {
-      return null;
-    }
-    return ArrayHelper.isArrayWithItems(result.outBinds[itemName])
-      ? result.outBinds[itemName][0]
-      : null;
-  }
-
   public static getItems(result: any, itemName: string): any[] {
     if (
       !result ||
@@ -132,5 +133,10 @@ export class OracleHelper {
     return ArrayHelper.isArrayWithItems(result.outBinds[itemName])
       ? result.outBinds[itemName]
       : null;
+  }
+
+  public static getFirstItem(result: any, itemName: string): any {
+    const items = OracleHelper.getItems(result, itemName);
+    return ArrayHelper.isArrayWithItems(items) ? items[0] : null;
   }
 }
