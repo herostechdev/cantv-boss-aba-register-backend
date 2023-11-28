@@ -13,6 +13,7 @@ import {
   DB_TYPE_BOOLEAN,
 } from 'oracledb';
 import { ArrayHelper } from 'src/system/infrastructure/helpers/array.helper';
+import { OracleConstants } from './oracle.constants';
 
 export class OracleHelper {
   public static stringBindIn(
@@ -67,22 +68,23 @@ export class OracleHelper {
   }
 
   public static tableOfStringBindOut(
-    maxArraySize = 1,
-    maxSize: number = undefined,
+    maxArraySize: number = OracleConstants.MAX_ARRAY_DEFAULT_SIZE,
   ): BindParameters {
     return {
       dir: BIND_OUT,
       type: DB_TYPE_VARCHAR,
-      maxSize: maxSize,
-      maxArraySize: maxArraySize,
+      // maxSize: maxSize,
+      maxArraySize: maxArraySize ?? OracleConstants.MAX_ARRAY_DEFAULT_SIZE,
     };
   }
 
-  public static tableOfNumberBindOut(maxArraySize = 1): BindParameters {
+  public static tableOfNumberBindOut(
+    maxArraySize: number = OracleConstants.MAX_ARRAY_DEFAULT_SIZE,
+  ): BindParameters {
     return {
       dir: BIND_OUT,
       type: DB_TYPE_NUMBER,
-      maxArraySize: maxArraySize,
+      maxArraySize: maxArraySize ?? OracleConstants.MAX_ARRAY_DEFAULT_SIZE,
     };
   }
 

@@ -46,6 +46,9 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
+      console.log();
+      console.log('ERROR getDSLAreaCodes');
+      console.log(error);
       super.exceptionHandler(error);
     } finally {
       await super.closeConnection();
@@ -53,20 +56,32 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
   }
 
   private async getDSLAreaCodes(): Promise<IGetDSLAreaCodesResponse> {
+    console.log();
+    console.log('getDSLAreaCodes');
+    console.log('set parameters');
     const parameters = {
       areacodes: OracleHelper.tableOfStringBindOut(),
       o_status: OracleHelper.numberBindOut(),
     };
+    console.log('parameters');
+    console.log(parameters);
+    console.log(
+      `executeStoredProcedure: ${BossConstants.ACT_PACKAGE} ${BossConstants.GET_DSL_AREA_CODES}`,
+    );
     const result = await super.executeStoredProcedure(
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_DSL_AREA_CODES,
       parameters,
     );
+    console.log('result');
+    console.log(JSON.stringify(result));
     const response: IGetDSLAreaCodesResponse = {
       areaCodes: OracleHelper.getItems(result, 'areacodes'),
       status: (result?.outBinds?.o_status ??
         GetDSLAreaCodesStatusConstants.INTERNAL_ERROR) as GetDSLAreaCodesStatusConstants,
     };
+    console.log('response');
+    console.log(JSON.stringify(response));
     switch (response.status) {
       case GetDSLAreaCodesStatusConstants.SUCCESSFULL:
         return response;
