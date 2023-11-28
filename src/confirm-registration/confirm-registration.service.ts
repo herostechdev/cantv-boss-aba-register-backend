@@ -312,7 +312,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       COUNTRY: OracleHelper.stringBindIn(BossConstants.VENEZUELA),
       CREATEDBY: OracleHelper.stringBindIn(BossConstants.REGISTER),
       PAYINST: OracleHelper.stringBindIn(null),
-      STATUS: OracleHelper.tableOfNumberBindOut(2),
+      STATUS: OracleHelper.tableOfStringBindOut(),
     };
     const result = await super.executeStoredProcedure(
       BossConstants.SIGS_PACKAGE,
@@ -368,7 +368,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       i_classname: OracleHelper.stringBindIn(className),
       i_attrname: OracleHelper.stringBindIn(attributeName),
       i_attrvalue: OracleHelper.stringBindIn(attributeValue),
-      status: OracleHelper.tableOfNumberBindOut(2),
+      status: OracleHelper.tableOfStringBindOut(),
     };
     const result = await super.executeStoredProcedure(
       BossConstants.BOSS_PACKAGE,

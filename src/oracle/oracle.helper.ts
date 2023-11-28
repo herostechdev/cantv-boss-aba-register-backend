@@ -73,7 +73,6 @@ export class OracleHelper {
     return {
       dir: BIND_OUT,
       type: DB_TYPE_VARCHAR,
-      // maxSize: maxSize,
       maxArraySize: maxArraySize ?? OracleConstants.MAX_ARRAY_DEFAULT_SIZE,
     };
   }

@@ -64,7 +64,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
   ): Promise<IIsIPAllowedRestrictedResponse> {
     const parameters = {
       i_ipsource: OracleHelper.stringBindIn(dto.ipAddress),
-      o_expiredate: OracleHelper.tableOfStringBindOut(1, 532),
+      o_expiredate: OracleHelper.tableOfStringBindOut(),
       o_status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(

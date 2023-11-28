@@ -37,13 +37,13 @@ export class PlanByClassClientService extends OracleDatabaseService {
         I_AREACODE: OracleHelper.stringBindIn(dto.areaCode),
         I_PHONENUMBER: OracleHelper.stringBindIn(dto.phoneNumber),
 
-        O_PLAN: OracleHelper.tableOfStringBindOut(532),
-        O_PLANDESIRED: OracleHelper.tableOfStringBindOut(532),
-        O_SHORTNAME: OracleHelper.tableOfStringBindOut(532),
-        O_MONTHLYFEE: OracleHelper.tableOfStringBindOut(532),
-        O_DOWNSTREAM: OracleHelper.tableOfStringBindOut(532),
-        O_LIMITE: OracleHelper.tableOfStringBindOut(532),
-        O_MB_ADICIONAL: OracleHelper.tableOfStringBindOut(532),
+        O_PLAN: OracleHelper.tableOfStringBindOut(),
+        O_PLANDESIRED: OracleHelper.tableOfStringBindOut(),
+        O_SHORTNAME: OracleHelper.tableOfStringBindOut(),
+        O_MONTHLYFEE: OracleHelper.tableOfStringBindOut(),
+        O_DOWNSTREAM: OracleHelper.tableOfStringBindOut(),
+        O_LIMITE: OracleHelper.tableOfStringBindOut(),
+        O_MB_ADICIONAL: OracleHelper.tableOfStringBindOut(),
         O_STATUS: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(

@@ -231,8 +231,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       classname: OracleHelper.stringBindIn(className),
       attrname: OracleHelper.stringBindIn(attributeName),
       avalue: OracleHelper.stringBindIn(value),
-      aname: OracleHelper.tableOfStringBindOut(64),
-      cltvalue: OracleHelper.tableOfStringBindOut(256),
+      aname: OracleHelper.tableOfStringBindOut(),
+      cltvalue: OracleHelper.tableOfStringBindOut(),
       status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(

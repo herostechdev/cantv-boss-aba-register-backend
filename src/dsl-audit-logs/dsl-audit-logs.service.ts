@@ -38,8 +38,8 @@ export class DSLAuditLogsService extends OracleDatabaseService {
         i_description: OracleHelper.stringBindIn(dto.description, 532),
         i_comments: OracleHelper.numberBindIn(dto.comments),
         i_planname: OracleHelper.numberBindIn(dto.planName),
-        o_status: OracleHelper.tableOfNumberBindOut(2),
-        o_message: OracleHelper.tableOfStringBindOut(30),
+        o_status: OracleHelper.tableOfStringBindOut(),
+        o_message: OracleHelper.tableOfStringBindOut(),
       };
       const result = await super.executeStoredProcedure(
         BossConstants.UTL_PACKAGE,

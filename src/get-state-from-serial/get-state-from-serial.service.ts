@@ -34,8 +34,8 @@ export class GetStateFromSerialService extends OracleDatabaseService {
         i_serial: OracleHelper.numberBindIn(
           Number(BossHelper.getSerial(dto.phoneNumber)),
         ),
-        o_state: OracleHelper.tableOfStringBindOut(532),
-        o_status: OracleHelper.tableOfStringBindOut(532),
+        o_state: OracleHelper.tableOfStringBindOut(),
+        o_status: OracleHelper.tableOfStringBindOut(),
       };
       const result = await super.executeStoredProcedure(
         BossConstants.BOSS_PACKAGE,

@@ -93,8 +93,8 @@ export class LoginService extends OracleDatabaseService {
       await super.connect();
       const parameters = {
         userlogin: OracleHelper.stringBindIn(data.requestDto.userlogin),
-        userpassword: OracleHelper.tableOfStringBindOut(56),
-        accessgroup: OracleHelper.tableOfStringBindOut(56),
+        userpassword: OracleHelper.tableOfStringBindOut(),
+        accessgroup: OracleHelper.tableOfStringBindOut(),
         status: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(
