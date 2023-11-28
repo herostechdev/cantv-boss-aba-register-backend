@@ -72,8 +72,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
           data.getClientClassNameFromIdValueResponse.status !==
           GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL
         ) {
-          // TODO: qué significa: Actualizar en la información de clientes en memoria en el frontend el campo de clase NATURAL
-          // TODO: Eliminar los ceros a la izquierda del Campo Identificador de Cliente
         }
         Wlog.instance.info({
           message: 'getFirstLetterFromABARequest',
@@ -87,7 +85,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           data.getFirstLetterFromABARequestResponse.status ===
           GetFirstLetterFromABARequestStatusConstants.SUCCESSFULL
         ) {
-          // FIXME: Asignar código tipo documento (Procedimiento24.PENDIENTE) al inicio  del identificador del cliente
+          data.requestDto.customerIdentificationDocument = `${data.getFirstLetterFromABARequestResponse.firstLetter}${data.requestDto.customerIdentificationDocument}`;
         }
       } else {
         Wlog.instance.info({
@@ -110,7 +108,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         ) {
           dto.customerClassName = data.clientExistsResponse.customerClassName;
         } else {
-          // TODO: CANTV informa que no se debe llamar esta API. Solo dejar comentario
+          // CANTV informa que no se debe llamar esta API. Solo dejar comentario
           // ValidarRifEnSeniat - URL. Invocar SENIAT para validar SOLO RIF. Si falla ignorar el error y cont.
         }
       }
