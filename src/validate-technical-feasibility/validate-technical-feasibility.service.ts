@@ -237,7 +237,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             method: 'validateTechnicalFeasibility',
           });
           data.checkIpResponse = await this.checkIp(data);
-          // TODO: Revisar las condiciones del flujo porque SOLO contemplan los CheckIpStatusConstants 10 Y 6
           // if(data.checkIpResponse.status === CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT)
         }
       } else {

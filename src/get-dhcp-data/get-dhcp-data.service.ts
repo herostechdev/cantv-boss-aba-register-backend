@@ -18,30 +18,39 @@ export class GetDHCPDataService extends ExceptionsService {
     super();
   }
 
-  // TODO: Solicitar permisos para el usuario VPN para tener acceso a BossProv
   public async get(dto: GetDHCPDataRequestDto): Promise<IGetDHCPDataResponse> {
     try {
       const url = `${this.integrationsConfigurationService.getDHCPDataUrl}?${dto.ipAddress}`;
-      const response =
-        await this.httpService.axiosRef.get<IGetDHCPDataResponse>(url, {
-          headers: {
-            'Content-Type': HttpConstants.APPLICATION_JSON,
-          },
-        });
+      const response = await this.httpService.axiosRef.get<any>(url, {
+        headers: {
+          'Content-Type': HttpConstants.APPLICATION_JSON,
+        },
+      });
       if (!ValidationHelper.isDefined(response.data)) {
-        throw new GetDHCPDataInvalidResponseException(JSON.stringify(response));
+        throw new GetDHCPDataInvalidResponseException(
+          JSON.stringify(response.data),
+        );
       }
+
       const parts = String(response.data).split('|');
       if (!ValidationHelper.isArrayWithItems(parts) || parts.length < 3) {
         throw new GetDHCPDataInvalidResponseException(JSON.stringify(response));
       }
       return {
-        vpi: parts[0],
-        vci: parts[1],
-        nsp: parts[2],
+        vpi: this.getValue(parts[0]),
+        vci: this.getValue(parts[1]),
+        nsp: this.getValue(parts[2]),
       };
     } catch (error) {
       throw new GetDHCPDataException(error);
     }
+  }
+
+  private getValue(source: string): string {
+    if (!ValidationHelper.isDefined(source)) {
+      return null;
+    }
+    const parts = source.replaceAll('\n', '').split(':');
+    return parts.length > 1 ? parts[1] : null;
   }
 }
