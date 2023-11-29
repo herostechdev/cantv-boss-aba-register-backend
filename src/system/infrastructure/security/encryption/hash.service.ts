@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import * as CryptoJS from 'crypto-js';
+import CryptoJS from 'crypto-js';
 import { SecurityConfigurationService } from 'src/system/configuration/security/security-configuration.service';
 
 @Injectable()

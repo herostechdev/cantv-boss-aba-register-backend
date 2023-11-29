@@ -128,11 +128,31 @@ export class LoginService extends OracleDatabaseService {
   private validatePassword(password: string, storedPassword: string): void {
     console.log();
     console.log('validatePassword');
-    console.log('password', password);
+    console.log();
+    console.log('    password', password);
+    console.log('    storedPassword', storedPassword);
+
+    console.log();
     const hashedPassword = this.hashService.hashing(password);
-    console.log('hashedPassword', hashedPassword);
-    console.log('isMatch', this.hashService.isMatch(password, storedPassword));
-    console.log('storedPassword', storedPassword);
+    console.log('    hashedPassword', hashedPassword);
+
+    console.log();
+    const md5Password = this.hashService.md5(password);
+    console.log('    md5Password', md5Password);
+
+    console.log();
+    const md5Base64Password = this.hashService.md5Base64(password);
+    console.log('    md5Base64Password', md5Base64Password);
+
+    console.log();
+    const md5HexPassword = this.hashService.md5Hex(password);
+    console.log('    md5HexPassword', md5HexPassword);
+
+    console.log();
+    console.log(
+      '    isMatch',
+      this.hashService.isMatch(password, storedPassword),
+    );
     if (!this.hashService.isMatch(password, storedPassword)) {
       throw new InvalidPasswordException();
     }
