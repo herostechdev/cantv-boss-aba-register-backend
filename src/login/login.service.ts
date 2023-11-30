@@ -50,7 +50,6 @@ export class LoginService extends OracleDatabaseService {
       data.getGroupAccessFromLoginResponse = await this.getGroupAccessFromLogin(
         data,
       );
-      //TODO: Validar si el password es correcto: data.getGroupAccessFromLoginResponse.userpassword. Validar con Ivan validación MD5
       Wlog.instance.info({
         message: 'Validar contraseña',
         bindingData: dto.userlogin,
@@ -125,6 +124,7 @@ export class LoginService extends OracleDatabaseService {
     }
   }
 
+  //TODO: Validar si el password es correcto: data.getGroupAccessFromLoginResponse.userpassword. Validar con Ivan validación MD5
   private validatePassword(password: string, storedPassword: string): void {
     console.log();
     console.log('validatePassword');
