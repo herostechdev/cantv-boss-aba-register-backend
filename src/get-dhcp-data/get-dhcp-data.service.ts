@@ -8,6 +8,7 @@ import { HttpService } from '@nestjs/axios';
 import { IGetDHCPDataResponse } from './get-dhcp-data-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetDHCPDataService extends ExceptionsService {
@@ -20,28 +21,63 @@ export class GetDHCPDataService extends ExceptionsService {
 
   public async get(dto: GetDHCPDataRequestDto): Promise<IGetDHCPDataResponse> {
     try {
+      Wlog.instance.info({
+        message: 'Inicio',
+        bindingData: dto.ipAddress,
+        clazz: GetDHCPDataService.name,
+        method: 'get',
+      });
       const url = `${this.integrationsConfigurationService.getDHCPDataUrl}?${dto.ipAddress}`;
+      Wlog.instance.info({
+        message: `Url ${url}`,
+        bindingData: dto.ipAddress,
+        clazz: GetDHCPDataService.name,
+        method: 'get',
+      });
       const response = await this.httpService.axiosRef.get<any>(url, {
         headers: {
           'Content-Type': HttpConstants.APPLICATION_JSON,
         },
       });
-      if (!ValidationHelper.isDefined(response.data)) {
+      Wlog.instance.info({
+        message: `Respuesta ${JSON.stringify(response?.data)}`,
+        bindingData: dto.ipAddress,
+        clazz: GetDHCPDataService.name,
+        method: 'get',
+      });
+      if (!ValidationHelper.isDefined(response?.data)) {
+        Wlog.instance.info({
+          message: 'Respuesta inválida',
+          bindingData: dto.ipAddress,
+          clazz: GetDHCPDataService.name,
+          method: 'get',
+        });
         throw new GetDHCPDataInvalidResponseException(
           JSON.stringify(response.data),
         );
       }
-
       const parts = String(response.data).split('|');
       if (!ValidationHelper.isArrayWithItems(parts) || parts.length < 3) {
         throw new GetDHCPDataInvalidResponseException(JSON.stringify(response));
       }
+      Wlog.instance.info({
+        message: 'Fin',
+        bindingData: dto.ipAddress,
+        clazz: GetDHCPDataService.name,
+        method: 'get',
+      });
       return {
         vpi: this.getValue(parts[0]),
         vci: this.getValue(parts[1]),
         nsp: this.getValue(parts[2]),
       };
     } catch (error) {
+      Wlog.instance.error({
+        message: error.message,
+        bindingData: dto.ipAddress,
+        clazz: GetDHCPDataService.name,
+        method: 'get',
+      });
       throw new GetDHCPDataException(error);
     }
   }
