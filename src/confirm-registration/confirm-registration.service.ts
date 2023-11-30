@@ -154,7 +154,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       });
       return data;
     } catch (error) {
-      Wlog.instance.info({
+      Wlog.instance.error({
         message: error?.message,
         bindingData: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,

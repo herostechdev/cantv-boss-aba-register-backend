@@ -8,6 +8,7 @@ import { ICRMCustomerRequestBody } from './crm-customer-request-body.interface';
 import { ICRMCustomerResponse } from './crm-customer-response.interface';
 import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse> {
@@ -21,6 +22,20 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
 
   async get(dto: CRMCustomerDto): Promise<ICRMCustomerResponse> {
     try {
+      Wlog.instance.info({
+        message: 'Inicio',
+        bindingData:
+          dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
+        clazz: CRMCustomersService.name,
+        method: 'get',
+      });
+      Wlog.instance.info({
+        message: 'Validar entrada',
+        bindingData:
+          dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
+        clazz: CRMCustomersService.name,
+        method: 'get',
+      });
       this.validateInput(dto);
       if (dto.customerId) {
         return await this.getClientByCustomerId(dto.customerId);
@@ -32,6 +47,13 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
       }
       return await this.getClientByFiscalNumber(dto.fiscalNumber);
     } catch (error) {
+      Wlog.instance.error({
+        message: error?.message,
+        bindingData:
+          dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
+        clazz: CRMCustomersService.name,
+        method: 'get',
+      });
       this.exceptionHandler(error);
     }
   }
@@ -44,18 +66,61 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
       throw new CRMCustomerInvalidQueryRequestException();
   }
 
-  private getClientByFiscalNumber(id: string): Promise<ICRMCustomerResponse> {
-    return this.invoke({ TAXPAYER_ID: id });
-  }
-
-  private getClientByIdentificationDocument(
+  private async getClientByCustomerId(
     id: string,
   ): Promise<ICRMCustomerResponse> {
-    return this.invoke({ NATIONAL_ID: id });
+    Wlog.instance.info({
+      message: 'Obtiene cliente por ID',
+      bindingData: id,
+      clazz: CRMCustomersService.name,
+      method: 'get',
+    });
+    const response = await this.invoke({ CUST_ID: id });
+    Wlog.instance.info({
+      message: 'Fin',
+      bindingData: id,
+      clazz: CRMCustomersService.name,
+      method: 'get',
+    });
+    return response;
   }
 
-  private getClientByCustomerId(id: string): Promise<ICRMCustomerResponse> {
-    return this.invoke({ CUST_ID: id });
+  private async getClientByIdentificationDocument(
+    id: string,
+  ): Promise<ICRMCustomerResponse> {
+    Wlog.instance.info({
+      message: 'Obtiene cliente por cédula de identidad',
+      bindingData: id,
+      clazz: CRMCustomersService.name,
+      method: 'get',
+    });
+    const response = await this.invoke({ NATIONAL_ID: id });
+    Wlog.instance.info({
+      message: 'Fin',
+      bindingData: id,
+      clazz: CRMCustomersService.name,
+      method: 'get',
+    });
+    return response;
+  }
+
+  private async getClientByFiscalNumber(
+    id: string,
+  ): Promise<ICRMCustomerResponse> {
+    Wlog.instance.info({
+      message: 'Obtiene cliente por RIF',
+      bindingData: id,
+      clazz: CRMCustomersService.name,
+      method: 'get',
+    });
+    const response = await this.invoke({ TAXPAYER_ID: id });
+    Wlog.instance.info({
+      message: 'Fin',
+      bindingData: id,
+      clazz: CRMCustomersService.name,
+      method: 'get',
+    });
+    return response;
   }
 
   private get clientQueryUrl(): string {
