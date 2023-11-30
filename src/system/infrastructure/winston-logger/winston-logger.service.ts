@@ -24,7 +24,7 @@ export class Wlog {
     return createLogger({
       // format: winston.format.json(),
       format: combine(
-        label({ label: WinstonLogConstants.APPLICATION_NAME }),
+        label({ label: this.applicationName }),
         timestamp(),
         format.metadata({
           fillExcept: ['message', 'level', 'timestamp', 'label'],
@@ -37,6 +37,10 @@ export class Wlog {
         // this.getDailyRotateFileTransport(),
       ],
     });
+  }
+
+  private get applicationName(): string {
+    return process.env.APP_NAME ?? WinstonLogConstants.APPLICATION_NAME;
   }
 
   private stringFormat(info: winston.Logform.TransformableInfo): string {
@@ -114,7 +118,7 @@ export class Wlog {
   }
 
   public warn(data: IWinstonLogInputData): void {
-    this.logger.log(WinstonLogConstants.WARNING, data.message, {
+    this.logger.log(WinstonLogConstants.WARN, data.message, {
       bindingData: data.bindingData,
       clazz: data.clazz,
       method: data.method,
