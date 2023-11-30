@@ -7,6 +7,7 @@ import { IGetASAPOrderDetailResponse } from './get-asap-order-detail-response.in
 import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
 import { GetASAPOrderDetailInvalidQueryRequestException } from './get-asap-order-detail-invalid-request.exception';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderDetailResponse> {
@@ -22,9 +23,40 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
     dto: GetASAPOrderDetailRequestDto,
   ): Promise<IGetASAPOrderDetailResponse> {
     try {
+      Wlog.instance.info({
+        message: 'Inicio',
+        bindingData: dto.orderId,
+        clazz: GetASAPOrderDetailService.name,
+        method: 'getASAPOrderDetail',
+      });
+      Wlog.instance.info({
+        message: 'Validar parámetros de entrada',
+        bindingData: dto.orderId,
+        clazz: GetASAPOrderDetailService.name,
+        method: 'getASAPOrderDetail',
+      });
       this.validateInput(dto);
-      return await this.invoke(dto);
+      Wlog.instance.info({
+        message: 'Obtieniendo información de la orden',
+        bindingData: dto.orderId,
+        clazz: GetASAPOrderDetailService.name,
+        method: 'getASAPOrderDetail',
+      });
+      const response = await this.invoke(dto);
+      Wlog.instance.info({
+        message: 'Fin',
+        bindingData: dto.orderId,
+        clazz: GetASAPOrderDetailService.name,
+        method: 'getASAPOrderDetail',
+      });
+      return response;
     } catch (error) {
+      Wlog.instance.error({
+        message: error?.message,
+        bindingData: dto.orderId,
+        clazz: GetASAPOrderDetailService.name,
+        method: 'getASAPOrderDetail',
+      });
       this.exceptionHandler(error);
     }
   }
@@ -47,9 +79,6 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       response.data,
       'Error al consultar el detalle de la orden en ASAP',
     );
-    console.log();
-    console.log('GetASAPOrderDetailService   >>   invoke');
-    console.log(response.data);
     return response.data;
   }
 
