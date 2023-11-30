@@ -129,7 +129,7 @@ export class LoginService extends OracleDatabaseService {
     console.log();
     console.log('validatePassword');
     console.log();
-    console.log('\tpassword', password);
+    console.log('    password', password);
     console.log('    storedPassword', storedPassword);
 
     console.log();
