@@ -23,7 +23,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
   ): Promise<IGetStateFromSerialResponse> {
     try {
       Wlog.instance.info({
-        message: 'Invocando GetOrderidFromAbaSales',
+        message: 'Inicio',
         bindingData: BossHelper.getPhoneNumber(dto),
         clazz: GetStateFromSerialService.name,
         method: 'getGetStateFromSerial',
