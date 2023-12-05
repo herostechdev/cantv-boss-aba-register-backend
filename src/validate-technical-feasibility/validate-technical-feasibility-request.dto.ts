@@ -23,17 +23,11 @@ export class ValidateTechnicalFeasibilityRequestDto implements IPhoneNumber {
   @IsInt()
   orderId: number; // Origen del parametro orderId (CTVIDSRVORD)  >> CORRESPONDE A LA ORDEN DE SERVICIO SUMINISTRADA POR EL CLIENTE EN LA VENTANA DONDE SE SOLICITA EL NUMERO DE TELEFONO
 
-  @IsInt()
-  dslamPortId: number; // Origen del parámetro l_dslamportid   >>  GetPortIdFromIp.o_dslamportid   O GetPortId.t_portid
+  @IsBoolean()
+  orderIsAtBoss: boolean;
 
   @IsString()
-  nsp: string;
-
-  @IsInt()
-  vpi: number;
-
-  @IsInt()
-  vci: number;
+  lineType: string; // ICustomerByPhoneNumberResponse.TIPO_LINEA
 
   @IsBoolean()
   isAutoInstallation: boolean;

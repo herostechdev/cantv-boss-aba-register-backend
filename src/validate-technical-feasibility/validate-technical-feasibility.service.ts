@@ -630,11 +630,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case GetPortIdFromIpConstants.EXECUTION_ERROR:
         throw new GetPortIdFromIpExecutionException();
       case GetPortIdFromIpConstants.DSLAM_DATA_NOT_FOUND_FOR_BOSS_PORT:
-        // throw new GetPortIdFromIpDSLAMDataNotFoundException();
         return response;
       case GetPortIdFromIpConstants.IP_FORMAT_ERROR:
         throw new GetPortIdFromIpBadIpFormatException();
-      // return response;
       default:
         throw new GetPortIdFromIpExecutionException();
     }
@@ -699,8 +697,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<string> {
     const parameters = {
-      i_nspip: OracleHelper.stringBindIn(data.requestDto.nsp),
-      i_invalidvpi: OracleHelper.numberBindIn(data.requestDto.vpi),
+      i_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
+      i_invalidvpi: OracleHelper.numberBindIn(
+        Number(data.queryDHCPResponse.vpi),
+      ),
     };
     const result = await super.executeStoredProcedure(
       BossConstants.UTL_PACKAGE,
@@ -714,9 +714,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetPortIdResponse> {
     const parameters = {
-      s_nspip: OracleHelper.stringBindIn(data.requestDto.nsp),
-      n_vpi: OracleHelper.numberBindIn(data.requestDto.vpi),
-      n_vci: OracleHelper.numberBindIn(data.requestDto.vci),
+      s_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
+      n_vpi: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vpi)),
+      n_vci: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vci)),
       I_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress),
       t_portid: OracleHelper.tableOfStringBindOut(),
       status: OracleHelper.tableOfStringBindOut(),
@@ -744,12 +744,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  // Origen del parámetro l_portid  >>  GetPortIdFromIp.o_dslamportid
   private async IsOccupiedPort(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IIsOccupiedPortResponse> {
     const parameters = {
-      l_portid: OracleHelper.numberBindIn(data.requestDto.dslamPortId),
+      l_portid: OracleHelper.numberBindIn(
+        data.getPortIdFromIpResponse.dslamportId,
+      ),
       l_result: OracleHelper.numberBindOut(),
       o_status: OracleHelper.numberBindOut(),
     };
@@ -865,17 +866,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case CheckIpStatusConstants.EXECUTION_ERROR:
         throw new CheckIpExecutionErrorException();
       case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PHONE_NUMBER:
-        // throw new CheckIpPortNotFoundByPhoneNumberException();
         return response;
       case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PARAMETER:
         throw new Error30032Exception();
       case CheckIpStatusConstants.SUCCESSFULL_BY_BUSSINESS_LOGIC:
         return response;
       case CheckIpStatusConstants.THERE_IS_NOT_CONTRACT_ASSOCIATED_WITH_THE_PORT:
-        // throw new CheckIpThereIsNotContractAssociatedWithThePortException();
         return response;
       case CheckIpStatusConstants.THE_PORT_IS_RESERVED:
-        // throw new CheckIpThePortIsReservedException();
         return response;
       case CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
         throw new Error30031Exception();
@@ -959,21 +957,21 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         throw new DeleteOrderExecutionErrorException();
       case DeleteOrderStatusConstants.THERE_IS_NO_DATA:
         throw new DeleteOrderThereIsNoDataException();
-      // return response;
       case DeleteOrderStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
         throw new DeleteOrderThePortIsOccupiedByAnotherContractException();
-      // return response;
       default:
         throw new DeleteOrderExecutionErrorException();
     }
   }
 
-  // Origen del parámetro l_dslamportid   >>  GetPortIdFromIp.o_dslamportid   O GetPortId
   private async getDSLCentralCoIdByDSLAMPortId(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDSLCentralCoIdByDSLAMPortIdResponse> {
     const parameters = {
-      l_dslamportid: OracleHelper.numberBindIn(data.requestDto.dslamPortId),
+      l_dslamportid: OracleHelper.numberBindIn(
+        data.getPortIdFromIpResponse.dslamportId ??
+          data.getPortIdResponse.portId,
+      ),
       sz_Coid: OracleHelper.stringBindOut(),
     };
     const result = await super.executeStoredProcedure(
@@ -987,16 +985,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     return response;
   }
 
-  // TODO: Determina cuál es la condición que indica que la orden está en BOSS
-  // TODO: determinar origen del parametro: sz_ncc
-  // TODO: determinar origen del parametro: sz_office
-  // TODO: determinar origen del parametro: sz_createdby
-  // TODO: determinar origen del parametro: sz_room
-  // TODO: determinar origen del parametro: n_recursive
-  // TODO: determinar origen del parametro: sz_sistema
-  // TODO: determinar origen del parametro: iCoid
-  // TODO: determinar origen del parametro: i_executiondate
-  // TODO: determinar origen del parametro: i_autoinstall
   private async readIABAOrder(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IReadIABAOrderResponse> {
@@ -1005,7 +993,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       'dd/MM/yyyy',
     );
     const parameters = {
-      sz_ncc: OracleHelper.stringBindIn(null, 10),
+      sz_ncc: OracleHelper.stringBindIn(
+        this.getValue(
+          data.requestDto.orderIsAtBoss,
+          data.getABADataResponse.abancc,
+          '0000000000',
+        ),
+        10,
+      ),
       sz_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
       sz_phonenumber: OracleHelper.stringBindIn(
         data.requestDto.phoneNumber,
@@ -1013,32 +1008,59 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       ),
       orderid: OracleHelper.stringBindIn(String(data.requestDto.orderId), 12),
       sz_clienttype: OracleHelper.stringBindIn(
-        data.getABADataResponse.abaclienttype,
-        1,
+        this.getValue(
+          data.requestDto.orderIsAtBoss,
+          data.getABADataResponse.abaclienttype,
+          data.requestDto.lineType,
+        ),
       ),
       sz_orderdate: OracleHelper.dateBindIn(
         orderDate.isValid ? orderDate.toJSDate() : null,
       ),
       sz_rack: OracleHelper.stringBindIn(
-        String(data.getDataFromDslamPortIdResponse.abarack),
+        this.getValue(
+          data.requestDto.orderIsAtBoss,
+          String(data.getABADataResponse.abarack),
+          String(data.getDataFromDslamPortIdResponse.abarack),
+        ),
         2,
       ),
       sz_position: OracleHelper.stringBindIn(
-        data.getDataFromDslamPortIdResponse.abadslamposition,
+        this.getValue(
+          data.requestDto.orderIsAtBoss,
+          String(data.getABADataResponse.abaposition),
+          data.getDataFromDslamPortIdResponse.abadslamposition,
+        ),
         2,
       ),
       n_dslamslot: OracleHelper.numberBindIn(
-        data.getDataFromDslamPortIdResponse.abaslot,
+        this.getValue(
+          data.requestDto.orderIsAtBoss,
+          data.getABADataResponse.abaslot,
+          data.getDataFromDslamPortIdResponse.abaslot,
+        ),
       ),
       n_port: OracleHelper.numberBindIn(
-        data.getDataFromDslamPortIdResponse.abaport,
+        this.getValue(
+          data.requestDto.orderIsAtBoss,
+          data.getABADataResponse.abaport,
+          data.getDataFromDslamPortIdResponse.abaport,
+        ),
       ),
       sz_ad: OracleHelper.stringBindIn(
-        data.getDataFromDslamPortIdResponse.abaad,
+        this.getValue(
+          data.requestDto.orderIsAtBoss,
+          data.getABADataResponse.abaad,
+          data.getDataFromDslamPortIdResponse.abaad,
+        ),
         5,
       ),
       sz_adpair: OracleHelper.stringBindIn(
-        data.getDataFromDslamPortIdResponse.abapairad,
+        this.getValue(
+          data.requestDto.orderIsAtBoss,
+          data.getABADataResponse.abaparad,
+          data.getDataFromDslamPortIdResponse.abapairad,
+        ),
         4,
       ),
       sz_office: OracleHelper.stringBindIn(null, 10),
@@ -1050,7 +1072,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       sz_room: OracleHelper.stringBindIn(BossConstants.ADSL, 32),
       n_recursive: OracleHelper.numberBindIn(BossConstants.ZERO),
       sz_sistema: OracleHelper.stringBindIn(null),
-      iCoid: OracleHelper.stringBindIn(null, 10),
+      iCoid: OracleHelper.stringBindIn(
+        data.getDSLCentralCoIdByDSLAMPortIdResponse.coId,
+        10,
+      ),
       i_executiondate: OracleHelper.stringBindIn(null),
       i_autoinstall: OracleHelper.numberBindIn(
         data.requestDto.isAutoInstallation
@@ -1084,5 +1109,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       default:
         throw new ReadIABAOrderGeneralDatabaseErrorException();
     }
+  }
+
+  private getValue<T>(orderIsAtBoss: boolean, value: T, elseValue: T): T {
+    return orderIsAtBoss ? value : elseValue;
   }
 }
