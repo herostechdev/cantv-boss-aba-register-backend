@@ -94,26 +94,16 @@ export class PlanByClassClientService extends OracleDatabaseService {
     response.status = rawResponse.status;
     for (let index = 0; index < rawResponse.plan.length; index++) {
       response.items.push({
-        plan: this.getValue(rawResponse.plan, index),
-        planDesired: this.getValue(rawResponse.planDesired, index),
-        shortName: this.getValue(rawResponse.shortName, index),
-        monthlyFee: this.getValue(rawResponse.monthlyFee, index),
-        downStream: this.getValue(rawResponse.downStream, index),
-        limit: this.getValue(rawResponse.limit, index),
-        additionalMB: this.getValue(rawResponse.additionalMB, index),
+        plan: ArrayHelper.getValue(rawResponse.plan, index),
+        planDesired: ArrayHelper.getValue(rawResponse.planDesired, index),
+        shortName: ArrayHelper.getValue(rawResponse.shortName, index),
+        monthlyFee: ArrayHelper.getValue(rawResponse.monthlyFee, index),
+        downStream: ArrayHelper.getValue(rawResponse.downStream, index),
+        limit: ArrayHelper.getValue(rawResponse.limit, index),
+        additionalMB: ArrayHelper.getValue(rawResponse.additionalMB, index),
       });
       response.count = response.items.length;
     }
     return response;
-  }
-
-  private getValue(values: string[], index: number): string {
-    if (!Array.isArray(values) || values.length === 0) {
-      return '';
-    }
-    if (index >= 0 && values.length > index) {
-      return values[index];
-    }
-    return '';
   }
 }

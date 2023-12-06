@@ -3,6 +3,17 @@ export class ArrayHelper {
     return Array.isArray(array) && array.length > 0;
   }
 
+  static getValue<T>(values: T[], index: number): T {
+    if (
+      ArrayHelper.isArrayWithItems(values) &&
+      index >= 0 &&
+      values.length > index
+    ) {
+      return values[index];
+    }
+    return null;
+  }
+
   static intersect<T>(left: T[], right: T[]): T[] {
     return left.filter((val1) => {
       return right.find((val2) => val1 === val2);
