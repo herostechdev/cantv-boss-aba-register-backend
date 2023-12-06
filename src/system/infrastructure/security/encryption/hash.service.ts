@@ -27,6 +27,8 @@ export class HashService {
   }
 
   getSalt(): string {
+    // const saltRounds = 1000 * Math.random();
+    // return bcrypt.genSaltSync(saltRounds);
     return bcrypt.genSaltSync(this.securityConfigurationService.saltRounds);
   }
 
