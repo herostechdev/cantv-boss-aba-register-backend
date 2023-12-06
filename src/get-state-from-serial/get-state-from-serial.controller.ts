@@ -6,7 +6,7 @@ import { GetStateFromSerialRequestDto } from './get-state-from-serial-request.dt
 import { IGetStateFromSerialResponse } from './get-state-from-serial-response.interface';
 
 @Controller({
-  path: 'getGetStateFromSerial',
+  path: 'getStateFromSerial',
   version: '1',
 })
 export class GetStateFromSerialController {
@@ -18,6 +18,6 @@ export class GetStateFromSerialController {
   ConfirmRegistration(
     @Body() dto: GetStateFromSerialRequestDto,
   ): Promise<IGetStateFromSerialResponse> {
-    return this.service.getGetStateFromSerial(dto);
+    return this.service.getStateFromSerial(dto);
   }
 }

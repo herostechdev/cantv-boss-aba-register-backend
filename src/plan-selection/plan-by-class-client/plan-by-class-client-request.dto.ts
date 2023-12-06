@@ -1,4 +1,4 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
 export class PlanByClassClientRequestDto implements IPhoneNumber {
@@ -15,5 +15,6 @@ export class PlanByClassClientRequestDto implements IPhoneNumber {
   dslamPortId: number; // GetPortidFromIp o GetPortId
 
   @IsString()
-  installerLogin: string;
+  @IsOptional()
+  installerLogin?: string;
 }

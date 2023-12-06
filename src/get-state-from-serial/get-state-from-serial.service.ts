@@ -18,7 +18,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  async getGetStateFromSerial(
+  async getStateFromSerial(
     dto: GetStateFromSerialRequestDto,
   ): Promise<IGetStateFromSerialResponse> {
     try {
@@ -26,7 +26,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
         message: 'Inicio',
         bindingData: BossHelper.getPhoneNumber(dto),
         clazz: GetStateFromSerialService.name,
-        method: 'getGetStateFromSerial',
+        method: 'getStateFromSerial',
       });
       await super.connect();
       const parameters = {
@@ -35,7 +35,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
           Number(BossHelper.getSerial(dto.phoneNumber)),
         ),
         o_state: OracleHelper.tableOfStringBindOut(),
-        o_status: OracleHelper.tableOfStringBindOut(),
+        o_status: OracleHelper.tableOfNumberBindOut(),
       };
       const result = await super.executeStoredProcedure(
         BossConstants.BOSS_PACKAGE,
@@ -44,7 +44,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
       );
       const response: IGetStateFromSerialResponse = {
         states: OracleHelper.getItems(result, 'o_state'),
-        status: (result?.outBinds?.status ??
+        status: (OracleHelper.getFirstItem(result, 'o_status') ??
           GetStateFromSerialStatusConstants.ERROR) as GetStateFromSerialStatusConstants,
       };
       switch (response.status) {
@@ -62,7 +62,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
         message: 'Invocando GetOrderidFromAbaSales',
         bindingData: BossHelper.getPhoneNumber(dto),
         clazz: GetStateFromSerialService.name,
-        method: 'getGetStateFromSerial',
+        method: 'getStateFromSerial',
         error: error,
         stack: error?.stack,
       });

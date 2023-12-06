@@ -26,13 +26,13 @@ export class PlanByClassClientService extends OracleDatabaseService {
       const parameters = {
         I_CLASSCLIENT: OracleHelper.stringBindIn(dto.customerClassName),
         I_DSLAMPORTID: OracleHelper.numberBindIn(dto.dslamPortId),
-        I_WSCONTRACT: OracleHelper.numberBindIn(null),
-        I_WS3CONTRACT: OracleHelper.stringBindIn(null),
+        I_WSCONTRACT: OracleHelper.numberBindIn(0),
+        I_WS3CONTRACT: OracleHelper.stringBindIn('0'),
         I_LOGINDIALUP: OracleHelper.stringBindIn(null),
-        I_SAMPLING: OracleHelper.stringBindIn(null),
-        I_UNETEALMEGA: OracleHelper.stringBindIn(null),
-        I_SPECIALCASE: OracleHelper.stringBindIn(null),
-        I_INTERNETEQUIPADO: OracleHelper.stringBindIn(null),
+        I_SAMPLING: OracleHelper.stringBindIn('0'),
+        I_UNETEALMEGA: OracleHelper.stringBindIn('0'),
+        I_SPECIALCASE: OracleHelper.stringBindIn('0'),
+        I_INTERNETEQUIPADO: OracleHelper.stringBindIn('-1'),
         I_LOGININSTALADOR: OracleHelper.stringBindIn(dto.installerLogin),
         I_AREACODE: OracleHelper.stringBindIn(dto.areaCode),
         I_PHONENUMBER: OracleHelper.stringBindIn(dto.phoneNumber),
@@ -52,21 +52,14 @@ export class PlanByClassClientService extends OracleDatabaseService {
         parameters,
       );
       const rawResponse: IPlanByClassClientRawResponse = {
-        // plan: OracleHelper.getFirstItem(result, 'O_PLAN'),
-        // planDesired: OracleHelper.getFirstItem(result, 'O_PLANDESIRED'),
-        // shortName: OracleHelper.getFirstItem(result, 'O_SHORTNAME'),
-        // monthlyFee: OracleHelper.getFirstItem(result, 'O_MONTHLYFEE'),
-        // downStream: OracleHelper.getFirstItem(result, 'O_DOWNSTREAM'),
-        // limit: OracleHelper.getFirstItem(result, 'O_LIMITE'),
-        // additionalMB: OracleHelper.getFirstItem(result, 'O_MB_ADICIONAL'),
         plan: OracleHelper.getItems(result, 'O_PLAN'),
-        planDesired: OracleHelper.getFirstItem(result, 'O_PLANDESIRED'),
-        shortName: OracleHelper.getFirstItem(result, 'O_SHORTNAME'),
-        monthlyFee: OracleHelper.getFirstItem(result, 'O_MONTHLYFEE'),
-        downStream: OracleHelper.getFirstItem(result, 'O_DOWNSTREAM'),
-        limit: OracleHelper.getFirstItem(result, 'O_LIMITE'),
-        additionalMB: OracleHelper.getFirstItem(result, 'O_MB_ADICIONAL'),
-        status: (result?.outBinds?.status ??
+        planDesired: OracleHelper.getItems(result, 'O_PLANDESIRED'),
+        shortName: OracleHelper.getItems(result, 'O_SHORTNAME'),
+        monthlyFee: OracleHelper.getItems(result, 'O_MONTHLYFEE'),
+        downStream: OracleHelper.getItems(result, 'O_DOWNSTREAM'),
+        limit: OracleHelper.getItems(result, 'O_LIMITE'),
+        additionalMB: OracleHelper.getItems(result, 'O_MB_ADICIONAL'),
+        status: (OracleHelper.getFirstItem(result, 'O_STATUS') ??
           PlanByClassClientStatusConstants.ERROR) as PlanByClassClientStatusConstants,
       };
       const response = this.rawToListResponse(rawResponse);
@@ -95,11 +88,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
       count: 0,
       status: 0,
     };
-    if (
-      !rawResponse ||
-      !ArrayHelper.isArrayWithItems(rawResponse.plan) ||
-      rawResponse.plan.length === 0
-    ) {
+    if (!rawResponse || !ArrayHelper.isArrayWithItems(rawResponse.plan)) {
       return response;
     }
     response.status = rawResponse.status;
@@ -115,7 +104,7 @@ export class PlanByClassClientService extends OracleDatabaseService {
       });
       response.count = response.items.length;
     }
-    rawResponse.plan.length;
+    return response;
   }
 
   private getValue(values: string[], index: number): string {
