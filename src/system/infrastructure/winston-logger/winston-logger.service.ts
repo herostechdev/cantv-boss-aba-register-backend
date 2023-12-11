@@ -47,15 +47,15 @@ export class Wlog {
     const rowLog = new StringBuilder();
     rowLog.append(`[${info.label}]`);
     rowLog.append(`${info.timestamp}`);
+    rowLog.append(`${info.level.toUpperCase()}`);
+    rowLog.append(`${info.message}`);
     if (info.metadata.clazz) {
       const method = info.metadata.method ? `.${info.metadata.method}` : '';
       rowLog.append(`[${info.metadata.clazz}${method}]`);
     }
-    rowLog.append(`${info.level.toUpperCase()}`);
     if (info.metadata.bindingData) {
       rowLog.append(`${info.metadata.bindingData}  |`);
     }
-    rowLog.append(`${info.message}`);
     if (info.metadata.error) {
       rowLog.append(`${info.metadata.error}`);
       if (info.metadata.error.stack) {

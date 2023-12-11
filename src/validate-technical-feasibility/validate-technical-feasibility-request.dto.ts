@@ -1,4 +1,4 @@
-import { IsBoolean, IsIP, IsInt, IsString } from 'class-validator';
+import { IsBoolean, IsIP, IsInt, IsOptional, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
 export class ValidateTechnicalFeasibilityRequestDto implements IPhoneNumber {
@@ -18,7 +18,8 @@ export class ValidateTechnicalFeasibilityRequestDto implements IPhoneNumber {
   registerStatus: string;
 
   @IsString()
-  loginInstall: string;
+  @IsOptional()
+  loginInstall?: string;
 
   @IsInt()
   orderId: number; // Origen del parametro orderId (CTVIDSRVORD)  >> CORRESPONDE A LA ORDEN DE SERVICIO SUMINISTRADA POR EL CLIENTE EN LA VENTANA DONDE SE SOLICITA EL NUMERO DE TELEFONO
@@ -27,7 +28,8 @@ export class ValidateTechnicalFeasibilityRequestDto implements IPhoneNumber {
   orderIsAtBoss: boolean;
 
   @IsString()
-  lineType: string; // ICustomerByPhoneNumberResponse.TIPO_LINEA
+  @IsOptional()
+  lineType?: string; // ICustomerByPhoneNumberResponse.TIPO_LINEA
 
   @IsBoolean()
   isAutoInstallation: boolean;
