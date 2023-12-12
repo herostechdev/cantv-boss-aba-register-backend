@@ -27,7 +27,6 @@ import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register
 import { GetASAPOrderDetailService } from 'src/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
-import { GetDataFromRequestsThereIsNoDataException } from './get-data-from-requests/get-data-from-requests-there-is-no-data.exception';
 import { GetDataFromRequestsStatusConstants } from './get-data-from-requests/get-data-from-requests-status.constants';
 import { GetDataFromRequestsException } from './get-data-from-requests/get-data-from-requests.exception';
 import { GetDHCPDataService } from 'src/get-dhcp-data/get-dhcp-data.service';
@@ -76,6 +75,7 @@ import { ReadIABAOrderOrderIsOldException } from './read-iaba-order/read-iaba-or
 import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from './read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
 import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
 import { TheRecordAlreadyExistsException } from './insert-dsl-aba-registers/insert-dsl-aba-registers-the-record-already-exists.exception';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { ValidateTechnicalFeasibilityData } from './validate-technical-feasibility-data';
 import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-feasibility-request.dto';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
@@ -91,6 +91,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly getDHCPDataService: GetDHCPDataService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super(oracleConfigurationService);
   }
@@ -317,6 +318,11 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
         error: error,
         stack: error?.stack,
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: String(dto.areaCode),
+        phoneNumber: String(dto.phoneNumber),
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
@@ -695,6 +701,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetASAPOrderDetailResponse> {
     return this.getASAPOrderDetailService.getASAPOrderDetail({
+      areaCode: data.requestDto.areaCode,
+      phoneNumber: data.requestDto.phoneNumber,
       orderId: String(data.requestDto.orderId),
     });
   }
@@ -703,6 +711,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDHCPDataResponse> {
     return this.getDHCPDataService.get({
+      areaCode: data.requestDto.areaCode,
+      phoneNumber: data.requestDto.phoneNumber,
       ipAddress: data.requestDto.ipAddress,
     });
   }

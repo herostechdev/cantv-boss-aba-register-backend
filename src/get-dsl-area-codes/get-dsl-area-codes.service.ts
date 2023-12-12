@@ -1,40 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { GetDSLAreaCodesException } from './get-dsl-area-codes.exception';
+import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesStatusConstants } from './get-dsl-area-codes-status.constants';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetDSLAreaCodesService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
+    protected readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super(oracleConfigurationService);
   }
 
-  async getDSLAreaCodesFlow(): Promise<IGetDSLAreaCodesResponse> {
+  async getDSLAreaCodesFlow(
+    dto: GetDSLAreaCodesRequestDto,
+  ): Promise<IGetDSLAreaCodesResponse> {
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        data: null,
+        data: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
       await super.connect();
       Wlog.instance.info({
         message: 'Obtiene los códigos de área',
-        data: null,
+        data: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
       const response = await this.getDSLAreaCodes();
       Wlog.instance.info({
         message: 'Fin',
-        data: null,
+        data: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
@@ -42,9 +47,14 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         message: error.message,
-        data: null,
+        data: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: String(dto.areaCode),
+        phoneNumber: String(dto.phoneNumber),
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       super.exceptionHandler(error);
     } finally {

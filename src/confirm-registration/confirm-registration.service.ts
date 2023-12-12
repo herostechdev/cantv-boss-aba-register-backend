@@ -45,6 +45,7 @@ import { OracleConfigurationService } from 'src/system/configuration/oracle/orac
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ThereIsNoDataException } from './create-and-provisioning-master-act/there-is-no-data.exception';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
@@ -52,6 +53,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly customerExistsService: CustomerExistsService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super(oracleConfigurationService);
   }
@@ -159,6 +161,11 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         data: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: dto.areaCode,
+        phoneNumber: dto.phoneNumber,
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {

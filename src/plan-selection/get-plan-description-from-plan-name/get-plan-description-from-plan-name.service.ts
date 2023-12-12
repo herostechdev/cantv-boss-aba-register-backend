@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { GetPlanDescriptionFromPlanNameStatusConstants } from './get-plan-description-from-plan-name-status.constants';
 import { GetPlanDescriptionFromPlanNameRequestDto } from './get-plan-description-from-plan-name-request.dto';
 import { GetPlanDFescriptionFromPlanNameException } from './get-plan-description-from-plan-name.exception';
 import { IGetPlanDescriptionFromPlanNameResponse } from './get-plan-description-from-plan-name-response.interface';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
 
 @Injectable()
 export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super(oracleConfigurationService);
   }
@@ -63,6 +65,11 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
         method: 'getPlanDescriptionFromPlanName',
         error: error,
         stack: error?.stack,
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: String(dto.areaCode),
+        phoneNumber: String(dto.phoneNumber),
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       super.exceptionHandler(error);
     } finally {

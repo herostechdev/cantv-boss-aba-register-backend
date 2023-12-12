@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { GetDHCPDataException } from './get-dhcp-data.exception';
 import { GetDHCPDataInvalidResponseException } from './get-dhcp-data-invalid-response.exception';
@@ -7,6 +8,7 @@ import { HttpConstants } from 'src/system/infrastructure/http/http-constants';
 import { HttpService } from '@nestjs/axios';
 import { IGetDHCPDataResponse } from './get-dhcp-data-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
@@ -15,6 +17,7 @@ export class GetDHCPDataService extends ExceptionsService {
   constructor(
     private readonly integrationsConfigurationService: IntegrationsConfigurationService,
     private readonly httpService: HttpService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super();
   }
@@ -23,14 +26,14 @@ export class GetDHCPDataService extends ExceptionsService {
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        data: dto.ipAddress,
+        data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
       const url = `${this.integrationsConfigurationService.getDHCPDataUrl}?${dto.ipAddress}`;
       Wlog.instance.info({
         message: `Url ${url}`,
-        data: dto.ipAddress,
+        data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
@@ -41,14 +44,14 @@ export class GetDHCPDataService extends ExceptionsService {
       });
       Wlog.instance.info({
         message: `Respuesta ${JSON.stringify(response?.data)}`,
-        data: dto.ipAddress,
+        data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
       if (!ValidationHelper.isDefined(response?.data)) {
         Wlog.instance.info({
           message: 'Respuesta inválida',
-          data: dto.ipAddress,
+          data: JSON.stringify(dto),
           clazz: GetDHCPDataService.name,
           method: 'get',
         });
@@ -62,7 +65,7 @@ export class GetDHCPDataService extends ExceptionsService {
       }
       Wlog.instance.info({
         message: 'Fin',
-        data: dto.ipAddress,
+        data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
@@ -74,9 +77,14 @@ export class GetDHCPDataService extends ExceptionsService {
     } catch (error) {
       Wlog.instance.error({
         message: error.message,
-        data: dto.ipAddress,
+        data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: String(dto.areaCode),
+        phoneNumber: String(dto.phoneNumber),
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       throw new GetDHCPDataException(error);
     }

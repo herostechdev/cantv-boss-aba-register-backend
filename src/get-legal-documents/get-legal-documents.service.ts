@@ -1,25 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { CustomNotFoundException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-not-found-exception';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { DocumentsConfigurationService } from 'src/system/configuration/documents/documents-configuration.service';
+import { GetLegalDocumentsRequestDto } from './get-legal-documents-request.dto';
 import { IGetLegalDocuments } from './get-legal-documents-response.interface';
-import { CustomNotFoundException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-not-found-exception';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetLegalDocumentsService extends ExceptionsService {
   constructor(
     private readonly documentsConfigurationService: DocumentsConfigurationService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super();
   }
-  public get(): IGetLegalDocuments {
+  public async get(
+    dto: GetLegalDocumentsRequestDto,
+  ): Promise<IGetLegalDocuments> {
     try {
-      return {
+      Wlog.instance.info({
+        message: 'Inicio',
+        data: JSON.stringify(dto),
+        clazz: GetLegalDocumentsService.name,
+        method: 'get',
+      });
+      const response: IGetLegalDocuments = {
         contract: this.getContractDocument(),
         termsAndConditions: this.getTermsAndConditionsDocument(),
       };
+      Wlog.instance.info({
+        message: 'Fin',
+        data: JSON.stringify(dto),
+        clazz: GetLegalDocumentsService.name,
+        method: 'get',
+      });
+      return response;
     } catch (error) {
+      Wlog.instance.error({
+        message: error.message,
+        data: JSON.stringify(dto),
+        clazz: GetLegalDocumentsService.name,
+        method: 'get',
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: String(dto.areaCode),
+        phoneNumber: String(dto.phoneNumber),
+        registerStatus: BossConstants.NOT_PROCESSED,
+      });
       super.exceptionHandler(error, 'Documentos Legales');
     }
   }

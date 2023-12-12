@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { Error2002Exception } from 'src/exceptions/error-2002.exception';
 import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesStatusConstants } from './get-order-id-from-aba-sales-status.constants';
@@ -6,15 +8,15 @@ import { GetOrderIdFromABASalesException } from './get-order-id-from-aba-sales.e
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetOrderIdFromABASalesService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super(oracleConfigurationService);
   }
@@ -67,6 +69,11 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
         method: 'getOrderIdFromABASales',
         error: error,
         stack: error?.stack,
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: String(dto.areaCode),
+        phoneNumber: String(dto.phoneNumber),
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {

@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { xml2js } from 'xml-js';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { CustomerByPhoneNumberInvalidQueryRequestException } from './customer-by-phone-number-invalid-request.exception';
 import { CustomerByPhoneNumberRequestPayloadService } from './customer-by-phone-number-request-payload.service';
 import { CustomerByPhoneNumberDto } from './customer-by-phone-number.dto';
 import { ICustomerByPhoneNumberRequestBody } from './customer-by-phone-number-request-body.interface';
 import { ICustomerByPhoneNumberResponse } from './customer-by-phone-number-response.interface';
-import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 import { PICConstants } from 'src/boss-helpers/pic.constants';
+import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
+import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerByPhoneNumberResponse> {
@@ -17,6 +19,7 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
     private readonly httpService: HttpService,
     private readonly requestPayloadService: CustomerByPhoneNumberRequestPayloadService,
     private readonly integrationsConfigurationService: IntegrationsConfigurationService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super();
   }
@@ -53,6 +56,11 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
         message: error?.message,
         clazz: CustomerByPhoneNumberService.name,
         method: 'get',
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: dto.areaCode,
+        phoneNumber: dto.phoneNumber,
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       this.exceptionHandler(error);
     }

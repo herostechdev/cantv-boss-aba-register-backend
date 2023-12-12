@@ -1,6 +1,13 @@
 import { IsOptional, IsString } from 'class-validator';
+import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
-export class CRMCustomerDto {
+export class CRMCustomerDto implements IPhoneNumber {
+  @IsString()
+  areaCode: string | number;
+
+  @IsString()
+  phoneNumber: string | number;
+
   @IsString()
   @IsOptional()
   customerId?: string;

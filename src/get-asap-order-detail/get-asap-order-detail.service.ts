@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { GetASAPOrderDetailInvalidQueryRequestException } from './get-asap-order-detail-invalid-request.exception';
 import { GetASAPOrderDetailPayloadService } from './get-asap-order-detail-payload.service';
 import { GetASAPOrderDetailRequestDto } from './get-asap-order-detail-request.dto';
 import { IGetASAPOrderDetailRequest } from './get-asap-order-detail-request.interface';
 import { IGetASAPOrderDetailResponse } from './get-asap-order-detail-response.interface';
-import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
-import { GetASAPOrderDetailInvalidQueryRequestException } from './get-asap-order-detail-invalid-request.exception';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
+import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
@@ -15,6 +17,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
     private readonly httpService: HttpService,
     private readonly requestPayloadService: GetASAPOrderDetailPayloadService,
     private readonly picConfigurationService: IntegrationsConfigurationService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super();
   }
@@ -56,6 +59,11 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
         data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: String(dto.areaCode),
+        phoneNumber: String(dto.phoneNumber),
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       this.exceptionHandler(error);
     }

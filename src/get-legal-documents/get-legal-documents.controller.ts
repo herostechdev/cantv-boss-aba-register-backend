@@ -1,4 +1,5 @@
-import { Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
+import { GetLegalDocumentsRequestDto } from './get-legal-documents-request.dto';
 import { GetLegalDocumentsService } from './get-legal-documents.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
@@ -14,7 +15,9 @@ export class GetLegalDocumentsController {
   @Post()
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
-  ConfirmRegistration(): IGetLegalDocuments {
-    return this.service.get();
+  ConfirmRegistration(
+    @Body() dto: GetLegalDocumentsRequestDto,
+  ): Promise<IGetLegalDocuments> {
+    return this.service.get(dto);
   }
 }

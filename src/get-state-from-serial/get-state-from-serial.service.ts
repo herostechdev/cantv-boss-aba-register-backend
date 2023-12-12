@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { GetStateFromSerialRequestDto } from './get-state-from-serial-request.dto';
 import { GetStateFromSerialStatusConstants } from './get-state-from-serial-status.constants';
 import { GetStateFromSerialException } from './get-state-from-serial.exception';
@@ -7,13 +8,14 @@ import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetStateFromSerialService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super(oracleConfigurationService);
   }
@@ -65,6 +67,11 @@ export class GetStateFromSerialService extends OracleDatabaseService {
         method: 'getStateFromSerial',
         error: error,
         stack: error?.stack,
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: String(dto.areaCode),
+        phoneNumber: String(dto.phoneNumber),
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       super.exceptionHandler(error);
     } finally {

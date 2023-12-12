@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { xml2js } from 'xml-js';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { CRMCustomerDto } from './crm-customer.dto';
 import { CRMCustomerInvalidQueryRequestException } from './crm-customer-query-invalid-request.exception';
 import { CRMCustomerRequestPayloadService } from './crm-customer-request-payload.service';
@@ -8,6 +9,7 @@ import { ICRMCustomerRequestBody } from './crm-customer-request-body.interface';
 import { ICRMCustomerResponse } from './crm-customer-response.interface';
 import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
@@ -16,6 +18,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     private readonly httpService: HttpService,
     private readonly requestPayloadService: CRMCustomerRequestPayloadService,
     private readonly integrationsConfigurationService: IntegrationsConfigurationService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super();
   }
@@ -50,6 +53,11 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
         data: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
         clazz: CRMCustomersService.name,
         method: 'get',
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: String(dto.areaCode),
+        phoneNumber: String(dto.phoneNumber),
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       this.exceptionHandler(error);
     }
