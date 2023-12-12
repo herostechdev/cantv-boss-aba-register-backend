@@ -4,7 +4,7 @@ import { IGetCustomerClassNameFromIdValueResponse } from './get-client-class-nam
 import { IGetCustomerInstanceIdFromIdValueResponse } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
 import { IGetDebtFromCustomerResponse } from './get-debt-from-client/get-debt-from-customer-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
-import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
+import { IUpdateDslAbaRegistersResponse } from '../dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 
 export class ValidateCustomerData {

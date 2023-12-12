@@ -1,14 +1,10 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { v4 } from 'uuid';
 import { CustomForbiddenException } from '../exceptions/custom-exceptions/custom-forbidden-exception';
 import { EntityDuplicatedException } from 'src/system/infrastructure/exceptions/entity-duplicated.exception';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
-// import { ErrorLogDto } from '../loggers/error-log.dto';
-// import { LogsService } from '../loggers/logs.service';
 
 export abstract class ExceptionsService {
-  // constructor(protected readonly logService: LogsService) {}
-
   protected exceptionHandler(error: any, document?: any): void {
     this.conditionalThrowException(
       error,

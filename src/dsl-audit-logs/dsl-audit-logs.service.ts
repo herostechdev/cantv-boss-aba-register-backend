@@ -64,7 +64,7 @@ export class DSLAuditLogsService extends OracleDatabaseService {
         message: error?.message,
         data: BossHelper.getPhoneNumber(dto),
         clazz: DSLAuditLogsService.name,
-        method: 'isIPAllowed',
+        method: 'log',
         error: error,
         stack: error?.stack,
       });

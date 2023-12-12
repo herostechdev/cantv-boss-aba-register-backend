@@ -22,15 +22,13 @@ import { IGetCustomerClassNameFromIdValueResponse } from './get-client-class-nam
 import { IGetCustomerInstanceIdFromIdValueResponse } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
 import { IGetDebtFromCustomerResponse } from './get-debt-from-client/get-debt-from-customer-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
-import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers/update-dsl-aba-registers-status.constants';
-import { UpdateDslAbaRegistersInternalErrorException } from './update-dsl-aba-registers/update-dsl-aba-registers-internal-error.exception';
 import { ValidateCustomerData } from './validate-customer-data';
 import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 
 @Injectable()
 export class ValidateCustomerService extends OracleDatabaseService {
@@ -39,6 +37,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
     private readonly getOrderIdFromABASalesService: GetOrderIdFromABASalesService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super(oracleConfigurationService);
   }
@@ -163,10 +162,11 @@ export class ValidateCustomerService extends OracleDatabaseService {
               method: 'validateCustomer',
             });
             data.updateDslABARegistersResponse =
-              await this.updateDslABARegisters(
-                data,
-                BossConstants.NOT_PROCESSED,
-              );
+              await this.updateDslAbaRegistersService.update({
+                areaCode: data.requestDto.areaCode,
+                phoneNumber: data.requestDto.phoneNumber,
+                registerStatus: BossConstants.NOT_PROCESSED,
+              });
             throw new Error30101Exception();
           }
         }
@@ -181,10 +181,12 @@ export class ValidateCustomerService extends OracleDatabaseService {
             clazz: ValidateCustomerService.name,
             method: 'validateCustomer',
           });
-          data.updateDslABARegistersResponse = await this.updateDslABARegisters(
-            data,
-            BossConstants.NOT_PROCESSED,
-          );
+          data.updateDslABARegistersResponse =
+            await this.updateDslAbaRegistersService.update({
+              areaCode: data.requestDto.areaCode,
+              phoneNumber: data.requestDto.phoneNumber,
+              registerStatus: BossConstants.NOT_PROCESSED,
+            });
           throw new Error1002Exception();
         }
       }
@@ -197,6 +199,11 @@ export class ValidateCustomerService extends OracleDatabaseService {
         method: 'validateCustomer',
         error: error,
         stack: error?.stack,
+      });
+      await this.updateDslAbaRegistersService.update({
+        areaCode: dto.areaCode,
+        phoneNumber: dto.phoneNumber,
+        registerStatus: BossConstants.NOT_PROCESSED,
       });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
@@ -393,35 +400,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
         return response;
       default:
         throw new GetDebtFromCustomerInternalErrorException();
-    }
-  }
-
-  private async updateDslABARegisters(
-    data: ValidateCustomerData,
-    registerStatus: string,
-  ): Promise<IUpdateDslAbaRegistersResponse> {
-    const parameters = {
-      iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-      iPhoneNumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber, 7),
-      iRegisterStatus: OracleHelper.stringBindIn(registerStatus, 16),
-      status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ABA_PACKAGE,
-      BossConstants.UPDATE_DSL_ABA_REGISTERS,
-      parameters,
-    );
-    const response: IUpdateDslAbaRegistersResponse = {
-      status: (result?.outBinds?.status ??
-        UpdateDslAbaRegistersStatusConstants.INTERNAL_ERROR) as UpdateDslAbaRegistersStatusConstants,
-    };
-    switch (response.status) {
-      case UpdateDslAbaRegistersStatusConstants.SUCCESSFULL:
-        return response;
-      case UpdateDslAbaRegistersStatusConstants.INTERNAL_ERROR:
-        throw new UpdateDslAbaRegistersInternalErrorException();
-      default:
-        throw new UpdateDslAbaRegistersInternalErrorException();
     }
   }
 }

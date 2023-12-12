@@ -3,9 +3,14 @@ import { ValidateCustomerController } from './validate-customer.controller';
 import { ValidateCustomerService } from './validate-customer.service';
 import { CustomerExistsModule } from 'src/customer-exists/customer-exists.module';
 import { GetOrderIdFromABASalesModule } from 'src/get-order-id-from-aba-sales/get-order-id-from-aba-sales.module';
+import { UpdateDslAbaRegistersModule } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.module';
 
 @Module({
-  imports: [CustomerExistsModule, GetOrderIdFromABASalesModule],
+  imports: [
+    CustomerExistsModule,
+    GetOrderIdFromABASalesModule,
+    UpdateDslAbaRegistersModule,
+  ],
   controllers: [ValidateCustomerController],
   providers: [ValidateCustomerService],
   exports: [],
