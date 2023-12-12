@@ -32,12 +32,24 @@ export abstract class OracleDatabaseService extends CommonService {
     storedProcedure: string,
     parameters?: any,
   ): Promise<any> {
+    console.log();
+    console.log('executeStoredProcedure');
+    console.log();
+    console.log('packageName', packageName, 'storedProcedure', storedProcedure);
+    console.log('parameters');
+    console.log(JSON.stringify(parameters));
+    console.log();
     const sql = this.getStoredProcedureStatement(
       packageName,
       storedProcedure,
       parameters,
     );
-    return await this.dbConnection.execute(sql, parameters);
+    // return await this.dbConnection.execute(sql, parameters);
+    const response = await this.dbConnection.execute(sql, parameters);
+    console.log();
+    console.log('response');
+    console.log(JSON.stringify(response));
+    return response;
   }
 
   private getStoredProcedureStatement(

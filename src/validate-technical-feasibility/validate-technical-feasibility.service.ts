@@ -99,6 +99,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     dto: ValidateTechnicalFeasibilityRequestDto,
   ): Promise<ValidateTechnicalFeasibilityData> {
     try {
+      console.log();
+      console.log('request payload');
+      console.log(JSON.stringify(dto));
       Wlog.instance.info({
         message: 'Inicio',
         bindingData: BossHelper.getPhoneNumber(dto),
@@ -108,15 +111,15 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       const data = new ValidateTechnicalFeasibilityData();
       data.requestDto = dto;
       await super.connect();
-      Wlog.instance.info({
-        message: 'insertDslAbaRegisters',
-        bindingData: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
-        method: 'validateTechnicalFeasibility',
-      });
-      data.insertDslAbaRegistersResponse = await this.insertDslAbaRegisters(
-        data,
-      );
+      // Wlog.instance.info({
+      //   message: 'insertDslAbaRegisters',
+      //   bindingData: BossHelper.getPhoneNumber(dto),
+      //   clazz: ValidateTechnicalFeasibilityService.name,
+      //   method: 'validateTechnicalFeasibility',
+      // });
+      // data.insertDslAbaRegistersResponse = await this.insertDslAbaRegisters(
+      //   data,
+      // );
       Wlog.instance.info({
         message: 'isPrepaidVoiceLine',
         bindingData: BossHelper.getPhoneNumber(dto),
@@ -149,6 +152,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       });
       data.getDataFromRequestsResponse = await this.getDataFromRequests(data);
       Wlog.instance.info({
+        message: 'getABADataFromRequests',
+        bindingData: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
+      data.getABADataFromRequestsResponse =
+        await this.getABADataFromRequestsService.getABADataFromRequests(dto);
+      Wlog.instance.info({
         message: 'getDownstreamFromPlan',
         bindingData: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -157,14 +168,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
         data,
       );
-      Wlog.instance.info({
-        message: 'getABADataFromRequests',
-        bindingData: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
-        method: 'validateTechnicalFeasibility',
-      });
-      data.getABADataFromRequestsResponse =
-        await this.getABADataFromRequestsService.getABADataFromRequests(dto);
       if (data.verifyContractByPhoneResponse.status === 0) {
         throw new VerifyContractByPhoneException();
       }
@@ -366,19 +369,24 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       BossConstants.INSERT_DSL_ABA_REGISTERS,
       parameters,
     );
+    console.log();
+    console.log('insertDslAbaRegisters');
+    console.log();
+    console.log('result');
+    console.log(JSON.stringify(result));
     const status = (result?.outBinds?.status ??
       InsertDslAbaRegisterConstants.INTERNAL_ERROR) as InsertDslAbaRegisterConstants;
     switch (status) {
       case InsertDslAbaRegisterConstants.SUCCESSFULL:
         return status;
       case InsertDslAbaRegisterConstants.INTERNAL_ERROR:
-        throw new InsertDslAbaRegisterException();
+        throw new InsertDslAbaRegisterException(result);
       case InsertDslAbaRegisterConstants.THERE_IS_NO_DATA:
         throw new InsertDslAbaRegisterThereIsNoDataException();
       case InsertDslAbaRegisterConstants.REGISTERRED:
         throw new TheRecordAlreadyExistsException();
       default:
-        throw new InsertDslAbaRegisterException();
+        throw new InsertDslAbaRegisterException(result);
     }
   }
 
@@ -400,9 +408,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       parameters,
     );
     const response: IIsPrepaidVoiceLineResponse = {
-      isPrepaid: (result?.outBinds?.Status ??
+      isPrepaid: (result?.outBinds?.isPrepago ??
         IsPrepaidVoiceLineIsPrepaidConstants.IT_IS_NOT_A_PREPAID_VOICE_LINE) as IsPrepaidVoiceLineIsPrepaidConstants,
-      status: (result?.outBinds?.Status ??
+      status: (result?.outBinds?.oStatus ??
         IsPrepaidVoiceLineStatusConstants.ERROR) as IsPrepaidVoiceLineStatusConstants,
     };
     if (
@@ -419,7 +427,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetAndRegisterQualifOfServiceResponse> {
     const parameters = {
-      i_clientserviceid: OracleHelper.numberBindIn(data.requestDto.orderId),
+      i_clientserviceid: OracleHelper.numberBindIn(null), // Iván indica enviar siempre null 2023-12-11
       i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
       i_phonenumber: OracleHelper.stringBindIn(
         data.requestDto.phoneNumber,
@@ -436,7 +444,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       BossConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
       parameters,
     );
-    const status = (result?.outBinds?.Status ??
+    const status = (result?.outBinds?.o_status ??
       GetAndRegisterQualifOfServiceStatusConstants.ERROR) as GetAndRegisterQualifOfServiceStatusConstants;
     const response: IGetAndRegisterQualifOfServiceResponse = {
       qualifpossible: result?.outBinds?.o_qualifpossible,
@@ -492,6 +500,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     const parameters = {
       i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
       i_phonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
+
       o_id: OracleHelper.tableOfStringBindOut(),
       o_firstname: OracleHelper.tableOfStringBindOut(),
       o_lastname: OracleHelper.tableOfStringBindOut(),
@@ -501,14 +510,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       o_address2: OracleHelper.tableOfStringBindOut(),
       o_city: OracleHelper.tableOfStringBindOut(),
       o_state: OracleHelper.tableOfStringBindOut(),
-      Status: OracleHelper.numberBindOut(),
+      Status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
       BossConstants.BOSS_PACKAGE,
       BossConstants.GET_DATA_FROM_REQUESTS,
       parameters,
     );
-    const status = (result?.outBinds?.Status ??
+    const status = (OracleHelper.getFirstItem(result, 'Status') ??
       GetDataFromRequestsStatusConstants.EXECUTION_ERROR) as GetDataFromRequestsStatusConstants;
     const response: IGetDataFromRequestsResponse = {
       id: OracleHelper.getFirstItem(result, 'o_id'),
@@ -529,7 +538,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case GetDataFromRequestsStatusConstants.EXECUTION_ERROR:
         throw new GetDataFromRequestsException();
       case GetDataFromRequestsStatusConstants.THERE_IS_NO_DATA:
-        throw new GetDataFromRequestsThereIsNoDataException();
+        // TODO: PENDENTE ENVIAR DOCUMENTACIÓN ACTUALIZADA
+        // throw new GetDataFromRequestsThereIsNoDataException();
+        return response;
       default:
         throw new GetDataFromRequestsException();
     }
@@ -539,7 +550,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDownstreamFromPlanResponse> {
     const parameters = {
-      i_planname: OracleHelper.stringBindIn(data.requestDto.areaCode, 32),
+      i_planname: OracleHelper.stringBindIn(
+        data.getABADataFromRequestsResponse.desiredPlan,
+        32,
+      ),
       o_downstream: OracleHelper.stringBindOut(32),
       o_status: OracleHelper.numberBindOut(),
     };
