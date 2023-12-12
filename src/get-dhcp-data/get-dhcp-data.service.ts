@@ -23,14 +23,14 @@ export class GetDHCPDataService extends ExceptionsService {
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData: dto.ipAddress,
+        data: dto.ipAddress,
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
       const url = `${this.integrationsConfigurationService.getDHCPDataUrl}?${dto.ipAddress}`;
       Wlog.instance.info({
         message: `Url ${url}`,
-        bindingData: dto.ipAddress,
+        data: dto.ipAddress,
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
@@ -41,14 +41,14 @@ export class GetDHCPDataService extends ExceptionsService {
       });
       Wlog.instance.info({
         message: `Respuesta ${JSON.stringify(response?.data)}`,
-        bindingData: dto.ipAddress,
+        data: dto.ipAddress,
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
       if (!ValidationHelper.isDefined(response?.data)) {
         Wlog.instance.info({
           message: 'Respuesta inválida',
-          bindingData: dto.ipAddress,
+          data: dto.ipAddress,
           clazz: GetDHCPDataService.name,
           method: 'get',
         });
@@ -62,7 +62,7 @@ export class GetDHCPDataService extends ExceptionsService {
       }
       Wlog.instance.info({
         message: 'Fin',
-        bindingData: dto.ipAddress,
+        data: dto.ipAddress,
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
@@ -74,7 +74,7 @@ export class GetDHCPDataService extends ExceptionsService {
     } catch (error) {
       Wlog.instance.error({
         message: error.message,
-        bindingData: dto.ipAddress,
+        data: dto.ipAddress,
         clazz: GetDHCPDataService.name,
         method: 'get',
       });

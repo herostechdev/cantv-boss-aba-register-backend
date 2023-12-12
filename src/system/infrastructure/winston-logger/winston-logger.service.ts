@@ -53,16 +53,18 @@ export class Wlog {
       rowLog.append(`[${info.metadata.clazz}${method}]`);
     }
     rowLog.append(`${info.message}`);
-    if (info.metadata.bindingData) {
-      rowLog.append(`${info.metadata.bindingData}  |`);
+    if (info.metadata.data) {
+      rowLog.append(`| Data: ${JSON.stringify(info.metadata.data)}`);
     }
     if (info.metadata.error) {
       rowLog.append(`${info.metadata.error}`);
       if (info.metadata.error.stack) {
-        rowLog.append(`${info.metadata.error.stack}`);
+        rowLog.append(
+          `| StackTrace: ${JSON.stringify(info.metadata.error.stack)}`,
+        );
       }
     }
-    return rowLog.toString();
+    return rowLog.toString('  ');
   }
 
   private objectFormat(info: winston.Logform.TransformableInfo): IWinstonLog {
@@ -72,7 +74,7 @@ export class Wlog {
       clazz: info.metadata?.clazz,
       method: info.metadata?.method,
       level: info.level,
-      bindingData: info.metadata?.bindingData,
+      data: info.metadata?.data,
       message: info.message,
       error: info.metadata?.error,
       stack: info.metadata?.error.stack,
@@ -111,7 +113,7 @@ export class Wlog {
 
   public info(data: IWinstonLogInputData): void {
     this.logger.log(WinstonLogConstants.INFO, data.message, {
-      bindingData: data.bindingData,
+      data: data.data,
       clazz: data.clazz,
       method: data.method,
     });
@@ -119,7 +121,7 @@ export class Wlog {
 
   public warn(data: IWinstonLogInputData): void {
     this.logger.log(WinstonLogConstants.WARN, data.message, {
-      bindingData: data.bindingData,
+      data: data.data,
       clazz: data.clazz,
       method: data.method,
     });
@@ -127,7 +129,7 @@ export class Wlog {
 
   public debug(data: IWinstonLogInputData): void {
     this.logger.log(WinstonLogConstants.DEBUG, data.message, {
-      bindingData: data.bindingData,
+      data: data.data,
       clazz: data.clazz,
       method: data.method,
     });
@@ -135,7 +137,7 @@ export class Wlog {
 
   public error(data: IWinstonLogInputData): void {
     this.logger.log(WinstonLogConstants.ERROR, data.message, {
-      bindingData: data.bindingData,
+      data: data.data,
       clazz: data.clazz,
       method: data.method,
       error: data.error,

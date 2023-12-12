@@ -27,21 +27,21 @@ export class IsIPAllowedService extends OracleDatabaseService {
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData: dto.ipAddress,
+        data: dto.ipAddress,
         clazz: IsIPAllowedService.name,
         method: 'isIPAllowed',
       });
       await super.connect();
       Wlog.instance.info({
         message: 'Verifica si la IP es permisada',
-        bindingData: dto.ipAddress,
+        data: dto.ipAddress,
         clazz: IsIPAllowedService.name,
         method: 'isIPAllowed',
       });
       const response = await this.isIPAllowed(dto);
       Wlog.instance.info({
         message: 'Fin',
-        bindingData: dto.ipAddress,
+        data: dto.ipAddress,
         clazz: IsIPAllowedService.name,
         method: 'isIPAllowed',
       });
@@ -49,7 +49,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         message: error.message,
-        bindingData: dto.ipAddress,
+        data: dto.ipAddress,
         clazz: IsIPAllowedService.name,
         method: 'isIPAllowed',
       });

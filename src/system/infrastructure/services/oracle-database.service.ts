@@ -5,10 +5,10 @@ import {
   NUMBER,
   DB_TYPE_BOOLEAN,
 } from 'oracledb';
-import { DateTime } from 'luxon';
 import { CommonService } from './common.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
+import { Wlog } from '../winston-logger/winston-logger.service';
 
 export abstract class OracleDatabaseService extends CommonService {
   constructor(
@@ -32,23 +32,28 @@ export abstract class OracleDatabaseService extends CommonService {
     storedProcedure: string,
     parameters?: any,
   ): Promise<any> {
-    console.log();
-    console.log('executeStoredProcedure');
-    console.log();
-    console.log('packageName', packageName, 'storedProcedure', storedProcedure);
-    console.log('parameters');
-    console.log(JSON.stringify(parameters));
-    console.log();
+    Wlog.instance.info({
+      message: `Ejecutando el SP: ${this.getPackage(
+        packageName,
+      )}${storedProcedure}`,
+      data: JSON.stringify(parameters),
+      clazz: OracleDatabaseService.name,
+      method: 'executeStoredProcedure',
+    });
     const sql = this.getStoredProcedureStatement(
       packageName,
       storedProcedure,
       parameters,
     );
-    // return await this.dbConnection.execute(sql, parameters);
     const response = await this.dbConnection.execute(sql, parameters);
-    console.log();
-    console.log('response');
-    console.log(JSON.stringify(response));
+    Wlog.instance.info({
+      message: `Respuesta del SP: ${this.getPackage(
+        packageName,
+      )}${storedProcedure}`,
+      data: JSON.stringify(response),
+      clazz: OracleDatabaseService.name,
+      method: 'executeStoredProcedure',
+    });
     return response;
   }
 

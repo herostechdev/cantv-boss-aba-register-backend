@@ -25,27 +25,27 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData: dto.orderId,
+        data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
       Wlog.instance.info({
         message: 'Validar parámetros de entrada',
-        bindingData: dto.orderId,
+        data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
       this.validateInput(dto);
       Wlog.instance.info({
         message: 'Obtieniendo información de la orden',
-        bindingData: dto.orderId,
+        data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
       const response = await this.invoke(dto);
       Wlog.instance.info({
         message: 'Fin',
-        bindingData: dto.orderId,
+        data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
@@ -53,7 +53,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
     } catch (error) {
       Wlog.instance.error({
         message: error?.message,
-        bindingData: dto.orderId,
+        data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });

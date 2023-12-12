@@ -104,7 +104,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       console.log(JSON.stringify(dto));
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
@@ -122,14 +122,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       // );
       Wlog.instance.info({
         message: 'isPrepaidVoiceLine',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.isPrepaidVoiceLine = await this.isPrepaidVoiceLine(data);
       Wlog.instance.info({
         message: 'getAndRegisterQualifOfService',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
@@ -137,7 +137,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         await this.getAndRegisterQualifOfService(data);
       Wlog.instance.info({
         message: 'verifyContractByPhone',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
@@ -146,14 +146,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       );
       Wlog.instance.info({
         message: 'getDataFromRequests',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.getDataFromRequestsResponse = await this.getDataFromRequests(data);
       Wlog.instance.info({
         message: 'getABADataFromRequests',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
@@ -161,7 +161,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         await this.getABADataFromRequestsService.getABADataFromRequests(dto);
       Wlog.instance.info({
         message: 'getDownstreamFromPlan',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
@@ -173,14 +173,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       }
       Wlog.instance.info({
         message: 'isValidIpAddress',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.isValidIpAddressResponse = await this.isValidIpAddress(data);
       Wlog.instance.info({
         message: 'getPortIdFromIp',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
@@ -190,7 +190,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       ) {
         Wlog.instance.info({
           message: 'IsOccupiedPort',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
@@ -198,7 +198,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         if (data.isOccupiedPortResponse.result > 0) {
           Wlog.instance.info({
             message: 'getPortIdFlow',
-            bindingData: BossHelper.getPhoneNumber(dto),
+            data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
@@ -206,7 +206,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         } else {
           Wlog.instance.info({
             message: 'getASAPOrderDetail',
-            bindingData: BossHelper.getPhoneNumber(dto),
+            data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
@@ -216,7 +216,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       } else {
         Wlog.instance.info({
           message: 'getPortIdFlow',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
@@ -224,7 +224,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       }
       Wlog.instance.info({
         message: 'getABAData',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
@@ -235,7 +235,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         } else {
           Wlog.instance.info({
             message: 'checkIp',
-            bindingData: BossHelper.getPhoneNumber(dto),
+            data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
@@ -245,7 +245,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       } else {
         Wlog.instance.info({
           message: 'getDataFromDslamPortId',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
@@ -258,7 +258,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         ) {
           Wlog.instance.info({
             message: 'modifyNetworkAccessLog',
-            bindingData: BossHelper.getPhoneNumber(dto),
+            data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
@@ -266,14 +266,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         }
         Wlog.instance.info({
           message: 'deleteOrder',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
         data.deleteOrderResponse = await this.deleteOrder(data);
         Wlog.instance.info({
           message: 'getDSLCentralCoIdByDSLAMPortId',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
@@ -281,7 +281,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           await this.getDSLCentralCoIdByDSLAMPortId(data);
         Wlog.instance.info({
           message: 'readIABAOrder',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
@@ -292,7 +292,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         ) {
           Wlog.instance.info({
             message: 'getABAData',
-            bindingData: BossHelper.getPhoneNumber(dto),
+            data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
@@ -312,7 +312,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         message: error?.message,
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
         error: error,

@@ -4,7 +4,7 @@ export interface IWinstonLog {
   clazz: string;
   method: string;
   level: string;
-  bindingData: string;
+  data: string;
   message: string;
   error: any;
   stack: any;

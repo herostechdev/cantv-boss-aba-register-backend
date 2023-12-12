@@ -76,6 +76,12 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
   private async invoke(
     bodyPayload: ICustomerByPhoneNumberRequestBody,
   ): Promise<ICustomerByPhoneNumberResponse> {
+    Wlog.instance.info({
+      message: `Url: ${this.customerByPhoneNumberUrl}`,
+      data: JSON.stringify(bodyPayload),
+      clazz: CustomerByPhoneNumberService.name,
+      method: 'invoke',
+    });
     const response =
       await this.httpService.axiosRef.post<ICustomerByPhoneNumberResponse>(
         this.customerByPhoneNumberUrl,

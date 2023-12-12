@@ -24,7 +24,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: GetStateFromSerialService.name,
         method: 'getStateFromSerial',
       });
@@ -60,7 +60,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         message: 'Invocando GetOrderidFromAbaSales',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: GetStateFromSerialService.name,
         method: 'getStateFromSerial',
         error: error,

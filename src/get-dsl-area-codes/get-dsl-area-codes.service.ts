@@ -20,21 +20,21 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData: null,
+        data: null,
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
       await super.connect();
       Wlog.instance.info({
         message: 'Obtiene los códigos de área',
-        bindingData: null,
+        data: null,
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
       const response = await this.getDSLAreaCodes();
       Wlog.instance.info({
         message: 'Fin',
-        bindingData: null,
+        data: null,
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
@@ -42,7 +42,7 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         message: error.message,
-        bindingData: null,
+        data: null,
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });

@@ -25,7 +25,7 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
     try {
       Wlog.instance.info({
         message: 'Invocando GetOrderidFromAbaSales',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: GetOrderIdFromABASalesService.name,
         method: 'getOrderIdFromABASales',
       });
@@ -62,7 +62,7 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         message: 'Invocando GetOrderidFromAbaSales',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: GetOrderIdFromABASalesService.name,
         method: 'getOrderIdFromABASales',
         error: error,

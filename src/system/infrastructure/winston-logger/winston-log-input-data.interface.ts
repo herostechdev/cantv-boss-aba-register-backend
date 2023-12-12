@@ -1,6 +1,6 @@
 export interface IWinstonLogInputData {
   message: string;
-  bindingData?: string;
+  data?: string;
   clazz: string;
   method?: string;
   error?: any;

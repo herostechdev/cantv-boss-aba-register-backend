@@ -34,7 +34,7 @@ export class LoginService extends OracleDatabaseService {
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData: dto.userlogin,
+        data: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
       });
@@ -43,7 +43,7 @@ export class LoginService extends OracleDatabaseService {
       await super.connect();
       Wlog.instance.info({
         message: 'Obtener permisología del usuario',
-        bindingData: dto.userlogin,
+        data: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
       });
@@ -52,7 +52,7 @@ export class LoginService extends OracleDatabaseService {
       );
       Wlog.instance.info({
         message: 'Validar contraseña',
-        bindingData: dto.userlogin,
+        data: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
       });
@@ -62,7 +62,7 @@ export class LoginService extends OracleDatabaseService {
       );
       Wlog.instance.info({
         message: 'Validar permisos',
-        bindingData: dto.userlogin,
+        data: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
       });
@@ -73,7 +73,7 @@ export class LoginService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         message: error?.message,
-        bindingData: dto.userlogin,
+        data: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
         error: error,

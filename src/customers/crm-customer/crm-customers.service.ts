@@ -24,15 +24,13 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData:
-          dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
+        data: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
         clazz: CRMCustomersService.name,
         method: 'get',
       });
       Wlog.instance.info({
-        message: 'Validar entrada',
-        bindingData:
-          dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
+        message: 'Validar parámetros de entrada',
+        data: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
         clazz: CRMCustomersService.name,
         method: 'get',
       });
@@ -49,8 +47,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     } catch (error) {
       Wlog.instance.error({
         message: error?.message,
-        bindingData:
-          dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
+        data: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
         clazz: CRMCustomersService.name,
         method: 'get',
       });
@@ -71,14 +68,14 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
   ): Promise<ICRMCustomerResponse> {
     Wlog.instance.info({
       message: 'Obtiene cliente por ID',
-      bindingData: id,
+      data: id,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
     const response = await this.invoke({ CUST_ID: id });
     Wlog.instance.info({
       message: 'Fin',
-      bindingData: id,
+      data: id,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
@@ -90,14 +87,14 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
   ): Promise<ICRMCustomerResponse> {
     Wlog.instance.info({
       message: 'Obtiene cliente por cédula de identidad',
-      bindingData: id,
+      data: id,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
     const response = await this.invoke({ NATIONAL_ID: id });
     Wlog.instance.info({
       message: 'Fin',
-      bindingData: id,
+      data: id,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
@@ -109,14 +106,14 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
   ): Promise<ICRMCustomerResponse> {
     Wlog.instance.info({
       message: 'Obtiene cliente por RIF',
-      bindingData: id,
+      data: id,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
     const response = await this.invoke({ TAXPAYER_ID: id });
     Wlog.instance.info({
       message: 'Fin',
-      bindingData: id,
+      data: id,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
@@ -130,6 +127,12 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
   private async invoke(
     bodyPayload: ICRMCustomerRequestBody,
   ): Promise<ICRMCustomerResponse> {
+    Wlog.instance.info({
+      message: `Url: ${this.clientQueryUrl}`,
+      data: JSON.stringify(bodyPayload),
+      clazz: CRMCustomersService.name,
+      method: 'invoke',
+    });
     const response = await this.httpService.axiosRef.post<ICRMCustomerResponse>(
       this.clientQueryUrl,
       this.getBodyPayload(bodyPayload),

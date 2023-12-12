@@ -49,7 +49,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
         method: 'validateCustomer',
       });
@@ -59,7 +59,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       if (BossHelper.isNaturalPerson(dto.customerClassName)) {
         Wlog.instance.info({
           message: 'getClientClassNameFromIdValue',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
@@ -75,7 +75,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         }
         Wlog.instance.info({
           message: 'getFirstLetterFromABARequest',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
@@ -90,7 +90,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       } else {
         Wlog.instance.info({
           message: 'clientExists',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
@@ -114,7 +114,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       }
       Wlog.instance.info({
         message: 'getAllValuesFromClientValues',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
         method: 'validateCustomer',
       });
@@ -130,7 +130,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       ) {
         Wlog.instance.info({
           message: 'getClientInstanceIdFromIdValue',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
@@ -145,7 +145,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         ) {
           Wlog.instance.info({
             message: 'getDebtFromClient',
-            bindingData: BossHelper.getPhoneNumber(dto),
+            data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateCustomerService.name,
             method: 'validateCustomer',
           });
@@ -158,7 +158,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           ) {
             Wlog.instance.info({
               message: 'updateDslABARegisters',
-              bindingData: BossHelper.getPhoneNumber(dto),
+              data: BossHelper.getPhoneNumber(dto),
               clazz: ValidateCustomerService.name,
               method: 'validateCustomer',
             });
@@ -177,7 +177,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         ) {
           Wlog.instance.info({
             message: 'updateDslABARegisters',
-            bindingData: BossHelper.getPhoneNumber(dto),
+            data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateCustomerService.name,
             method: 'validateCustomer',
           });
@@ -192,7 +192,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         message: error?.message,
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
         method: 'validateCustomer',
         error: error,
@@ -390,7 +390,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
       case GetDebtFromCustomerStatusConstants.INTERNAL_ERROR:
         throw new GetDebtFromCustomerInternalErrorException();
       case GetDebtFromCustomerStatusConstants.THERE_IS_NO_DATA:
-        // throw new GetDebtFromCustomerThereIsNoDataException();
         return response;
       default:
         throw new GetDebtFromCustomerInternalErrorException();

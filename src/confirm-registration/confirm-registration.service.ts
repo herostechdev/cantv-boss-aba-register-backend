@@ -62,7 +62,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     try {
       Wlog.instance.info({
         message: 'Inicio',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -71,14 +71,14 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       await super.connect();
       Wlog.instance.info({
         message: 'getPlanAbaFromKenan',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
       data.getPlanAbaFromKenanResponse = await this.getPlanAbaFromKenan(data);
       Wlog.instance.info({
         message: 'Verifica que el cliente existe',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -95,7 +95,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       ) {
         Wlog.instance.info({
           message: 'createAndProvisioningMasterAct',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ConfirmRegistrationService.name,
           method: 'confirmRegistrationFlow',
         });
@@ -110,7 +110,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       } else {
         Wlog.instance.info({
           message: 'createAndProvisioningCustomer',
-          bindingData: BossHelper.getPhoneNumber(dto),
+          data: BossHelper.getPhoneNumber(dto),
           clazz: ConfirmRegistrationService.name,
           method: 'confirmRegistrationFlow',
         });
@@ -125,21 +125,21 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       }
       Wlog.instance.info({
         message: 'isReservedLogin',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
       data.isReservedLoginResponse = await this.isReservedLogin(data);
       Wlog.instance.info({
         message: 'abaRegister',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
       data.abaRegisterResponse = await this.abaRegister(data);
       Wlog.instance.info({
         message: 'cancelABAInstallation',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -148,7 +148,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       );
       Wlog.instance.info({
         message: 'Fin',
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -156,7 +156,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         message: error?.message,
-        bindingData: BossHelper.getPhoneNumber(dto),
+        data: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
