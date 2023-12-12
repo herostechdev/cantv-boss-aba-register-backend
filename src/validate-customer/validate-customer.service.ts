@@ -200,7 +200,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         error: error,
         stack: error?.stack,
       });
-      await this.updateDslAbaRegistersService.update({
+      await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: dto.areaCode,
         phoneNumber: dto.phoneNumber,
         registerStatus: BossConstants.NOT_PROCESSED,

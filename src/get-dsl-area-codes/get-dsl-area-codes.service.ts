@@ -51,7 +51,7 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
-      await this.updateDslAbaRegistersService.update({
+      await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),
         phoneNumber: String(dto.phoneNumber),
         registerStatus: BossConstants.NOT_PROCESSED,

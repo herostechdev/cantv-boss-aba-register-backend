@@ -71,4 +71,12 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
       await this.closeConnection();
     }
   }
+
+  async errorUpdate(
+    dto: UpdateDslAbaRegistersRequestDto,
+  ): Promise<IUpdateDslAbaRegistersResponse> {
+    try {
+      return await this.update(dto);
+    } catch (error) {}
+  }
 }

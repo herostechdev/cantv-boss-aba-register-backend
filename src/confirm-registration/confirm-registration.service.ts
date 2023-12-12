@@ -162,7 +162,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      await this.updateDslAbaRegistersService.update({
+      await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: dto.areaCode,
         phoneNumber: dto.phoneNumber,
         registerStatus: BossConstants.NOT_PROCESSED,

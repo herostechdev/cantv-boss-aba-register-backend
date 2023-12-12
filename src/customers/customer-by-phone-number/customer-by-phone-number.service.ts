@@ -57,7 +57,7 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
         clazz: CustomerByPhoneNumberService.name,
         method: 'get',
       });
-      await this.updateDslAbaRegistersService.update({
+      await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: dto.areaCode,
         phoneNumber: dto.phoneNumber,
         registerStatus: BossConstants.NOT_PROCESSED,

@@ -60,7 +60,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
-      await this.updateDslAbaRegistersService.update({
+      await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),
         phoneNumber: String(dto.phoneNumber),
         registerStatus: BossConstants.NOT_PROCESSED,

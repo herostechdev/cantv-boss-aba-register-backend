@@ -54,7 +54,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
         clazz: CRMCustomersService.name,
         method: 'get',
       });
-      await this.updateDslAbaRegistersService.update({
+      await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),
         phoneNumber: String(dto.phoneNumber),
         registerStatus: BossConstants.NOT_PROCESSED,

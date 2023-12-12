@@ -319,7 +319,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         error: error,
         stack: error?.stack,
       });
-      await this.updateDslAbaRegistersService.update({
+      await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),
         phoneNumber: String(dto.phoneNumber),
         registerStatus: BossConstants.NOT_PROCESSED,

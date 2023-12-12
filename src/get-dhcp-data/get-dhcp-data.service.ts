@@ -81,7 +81,7 @@ export class GetDHCPDataService extends ExceptionsService {
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
-      await this.updateDslAbaRegistersService.update({
+      await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),
         phoneNumber: String(dto.phoneNumber),
         registerStatus: BossConstants.NOT_PROCESSED,
