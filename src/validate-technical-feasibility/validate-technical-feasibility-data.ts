@@ -8,7 +8,7 @@ import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/g
 import { IGetDataFromRequestsResponse } from './get-data-from-requests/get-data-from-requests-response.interface';
 import { IGetDHCPDataResponse } from 'src/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
-import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from './get-dsl-central-co-id-by-dslam-port-id/get-dsl-central-co-id-by-dslam-port-id-response.interface';
+import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../dsl-aba-registers/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
