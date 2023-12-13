@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { CustomerByPhoneNumberDto } from './customer-by-phone-number/customer-by-phone-number.dto';
 import { CustomersService } from './customers.service';
 import { CRMCustomerDto } from './crm-customer/crm-customer.dto';
@@ -11,12 +11,14 @@ export class CustomersController {
   constructor(private readonly customerService: CustomersService) {}
 
   @Post('crmCustomer')
+  @HttpCode(200)
   @UseFilters(new HttpExceptionFilter())
   crmCustomer(@Body() dto: CRMCustomerDto): Promise<ICRMCustomerResponse> {
     return this.customerService.crmCustomer(dto);
   }
 
   @Post('byPhoneNumber')
+  @HttpCode(200)
   @UseFilters(new HttpExceptionFilter())
   byPhoneNumber(
     @Body() dto: CustomerByPhoneNumberDto,
