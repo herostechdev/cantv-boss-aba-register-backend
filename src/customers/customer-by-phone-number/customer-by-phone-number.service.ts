@@ -10,6 +10,7 @@ import { ICustomerByPhoneNumberResponse } from './customer-by-phone-number-respo
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 import { PICConstants } from 'src/boss-helpers/pic.constants';
 import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
+import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
@@ -149,6 +150,8 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
   }
   private getBodyPayload(bodyPayload: ICustomerByPhoneNumberRequestBody): any {
     return this.requestPayloadService.get({
+      soapTagType: SoapTagTypesConstants.INCLUDE_SOAP_ENV,
+      includeXmlnsObt: true,
       functionName: 'consultaAbonadoActivoNumeroTelefono',
       body: bodyPayload,
     });

@@ -33,22 +33,30 @@ export class DSLAuditLogsService extends OracleDatabaseService {
         i_orderid: OracleHelper.stringBindIn(String(dto.orderId), 30),
         i_ipaddress: OracleHelper.stringBindIn(dto.ipAddress, 15),
         i_activationlogin: OracleHelper.stringBindIn(dto.activationLogin, 256),
-        i_webpage: OracleHelper.dateBindIn(dto.webPage),
-        i_code: OracleHelper.stringBindIn(dto.code, 10),
-        i_description: OracleHelper.stringBindIn(dto.description, 532),
-        i_comments: OracleHelper.numberBindIn(dto.comments),
-        i_planname: OracleHelper.numberBindIn(dto.planName),
-        o_status: OracleHelper.tableOfStringBindOut(),
+        i_webpage: OracleHelper.stringBindIn(
+          dto.webPage ?? BossConstants.ABA_REGISTER,
+        ),
+        i_code: OracleHelper.stringBindIn(
+          dto.code ?? BossConstants.OK_RESPONSE,
+          10,
+        ),
+        i_description: OracleHelper.stringBindIn(
+          dto.description ?? BossConstants.ABA_REGISTER,
+          532,
+        ),
+        i_comments: OracleHelper.stringBindIn(dto.comments),
+        i_planname: OracleHelper.stringBindIn(dto.planName),
+        o_status: OracleHelper.tableOfNumberBindOut(),
         o_message: OracleHelper.tableOfStringBindOut(),
       };
       const result = await super.executeStoredProcedure(
         BossConstants.UTL_PACKAGE,
-        BossConstants.DSL_AUDIT_LOGS,
+        BossConstants.INSERT_DSL_AUDIT_LOGS,
         parameters,
       );
       const response: IDSLAuditLogsResponse = {
         message: OracleHelper.getFirstItem(result, 'o_message'),
-        status: (result?.outBinds?.status ??
+        status: (OracleHelper.getFirstItem(result, 'o_status') ??
           DSLAuditLogsStatusConstants.ERROR) as DSLAuditLogsStatusConstants,
       };
       switch (response.status) {

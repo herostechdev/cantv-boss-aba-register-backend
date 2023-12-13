@@ -8,6 +8,7 @@ import { IGetASAPOrderDetailRequest } from './get-asap-order-detail-request.inte
 import { IGetASAPOrderDetailResponse } from './get-asap-order-detail-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
+import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
@@ -40,7 +41,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       });
       this.validateInput(dto);
       Wlog.instance.info({
-        message: 'Obtieniendo información de la orden',
+        message: 'Obteniendo información de la orden',
         data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
@@ -77,6 +78,12 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
   private async invoke(
     bodyPayload: IGetASAPOrderDetailRequest,
   ): Promise<IGetASAPOrderDetailResponse> {
+    Wlog.instance.info({
+      message: `Url ${this.picConfigurationService.getASAPOrderDetailUrl}`,
+      data: JSON.stringify(bodyPayload),
+      clazz: GetASAPOrderDetailService.name,
+      method: 'getASAPOrderDetail',
+    });
     const response =
       await this.httpService.axiosRef.post<IGetASAPOrderDetailResponse>(
         this.picConfigurationService.getASAPOrderDetailUrl,
@@ -92,7 +99,9 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
 
   private getBodyPayload(bodyPayload: IGetASAPOrderDetailRequest): any {
     return this.requestPayloadService.get({
-      functionName: 'obtenerclienteCRM',
+      soapTagType: SoapTagTypesConstants.EXCLUDE_SOAP_ENV,
+      includeXmlnsObt: false,
+      functionName: null,
       body: bodyPayload,
     });
   }

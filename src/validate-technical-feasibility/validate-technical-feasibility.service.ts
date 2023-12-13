@@ -169,7 +169,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
         data,
       );
-      if (data.verifyContractByPhoneResponse.status === 0) {
+      if (data.verifyContractByPhoneResponse.status !== 0) {
         throw new VerifyContractByPhoneException();
       }
       Wlog.instance.info({
@@ -186,8 +186,11 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
       });
       data.getPortIdFromIpResponse = await this.getPortIdFromIp(data);
+
       if (
-        ValidationHelper.isDefined(data.getPortIdFromIpResponse.dslamportId)
+        // ValidationHelper.isDefined(data.getPortIdFromIpResponse.dslamportId)
+        data.getPortIdFromIpResponse.status ===
+        GetPortIdFromIpConstants.SUCCESSFULL
       ) {
         Wlog.instance.info({
           message: 'IsOccupiedPort',
@@ -196,6 +199,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           method: 'validateTechnicalFeasibility',
         });
         data.isOccupiedPortResponse = await this.IsOccupiedPort(data);
+
         if (data.isOccupiedPortResponse.result > 0) {
           Wlog.instance.info({
             message: 'getPortIdFlow',
@@ -213,6 +217,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           });
           await this.rbeDoesNotExistLog(data);
           data.getASAPOrderDetailResponse = await this.getASAPOrderDetail(data);
+
+          return data;
         }
       } else {
         Wlog.instance.info({
@@ -223,6 +229,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         });
         await this.getPortIdFlow(data);
       }
+
       Wlog.instance.info({
         message: 'getABAData',
         data: BossHelper.getPhoneNumber(dto),
@@ -344,7 +351,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       code: null,
       description: description,
       comments: null,
-      planName: null,
+      planName: data.getABADataFromRequestsResponse.desiredPlan,
     });
   }
 
@@ -375,11 +382,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       BossConstants.INSERT_DSL_ABA_REGISTERS,
       parameters,
     );
-    console.log();
-    console.log('insertDslAbaRegisters');
-    console.log();
-    console.log('result');
-    console.log(JSON.stringify(result));
     const status = (result?.outBinds?.status ??
       InsertDslAbaRegisterConstants.INTERNAL_ERROR) as InsertDslAbaRegisterConstants;
     switch (status) {
@@ -603,7 +605,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       BossConstants.IS_VALID_IP_ADDRESS,
       parameters,
     );
-    const status = (result?.outBinds?.status ??
+    const status = (result?.outBinds?.Status ??
       IsValidIpAddressConstants.ERROR_1003) as IsValidIpAddressConstants;
     const response: IIsValidIpAddressResponse = {
       status: status,
@@ -628,7 +630,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetPortIdFromIpResponse> {
     const parameters = {
-      i_ipaddress: OracleHelper.stringBindIn(data.requestDto.areaCode, 15),
+      i_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 15),
       o_dslamportid: OracleHelper.numberBindOut(),
       o_status: OracleHelper.numberBindOut(),
     };
@@ -638,7 +640,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       parameters,
     );
     const dslamportId = result?.outBinds?.o_dslamportid ?? 1;
-    const status = (result?.outBinds?.status ??
+    const status = (result?.outBinds?.o_status ??
       GetPortIdFromIpConstants.EXECUTION_ERROR) as GetPortIdFromIpConstants;
     const response: IGetPortIdFromIpResponse = {
       dslamportId: dslamportId,
@@ -785,7 +787,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     );
     const response: IIsOccupiedPortResponse = {
       result: result?.outBinds?.l_result ?? BossConstants.OCCUPIED_PORT,
-      status: (result?.outBinds?.status ??
+      status: (result?.outBinds?.o_status ??
         IsOccupiedPortConstants.INTERNAL_ERROR) as IsOccupiedPortConstants,
     };
     switch (response.status) {

@@ -1,5 +1,9 @@
+import { SoapTagTypesConstants } from './soap-tag-types.constants';
+
 export interface ISOAPRequestData<B, H> {
-  body?: B;
-  header?: H;
+  soapTagType: SoapTagTypesConstants;
   functionName?: string;
+  includeXmlnsObt?: boolean;
+  header?: H;
+  body?: B;
 }

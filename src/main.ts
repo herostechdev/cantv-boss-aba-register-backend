@@ -11,41 +11,7 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
-
-import { GetABADataFromRequestsService } from './validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests.service';
 import { OracleConstants } from './oracle/oracle.constants';
-// import { HashService } from './system/infrastructure/security/encryption/hash.service';
-
-// const test = (app: INestApplication) => {
-//   const hashService: HashService = app.get(HashService);
-//   const text = 'Cantv2023';
-//   console.log('MD5 Standard toString()   >>', hashService.md5(text).toString());
-//   console.log(
-//     'MD5 CryptoJS.enc.Base64   >>',
-//     hashService.md5Base64(text).toString(),
-//   );
-//   console.log(
-//     'MD5 CryptoJS.enc.Hex      >>',
-//     hashService.md5Hex(text).toString(),
-//   );
-//   console.log(
-//     'HASH                      >>',
-//     hashService.hashing(text).toString(),
-//   );
-// };
-
-const spTest = async (app: INestApplication) => {
-  const service: GetABADataFromRequestsService = app.get(
-    GetABADataFromRequestsService,
-  );
-  const response = await service.getABADataFromRequests({
-    areaCode: '212',
-    phoneNumber: '9885176',
-  });
-  console.log();
-  console.log('response');
-  console.log(response);
-};
 
 const initializePipes = (app: INestApplication) => {
   app.useGlobalPipes(
@@ -95,8 +61,6 @@ const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
   initializePipes(app);
   await initializeOracleDatabaseClient(app);
-  // test(app);
-  // await spTest(app);
   await startServer(app);
 };
 

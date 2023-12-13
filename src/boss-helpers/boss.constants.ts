@@ -1,4 +1,6 @@
 export class BossConstants {
+  // insertdslauditlogs
+
   // PACKAGES
   public static ABA_PACKAGE = 'ABA_PACKAGE';
   public static ACT_PACKAGE = 'ACT_PACKAGE';
@@ -15,7 +17,7 @@ export class BossConstants {
   public static CREATE_AND_PROVISIONING_MASTER_ACT =
     'CreateAndProvisionMasterAct';
   public static DELETE_ORDER = 'DeleteOrder';
-  public static DSL_AUDIT_LOGS = 'DSLAUDITLOGS';
+  public static INSERT_DSL_AUDIT_LOGS = 'insertdslauditlogs';
   public static GET_AND_REGISTER_QUALIF_OF_SERVICE =
     'GetAndRegisterQualifOfServ';
   public static GET_ABA_DATA = 'GetAbaData';
@@ -83,6 +85,8 @@ export class BossConstants {
   public static OCCUPIED_PORT = 1;
   public static PROCESSED = 'PROCESADO';
   public static REGISTER = 'Registro';
+  public static OK_RESPONSE = '0000';
+
   public static USERS = 'USUARIOS';
   public static VENEZUELA = 'VENEZUELA';
 }

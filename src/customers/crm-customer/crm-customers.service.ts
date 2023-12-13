@@ -11,6 +11,7 @@ import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 
 @Injectable()
 export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse> {
@@ -203,7 +204,9 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
 
   private getBodyPayload(bodyPayload: ICRMCustomerRequestBody): any {
     return this.requestPayloadService.get({
+      soapTagType: SoapTagTypesConstants.INCLUDE_SOAP_ENV,
       functionName: 'obtenerclienteCRM',
+      includeXmlnsObt: true,
       body: bodyPayload,
     });
   }

@@ -17,8 +17,8 @@ export class DSLAuditLogsRequestDto implements IPhoneNumber {
   @IsString()
   activationLogin: string;
 
-  @IsDate()
-  webPage: Date;
+  @IsString()
+  webPage: string;
 
   @IsString()
   code: string;
@@ -27,8 +27,8 @@ export class DSLAuditLogsRequestDto implements IPhoneNumber {
   description: string;
 
   @IsString()
-  comments: number;
+  comments: string;
 
   @IsString()
-  planName: number;
+  planName: string;
 }

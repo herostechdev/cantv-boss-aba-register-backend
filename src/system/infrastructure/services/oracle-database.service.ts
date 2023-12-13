@@ -32,6 +32,15 @@ export abstract class OracleDatabaseService extends CommonService {
     storedProcedure: string,
     parameters?: any,
   ): Promise<any> {
+    console.log();
+    console.log('executeStoredProcedure');
+    console.log(
+      `Ejecutando el SP: ${this.getPackage(packageName)}${storedProcedure}`,
+    );
+    console.log();
+    console.log('parameters');
+    console.log(JSON.stringify(parameters));
+
     Wlog.instance.info({
       message: `Ejecutando el SP: ${this.getPackage(
         packageName,
@@ -46,6 +55,11 @@ export abstract class OracleDatabaseService extends CommonService {
       parameters,
     );
     const response = await this.dbConnection.execute(sql, parameters);
+
+    console.log();
+    console.log('response');
+    console.log(JSON.stringify(response));
+
     Wlog.instance.info({
       message: `Respuesta del SP: ${this.getPackage(
         packageName,
