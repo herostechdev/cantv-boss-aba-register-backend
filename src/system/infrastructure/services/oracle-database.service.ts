@@ -33,6 +33,7 @@ export abstract class OracleDatabaseService extends CommonService {
     parameters?: any,
   ): Promise<any> {
     console.log();
+    console.log('============================================================');
     console.log('executeStoredProcedure');
     console.log(
       `Ejecutando el SP: ${this.getPackage(packageName)}${storedProcedure}`,

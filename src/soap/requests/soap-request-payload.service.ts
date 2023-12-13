@@ -5,8 +5,11 @@ import { ISOAPRequestData } from './soap-request-data.interface';
 import { ITextNode } from '../text-node.interface';
 import { SoapTagTypesConstants } from './soap-tag-types.constants';
 
-export abstract class SOAPRequestPayloadService<B, H> extends CommonService {
-  get(requestData: ISOAPRequestData<B, H>): string {
+export abstract class SOAPRequestPayloadService<
+  BODY,
+  HEADER,
+> extends CommonService {
+  get(requestData: ISOAPRequestData<BODY, HEADER>): string {
     const envelope = this.getEnvelope(requestData);
     return xmlJsParser.js2xml(envelope, this.xmlOptions);
   }
@@ -18,7 +21,7 @@ export abstract class SOAPRequestPayloadService<B, H> extends CommonService {
   }
 
   protected getEnvelope(
-    requestData: ISOAPRequestData<B, H>,
+    requestData: ISOAPRequestData<BODY, HEADER>,
   ): xmlJsParser.Element | xmlJsParser.ElementCompact {
     switch (requestData.soapTagType) {
       case SoapTagTypesConstants.EXCLUDE_SOAP_ENV:
@@ -40,7 +43,9 @@ export abstract class SOAPRequestPayloadService<B, H> extends CommonService {
     }
   }
 
-  protected getEnvelopeAttributes(requestData: ISOAPRequestData<B, H>): any {
+  protected getEnvelopeAttributes(
+    requestData: ISOAPRequestData<BODY, HEADER>,
+  ): any {
     let attributes: any = null;
     switch (requestData.soapTagType) {
       case SoapTagTypesConstants.EXCLUDE_SOAP_ENV:
@@ -61,13 +66,13 @@ export abstract class SOAPRequestPayloadService<B, H> extends CommonService {
   }
 
   protected getHeader(
-    requestData: ISOAPRequestData<B, H>,
+    requestData: ISOAPRequestData<BODY, HEADER>,
   ): xmlJsParser.Element | xmlJsParser.ElementCompact {
     return null;
   }
 
   protected getBody(
-    requestData: ISOAPRequestData<B, H>,
+    requestData: ISOAPRequestData<BODY, HEADER>,
   ): xmlJsParser.Element | xmlJsParser.ElementCompact {
     return null;
   }

@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import axios, { AxiosInstance } from 'axios';
+import * as https from 'https';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { GetDHCPDataException } from './get-dhcp-data.exception';
@@ -37,9 +39,14 @@ export class GetDHCPDataService extends ExceptionsService {
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
-      const response = await this.httpService.axiosRef.get<any>(url, {
+      const instance: AxiosInstance = axios.create({
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false,
+        }),
+      });
+      const response = await instance.get<any>(url, {
         headers: {
-          'Content-Type': HttpConstants.APPLICATION_JSON,
+          'Content-Type': HttpConstants.TEXT_HTML,
         },
       });
       Wlog.instance.info({

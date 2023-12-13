@@ -88,7 +88,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       await this.httpService.axiosRef.post<IGetASAPOrderDetailResponse>(
         this.picConfigurationService.getASAPOrderDetailUrl,
         this.getBodyPayload(bodyPayload),
-        super.getAxiosRequestConfig('consultarDetalleOrdenesAsap'),
+        super.getAxiosRequestConfig('VT673consultarDetalleDeOrdenesASAP'),
       );
     super.validateResponse(
       response.data,

@@ -100,9 +100,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     dto: ValidateTechnicalFeasibilityRequestDto,
   ): Promise<ValidateTechnicalFeasibilityData> {
     try {
-      console.log();
-      console.log('request payload');
-      console.log(JSON.stringify(dto));
       Wlog.instance.info({
         message: 'Inicio',
         data: BossHelper.getPhoneNumber(dto),
@@ -112,15 +109,15 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       const data = new ValidateTechnicalFeasibilityData();
       data.requestDto = dto;
       await super.connect();
-      // Wlog.instance.info({
-      //   message: 'insertDslAbaRegisters',
-      //   bindingData: BossHelper.getPhoneNumber(dto),
-      //   clazz: ValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // data.insertDslAbaRegistersResponse = await this.insertDslAbaRegisters(
-      //   data,
-      // );
+      Wlog.instance.info({
+        message: 'insertDslAbaRegisters',
+        data: JSON.stringify(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
+      data.insertDslAbaRegistersResponse = await this.insertDslAbaRegisters(
+        data,
+      );
       Wlog.instance.info({
         message: 'isPrepaidVoiceLine',
         data: BossHelper.getPhoneNumber(dto),
@@ -248,7 +245,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             method: 'validateTechnicalFeasibility',
           });
           data.checkIpResponse = await this.checkIp(data);
-          // if(data.checkIpResponse.status === CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT)
         }
       } else {
         Wlog.instance.info({
@@ -546,7 +542,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case GetDataFromRequestsStatusConstants.EXECUTION_ERROR:
         throw new GetDataFromRequestsException();
       case GetDataFromRequestsStatusConstants.THERE_IS_NO_DATA:
-        // TODO: PENDENTE ENVIAR DOCUMENTACIÓN ACTUALIZADA
         // throw new GetDataFromRequestsThereIsNoDataException();
         return response;
       default:
@@ -698,7 +693,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     await this.callAuditLog(data, 'RBE no existe');
   }
 
-  // Origen del parametro orderId (CTVIDSRVORD)  >> CORRESPONDE A LA ORDEN DE SERVICIO SUMINISTRADA POR EL CLIENTE EN LA VENTANA DONDE SE SOLICITA EL NUMERO DE TELEFONO
   private async getASAPOrderDetail(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetASAPOrderDetailResponse> {
@@ -849,7 +843,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       abaposition: OracleHelper.getFirstItem(result, 'abaposition'),
       abavci: OracleHelper.getFirstItem(result, 'abavci'),
       abacontractid: OracleHelper.getFirstItem(result, 'abacontractid'),
-      status: (result?.outBinds?.status ??
+      status: (result?.outBinds?.Status ??
         GetABADataConstants.EXECUTION_ERROR) as GetABADataConstants,
     };
     switch (response.status) {
