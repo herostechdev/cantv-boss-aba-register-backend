@@ -33,12 +33,6 @@ export class ApplicationConfigurationService {
     return this.configService.get<string>('application.requestFilter');
   }
 
-  get maxConcurrentProcess(): number {
-    return Number(
-      this.configService.get<number>('application.maxConcurrentProcess'),
-    );
-  }
-
   get logFolder(): string {
     return this.configService.get<string>('application.logFolder');
   }

@@ -19,7 +19,6 @@ import { ApplicationConfigurationService } from './application-configuration.ser
         APP_REQUEST_TIMEOUT: Joi.number().default(30000),
         APP_REQUEST_OFFSET: Joi.number().default(0),
         APP_REQUEST_LIMIT: Joi.number().default(500),
-        APP_MAX_CONCURRENT_PROCESS: Joi.number().default(10),
         LOG_FOLDER: Joi.string(),
       }),
     }),

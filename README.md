@@ -60,13 +60,16 @@ $ npm run test:cov
 
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+AbaRegister is an privative software.
+
+## Oracle database documentation
+
+- [System limits](https://docs.oracle.com/database/timesten-18.1/TTREF/limit.htm#TTREF455)
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Author - [Frank Paredes](frankparedesleon@gmail.com)
+- Website -
 
 ## License
 

@@ -63,7 +63,7 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
       });
       super.exceptionHandler(error);
     } finally {
-      await super.closeConnection();
+      await super.closeConnection(true, dto);
     }
   }
 
