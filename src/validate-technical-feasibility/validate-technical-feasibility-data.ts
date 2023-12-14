@@ -24,7 +24,7 @@ export class ValidateTechnicalFeasibilityData {
   isPrepaidVoiceLine: IIsPrepaidVoiceLineResponse;
   getAndRegisterQualifOfServiceResponse: IGetAndRegisterQualifOfServiceResponse;
   verifyContractByPhoneResponse: IVerifiyContractByPhoneResponse;
-  getDataFromRequestsResponse: IGetDataFromRequestsResponse;
+  // getDataFromRequestsResponse: IGetDataFromRequestsResponse;
   getDownstreamFromPlanResponse: IGetDownstreamFromPlanResponse;
   getABADataFromRequestsResponse: IGetABADataFromRequestsResponse;
   isValidIpAddressResponse: IIsValidIpAddressResponse;

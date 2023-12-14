@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Connection } from 'oracledb';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers-response.interface';
@@ -9,6 +10,7 @@ import { UpdateDslAbaRegistersInternalErrorException } from './update-dsl-aba-re
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers-request.dto';
 import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers-status.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
 @Injectable()
 export class UpdateDslAbaRegistersService extends OracleDatabaseService {
@@ -20,6 +22,7 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
 
   async update(
     dto: UpdateDslAbaRegistersRequestDto,
+    dbConnection?: Connection,
   ): Promise<IUpdateDslAbaRegistersResponse> {
     try {
       Wlog.instance.info({
@@ -28,6 +31,7 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
         clazz: UpdateDslAbaRegistersService.name,
         method: 'update',
       });
+      await super.connect(dbConnection);
       const parameters = {
         iAreaCode: OracleHelper.stringBindIn(dto.areaCode, 3),
         iPhoneNumber: OracleHelper.stringBindIn(dto.phoneNumber, 7),
@@ -68,7 +72,7 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
       });
       super.exceptionHandler(error, `${JSON.stringify(dto)}`);
     } finally {
-      await this.closeConnection();
+      await this.closeConnection(ValidationHelper.isDefined(dbConnection));
     }
   }
 

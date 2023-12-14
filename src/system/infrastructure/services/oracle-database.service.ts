@@ -19,11 +19,18 @@ export abstract class OracleDatabaseService extends CommonService {
 
   protected dbConnection: Connection;
 
-  protected async connect(): Promise<void> {
+  protected async connect(dbConnection?: Connection): Promise<void> {
+    if (dbConnection) {
+      this.dbConnection = dbConnection;
+      return;
+    }
     this.dbConnection = await getConnection(OracleConstants.POOL_ALIAS);
   }
 
-  protected async closeConnection(): Promise<void> {
+  protected async closeConnection(closeConnection = true): Promise<void> {
+    if (!closeConnection) {
+      return;
+    }
     return this.dbConnection?.close();
   }
 
@@ -55,6 +62,17 @@ export abstract class OracleDatabaseService extends CommonService {
       storedProcedure,
       parameters,
     );
+
+    console.log();
+    console.log('sql');
+    console.log(JSON.stringify(sql));
+
+    Wlog.instance.info({
+      message: `Sentencia Sql: ${sql}`,
+      data: JSON.stringify(parameters),
+      clazz: OracleDatabaseService.name,
+      method: 'executeStoredProcedure',
+    });
     const response = await this.dbConnection.execute(sql, parameters);
 
     console.log();

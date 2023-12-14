@@ -142,13 +142,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.verifyContractByPhoneResponse = await this.verifyContractByPhone(
         data,
       );
-      Wlog.instance.info({
-        message: 'getDataFromRequests',
-        data: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
-        method: 'validateTechnicalFeasibility',
-      });
-      data.getDataFromRequestsResponse = await this.getDataFromRequests(data);
+      // Wlog.instance.info({
+      //   message: 'getDataFromRequests',
+      //   data: BossHelper.getPhoneNumber(dto),
+      //   clazz: ValidateTechnicalFeasibilityService.name,
+      //   method: 'validateTechnicalFeasibility',
+      // });
+      // data.getDataFromRequestsResponse = await this.getDataFromRequests(data);
       Wlog.instance.info({
         message: 'getABADataFromRequests',
         data: BossHelper.getPhoneNumber(dto),
@@ -156,7 +156,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
       });
       data.getABADataFromRequestsResponse =
-        await this.getABADataFromRequestsService.getABADataFromRequests(dto);
+        await this.getABADataFromRequestsService.getABADataFromRequests(
+          dto,
+          this.dbConnection,
+        );
       Wlog.instance.info({
         message: 'getDownstreamFromPlan',
         data: BossHelper.getPhoneNumber(dto),
