@@ -47,6 +47,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
   ): Promise<ValidateCustomerData> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
@@ -57,6 +58,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       await super.connect();
       if (BossHelper.isNaturalPerson(dto.customerClassName)) {
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getClientClassNameFromIdValue',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
@@ -73,6 +75,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         ) {
         }
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getFirstLetterFromABARequest',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
@@ -88,6 +91,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         }
       } else {
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'clientExists',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
@@ -112,6 +116,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         }
       }
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getAllValuesFromClientValues',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
@@ -128,6 +133,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         GetAllValuesFromClientValuesStatusConstants.SUCCESSFULL
       ) {
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getClientInstanceIdFromIdValue',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
@@ -143,6 +149,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL
         ) {
           Wlog.instance.info({
+            phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'getDebtFromClient',
             data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateCustomerService.name,
@@ -156,6 +163,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
             GetDebtFromCustomerStatusConstants.SUCCESSFULL
           ) {
             Wlog.instance.info({
+              phoneNumber: BossHelper.getPhoneNumber(dto),
               message: 'updateDslABARegisters',
               data: BossHelper.getPhoneNumber(dto),
               clazz: ValidateCustomerService.name,
@@ -176,6 +184,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           GetAllValuesFromClientValuesStatusConstants.THERE_IS_NO_DATA
         ) {
           Wlog.instance.info({
+            phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'updateDslABARegisters',
             data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateCustomerService.name,
@@ -193,12 +202,11 @@ export class ValidateCustomerService extends OracleDatabaseService {
       return data;
     } catch (error) {
       Wlog.instance.error({
-        message: error?.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
         method: 'validateCustomer',
         error: error,
-        stack: error?.stack,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: dto.areaCode,

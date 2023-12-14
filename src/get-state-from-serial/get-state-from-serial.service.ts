@@ -25,6 +25,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
   ): Promise<IGetStateFromSerialResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: BossHelper.getPhoneNumber(dto),
         clazz: GetStateFromSerialService.name,
@@ -51,22 +52,29 @@ export class GetStateFromSerialService extends OracleDatabaseService {
       };
       switch (response.status) {
         case GetStateFromSerialStatusConstants.SUCCESSFULL:
-          return response;
+          break;
         case GetStateFromSerialStatusConstants.ERROR:
           throw new GetStateFromSerialException();
         case GetStateFromSerialStatusConstants.THERE_IS_NO_DATA:
-          return response;
+          break;
         default:
           throw new GetStateFromSerialException();
       }
+      Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
+        message: 'Fin',
+        data: BossHelper.getPhoneNumber(dto),
+        clazz: GetStateFromSerialService.name,
+        method: 'getStateFromSerial',
+      });
+      return response;
     } catch (error) {
       Wlog.instance.error({
-        message: 'Invocando GetOrderidFromAbaSales',
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: BossHelper.getPhoneNumber(dto),
         clazz: GetStateFromSerialService.name,
         method: 'getStateFromSerial',
         error: error,
-        stack: error?.stack,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),

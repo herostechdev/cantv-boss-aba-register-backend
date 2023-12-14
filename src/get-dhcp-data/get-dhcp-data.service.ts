@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import * as https from 'https';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { GetDHCPDataException } from './get-dhcp-data.exception';
 import { GetDHCPDataInvalidResponseException } from './get-dhcp-data-invalid-response.exception';
@@ -27,6 +28,7 @@ export class GetDHCPDataService extends ExceptionsService {
   public async get(dto: GetDHCPDataRequestDto): Promise<IGetDHCPDataResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
@@ -34,6 +36,7 @@ export class GetDHCPDataService extends ExceptionsService {
       });
       const url = `${this.integrationsConfigurationService.getDHCPDataUrl}?${dto.ipAddress}`;
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: `Url ${url}`,
         data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
@@ -50,6 +53,7 @@ export class GetDHCPDataService extends ExceptionsService {
         },
       });
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: `Respuesta ${JSON.stringify(response?.data)}`,
         data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
@@ -57,6 +61,7 @@ export class GetDHCPDataService extends ExceptionsService {
       });
       if (!ValidationHelper.isDefined(response?.data)) {
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'Respuesta inválida',
           data: JSON.stringify(dto),
           clazz: GetDHCPDataService.name,
@@ -71,6 +76,7 @@ export class GetDHCPDataService extends ExceptionsService {
         throw new GetDHCPDataInvalidResponseException(JSON.stringify(response));
       }
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
         data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
@@ -83,10 +89,11 @@ export class GetDHCPDataService extends ExceptionsService {
       };
     } catch (error) {
       Wlog.instance.error({
-        message: error.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
+        error: error,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),

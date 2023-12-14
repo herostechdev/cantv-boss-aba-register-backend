@@ -27,17 +27,31 @@ export abstract class OracleDatabaseService extends CommonService {
     this.dbConnection = await getConnection(OracleConstants.POOL_ALIAS);
   }
 
-  protected async closeConnection(closeConnection = true): Promise<void> {
-    if (!closeConnection) {
-      return;
+  protected async closeConnection(
+    closeConnection = true,
+    additionalData?: any,
+  ): Promise<void> {
+    try {
+      if (!this.dbConnection || !closeConnection) {
+        return;
+      }
+      return this.dbConnection?.close();
+    } catch (error) {
+      Wlog.instance.error({
+        phoneNumber: additionalData?.phoneNumber,
+        data: `closeConnection: ${closeConnection}`,
+        clazz: OracleDatabaseService.name,
+        method: 'closeConnection',
+        error: error,
+      });
     }
-    return this.dbConnection?.close();
   }
 
   protected async executeStoredProcedure(
     packageName: string,
     storedProcedure: string,
     parameters?: any,
+    additionalData?: any,
   ): Promise<any> {
     console.log();
     console.log('============================================================');
@@ -50,6 +64,7 @@ export abstract class OracleDatabaseService extends CommonService {
     console.log(JSON.stringify(parameters));
 
     Wlog.instance.info({
+      phoneNumber: additionalData?.phoneNumber,
       message: `Ejecutando el SP: ${this.getPackage(
         packageName,
       )}${storedProcedure}`,
@@ -68,6 +83,7 @@ export abstract class OracleDatabaseService extends CommonService {
     console.log(JSON.stringify(sql));
 
     Wlog.instance.info({
+      phoneNumber: additionalData?.phoneNumber,
       message: `Sentencia Sql: ${sql}`,
       data: JSON.stringify(parameters),
       clazz: OracleDatabaseService.name,
@@ -80,6 +96,7 @@ export abstract class OracleDatabaseService extends CommonService {
     console.log(JSON.stringify(response));
 
     Wlog.instance.info({
+      phoneNumber: additionalData?.phoneNumber,
       message: `Respuesta del SP: ${this.getPackage(
         packageName,
       )}${storedProcedure}`,

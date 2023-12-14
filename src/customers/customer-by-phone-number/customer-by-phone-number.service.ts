@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { xml2js } from 'xml-js';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CustomerByPhoneNumberInvalidQueryRequestException } from './customer-by-phone-number-invalid-request.exception';
 import { CustomerByPhoneNumberRequestPayloadService } from './customer-by-phone-number-request-payload.service';
 import { CustomerByPhoneNumberDto } from './customer-by-phone-number.dto';
@@ -30,23 +31,27 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
   ): Promise<ICustomerByPhoneNumberResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio ',
         clazz: CustomerByPhoneNumberService.name,
         method: 'get',
       });
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Validando parámetros',
         clazz: CustomerByPhoneNumberService.name,
         method: 'get',
       });
       this.validateInput(dto);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Consultando',
         clazz: CustomerByPhoneNumberService.name,
         method: 'get',
       });
       const response = await this.getCustomer(dto);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
         clazz: CustomerByPhoneNumberService.name,
         method: 'get',
@@ -54,9 +59,10 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
       return response;
     } catch (error) {
       Wlog.instance.error({
-        message: error?.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         clazz: CustomerByPhoneNumberService.name,
         method: 'get',
+        error: error,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: dto.areaCode,
@@ -75,7 +81,9 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
   private getCustomer(
     dto: CustomerByPhoneNumberDto,
   ): Promise<ICustomerByPhoneNumberResponse> {
-    return this.invoke({ NU_SERVICIO: `${dto.areaCode}${dto.phoneNumber}` });
+    return this.invoke(dto, {
+      NU_SERVICIO: `${dto.areaCode}${dto.phoneNumber}`,
+    });
   }
 
   private get customerByPhoneNumberUrl(): string {
@@ -83,9 +91,11 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
   }
 
   private async invoke(
+    dto: CustomerByPhoneNumberDto,
     bodyPayload: ICustomerByPhoneNumberRequestBody,
   ): Promise<ICustomerByPhoneNumberResponse> {
     Wlog.instance.info({
+      phoneNumber: BossHelper.getPhoneNumber(dto),
       message: `Url: ${this.customerByPhoneNumberUrl}`,
       data: JSON.stringify(bodyPayload),
       clazz: CustomerByPhoneNumberService.name,

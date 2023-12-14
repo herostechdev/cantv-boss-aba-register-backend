@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { GetDSLAreaCodesException } from './get-dsl-area-codes.exception';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesStatusConstants } from './get-dsl-area-codes-status.constants';
@@ -24,6 +25,7 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
   ): Promise<IGetDSLAreaCodesResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
@@ -31,13 +33,15 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
       });
       await super.connect();
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Obtiene los códigos de área',
         data: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
-      const response = await this.getDSLAreaCodes();
+      const response = await this.getDSLAreaCodes(dto);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
         data: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
@@ -46,10 +50,11 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
       return response;
     } catch (error) {
       Wlog.instance.error({
-        message: error.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
+        error: error,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),
@@ -62,7 +67,9 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
     }
   }
 
-  private async getDSLAreaCodes(): Promise<IGetDSLAreaCodesResponse> {
+  private async getDSLAreaCodes(
+    dto: GetDSLAreaCodesRequestDto,
+  ): Promise<IGetDSLAreaCodesResponse> {
     const parameters = {
       areacodes: OracleHelper.tableOfStringBindOut(),
       o_status: OracleHelper.numberBindOut(),
@@ -71,6 +78,7 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_DSL_AREA_CODES,
       parameters,
+      dto,
     );
     const response: IGetDSLAreaCodesResponse = {
       areaCodes: OracleHelper.getItems(result, 'areacodes'),

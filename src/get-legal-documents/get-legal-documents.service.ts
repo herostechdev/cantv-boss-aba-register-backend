@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CustomNotFoundException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-not-found-exception';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { DocumentsConfigurationService } from 'src/system/configuration/documents/documents-configuration.service';
@@ -23,6 +24,7 @@ export class GetLegalDocumentsService extends ExceptionsService {
   ): Promise<IGetLegalDocuments> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: JSON.stringify(dto),
         clazz: GetLegalDocumentsService.name,
@@ -33,6 +35,7 @@ export class GetLegalDocumentsService extends ExceptionsService {
         termsAndConditions: this.getTermsAndConditionsDocument(),
       };
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
         data: JSON.stringify(dto),
         clazz: GetLegalDocumentsService.name,
@@ -41,10 +44,11 @@ export class GetLegalDocumentsService extends ExceptionsService {
       return response;
     } catch (error) {
       Wlog.instance.error({
-        message: error.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: JSON.stringify(dto),
         clazz: GetLegalDocumentsService.name,
         method: 'get',
+        error: error,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),

@@ -4,13 +4,14 @@ import {
   IIsIPAllowedResponse,
   IIsIPAllowedRestrictedResponse,
 } from './is-ip-allowed-response.interface';
-import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
-import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { OracleHelper } from 'src/oracle/oracle.helper';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { ExpiredIpException } from './expired-ip.exception';
 import { IsIpAllowedStatusConstants } from './is-ip-allowed-status.constants';
 import { IsIpAllowedException } from './is-ip-allowed.exception';
-import { ExpiredIpException } from './expired-ip.exception';
+import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
+import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
+import { OracleHelper } from 'src/oracle/oracle.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
@@ -26,6 +27,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
   ): Promise<IIsIPAllowedRestrictedResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: dto.ipAddress,
         clazz: IsIPAllowedService.name,
@@ -33,6 +35,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
       });
       await super.connect();
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Verifica si la IP es permisada',
         data: dto.ipAddress,
         clazz: IsIPAllowedService.name,
@@ -40,6 +43,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
       });
       const response = await this.isIPAllowed(dto);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
         data: dto.ipAddress,
         clazz: IsIPAllowedService.name,
@@ -48,10 +52,11 @@ export class IsIPAllowedService extends OracleDatabaseService {
       return response;
     } catch (error) {
       Wlog.instance.error({
-        message: error.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: dto.ipAddress,
         clazz: IsIPAllowedService.name,
         method: 'isIPAllowed',
+        error: error,
       });
       super.exceptionHandler(error, dto?.ipAddress);
     } finally {

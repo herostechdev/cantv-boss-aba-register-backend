@@ -21,6 +21,7 @@ export class DSLAuditLogsService extends OracleDatabaseService {
   async log(dto: DSLAuditLogsRequestDto): Promise<IDSLAuditLogsResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Invocando DSLAuditLogsService',
         data: BossHelper.getPhoneNumber(dto),
         clazz: DSLAuditLogsService.name,
@@ -69,12 +70,11 @@ export class DSLAuditLogsService extends OracleDatabaseService {
       }
     } catch (error) {
       Wlog.instance.error({
-        message: error?.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: BossHelper.getPhoneNumber(dto),
         clazz: DSLAuditLogsService.name,
         method: 'log',
         error: error,
-        stack: error?.stack,
       });
       super.exceptionHandler(error, `${dto?.areaCode}-${dto?.phoneNumber}`);
     } finally {

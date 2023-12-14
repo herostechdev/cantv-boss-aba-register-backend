@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { GetGroupAccessFromLoginInternalErrorException } from './get-group-access-from-login/get-group-access-from-login-internal-error.exception';
 import { GetGroupAccessFromLoginThereIsNoDataException } from './get-group-access-from-login/get-group-access-from-login-there-is-no-data.exception';
 import { GetGroupAccessFromLoginNotFoundException } from './get-group-access-from-login/get-group-access-from-login-not-found.exception';
@@ -17,7 +19,6 @@ import { LoginData } from './LOGIN-data';
 import { LoginRequestDto } from './login-request.dto';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
@@ -33,6 +34,7 @@ export class LoginService extends OracleDatabaseService {
   async login(dto: LoginRequestDto): Promise<ILoginResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: dto.userlogin,
         clazz: LoginService.name,
@@ -42,6 +44,7 @@ export class LoginService extends OracleDatabaseService {
       data.requestDto = dto;
       await super.connect();
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Obtener permisología del usuario',
         data: dto.userlogin,
         clazz: LoginService.name,
@@ -51,6 +54,7 @@ export class LoginService extends OracleDatabaseService {
         data,
       );
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Validar contraseña',
         data: dto.userlogin,
         clazz: LoginService.name,
@@ -61,6 +65,7 @@ export class LoginService extends OracleDatabaseService {
         data.getGroupAccessFromLoginResponse?.userpassword,
       );
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Validar permisos',
         data: dto.userlogin,
         clazz: LoginService.name,
@@ -72,12 +77,11 @@ export class LoginService extends OracleDatabaseService {
       };
     } catch (error) {
       Wlog.instance.error({
-        message: error?.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
         error: error,
-        stack: error?.stack,
       });
       super.exceptionHandler(error, `${dto?.userlogin}`);
     } finally {

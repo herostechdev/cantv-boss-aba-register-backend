@@ -101,6 +101,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   ): Promise<ValidateTechnicalFeasibilityData> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -110,6 +111,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.requestDto = dto;
       await super.connect();
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'insertDslAbaRegisters',
         data: JSON.stringify(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -119,6 +121,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         data,
       );
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'isPrepaidVoiceLine',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -126,6 +129,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       });
       data.isPrepaidVoiceLine = await this.isPrepaidVoiceLine(data);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getAndRegisterQualifOfService',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -134,6 +138,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.getAndRegisterQualifOfServiceResponse =
         await this.getAndRegisterQualifOfService(data);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'verifyContractByPhone',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -150,6 +155,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       // });
       // data.getDataFromRequestsResponse = await this.getDataFromRequests(data);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getABADataFromRequests',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -161,6 +167,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           this.dbConnection,
         );
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getDownstreamFromPlan',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -173,6 +180,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         throw new VerifyContractByPhoneException();
       }
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'isValidIpAddress',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -180,6 +188,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       });
       data.isValidIpAddressResponse = await this.isValidIpAddress(data);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getPortIdFromIp',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -193,6 +202,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         GetPortIdFromIpConstants.SUCCESSFULL
       ) {
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'IsOccupiedPort',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
@@ -202,6 +212,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
 
         if (data.isOccupiedPortResponse.result > 0) {
           Wlog.instance.info({
+            phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'getPortIdFlow',
             data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
@@ -210,6 +221,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           await this.getPortIdFlow(data);
         } else {
           Wlog.instance.info({
+            phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'getASAPOrderDetail',
             data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
@@ -222,6 +234,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         }
       } else {
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getPortIdFlow',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
@@ -231,6 +244,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       }
 
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getABAData',
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
@@ -242,6 +256,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           throw new TheClientAlreadyHasABAServiceException();
         } else {
           Wlog.instance.info({
+            phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'checkIp',
             data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
@@ -251,6 +266,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         }
       } else {
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getDataFromDslamPortId',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
@@ -264,6 +280,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL
         ) {
           Wlog.instance.info({
+            phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'modifyNetworkAccessLog',
             data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
@@ -272,6 +289,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           await this.modifyNetworkAccessLog(data);
         }
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'deleteOrder',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
@@ -279,6 +297,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         });
         data.deleteOrderResponse = await this.deleteOrder(data);
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getDSLCentralCoIdByDSLAMPortId',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
@@ -287,6 +306,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         data.getDSLCentralCoIdByDSLAMPortIdResponse =
           await this.getDSLCentralCoIdByDSLAMPortId(data);
         Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'readIABAOrder',
           data: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
@@ -298,6 +318,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           ReadIABAOrderErrorCodeConstants.SUCCESSFULL
         ) {
           Wlog.instance.info({
+            phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'getABAData',
             data: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
@@ -318,12 +339,11 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       return data;
     } catch (error) {
       Wlog.instance.error({
-        message: error?.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: BossHelper.getPhoneNumber(dto),
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
         error: error,
-        stack: error?.stack,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),

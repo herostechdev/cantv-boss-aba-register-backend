@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { GetASAPOrderDetailInvalidQueryRequestException } from './get-asap-order-detail-invalid-request.exception';
 import { GetASAPOrderDetailPayloadService } from './get-asap-order-detail-payload.service';
 import { GetASAPOrderDetailRequestDto } from './get-asap-order-detail-request.dto';
@@ -28,12 +29,14 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
   ): Promise<IGetASAPOrderDetailResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Validar parámetros de entrada',
         data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
@@ -41,6 +44,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       });
       this.validateInput(dto);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Obteniendo información de la orden',
         data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
@@ -48,6 +52,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       });
       const response = await this.invoke(dto);
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
         data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
@@ -56,10 +61,11 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       return response;
     } catch (error) {
       Wlog.instance.error({
-        message: error?.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
+        error: error,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),
@@ -76,11 +82,15 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
   }
 
   private async invoke(
-    bodyPayload: IGetASAPOrderDetailRequest,
+    dto: GetASAPOrderDetailRequestDto,
   ): Promise<IGetASAPOrderDetailResponse> {
+    const bodyPayload: IGetASAPOrderDetailRequest = {
+      orderId: dto.orderId,
+    };
     Wlog.instance.info({
+      phoneNumber: BossHelper.getPhoneNumber(dto),
       message: `Url ${this.picConfigurationService.getASAPOrderDetailUrl}`,
-      data: JSON.stringify(bodyPayload),
+      data: JSON.stringify(dto),
       clazz: GetASAPOrderDetailService.name,
       method: 'getASAPOrderDetail',
     });

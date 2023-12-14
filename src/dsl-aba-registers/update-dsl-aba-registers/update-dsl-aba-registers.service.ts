@@ -26,6 +26,7 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
   ): Promise<IUpdateDslAbaRegistersResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: BossHelper.getPhoneNumber(dto),
         clazz: UpdateDslAbaRegistersService.name,
@@ -48,6 +49,7 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
           UpdateDslAbaRegistersStatusConstants.INTERNAL_ERROR) as UpdateDslAbaRegistersStatusConstants,
       };
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
         data: BossHelper.getPhoneNumber(dto),
         clazz: UpdateDslAbaRegistersService.name,
@@ -63,12 +65,11 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
       }
     } catch (error) {
       Wlog.instance.error({
-        message: error?.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: BossHelper.getPhoneNumber(dto),
         clazz: UpdateDslAbaRegistersService.name,
         method: 'update',
         error: error,
-        stack: error?.stack,
       });
       super.exceptionHandler(error, `${JSON.stringify(dto)}`);
     } finally {

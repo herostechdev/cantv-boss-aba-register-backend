@@ -25,6 +25,7 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
   ): Promise<IGetPlanDescriptionFromPlanNameResponse> {
     try {
       Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         data: BossHelper.getPhoneNumber(dto),
         clazz: GetPlanDescriptionFromPlanNameService.name,
@@ -49,22 +50,29 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
       };
       switch (response.status) {
         case GetPlanDescriptionFromPlanNameStatusConstants.SUCCESSFULL:
-          return response;
+          break;
         case GetPlanDescriptionFromPlanNameStatusConstants.INTERNAL_ERROR:
           throw new GetPlanDFescriptionFromPlanNameException();
         case GetPlanDescriptionFromPlanNameStatusConstants.THERE_IS_NO_DATA:
-          return response;
+          break;
         default:
           throw new GetPlanDFescriptionFromPlanNameException();
       }
+      Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
+        message: 'Fin',
+        data: BossHelper.getPhoneNumber(dto),
+        clazz: GetPlanDescriptionFromPlanNameService.name,
+        method: 'getPlanDescriptionFromPlanName',
+      });
+      return response;
     } catch (error) {
       Wlog.instance.error({
-        message: error?.message,
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: BossHelper.getPhoneNumber(dto),
         clazz: GetPlanDescriptionFromPlanNameService.name,
         method: 'getPlanDescriptionFromPlanName',
         error: error,
-        stack: error?.stack,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),

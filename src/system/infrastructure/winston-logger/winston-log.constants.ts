@@ -8,4 +8,5 @@ export class WinstonLogConstants {
   public static WARN = 'warn';
   public static DEBUG = 'debug';
   public static ERROR = 'error';
+  public static UNKNOWN = 'UNKNOWN';
 }

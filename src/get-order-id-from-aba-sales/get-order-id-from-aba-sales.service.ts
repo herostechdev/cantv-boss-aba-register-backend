@@ -26,7 +26,8 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
   ): Promise<IGetOrderIdFromABASalesResponse> {
     try {
       Wlog.instance.info({
-        message: 'Invocando GetOrderidFromAbaSales',
+        phoneNumber: BossHelper.getPhoneNumber(dto),
+        message: 'Inicio',
         data: BossHelper.getPhoneNumber(dto),
         clazz: GetOrderIdFromABASalesService.name,
         method: 'getOrderIdFromABASales',
@@ -51,24 +52,31 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
       };
       switch (response.status) {
         case GetOrderIdFromABASalesStatusConstants.SUCCESSFULL:
-          return response;
+          break;
         case GetOrderIdFromABASalesStatusConstants.ERROR:
           throw new GetOrderIdFromABASalesException(result);
         case GetOrderIdFromABASalesStatusConstants.PHONE_WITHOUT_PRE_ORDER:
-          return response;
+          break;
         case GetOrderIdFromABASalesStatusConstants.PRE_ORDER_NOT_ACCEPTED_OR_COMPLETED:
           throw new Error2002Exception();
         default:
           throw new GetOrderIdFromABASalesException(result);
       }
+      Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
+        message: 'Fin',
+        data: BossHelper.getPhoneNumber(dto),
+        clazz: GetOrderIdFromABASalesService.name,
+        method: 'getOrderIdFromABASales',
+      });
+      return response;
     } catch (error) {
       Wlog.instance.error({
-        message: 'Invocando GetOrderidFromAbaSales',
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         data: BossHelper.getPhoneNumber(dto),
         clazz: GetOrderIdFromABASalesService.name,
         method: 'getOrderIdFromABASales',
         error: error,
-        stack: error?.stack,
       });
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),

@@ -3,7 +3,8 @@ const { combine, timestamp, label, printf } = format;
 import * as path from 'path';
 
 import { IWinstonLog } from './winston-log.interface';
-import { IWinstonLogInputData } from './winston-log-input-data.interface';
+import { IAbaRegisterWinstonErrorLogInputData } from './aba-register-winston-error-log-input-data.interface';
+import { IAbaRegisterWinstonLogInputData } from './aba-register-winston-log-input-data.interface';
 import { StringBuilder } from '../helpers/string.builder';
 import { WinstonLogConstants } from './winston-log.constants';
 // import DailyRotateFile from 'winston-daily-rotate-file';
@@ -18,6 +19,43 @@ export class Wlog {
 
   private constructor() {
     this.logger = this.getLogger();
+  }
+
+  public info(data: IAbaRegisterWinstonLogInputData): void {
+    this.logger.log(WinstonLogConstants.INFO, data.message, {
+      phoneNumber: data.phoneNumber,
+      data: data.data,
+      clazz: data.clazz,
+      method: data.method,
+    });
+  }
+
+  public warn(data: IAbaRegisterWinstonLogInputData): void {
+    this.logger.log(WinstonLogConstants.WARN, data.message, {
+      phoneNumber: data.phoneNumber,
+      data: data.data,
+      clazz: data.clazz,
+      method: data.method,
+    });
+  }
+
+  public debug(data: IAbaRegisterWinstonLogInputData): void {
+    this.logger.log(WinstonLogConstants.DEBUG, data.message, {
+      phoneNumber: data.phoneNumber,
+      data: data.data,
+      clazz: data.clazz,
+      method: data.method,
+    });
+  }
+
+  public error(data: IAbaRegisterWinstonErrorLogInputData): void {
+    this.logger.log(WinstonLogConstants.ERROR, data.message, {
+      phoneNumber: data.phoneNumber,
+      data: data.data,
+      clazz: data.clazz,
+      method: data.method,
+      error: data.error,
+    });
   }
 
   private getLogger(): winston.Logger {
@@ -48,23 +86,48 @@ export class Wlog {
     rowLog.append(`[${info.label}]`);
     rowLog.append(`${info.timestamp}`);
     rowLog.append(`${info.level.toUpperCase()}`);
-    if (info.metadata.clazz) {
-      const method = info.metadata.method ? `.${info.metadata.method}` : '';
-      rowLog.append(`[${info.metadata.clazz}${method}]`);
-    }
-    rowLog.append(`${info.message}`);
-    if (info.metadata.data) {
-      rowLog.append(`| Data: ${JSON.stringify(info.metadata.data)}`);
-    }
-    if (info.metadata.error) {
-      rowLog.append(`${info.metadata.error}`);
-      if (info.metadata.error.stack) {
-        rowLog.append(
-          `| StackTrace: ${JSON.stringify(info.metadata.error.stack)}`,
-        );
-      }
-    }
+    this.addClazzMethod(rowLog, info.metadata);
+    this.addPhoneNumber(rowLog, info.metadata?.phoneNumber);
+    this.addData(rowLog, info.metadata);
+    this.addMessage(rowLog, info.message, info.metadata?.error);
+    this.addData(rowLog, info.metadata);
+    this.addError(rowLog, info.metadata);
     return rowLog.toString('  ');
+  }
+
+  private addPhoneNumber(rowLog: StringBuilder, phoneNumber?: string): void {
+    rowLog.append(`[${phoneNumber ?? WinstonLogConstants.UNKNOWN}]`);
+  }
+
+  private addMessage(
+    rowLog: StringBuilder,
+    message?: string,
+    error?: any,
+  ): void {
+    rowLog.append(
+      error?.message && !message
+        ? error.message
+        : message ?? WinstonLogConstants.UNKNOWN,
+    );
+  }
+
+  private addClazzMethod(rowLog: StringBuilder, metadata: any): void {
+    if (!metadata || !metadata.clazz) return;
+    const method = metadata.method ? `.${metadata.method}` : '';
+    rowLog.append(`[${metadata.clazz}${method}]`);
+  }
+
+  private addData(rowLog: StringBuilder, metadata: any): void {
+    if (!metadata || !metadata.data) return;
+    rowLog.append(`| Data: ${JSON.stringify(metadata.data)}`);
+  }
+
+  private addError(rowLog: StringBuilder, metadata: any): void {
+    if (!metadata || !metadata.error) return;
+    rowLog.append(`${metadata.error}`);
+    if (metadata.error.stack) {
+      rowLog.append(`| StackTrace: ${JSON.stringify(metadata.error.stack)}`);
+    }
   }
 
   private objectFormat(info: winston.Logform.TransformableInfo): IWinstonLog {
@@ -110,38 +173,4 @@ export class Wlog {
   //     maxFiles: '30d',
   //   });
   // }
-
-  public info(data: IWinstonLogInputData): void {
-    this.logger.log(WinstonLogConstants.INFO, data.message, {
-      data: data.data,
-      clazz: data.clazz,
-      method: data.method,
-    });
-  }
-
-  public warn(data: IWinstonLogInputData): void {
-    this.logger.log(WinstonLogConstants.WARN, data.message, {
-      data: data.data,
-      clazz: data.clazz,
-      method: data.method,
-    });
-  }
-
-  public debug(data: IWinstonLogInputData): void {
-    this.logger.log(WinstonLogConstants.DEBUG, data.message, {
-      data: data.data,
-      clazz: data.clazz,
-      method: data.method,
-    });
-  }
-
-  public error(data: IWinstonLogInputData): void {
-    this.logger.log(WinstonLogConstants.ERROR, data.message, {
-      data: data.data,
-      clazz: data.clazz,
-      method: data.method,
-      error: data.error,
-      stack: data.stack,
-    });
-  }
 }
