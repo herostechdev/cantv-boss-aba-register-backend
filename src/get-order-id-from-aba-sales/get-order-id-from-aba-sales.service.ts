@@ -28,7 +28,7 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: GetOrderIdFromABASalesService.name,
         method: 'getOrderIdFromABASales',
       });
@@ -65,7 +65,7 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: GetOrderIdFromABASalesService.name,
         method: 'getOrderIdFromABASales',
       });
@@ -73,7 +73,7 @@ export class GetOrderIdFromABASalesService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: GetOrderIdFromABASalesService.name,
         method: 'getOrderIdFromABASales',
         error: error,

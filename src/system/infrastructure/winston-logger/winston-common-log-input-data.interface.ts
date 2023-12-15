@@ -2,5 +2,6 @@ export interface IWinstonCommonLogInputData {
   message?: string;
   clazz?: string;
   method?: string;
-  data?: string;
+  input?: string;
+  response?: string;
 }

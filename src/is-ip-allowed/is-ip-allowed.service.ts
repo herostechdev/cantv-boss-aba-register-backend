@@ -29,7 +29,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: dto.ipAddress,
+        input: dto.ipAddress,
         clazz: IsIPAllowedService.name,
         method: 'isIPAllowed',
       });
@@ -37,7 +37,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Verifica si la IP es permisada',
-        data: dto.ipAddress,
+        input: dto.ipAddress,
         clazz: IsIPAllowedService.name,
         method: 'isIPAllowed',
       });
@@ -45,7 +45,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
-        data: dto.ipAddress,
+        input: dto.ipAddress,
         clazz: IsIPAllowedService.name,
         method: 'isIPAllowed',
       });
@@ -53,7 +53,7 @@ export class IsIPAllowedService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: dto.ipAddress,
+        input: dto.ipAddress,
         clazz: IsIPAllowedService.name,
         method: 'isIPAllowed',
         error: error,

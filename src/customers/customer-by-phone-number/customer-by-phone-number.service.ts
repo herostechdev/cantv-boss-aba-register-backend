@@ -97,7 +97,7 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
       message: `Url: ${this.customerByPhoneNumberUrl}`,
-      data: JSON.stringify(bodyPayload),
+      input: JSON.stringify(bodyPayload),
       clazz: CustomerByPhoneNumberService.name,
       method: 'invoke',
     });

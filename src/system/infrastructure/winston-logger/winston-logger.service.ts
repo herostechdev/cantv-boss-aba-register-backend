@@ -22,40 +22,35 @@ export class Wlog {
   }
 
   public info(data: IAbaRegisterWinstonLogInputData): void {
-    this.logger.log(WinstonLogConstants.INFO, data.message, {
-      phoneNumber: data.phoneNumber,
-      data: data.data,
-      clazz: data.clazz,
-      method: data.method,
-    });
+    this.logger.log(WinstonLogConstants.INFO, data.message, this.getMeta(data));
   }
 
   public warn(data: IAbaRegisterWinstonLogInputData): void {
-    this.logger.log(WinstonLogConstants.WARN, data.message, {
-      phoneNumber: data.phoneNumber,
-      data: data.data,
-      clazz: data.clazz,
-      method: data.method,
-    });
+    this.logger.log(WinstonLogConstants.WARN, data.message, this.getMeta(data));
   }
 
   public debug(data: IAbaRegisterWinstonLogInputData): void {
-    this.logger.log(WinstonLogConstants.DEBUG, data.message, {
-      phoneNumber: data.phoneNumber,
-      data: data.data,
-      clazz: data.clazz,
-      method: data.method,
-    });
+    this.logger.log(
+      WinstonLogConstants.DEBUG,
+      data.message,
+      this.getMeta(data),
+    );
   }
 
   public error(data: IAbaRegisterWinstonErrorLogInputData): void {
-    this.logger.log(WinstonLogConstants.ERROR, data.message, {
+    const metadata = this.getMeta(data);
+    metadata.error = data.error;
+    this.logger.log(WinstonLogConstants.ERROR, data.message, metadata);
+  }
+
+  private getMeta(data: IAbaRegisterWinstonLogInputData): any {
+    return {
       phoneNumber: data.phoneNumber,
-      data: data.data,
       clazz: data.clazz,
       method: data.method,
-      error: data.error,
-    });
+      input: data.input,
+      response: data.response,
+    };
   }
 
   private getLogger(): winston.Logger {
@@ -89,7 +84,8 @@ export class Wlog {
       .append(this.getClazzMethod(info.metadata))
       .append(this.getPhoneNumber(info.metadata?.phoneNumber))
       .append(this.getMessage(info.message, info.metadata?.error))
-      .append(this.getData(info.metadata?.data))
+      .append(this.getInput(info.metadata?.input))
+      .append(this.getResponse(info.metadata?.response))
       .append(this.getExceptionName(info.metadata?.error))
       .append(this.getStack(info.metadata?.error))
       .append(this.getInnerException(info.metadata?.error))
@@ -112,25 +108,30 @@ export class Wlog {
       : message ?? WinstonLogConstants.UNKNOWN;
   }
 
-  private getData(data?: any): string {
-    if (!data) return null;
-    return `| Data: ${JSON.stringify(data)}`;
+  private getInput(input?: any): string {
+    if (!input) return null;
+    return `| INPUT: ${JSON.stringify(input)}`;
+  }
+
+  private getResponse(response?: any): string {
+    if (!response) return null;
+    return `| RESPONSE: ${JSON.stringify(response)}`;
   }
 
   private getExceptionName(exception?: any): string {
     if (!exception || (!exception.name && !exception.code)) return null;
     const code = exception.code ? `( ${exception.code} )` : '';
-    return `| Exception: ${exception.name ?? ''} ${code}`.trim();
+    return `| EXCEPTION: ${exception.name ?? ''} ${code}`.trim();
   }
 
   private getStack(exception?: any): string {
     if (!exception || !exception.stack) return null;
-    return `| Stack: ${JSON.stringify(exception.stack ?? '')}`.trim();
+    return `| STACK: ${JSON.stringify(exception.stack ?? '')}`.trim();
   }
 
   private getInnerException(exception?: any): string {
     if (!exception || !exception.innerException) return null;
-    return `| InnerException: ${JSON.stringify(
+    return `| INNER_EXCEPTION: ${JSON.stringify(
       exception.innerException ?? '',
     )}`.trim();
   }
@@ -139,13 +140,16 @@ export class Wlog {
     return {
       label: info.label,
       timestamp: info.timestamp,
+      level: info.level,
       clazz: info.metadata?.clazz,
       method: info.metadata?.method,
-      level: info.level,
-      data: info.metadata?.data,
       message: info.message,
-      error: info.metadata?.error,
-      stack: info.metadata?.error.stack,
+      input: info.metadata?.input,
+      response: info.metadata?.response,
+      exception: info.metadata?.error?.name,
+      exceptionCode: info.metadata?.error?.code,
+      stack: info.metadata?.error?.stack,
+      innerException: info.metadata?.error?.innerException,
     };
   }
 

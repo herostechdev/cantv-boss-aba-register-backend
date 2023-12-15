@@ -65,7 +65,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -75,7 +75,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getPlanAbaFromKenan',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -83,7 +83,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Verifica que el cliente existe',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -101,7 +101,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'createAndProvisioningMasterAct',
-          data: BossHelper.getPhoneNumber(dto),
+          input: BossHelper.getPhoneNumber(dto),
           clazz: ConfirmRegistrationService.name,
           method: 'confirmRegistrationFlow',
         });
@@ -117,7 +117,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'createAndProvisioningCustomer',
-          data: BossHelper.getPhoneNumber(dto),
+          input: BossHelper.getPhoneNumber(dto),
           clazz: ConfirmRegistrationService.name,
           method: 'confirmRegistrationFlow',
         });
@@ -133,7 +133,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'isReservedLogin',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -141,7 +141,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'abaRegister',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -149,7 +149,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'cancelABAInstallation',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -159,7 +159,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -167,7 +167,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
         error: error,

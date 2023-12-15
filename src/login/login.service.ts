@@ -36,7 +36,7 @@ export class LoginService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: dto.userlogin,
+        input: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
       });
@@ -46,7 +46,7 @@ export class LoginService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Obtener permisología del usuario',
-        data: dto.userlogin,
+        input: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
       });
@@ -56,7 +56,7 @@ export class LoginService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Validar contraseña',
-        data: dto.userlogin,
+        input: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
       });
@@ -67,7 +67,7 @@ export class LoginService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Validar permisos',
-        data: dto.userlogin,
+        input: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
       });
@@ -78,7 +78,7 @@ export class LoginService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: dto.userlogin,
+        input: dto.userlogin,
         clazz: LoginService.name,
         method: 'login',
         error: error,

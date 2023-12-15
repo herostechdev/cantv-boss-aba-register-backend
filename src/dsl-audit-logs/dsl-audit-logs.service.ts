@@ -23,7 +23,7 @@ export class DSLAuditLogsService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Invocando DSLAuditLogsService',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: DSLAuditLogsService.name,
         method: 'log',
       });
@@ -71,7 +71,7 @@ export class DSLAuditLogsService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: DSLAuditLogsService.name,
         method: 'log',
         error: error,

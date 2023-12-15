@@ -26,7 +26,7 @@ export class GetLegalDocumentsService extends ExceptionsService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetLegalDocumentsService.name,
         method: 'get',
       });
@@ -37,7 +37,7 @@ export class GetLegalDocumentsService extends ExceptionsService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetLegalDocumentsService.name,
         method: 'get',
       });
@@ -45,7 +45,7 @@ export class GetLegalDocumentsService extends ExceptionsService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetLegalDocumentsService.name,
         method: 'get',
         error: error,

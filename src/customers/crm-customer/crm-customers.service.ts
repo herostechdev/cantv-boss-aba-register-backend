@@ -30,14 +30,14 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
+        input: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
         clazz: CRMCustomersService.name,
         method: 'get',
       });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Validar parámetros de entrada',
-        data: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
+        input: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
         clazz: CRMCustomersService.name,
         method: 'get',
       });
@@ -52,7 +52,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
+        input: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
         clazz: CRMCustomersService.name,
         method: 'get',
         error: error,
@@ -80,7 +80,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
       message: 'Obtiene cliente por ID',
-      data: dto.customerId,
+      input: dto.customerId,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
@@ -88,7 +88,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
       message: 'Fin',
-      data: dto.customerId,
+      input: dto.customerId,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
@@ -101,7 +101,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
       message: 'Obtiene cliente por cédula de identidad',
-      data: dto.identificationDocument,
+      input: dto.identificationDocument,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
@@ -111,7 +111,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
       message: 'Fin',
-      data: dto.identificationDocument,
+      input: dto.identificationDocument,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
@@ -124,7 +124,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
       message: 'Obtiene cliente por RIF',
-      data: dto.fiscalNumber,
+      input: dto.fiscalNumber,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
@@ -132,7 +132,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
       message: 'Fin',
-      data: dto.fiscalNumber,
+      input: dto.fiscalNumber,
       clazz: CRMCustomersService.name,
       method: 'get',
     });
@@ -150,7 +150,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
       message: `Url: ${this.clientQueryUrl}`,
-      data: JSON.stringify(bodyPayload),
+      input: JSON.stringify(bodyPayload),
       clazz: CRMCustomersService.name,
       method: 'invoke',
     });

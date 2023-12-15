@@ -28,7 +28,7 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: UpdateDslAbaRegistersService.name,
         method: 'update',
       });
@@ -51,7 +51,7 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: UpdateDslAbaRegistersService.name,
         method: 'update',
       });
@@ -66,7 +66,7 @@ export class UpdateDslAbaRegistersService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: UpdateDslAbaRegistersService.name,
         method: 'update',
         error: error,

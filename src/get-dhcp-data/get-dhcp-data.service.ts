@@ -30,7 +30,7 @@ export class GetDHCPDataService extends ExceptionsService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
@@ -38,7 +38,7 @@ export class GetDHCPDataService extends ExceptionsService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: `Url ${url}`,
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
@@ -55,7 +55,7 @@ export class GetDHCPDataService extends ExceptionsService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: `Respuesta ${JSON.stringify(response?.data)}`,
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
@@ -63,7 +63,7 @@ export class GetDHCPDataService extends ExceptionsService {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'Respuesta inválida',
-          data: JSON.stringify(dto),
+          input: JSON.stringify(dto),
           clazz: GetDHCPDataService.name,
           method: 'get',
         });
@@ -78,7 +78,7 @@ export class GetDHCPDataService extends ExceptionsService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
       });
@@ -90,7 +90,7 @@ export class GetDHCPDataService extends ExceptionsService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetDHCPDataService.name,
         method: 'get',
         error: error,

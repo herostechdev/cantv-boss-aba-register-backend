@@ -49,7 +49,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
         method: 'validateCustomer',
       });
@@ -60,7 +60,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getClientClassNameFromIdValue',
-          data: BossHelper.getPhoneNumber(dto),
+          input: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
@@ -77,7 +77,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getFirstLetterFromABARequest',
-          data: BossHelper.getPhoneNumber(dto),
+          input: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
@@ -93,7 +93,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'clientExists',
-          data: BossHelper.getPhoneNumber(dto),
+          input: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
@@ -118,7 +118,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getAllValuesFromClientValues',
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
         method: 'validateCustomer',
       });
@@ -135,7 +135,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getClientInstanceIdFromIdValue',
-          data: BossHelper.getPhoneNumber(dto),
+          input: BossHelper.getPhoneNumber(dto),
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
@@ -151,7 +151,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           Wlog.instance.info({
             phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'getDebtFromClient',
-            data: BossHelper.getPhoneNumber(dto),
+            input: BossHelper.getPhoneNumber(dto),
             clazz: ValidateCustomerService.name,
             method: 'validateCustomer',
           });
@@ -165,7 +165,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
             Wlog.instance.info({
               phoneNumber: BossHelper.getPhoneNumber(dto),
               message: 'updateDslABARegisters',
-              data: BossHelper.getPhoneNumber(dto),
+              input: BossHelper.getPhoneNumber(dto),
               clazz: ValidateCustomerService.name,
               method: 'validateCustomer',
             });
@@ -186,7 +186,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           Wlog.instance.info({
             phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'updateDslABARegisters',
-            data: BossHelper.getPhoneNumber(dto),
+            input: BossHelper.getPhoneNumber(dto),
             clazz: ValidateCustomerService.name,
             method: 'validateCustomer',
           });
@@ -203,7 +203,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: BossHelper.getPhoneNumber(dto),
+        input: BossHelper.getPhoneNumber(dto),
         clazz: ValidateCustomerService.name,
         method: 'validateCustomer',
         error: error,

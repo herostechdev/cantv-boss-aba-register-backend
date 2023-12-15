@@ -31,14 +31,14 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: dto.orderId,
+        input: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Validar parámetros de entrada',
-        data: dto.orderId,
+        input: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
@@ -46,7 +46,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Obteniendo información de la orden',
-        data: dto.orderId,
+        input: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
@@ -54,7 +54,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
-        data: dto.orderId,
+        input: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
       });
@@ -62,7 +62,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: dto.orderId,
+        input: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
         error: error,
@@ -90,7 +90,7 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
       message: `Url ${this.picConfigurationService.getASAPOrderDetailUrl}`,
-      data: JSON.stringify(dto),
+      input: JSON.stringify(dto),
       clazz: GetASAPOrderDetailService.name,
       method: 'getASAPOrderDetail',
     });

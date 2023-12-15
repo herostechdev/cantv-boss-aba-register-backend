@@ -27,7 +27,7 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
@@ -35,7 +35,7 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Obtiene los códigos de área',
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
@@ -43,7 +43,7 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
       });
@@ -51,7 +51,7 @@ export class GetDSLAreaCodesService extends OracleDatabaseService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        data: JSON.stringify(dto),
+        input: JSON.stringify(dto),
         clazz: GetDSLAreaCodesService.name,
         method: 'getDSLAreaCodes',
         error: error,

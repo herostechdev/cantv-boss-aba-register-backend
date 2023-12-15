@@ -39,7 +39,7 @@ export abstract class OracleDatabaseService extends CommonService {
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: additionalData?.phoneNumber,
-        data: `closeConnection: ${closeConnection}`,
+        input: `closeConnection: ${closeConnection}`,
         clazz: OracleDatabaseService.name,
         method: 'closeConnection',
         error: error,
@@ -68,7 +68,7 @@ export abstract class OracleDatabaseService extends CommonService {
       message: `Ejecutando el SP: ${this.getPackage(
         packageName,
       )}${storedProcedure}`,
-      data: JSON.stringify(parameters),
+      input: JSON.stringify(parameters),
       clazz: OracleDatabaseService.name,
       method: 'executeStoredProcedure',
     });
@@ -85,7 +85,7 @@ export abstract class OracleDatabaseService extends CommonService {
     Wlog.instance.info({
       phoneNumber: additionalData?.phoneNumber,
       message: `Sentencia Sql: ${sql}`,
-      data: JSON.stringify(parameters),
+      input: JSON.stringify(parameters),
       clazz: OracleDatabaseService.name,
       method: 'executeStoredProcedure',
     });
@@ -100,7 +100,7 @@ export abstract class OracleDatabaseService extends CommonService {
       message: `Respuesta del SP: ${this.getPackage(
         packageName,
       )}${storedProcedure}`,
-      data: JSON.stringify(response),
+      input: JSON.stringify(response),
       clazz: OracleDatabaseService.name,
       method: 'executeStoredProcedure',
     });
