@@ -82,52 +82,57 @@ export class Wlog {
   }
 
   private stringFormat(info: winston.Logform.TransformableInfo): string {
-    const rowLog = new StringBuilder();
-    rowLog.append(`[${info.label}]`);
-    rowLog.append(`${info.timestamp}`);
-    rowLog.append(`${info.level.toUpperCase()}`);
-    this.addClazzMethod(rowLog, info.metadata);
-    this.addPhoneNumber(rowLog, info.metadata?.phoneNumber);
-    this.addData(rowLog, info.metadata);
-    this.addMessage(rowLog, info.message, info.metadata?.error);
-    this.addData(rowLog, info.metadata);
-    this.addError(rowLog, info.metadata);
-    return rowLog.toString('  ');
+    return new StringBuilder()
+      .append(`[${info.label}]`)
+      .append(`${info.timestamp}`)
+      .append(`${info.level.toUpperCase()}`)
+      .append(this.getClazzMethod(info.metadata))
+      .append(this.getPhoneNumber(info.metadata?.phoneNumber))
+      .append(this.getMessage(info.message, info.metadata?.error))
+      .append(this.getData(info.metadata?.data))
+      .append(this.getExceptionName(info.metadata?.error))
+      .append(this.getStack(info.metadata?.error))
+      .append(this.getInnerException(info.metadata?.error))
+      .toString('  ');
   }
 
-  private addPhoneNumber(rowLog: StringBuilder, phoneNumber?: string): void {
-    rowLog.append(`[${phoneNumber ?? WinstonLogConstants.UNKNOWN}]`);
-  }
-
-  private addMessage(
-    rowLog: StringBuilder,
-    message?: string,
-    error?: any,
-  ): void {
-    rowLog.append(
-      error?.message && !message
-        ? error.message
-        : message ?? WinstonLogConstants.UNKNOWN,
-    );
-  }
-
-  private addClazzMethod(rowLog: StringBuilder, metadata: any): void {
-    if (!metadata || !metadata.clazz) return;
+  private getClazzMethod(metadata: any): string {
+    if (!metadata || !metadata.clazz) return null;
     const method = metadata.method ? `.${metadata.method}` : '';
-    rowLog.append(`[${metadata.clazz}${method}]`);
+    return `[${metadata.clazz}${method}]`;
   }
 
-  private addData(rowLog: StringBuilder, metadata: any): void {
-    if (!metadata || !metadata.data) return;
-    rowLog.append(`| Data: ${JSON.stringify(metadata.data)}`);
+  private getPhoneNumber(phoneNumber?: string): string {
+    return `[${phoneNumber ?? WinstonLogConstants.UNKNOWN}]`;
   }
 
-  private addError(rowLog: StringBuilder, metadata: any): void {
-    if (!metadata || !metadata.error) return;
-    rowLog.append(`${metadata.error}`);
-    if (metadata.error.stack) {
-      rowLog.append(`| StackTrace: ${JSON.stringify(metadata.error.stack)}`);
-    }
+  private getMessage(message?: string, error?: any): string {
+    return error?.message && !message
+      ? error.message
+      : message ?? WinstonLogConstants.UNKNOWN;
+  }
+
+  private getData(data?: any): string {
+    if (!data) return null;
+    return `| Data: ${JSON.stringify(data)}`;
+  }
+
+  private getExceptionName(exception?: any): string {
+    if (!exception || (!exception.name && !exception.code)) return null;
+    const code = exception.code ? `( ${exception.code} )` : '';
+    return `| Exception: ${exception.name ?? ''} ${code}`.trim();
+  }
+
+  private getStack(exception?: any): string {
+    if (!exception || !exception.stack) return null;
+    return `| Stack: ${JSON.stringify(exception.stack ?? '')}`.trim();
+  }
+
+  private getInnerException(exception?: any): string {
+    if (!exception || !exception.innerException) return null;
+    return `| InnerException: ${JSON.stringify(
+      exception.innerException ?? '',
+    )}`.trim();
   }
 
   private objectFormat(info: winston.Logform.TransformableInfo): IWinstonLog {
