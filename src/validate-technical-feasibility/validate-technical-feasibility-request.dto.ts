@@ -15,9 +15,6 @@ export class ValidateTechnicalFeasibilityRequestDto implements IPhoneNumber {
   registerDate: string;
 
   @IsString()
-  registerStatus: string;
-
-  @IsString()
   @IsOptional()
   loginInstall?: string;
 

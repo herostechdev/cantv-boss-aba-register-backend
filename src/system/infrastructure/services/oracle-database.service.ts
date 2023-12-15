@@ -100,7 +100,7 @@ export abstract class OracleDatabaseService extends CommonService {
       message: `Respuesta del SP: ${this.getPackage(
         packageName,
       )}${storedProcedure}`,
-      input: JSON.stringify(response),
+      response: JSON.stringify(response),
       clazz: OracleDatabaseService.name,
       method: 'executeStoredProcedure',
     });

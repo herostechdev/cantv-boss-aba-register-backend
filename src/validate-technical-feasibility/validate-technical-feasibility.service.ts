@@ -386,10 +386,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
       iPhoneNumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber, 7),
       iRegisterDate: OracleHelper.dateBindIn(registerDate),
-      iRegisterStatus: OracleHelper.stringBindIn(
-        data.requestDto.registerStatus,
-        16,
-      ),
+      iRegisterStatus: OracleHelper.stringBindIn(BossConstants.IN_PROGRESS, 16),
       iLoginInstall: OracleHelper.stringBindIn(
         data.requestDto.loginInstall,
         32,
