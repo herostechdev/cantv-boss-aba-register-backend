@@ -103,9 +103,7 @@ export class Wlog {
   }
 
   private getMessage(message?: string, error?: any): string {
-    return error?.message && !message
-      ? error.message
-      : message ?? WinstonLogConstants.UNKNOWN;
+    return error?.message ?? message ?? WinstonLogConstants.UNKNOWN;
   }
 
   private getInput(input?: any): string {
