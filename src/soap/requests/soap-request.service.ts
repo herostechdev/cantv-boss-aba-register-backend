@@ -25,16 +25,12 @@ export abstract class SOAPRequestService<
     response: RESPONSE,
     errorMessage: string,
     okErrorCode = PICConstants.PIC_OK_DEFAULT_ERROR_CODE,
-    // errorCodeField = PICConstants.PIC_DEFAULT_ERROR_CODE_FIELD,
-    // errorMessageField = PICConstants.PIC_DEFAULT_ERROR_MESSAGE_FIELD,
   ) {
     okErrorCode = okErrorCode ?? PICConstants.PIC_OK_DEFAULT_ERROR_CODE;
     if (
       !response ||
       !response.ERROR_CODE ||
       response.ERROR_CODE !== okErrorCode
-      // !response[errorCodeField] ||
-      // response[errorMessageField] !== okErrorCode
     )
       throw new CustomBadRequestException({
         // code: response[errorCodeField],
