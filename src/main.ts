@@ -12,8 +12,17 @@ import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from './oracle/oracle.constants';
+import { Wlog } from './system/infrastructure/winston-logger/winston-logger.service';
+import { BossHelper } from './boss-helpers/boss.helper';
 
 const initializePipes = (app: INestApplication) => {
+  Wlog.instance.info({
+    phoneNumber: null,
+    message: 'Inicializando pipes',
+    input: null,
+    clazz: BossHelper.applicationName,
+    method: 'initializePipes',
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       forbidNonWhitelisted: false,
@@ -25,6 +34,13 @@ const initializePipes = (app: INestApplication) => {
 };
 
 const initializeOracleDatabaseClient = async (app: INestApplication) => {
+  Wlog.instance.info({
+    phoneNumber: null,
+    message: 'Inicializando el cliente Oracle',
+    input: null,
+    clazz: BossHelper.applicationName,
+    method: 'initializeOracleDatabaseClient',
+  });
   // Initialize Oracle Client
   const oracleConfigurationService: OracleConfigurationService = app.get(
     OracleConfigurationService,
@@ -41,9 +57,23 @@ const initializeOracleDatabaseClient = async (app: INestApplication) => {
     poolMax: oracleConfigurationService.poolMaxConnections,
     poolMin: oracleConfigurationService.poolMinConnections,
   });
+  Wlog.instance.info({
+    phoneNumber: null,
+    message: 'Cliente Otacle inicializado',
+    input: null,
+    clazz: BossHelper.applicationName,
+    method: 'initializeOracleDatabaseClient',
+  });
 };
 
 const startServer = async (app: INestApplication) => {
+  Wlog.instance.info({
+    phoneNumber: null,
+    message: 'Iniciando el servidor',
+    input: null,
+    clazz: BossHelper.applicationName,
+    method: 'startServer',
+  });
   const applicationConfigurationService: ApplicationConfigurationService =
     app.get(ApplicationConfigurationService);
   app.setGlobalPrefix(applicationConfigurationService.routesPrefix);

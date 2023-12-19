@@ -2,4 +2,10 @@ export class PICConstants {
   // ERROR CODES
   public static PIC_OK_DEFAULT_ERROR_CODE = '000';
   public static PIC_OK_4_ZEROS_ERROR_CODE = '0000';
+
+  // ERROR FIELDS
+  public static PIC_DEFAULT_ERROR_CODE_FIELD = 'ERROR_CODE';
+  public static PIC_DEFAULT_ERROR_MESSAGE_FIELD = 'ERROR_MESSAGE';
+  // public static PIC_CTVERRCODAS_ERROR_CODE_FIELD = 'CTVERRCODAS';
+  // public static PIC_CTVERRMSGAS_ERROR_MESSAGE_FIELD = 'CTVERRMSGAS';
 }

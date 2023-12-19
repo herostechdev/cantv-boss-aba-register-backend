@@ -61,7 +61,7 @@ export class GetABADataFromRequestsService extends OracleDatabaseService {
       BossConstants.GET_ABA_DATA_FROM_REQUESTS,
       parameters,
     );
-    const status = (result?.outBinds?.o_Status ??
+    const status = (result?.outBinds?.Status ??
       GetABADataFromRequestsStatusConstants.EXECUTION_ERROR) as GetABADataFromRequestsStatusConstants;
     const response: IGetABADataFromRequestsResponse = {
       date1: result?.outBinds?.sz_Fecha1,

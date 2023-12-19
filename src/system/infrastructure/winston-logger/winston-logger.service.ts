@@ -1,5 +1,6 @@
 import winston, { createLogger, format, transports } from 'winston';
 const { combine, timestamp, label, printf } = format;
+// import DailyRotateFile from 'winston-daily-rotate-file';
 import * as path from 'path';
 
 import { IWinstonLog } from './winston-log.interface';
@@ -7,7 +8,7 @@ import { IAbaRegisterWinstonErrorLogInputData } from './aba-register-winston-err
 import { IAbaRegisterWinstonLogInputData } from './aba-register-winston-log-input-data.interface';
 import { StringBuilder } from '../helpers/string.builder';
 import { WinstonLogConstants } from './winston-log.constants';
-// import DailyRotateFile from 'winston-daily-rotate-file';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 
 export class Wlog {
   private static _instance: Wlog;
@@ -57,7 +58,7 @@ export class Wlog {
     return createLogger({
       // format: winston.format.json(),
       format: combine(
-        label({ label: this.applicationName }),
+        label({ label: BossHelper.applicationName }),
         timestamp(),
         format.metadata({
           fillExcept: ['message', 'level', 'timestamp', 'label'],
@@ -70,10 +71,6 @@ export class Wlog {
         // this.getDailyRotateFileTransport(),
       ],
     });
-  }
-
-  private get applicationName(): string {
-    return process.env.APP_NAME ?? WinstonLogConstants.APPLICATION_NAME;
   }
 
   private stringFormat(info: winston.Logform.TransformableInfo): string {
@@ -173,11 +170,14 @@ export class Wlog {
 
   // private getDailyRotateFileTransport(): DailyRotateFile {
   //   return new DailyRotateFile({
-  //     filename: path.join(process.env.LOG_FOLDER, 'BossAbaRegister-%DATE%.log'),
+  //     filename: path.join(
+  //       process.env.LOG_FOLDER,
+  //       `${BossHelper.applicationName}-%DATE%.log`,
+  //     ),
   //     datePattern: 'YYYY-MM-DD-HH',
   //     zippedArchive: true,
-  //     maxSize: '100m',
-  //     maxFiles: '30d',
+  //     maxSize: '50m',
+  //     maxFiles: '14d',
   //   });
   // }
 }

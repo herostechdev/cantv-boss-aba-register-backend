@@ -83,10 +83,10 @@ export class BossConstants {
   public static NULL = 'NULL';
   public static NOT_AVAILABLE = 'NO_DISPONIBLE';
   public static OCCUPIED_PORT = 1;
+  public static OK_RESPONSE = '0000';
   public static PROCESSED = 'PROCESADO';
   public static REGISTER = 'Registro';
-  public static OK_RESPONSE = '0000';
-
   public static USERS = 'USUARIOS';
+  public static UNKNOWN = 'UNKNOWN';
   public static VENEZUELA = 'VENEZUELA';
 }

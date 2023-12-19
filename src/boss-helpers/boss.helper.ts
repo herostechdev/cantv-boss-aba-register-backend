@@ -3,6 +3,10 @@ import { IPhoneNumber } from 'src/responses/phone-number.interface';
 import { StringHelper } from 'src/system/infrastructure/helpers/string.helper';
 
 export class BossHelper {
+  public static get applicationName(): string {
+    return process.env.APP_NAME ?? BossConstants.UNKNOWN;
+  }
+
   public static getPhoneNumber(data: IPhoneNumber, delimiter = '-'): string {
     if (!data || !data.areaCode || !data.phoneNumber) return null;
     return `${data.areaCode}${delimiter ?? '-'}${data.phoneNumber}`;
