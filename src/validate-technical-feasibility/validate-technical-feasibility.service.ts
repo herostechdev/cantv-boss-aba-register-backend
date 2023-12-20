@@ -228,9 +228,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             method: 'validateTechnicalFeasibility',
           });
           await this.rbeDoesNotExistLog(data);
-          data.getASAPOrderDetailResponse = await this.getASAPOrderDetail(data);
-
-          return data;
+          await this.setASAPOrderDetail(data);
         }
       } else {
         Wlog.instance.info({
@@ -242,7 +240,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         });
         await this.getPortIdFlow(data);
       }
-
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getABAData',
@@ -251,6 +248,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
       });
       data.getABADataResponse = await this.getABAData(data);
+
+      return data;
+
       if (data.getABADataResponse.status === 0) {
         if (ValidationHelper.isDefined(data.getABADataResponse.abacontractid)) {
           throw new TheClientAlreadyHasABAServiceException();
@@ -263,6 +263,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             method: 'validateTechnicalFeasibility',
           });
           data.checkIpResponse = await this.checkIp(data);
+
+          return data;
         }
       } else {
         Wlog.instance.info({
@@ -481,9 +483,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case GetAndRegisterQualifOfServiceStatusConstants.SUCCESSFULL:
         return response;
       case GetAndRegisterQualifOfServiceStatusConstants.ERROR:
-        throw new GetAndRegisterQualifOfServiceException();
+        throw new GetAndRegisterQualifOfServiceException(result);
       default:
-        throw new GetAndRegisterQualifOfServiceException();
+        throw new GetAndRegisterQualifOfServiceException(result);
     }
   }
 
@@ -700,7 +702,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       ) {
         await this.rbeDoesNotExistLog(data);
       } else {
-        data.getASAPOrderDetailResponse = await this.getASAPOrderDetail(data);
+        await this.setASAPOrderDetail(data);
       }
     } else {
       throw new Error30092Exception();
@@ -713,14 +715,51 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     await this.callAuditLog(data, 'RBE no existe');
   }
 
-  private async getASAPOrderDetail(
+  private async setASAPOrderDetail(
     data: ValidateTechnicalFeasibilityData,
-  ): Promise<IGetASAPOrderDetailResponse> {
-    return this.getASAPOrderDetailService.getASAPOrderDetail({
-      areaCode: data.requestDto.areaCode,
-      phoneNumber: data.requestDto.phoneNumber,
-      orderId: String(data.requestDto.orderId),
-    });
+  ): Promise<void> {
+    data.getASAPOrderDetailResponse =
+      await this.getASAPOrderDetailService.getASAPOrderDetail({
+        areaCode: data.requestDto.areaCode,
+        phoneNumber: data.requestDto.phoneNumber,
+        orderId: String(data.requestDto.orderId),
+      });
+    this.setLinkNetwork(data);
+  }
+
+  /**
+   * Del campo CTVOBSAS:
+   *  BA => Bastidor
+   *  SB => SubBastidor
+   *  RA => Ranura
+   *  PT => Puerto
+   *  AD => Regleta
+   *  PA => Par
+   *  AUD45 => Tecnología de la Central
+   *  PI =>
+   */
+  private setLinkNetwork(data: ValidateTechnicalFeasibilityData): void {
+    if (!ValidationHelper.isDefined(data.getASAPOrderDetailResponse.CTVOBSAS)) {
+      return;
+    }
+    data.linkNetworkResponse = {
+      BA: null,
+      SB: null,
+      RA: null,
+      PT: null,
+      RE: null,
+      PA: null,
+      AUD45: null,
+      PI: null,
+    };
+    const linkNetworkData = data.getASAPOrderDetailResponse.CTVOBSAS.split(' ');
+    for (let index = 0; index < linkNetworkData.length; index += 2) {
+      const key = linkNetworkData[index];
+      if (data.linkNetworkResponse.hasOwnProperty(key)) {
+        data.linkNetworkResponse[linkNetworkData[index]] =
+          linkNetworkData[index + 1];
+      }
+    }
   }
 
   private queryDHCP(
@@ -843,7 +882,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       abaposition: OracleHelper.tableOfNumberBindOut(),
       abavci: OracleHelper.tableOfNumberBindOut(),
       abacontractid: OracleHelper.tableOfNumberBindOut(),
-      Status: OracleHelper.numberBindOut(),
+      Status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
       BossConstants.ACT_PACKAGE,
@@ -863,7 +902,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       abaposition: OracleHelper.getFirstItem(result, 'abaposition'),
       abavci: OracleHelper.getFirstItem(result, 'abavci'),
       abacontractid: OracleHelper.getFirstItem(result, 'abacontractid'),
-      status: (result?.outBinds?.Status ??
+      status: (OracleHelper.getFirstItem(result, 'Status') ??
         GetABADataConstants.EXECUTION_ERROR) as GetABADataConstants,
     };
     switch (response.status) {
@@ -887,7 +926,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       ),
       abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
       abaphonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
-      abauserlogin: OracleHelper.stringBindIn(data.requestDto.loginInstall),
+      abauserlogin: OracleHelper.stringBindIn(
+        data.requestDto.loginInstall ?? BossConstants.REGISTER,
+      ),
       abaportwithcontract: OracleHelper.numberBindIn(BossConstants.ZERO),
       Status: OracleHelper.numberBindOut(),
     };
@@ -904,7 +945,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case CheckIpStatusConstants.SUCCESSFULL:
         return response;
       case CheckIpStatusConstants.EXECUTION_ERROR:
-        throw new CheckIpExecutionErrorException();
+        throw new CheckIpExecutionErrorException(result);
       case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PHONE_NUMBER:
         return response;
       case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PARAMETER:
@@ -918,7 +959,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
         throw new Error30031Exception();
       default:
-        throw new CheckIpExecutionErrorException();
+        throw new CheckIpExecutionErrorException(result);
     }
   }
 
