@@ -41,7 +41,6 @@ import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
 import { IDeleteOrderResponse } from './delete-order/delete-order-response.interface';
 import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
-import { IGetASAPOrderDetailResponse } from 'src/get-asap-order-detail/get-asap-order-detail-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../dsl-aba-registers/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/get-dhcp-data/get-dhcp-data-response.interface';
@@ -733,7 +732,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
    *  SB => SubBastidor
    *  RA => Ranura
    *  PT => Puerto
-   *  AD => Regleta
+   *  RE => Regleta
    *  PA => Par
    *  AUD45 => Tecnología de la Central
    *  PI =>
