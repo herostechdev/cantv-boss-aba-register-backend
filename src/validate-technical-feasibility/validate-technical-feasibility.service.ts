@@ -196,9 +196,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.getPortIdFromIpResponse = await this.getPortIdFromIp(data);
 
       if (
-        // ValidationHelper.isDefined(data.getPortIdFromIpResponse.dslamportId)
-        data.getPortIdFromIpResponse.status ===
-        GetPortIdFromIpConstants.SUCCESSFULL
+        ValidationHelper.isDefined(data.getPortIdFromIpResponse.dslamportId)
+        // data.getPortIdFromIpResponse.status ===
+        // GetPortIdFromIpConstants.SUCCESSFULL
       ) {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -212,7 +212,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         if (data.isOccupiedPortResponse.result > 0) {
           Wlog.instance.info({
             phoneNumber: BossHelper.getPhoneNumber(dto),
-            message: 'getPortIdFlow',
+            message: 'getPortIdFlow    (1)',
             input: BossHelper.getPhoneNumber(dto),
             clazz: ValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
@@ -232,12 +232,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       } else {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'getPortIdFlow',
+          message: 'getPortIdFlow   (2)',
           input: BossHelper.getPhoneNumber(dto),
           clazz: ValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
         await this.getPortIdFlow(data);
+        return data;
       }
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -247,8 +248,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
       });
       data.getABADataResponse = await this.getABAData(data);
-
-      return data;
 
       if (data.getABADataResponse.status === 0) {
         if (ValidationHelper.isDefined(data.getABADataResponse.abacontractid)) {
@@ -262,8 +261,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             method: 'validateTechnicalFeasibility',
           });
           data.checkIpResponse = await this.checkIp(data);
-
-          return data;
         }
       } else {
         Wlog.instance.info({
@@ -655,11 +652,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       BossConstants.GET_PORT_ID_FROM_IP,
       parameters,
     );
-    const dslamportId = result?.outBinds?.o_dslamportid ?? 1;
     const status = (result?.outBinds?.o_status ??
       GetPortIdFromIpConstants.EXECUTION_ERROR) as GetPortIdFromIpConstants;
     const response: IGetPortIdFromIpResponse = {
-      dslamportId: dslamportId,
+      dslamportId: result?.outBinds?.o_dslamportid,
       status: status,
     };
     switch (status) {
@@ -679,9 +675,40 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   private async getPortIdFlow(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<void> {
+    Wlog.instance.info({
+      phoneNumber: null,
+      message: 'queryDHCP',
+      input: null,
+      clazz: ValidateTechnicalFeasibilityService.name,
+      method: 'getPortIdFlow',
+    });
     data.queryDHCPResponse = await this.queryDHCP(data);
+
+    Wlog.instance.info({
+      phoneNumber: null,
+      message: 'getValidVPI',
+      input: null,
+      clazz: ValidateTechnicalFeasibilityService.name,
+      method: 'getPortIdFlow',
+    });
     data.getValidVPIResponse = await this.getValidVPI(data);
+
+    Wlog.instance.info({
+      phoneNumber: null,
+      message: 'getPortId',
+      input: null,
+      clazz: ValidateTechnicalFeasibilityService.name,
+      method: 'getPortIdFlow',
+    });
     data.getPortIdResponse = await this.getPortId(data);
+
+    Wlog.instance.info({
+      phoneNumber: null,
+      message: 'validaciones validaciones',
+      input: null,
+      clazz: ValidateTechnicalFeasibilityService.name,
+      method: 'getPortIdFlow',
+    });
     if (ValidationHelper.isDefined(data.getPortIdResponse)) {
       await this.dslAuditLogsService.log({
         areaCode: data.requestDto.areaCode,
@@ -779,10 +806,11 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       i_invalidvpi: OracleHelper.numberBindIn(
         Number(data.queryDHCPResponse.vpi),
       ),
+      result: OracleHelper.numberBindOut(),
     };
-    const result = await super.executeStoredProcedure(
-      BossConstants.UTL_PACKAGE,
+    const result = await super.executeFunction(
       BossConstants.GET_VALID_VPI,
+      BossConstants.UTL_PACKAGE,
       parameters,
     );
     return result;
@@ -795,30 +823,31 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       s_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
       n_vpi: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vpi)),
       n_vci: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vci)),
-      I_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress),
-      t_portid: OracleHelper.tableOfStringBindOut(),
-      status: OracleHelper.tableOfStringBindOut(),
+      // I_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress),
+
+      t_portid: OracleHelper.tableOfNumberBindOut(),
+      status: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
       BossConstants.BOSS_PACKAGE,
       BossConstants.GET_PORT_ID,
       parameters,
     );
-    const status = (result?.outBinds?.status ??
+    const status = (OracleHelper.getFirstItem(result, 'status') ??
       GetPortIdStatusConstants.EXECUTION_ERROR) as GetPortIdStatusConstants;
     const response: IGetPortIdResponse = {
-      portId: result?.outBinds?.t_portid,
+      portId: OracleHelper.getFirstItem(result, 't_portid'),
       status: status,
     };
     switch (status) {
       case GetPortIdStatusConstants.SUCCESSFULL:
         return response;
       case GetPortIdStatusConstants.EXECUTION_ERROR:
-        throw new GetPortIdException();
+        throw new GetPortIdException(result);
       case GetPortIdStatusConstants.THERE_IS_NO_DATA:
-        throw new Error30092Exception();
+        throw new Error30092Exception(result);
       default:
-        throw new GetPortIdException();
+        throw new GetPortIdException(result);
     }
   }
 

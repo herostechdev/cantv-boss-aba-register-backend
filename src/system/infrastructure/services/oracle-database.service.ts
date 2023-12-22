@@ -4,6 +4,8 @@ import {
   BindParameter,
   NUMBER,
   DB_TYPE_BOOLEAN,
+  BindParameters,
+  BIND_OUT,
 } from 'oracledb';
 import { CommonService } from './common.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
@@ -121,17 +123,63 @@ export abstract class OracleDatabaseService extends CommonService {
     functionName: string,
     packageName?: string,
     parameters?: any,
+    additionalData?: any,
   ): Promise<any> {
     console.log();
+    console.log('============================================================');
     console.log('executeFunction');
+    console.log(
+      `Ejecutando la función: ${this.getPackage(packageName)}${functionName}`,
+    );
+    console.log();
+    console.log('parameters');
+    console.log(JSON.stringify(parameters));
+
+    Wlog.instance.info({
+      phoneNumber: additionalData?.phoneNumber,
+      message: `Ejecutando la función: ${this.getPackage(
+        packageName,
+      )}${functionName}`,
+      input: JSON.stringify(parameters),
+      clazz: OracleDatabaseService.name,
+      method: 'executeFunction',
+    });
     const sql = this.getFunctionStatement(
       functionName,
       packageName,
       parameters,
     );
+
+    console.log();
     console.log('sql');
-    console.log(sql);
-    return await this.dbConnection.execute(sql, parameters);
+    console.log(JSON.stringify(sql));
+
+    Wlog.instance.info({
+      phoneNumber: additionalData?.phoneNumber,
+      message: `Sentencia Sql: ${sql}`,
+      input: JSON.stringify(parameters),
+      clazz: OracleDatabaseService.name,
+      method: 'executeFunction',
+    });
+    const options = {
+      autoCommit: true,
+    };
+    const response = await this.dbConnection.execute(sql, parameters, options);
+
+    console.log();
+    console.log('response');
+    console.log(JSON.stringify(response));
+
+    Wlog.instance.info({
+      phoneNumber: additionalData?.phoneNumber,
+      message: `Respuesta la función: ${this.getPackage(
+        packageName,
+      )}${functionName}`,
+      response: JSON.stringify(response),
+      clazz: OracleDatabaseService.name,
+      method: 'executeFunction',
+    });
+    return response;
   }
 
   private getFunctionStatement(
@@ -140,8 +188,7 @@ export abstract class OracleDatabaseService extends CommonService {
     parameters?: any,
   ): string {
     packageName = this.getPackage(packageName);
-    parameters = this.getParameterValues(parameters);
-    // return `SELECT ${packageName}${functionName}(${parameters}) FROM DUAL;`;
+    parameters = this.getParameterNames(parameters, true);
     return `BEGIN :result := ${packageName}${functionName}(${parameters}); END;`;
   }
 
@@ -149,29 +196,18 @@ export abstract class OracleDatabaseService extends CommonService {
     return packageName ? `${packageName}.` : '';
   }
 
-  private getParameterNames(parameters?: any): string {
+  private getParameterNames(
+    parameters?: any,
+    excludeOutParameters = false,
+  ): string {
     if (!parameters) return '';
-    return `:${Object.keys(parameters).join(', :')}`;
-  }
-
-  private getParameterValues(parameters?: any): string {
-    if (!parameters) return '';
-    const keys = Object.keys(parameters);
-    return keys
-      .map((key) => {
-        const bindParameter = parameters[key] as BindParameter;
-        console.log();
-        console.log('bindParameter');
-        console.log(bindParameter);
-        if (
-          bindParameter.type === NUMBER ||
-          bindParameter.type === DB_TYPE_BOOLEAN
-        ) {
-          return bindParameter.val;
-        }
-        return `'${bindParameter.val}'`;
-      })
-      .join(', ')
-      .trim();
+    const filteredParameters = Object.keys(parameters).filter((key) => {
+      const parameter: BindParameter = parameters[key];
+      if (excludeOutParameters === true && parameter.dir === BIND_OUT) {
+        return false;
+      }
+      return true;
+    });
+    return `:${filteredParameters.join(', :')}`;
   }
 }
