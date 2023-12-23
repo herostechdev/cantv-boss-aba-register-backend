@@ -238,8 +238,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           method: 'validateTechnicalFeasibility',
         });
         await this.getPortIdFlow(data);
-        return data;
       }
+
+      // TODO: HABILITAR VALIDACIÓN DE RESPUESTA GET ORDER DETAIL
+
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getABAData',
@@ -727,9 +729,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         IsValidIpAddressConstants.POOL_RBE_LEASE
       ) {
         await this.rbeDoesNotExistLog(data);
-      } else {
-        await this.setASAPOrderDetail(data);
       }
+      await this.setASAPOrderDetail(data);
     } else {
       throw new Error30092Exception();
     }
@@ -950,7 +951,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   ): Promise<ICheckIpResponse> {
     const parameters = {
       abadslamportid: OracleHelper.stringBindIn(
-        String(data.getPortIdFromIpResponse.dslamportId),
+        String(
+          data.getPortIdFromIpResponse.dslamportId ??
+            data.getPortIdResponse.portId,
+        ),
       ),
       abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
       abaphonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),

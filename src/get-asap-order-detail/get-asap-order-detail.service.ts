@@ -98,6 +98,12 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       clazz: GetASAPOrderDetailService.name,
       method: 'getASAPOrderDetail',
     });
+
+    console.log();
+    console.log('============================================================');
+    console.log('GetASAPOrderDetailService.invoke');
+    console.log('url', this.picConfigurationService.getASAPOrderDetailUrl);
+
     const instance: AxiosInstance = axios.create({
       httpsAgent: new https.Agent({
         rejectUnauthorized: false,
@@ -108,14 +114,26 @@ export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderD
       this.getBodyPayload(bodyPayload),
       super.getAxiosRequestConfig('VT673consultarDetalleDeOrdenesASAP'),
     );
+
+    console.log();
+    console.log('response');
+    console.log(JSON.stringify(response.data));
+
     const asapOrderDetailResponse = this.getASAPOrderDetailResponse(
       response.data,
     );
+
+    console.log();
+    console.log('asapOrderDetailResponse');
+    console.log(JSON.stringify(asapOrderDetailResponse));
+
     super.validateResponse(
       asapOrderDetailResponse,
       'Error al consultar el detalle de la orden en ASAP. No existe la orden de servicio solicitada',
       PICConstants.PIC_OK_4_ZEROS_ERROR_CODE,
     );
+    console.log();
+    console.log('Fin');
     return asapOrderDetailResponse;
   }
 
