@@ -824,7 +824,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       s_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
       n_vpi: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vpi)),
       n_vci: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vci)),
-      // I_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress),
 
       t_portid: OracleHelper.tableOfNumberBindOut(),
       status: OracleHelper.tableOfNumberBindOut(),
