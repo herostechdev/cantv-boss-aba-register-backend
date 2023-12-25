@@ -6,7 +6,7 @@ export class ExpiredIpException extends CustomBadRequestException {
       code: '',
       guid: '031f1420-3fc4-4c1a-ab20-2acaace98719',
       objectOrError:
-        'Fecha Límite configurada de la Ip – vencida. Acción:=> Rechazar Intento de Registro Remoto-Indicar que debe contacar a Administrador',
+        'Fecha Límite configurada de la Ip está vencida. Acción: Rechazar Intento de Registro Remoto-Indicar que debe contacar a Administrador',
     });
   }
 }

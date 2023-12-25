@@ -1,12 +1,4 @@
-import {
-  getConnection,
-  Connection,
-  BindParameter,
-  NUMBER,
-  DB_TYPE_BOOLEAN,
-  BindParameters,
-  BIND_OUT,
-} from 'oracledb';
+import { getConnection, Connection, BindParameter, BIND_OUT } from 'oracledb';
 import { CommonService } from './common.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';

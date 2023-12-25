@@ -9,6 +9,9 @@ import { ThrottlerConfigurationService } from './system/configuration/throttler/
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+import { AbaRegisterModule } from './aba-register-flow/aba-register.module';
+
 import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
 import { CustomersModule } from './customers/customers.module';
 import { CustomerExistsModule } from './customer-exists/customer-exists.module';
@@ -23,7 +26,7 @@ import { GetOrderIdFromABASalesModule } from './get-order-id-from-aba-sales/get-
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
 import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
 import { IntegrationsConfigurationModule } from './system/configuration/pic/integrations-configuration.module';
-import { IsIPAllowedModule } from './is-ip-allowed/is-ip-allowed.module';
+import { StoredproceduresRawModule } from './database-objects/stored-procedures/stored-procedure-raw.module';
 import { LoginModule } from './login/login.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/plan-by-class-client.module';
@@ -46,6 +49,9 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     }),
 
     ApplicationConfigurationModule,
+
+    AbaRegisterModule,
+
     CustomerExistsModule,
     ConfirmRegistrationModule,
     CustomersModule,
@@ -60,7 +66,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     GetPlanDescriptionFromPlanNameModule,
     GetStateFromSerialModule,
     IntegrationsConfigurationModule,
-    IsIPAllowedModule,
+    StoredproceduresRawModule,
     LoginModule,
     OracleConfigurationModule,
     PlanByClassClientModule,
