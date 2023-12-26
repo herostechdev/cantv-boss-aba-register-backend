@@ -1,15 +1,18 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login/get-group-access-from-login-raw.service';
+import { GetGroupAccessFromLoginRequestDto } from './get-group-access-from-login/get-group-access-from-login-request.dto';
+import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
+import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
+import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
+import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
 import { IsIPAllowedRequestDto } from './is-ip-allowed/is-ip-allowed-request.dto';
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
 import { IIsIPAllowedResponse } from './is-ip-allowed/is-ip-allowed-response.interface';
-import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
-import { GetGroupAccessFromLoginRequestDto } from './get-group-access-from-login/get-group-access-from-login-request.dto';
-import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
-import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allowed-request.dto';
 import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
+import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
+import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allowed-request.dto';
 
 @Controller({
   path: 'raw/sp',
@@ -18,6 +21,7 @@ import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allow
 export class StoredProceduresRawController {
   constructor(
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
+    private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
     private readonly isIPAllowedRawService: IsIPAllowedRawService,
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
   ) {}
@@ -29,6 +33,15 @@ export class StoredProceduresRawController {
     @Body() dto: GetGroupAccessFromLoginRequestDto,
   ): Promise<IGetGroupAccessFromLoginResponse> {
     return this.getGroupAccessFromLoginRawService.execute(dto);
+  }
+
+  @Post('getOrderIdFromABASales')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  GetOrderIdFromABASales(
+    @Body() dto: GetOrderIdFromABASalesRequestDto,
+  ): Promise<IGetOrderIdFromABASalesResponse> {
+    return this.getOrderIdFromABASalesRawService.execute(dto);
   }
 
   @Post('isIpAllowed')

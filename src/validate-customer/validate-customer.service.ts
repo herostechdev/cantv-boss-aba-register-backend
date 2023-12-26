@@ -16,7 +16,6 @@ import { GetDebtFromCustomerInternalErrorException } from './get-debt-from-clien
 import { GetDebtFromCustomerStatusConstants } from './get-debt-from-client/get-debt-from-customer-status.constants';
 import { GetFirstLetterFromABARequestStatusConstants } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
 import { GetFirstLetterFromABARequestInternalErrorException } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-internal-error.exception';
-import { GetOrderIdFromABASalesService } from 'src/get-order-id-from-aba-sales/get-order-id-from-aba-sales.service';
 import { IGetAllValuesFromClientValuesResponse } from './get-all-values-from-client-values/get-all-values-from-client-values-response.interface';
 import { IGetCustomerClassNameFromIdValueResponse } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
 import { IGetCustomerInstanceIdFromIdValueResponse } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
@@ -25,18 +24,17 @@ import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-a
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
+import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { ValidateCustomerData } from './validate-customer-data';
 import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 
 @Injectable()
 export class ValidateCustomerService extends OracleDatabaseService {
   constructor(
     private readonly clientExistsService: CustomerExistsService,
-    private readonly getOrderIdFromABASalesService: GetOrderIdFromABASalesService,
-    protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
+    protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
   ) {
     super(oracleConfigurationService);

@@ -22,7 +22,6 @@ import { GetASAPOrderDetailModule } from './get-asap-order-detail/get-asap-order
 import { GetDHCPDataModule } from './get-dhcp-data/get-dhcp-data.module';
 import { GetDSLAreaCodesModule } from './get-dsl-area-codes/get-dsl-area-codes.module';
 import { GetLegalDocumentsModule } from './get-legal-documents/get-legal-documents.module';
-import { GetOrderIdFromABASalesModule } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales.module';
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
 import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
 import { IntegrationsConfigurationModule } from './system/configuration/pic/integrations-configuration.module';
@@ -62,7 +61,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     GetDHCPDataModule,
     GetDSLAreaCodesModule,
     GetLegalDocumentsModule,
-    GetOrderIdFromABASalesModule,
     GetPlanDescriptionFromPlanNameModule,
     GetStateFromSerialModule,
     IntegrationsConfigurationModule,
