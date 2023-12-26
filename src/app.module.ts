@@ -26,7 +26,7 @@ import { GetOrderIdFromABASalesModule } from './get-order-id-from-aba-sales/get-
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
 import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
 import { IntegrationsConfigurationModule } from './system/configuration/pic/integrations-configuration.module';
-import { StoredproceduresRawModule } from './database-objects/stored-procedures/stored-procedure-raw.module';
+import { StoredproceduresRawModule } from './raw/stored-procedures/stored-procedure-raw.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/plan-by-class-client.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';

@@ -3,12 +3,12 @@ import { Connection } from 'oracledb';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CommonService } from 'src/system/infrastructure/services/common.service';
 import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
-import { ISGActionAllowedException } from 'src/database-objects/stored-procedures/isg-action-allowed/isg-action-allowed.exception';
-import { ISGActionAllowedRawService } from 'src/database-objects/stored-procedures/isg-action-allowed/isg-action-allowed-raw.service';
-import { ISGActionAllowedRequestDto } from 'src/database-objects/stored-procedures/isg-action-allowed/isg-action-allowed-request.dto';
-import { ISGActionAllowedStatusConstants } from 'src/database-objects/stored-procedures/isg-action-allowed/isg-action-allowed-status.constants';
-import { ISGActionAllowedThereIsNoDataException } from 'src/database-objects/stored-procedures/isg-action-allowed/isg-action-allowed-there-is-no-data.exception';
-import { IISGActionAllowedResponse } from 'src/database-objects/stored-procedures/isg-action-allowed/isg-action-allowed-response.interface';
+import { ISGActionAllowedException } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed.exception';
+import { ISGActionAllowedRawService } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-raw.service';
+import { ISGActionAllowedRequestDto } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-request.dto';
+import { ISGActionAllowedStatusConstants } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-status.constants';
+import { ISGActionAllowedThereIsNoDataException } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-there-is-no-data.exception';
+import { IISGActionAllowedResponse } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-response.interface';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()

@@ -4,8 +4,8 @@ import { AbaRegisterLoginRequestDto } from './step-1/login/aba-register-login-re
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
-import { IIsIPAllowedResponse } from 'src/database-objects/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
-import { IsIPAllowedRequestDto } from 'src/database-objects/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
+import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
+import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
 
 @Controller({
   path: 'abaRegister',
