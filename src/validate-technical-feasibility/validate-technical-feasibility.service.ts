@@ -24,7 +24,7 @@ import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-e
 import { GetABADataFromRequestsService } from './get-aba-data-from-requests/get-aba-data-from-requests.service';
 import { GetAndRegisterQualifOfServiceException } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service.exception';
 import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
-import { GetASAPOrderDetailService } from 'src/get-asap-order-detail/get-asap-order-detail.service';
+import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDataFromRequestsStatusConstants } from './get-data-from-requests/get-data-from-requests-status.constants';
@@ -746,7 +746,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<void> {
     data.getASAPOrderDetailResponse =
-      await this.getASAPOrderDetailService.getASAPOrderDetail({
+      await this.getASAPOrderDetailService.execute({
         areaCode: data.requestDto.areaCode,
         phoneNumber: data.requestDto.phoneNumber,
         orderId: String(data.requestDto.orderId),

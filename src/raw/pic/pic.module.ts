@@ -5,6 +5,8 @@ import { CRMCustomersService } from './crm-customer/crm-customers.service';
 import { CRMCustomerRequestPayloadService } from './crm-customer/crm-customer-request-payload.service';
 import { CustomerByPhoneNumberService } from './customer-by-phone-number/customer-by-phone-number.service';
 import { CustomerByPhoneNumberRequestPayloadService } from './customer-by-phone-number/customer-by-phone-number-request-payload.service';
+import { GetASAPOrderDetailService } from './get-asap-order-detail/get-asap-order-detail.service';
+import { GetASAPOrderDetailPayloadService } from './get-asap-order-detail/get-asap-order-detail-payload.service';
 
 @Module({
   imports: [HttpModule],
@@ -14,7 +16,9 @@ import { CustomerByPhoneNumberRequestPayloadService } from './customer-by-phone-
     CRMCustomerRequestPayloadService,
     CustomerByPhoneNumberService,
     CustomerByPhoneNumberRequestPayloadService,
+    GetASAPOrderDetailPayloadService,
+    GetASAPOrderDetailService,
   ],
-  exports: [],
+  exports: [GetASAPOrderDetailService],
 })
 export class PICModule {}

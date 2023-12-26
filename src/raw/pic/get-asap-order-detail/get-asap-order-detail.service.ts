@@ -20,7 +20,6 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 @Injectable()
 export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderDetailResponse> {
   constructor(
-    private readonly httpService: HttpService,
     private readonly requestPayloadService: GetASAPOrderDetailPayloadService,
     private readonly picConfigurationService: IntegrationsConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
@@ -28,7 +27,7 @@ export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderD
     super();
   }
 
-  async getASAPOrderDetail(
+  async execute(
     dto: GetASAPOrderDetailRequestDto,
   ): Promise<IGetASAPOrderDetailResponse> {
     try {
