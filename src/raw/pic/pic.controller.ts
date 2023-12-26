@@ -18,14 +18,14 @@ export class PICController {
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
   ) {}
 
-  @Post('crmCustomer')
+  @Post('customers/fromCRM')
   @HttpCode(200)
   @UseFilters(new HttpExceptionFilter())
   crmCustomer(@Body() dto: CRMCustomerDto): Promise<ICRMCustomerResponse> {
     return this.crmCustomersService.execute(dto);
   }
 
-  @Post('customerByPhoneNumber')
+  @Post('customers/byPhoneNumber')
   @HttpCode(200)
   @UseFilters(new HttpExceptionFilter())
   byPhoneNumber(
