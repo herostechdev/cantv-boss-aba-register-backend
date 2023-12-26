@@ -10,6 +10,7 @@ import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-d
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
+import { IInsertDslAbaRegistersResponse } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
 import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
@@ -20,7 +21,7 @@ import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-fea
 
 export class ValidateTechnicalFeasibilityData {
   requestDto: ValidateTechnicalFeasibilityRequestDto;
-  insertDslAbaRegistersResponse: number;
+  insertDslAbaRegistersResponse: IInsertDslAbaRegistersResponse;
   isPrepaidVoiceLine: IIsPrepaidVoiceLineResponse;
   getAndRegisterQualifOfServiceResponse: IGetAndRegisterQualifOfServiceResponse;
   verifyContractByPhoneResponse: IVerifiyContractByPhoneResponse;

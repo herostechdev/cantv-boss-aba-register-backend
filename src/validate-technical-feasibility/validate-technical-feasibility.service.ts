@@ -50,12 +50,10 @@ import { IGetDataFromRequestsResponse } from './get-data-from-requests/get-data-
 import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
-import { InsertDslAbaRegisterConstants } from './insert-dsl-aba-registers/insert-dsl-aba-register.constants';
-import { InsertDslAbaRegisterException } from './insert-dsl-aba-registers/insert-dsl-aba-register.exception';
-import { InsertDslAbaRegisterThereIsNoDataException } from './insert-dsl-aba-registers/insert-dsl-aba-registers-there-is-no-data.exception';
 import { IsPrepaidVoiceLineException } from './is-prepaid-voice-line/is-a-prepaid-voice-line.exception';
 import { IsPrepaidVoiceLineIsPrepaidConstants } from './is-prepaid-voice-line/is-prepaid-voice-line-is-prepaid.constants';
 import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
+import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { IReadIABAOrderResponse } from './read-iaba-order/read-iaba-order-response.interface';
 import { IsOccupiedPortConstants } from './Is-occupied-port/is-occupied-port.constants';
 import { IsOccupiedPortInternalErrorException } from './Is-occupied-port/is-occupied-port-internal-error.exception';
@@ -73,7 +71,6 @@ import { ReadIABAOrderOrderExistsException } from './read-iaba-order/read-iaba-o
 import { ReadIABAOrderOrderIsOldException } from './read-iaba-order/read-iaba-order-order-is-old.exception';
 import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from './read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
 import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
-import { TheRecordAlreadyExistsException } from './insert-dsl-aba-registers/insert-dsl-aba-registers-the-record-already-exists.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidateTechnicalFeasibilityData } from './validate-technical-feasibility-data';
 import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-feasibility-request.dto';
@@ -89,6 +86,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     private readonly getABADataFromRequestsService: GetABADataFromRequestsService,
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly getDHCPDataService: GetDHCPDataService,
+    private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
@@ -116,9 +114,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
-      data.insertDslAbaRegistersResponse = await this.insertDslAbaRegisters(
-        data,
-      );
+      data.insertDslAbaRegistersResponse =
+        await this.insertDslAbaRegistersRawService.execute({
+          areaCode: data.requestDto.areaCode,
+          phoneNumber: data.requestDto.phoneNumber,
+          registerDate: data.requestDto.registerDate,
+          registerStatus: BossConstants.IN_PROGRESS,
+        });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'isPrepaidVoiceLine',
@@ -374,45 +376,45 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     });
   }
 
-  private async insertDslAbaRegisters(
-    data: ValidateTechnicalFeasibilityData,
-  ): Promise<number> {
-    const registerDate = DateTime.fromFormat(
-      data.requestDto.registerDate,
-      BossConstants.DEFAULT_DATE_FORMAT,
-    ).toJSDate();
-    // .toFormat(BossConstants.DEFAULT_DATE_FORMAT);
-    const parameters = {
-      iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-      iPhoneNumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber, 7),
-      iRegisterDate: OracleHelper.dateBindIn(registerDate),
-      iRegisterStatus: OracleHelper.stringBindIn(BossConstants.IN_PROGRESS, 16),
-      iLoginInstall: OracleHelper.stringBindIn(
-        data.requestDto.loginInstall,
-        32,
-      ),
-      status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ABA_PACKAGE,
-      BossConstants.INSERT_DSL_ABA_REGISTERS,
-      parameters,
-    );
-    const status = (result?.outBinds?.status ??
-      InsertDslAbaRegisterConstants.INTERNAL_ERROR) as InsertDslAbaRegisterConstants;
-    switch (status) {
-      case InsertDslAbaRegisterConstants.SUCCESSFULL:
-        return status;
-      case InsertDslAbaRegisterConstants.INTERNAL_ERROR:
-        throw new InsertDslAbaRegisterException(result);
-      case InsertDslAbaRegisterConstants.THERE_IS_NO_DATA:
-        throw new InsertDslAbaRegisterThereIsNoDataException();
-      case InsertDslAbaRegisterConstants.REGISTERRED:
-        throw new TheRecordAlreadyExistsException();
-      default:
-        throw new InsertDslAbaRegisterException(result);
-    }
-  }
+  // private async insertDslAbaRegisters(
+  //   data: ValidateTechnicalFeasibilityData,
+  // ): Promise<number> {
+  //   const registerDate = DateTime.fromFormat(
+  //     data.requestDto.registerDate,
+  //     BossConstants.DEFAULT_DATE_FORMAT,
+  //   ).toJSDate();
+  //   // .toFormat(BossConstants.DEFAULT_DATE_FORMAT);
+  //   const parameters = {
+  //     iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
+  //     iPhoneNumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber, 7),
+  //     iRegisterDate: OracleHelper.dateBindIn(registerDate),
+  //     iRegisterStatus: OracleHelper.stringBindIn(BossConstants.IN_PROGRESS, 16),
+  //     iLoginInstall: OracleHelper.stringBindIn(
+  //       data.requestDto.loginInstall,
+  //       32,
+  //     ),
+  //     status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ABA_PACKAGE,
+  //     BossConstants.INSERT_DSL_ABA_REGISTERS,
+  //     parameters,
+  //   );
+  //   const status = (result?.outBinds?.status ??
+  //     InsertDslAbaRegisterConstants.INTERNAL_ERROR) as InsertDslAbaRegisterConstants;
+  //   switch (status) {
+  //     case InsertDslAbaRegisterConstants.SUCCESSFULL:
+  //       return status;
+  //     case InsertDslAbaRegisterConstants.INTERNAL_ERROR:
+  //       throw new InsertDslAbaRegisterException(result);
+  //     case InsertDslAbaRegisterConstants.THERE_IS_NO_DATA:
+  //       throw new InsertDslAbaRegisterThereIsNoDataException();
+  //     case InsertDslAbaRegisterConstants.REGISTERRED:
+  //       throw new TheRecordAlreadyExistsException();
+  //     default:
+  //       throw new InsertDslAbaRegisterException(result);
+  //   }
+  // }
 
   private async isPrepaidVoiceLine(
     data: ValidateTechnicalFeasibilityData,
