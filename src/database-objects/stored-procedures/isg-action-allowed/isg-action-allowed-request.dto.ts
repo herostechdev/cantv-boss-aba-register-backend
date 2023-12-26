@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
-export class LoginRequestDto implements IPhoneNumber {
+export class ISGActionAllowedRequestDto implements IPhoneNumber {
   @IsString()
   @IsOptional()
   areaCode: string;
@@ -11,8 +11,8 @@ export class LoginRequestDto implements IPhoneNumber {
   phoneNumber: string;
 
   @IsString()
-  userlogin: string;
+  groupName: string;
 
   @IsString()
-  password: string;
+  action: string;
 }

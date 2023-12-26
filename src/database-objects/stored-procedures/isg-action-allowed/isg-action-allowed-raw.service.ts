@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { IISGActionAllowedResponse } from './isg-action-allowed-response.interface';
+import { ISGActionAllowedRequestDto } from './isg-action-allowed-request.dto';
 import { IOracleRawExecute } from 'src/oracle/oracle-raw-execute.interface';
-import { IsIPAllowedRequestDto } from './is-ip-allowed-request.dto';
-import { IIsIPAllowedResponse } from './is-ip-allowed-response.interface';
-import { IsIpAllowedStatusConstants } from './is-ip-allowed-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 
 @Injectable()
-export class IsIPAllowedRawService
+export class ISGActionAllowedRawService
   extends OracleDatabaseService
-  implements IOracleRawExecute<IsIPAllowedRequestDto, IIsIPAllowedResponse>
+  implements
+    IOracleRawExecute<ISGActionAllowedRequestDto, IISGActionAllowedResponse>
 {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
@@ -21,14 +21,14 @@ export class IsIPAllowedRawService
   }
 
   async execute(
-    dto: IsIPAllowedRequestDto,
+    dto: ISGActionAllowedRequestDto,
     dbConnection?: Connection,
-  ): Promise<IIsIPAllowedResponse> {
+  ): Promise<IISGActionAllowedResponse> {
     try {
       await super.connect(dbConnection);
       const result = await super.executeStoredProcedure(
-        BossConstants.BOSS_PACKAGE,
-        BossConstants.GET_IF_REMOTE_INSTALLER_IP,
+        BossConstants.SIGS_PACKAGE,
+        BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
         this.getParameters(dto),
       );
       return this.getResponse(result);
@@ -39,20 +39,18 @@ export class IsIPAllowedRawService
     }
   }
 
-  getParameters(dto: IsIPAllowedRequestDto): any {
+  getParameters(dto: ISGActionAllowedRequestDto): any {
     return {
-      i_ipsource: OracleHelper.stringBindIn(dto.ipAddress),
+      groupname: OracleHelper.stringBindIn(dto.groupName),
+      action: OracleHelper.stringBindIn(BossConstants.INSTALL_ABA),
 
-      o_expiredate: OracleHelper.tableOfStringBindOut(),
-      o_status: OracleHelper.tableOfNumberBindOut(),
+      status: OracleHelper.tableOfNumberBindOut(),
     };
   }
 
-  getResponse(result: any): IIsIPAllowedResponse {
+  getResponse(result: any): IISGActionAllowedResponse {
     return {
-      expireDate: OracleHelper.getFirstItem(result, 'o_expiredate'),
-      status: (OracleHelper.getFirstItem(result, 'o_status') ??
-        IsIpAllowedStatusConstants.ERROR) as IsIpAllowedStatusConstants,
+      status: OracleHelper.getFirstItem(result, 'status'),
     };
   }
 }

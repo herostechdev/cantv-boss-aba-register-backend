@@ -28,16 +28,16 @@ export class AbaRegisterIsIPAllowedService
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
-        input: dto.ipAddress,
+        input: JSON.stringify(dto),
         clazz: AbaRegisterIsIPAllowedService.name,
-        method: 'isIPAllowed',
+        method: 'execute',
       });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Verifica si la IP es permisada',
-        input: dto.ipAddress,
+        input: JSON.stringify(dto),
         clazz: AbaRegisterIsIPAllowedService.name,
-        method: 'isIPAllowed',
+        method: 'execute',
       });
       const response = await this.isIPAllowedRawService.execute(
         dto,
@@ -47,20 +47,20 @@ export class AbaRegisterIsIPAllowedService
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
-        input: dto.ipAddress,
+        input: JSON.stringify(dto),
         clazz: AbaRegisterIsIPAllowedService.name,
-        method: 'isIPAllowed',
+        method: 'execute',
       });
       return response;
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: dto.ipAddress,
+        input: JSON.stringify(dto),
         clazz: AbaRegisterIsIPAllowedService.name,
-        method: 'isIPAllowed',
+        method: 'execute',
         error: error,
       });
-      super.exceptionHandler(error, dto?.ipAddress);
+      super.exceptionHandler(error, JSON.stringify(dto));
     }
   }
 

@@ -27,7 +27,6 @@ import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-
 import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
 import { IntegrationsConfigurationModule } from './system/configuration/pic/integrations-configuration.module';
 import { StoredproceduresRawModule } from './database-objects/stored-procedures/stored-procedure-raw.module';
-import { LoginModule } from './login/login.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/plan-by-class-client.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
@@ -51,6 +50,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     ApplicationConfigurationModule,
 
     AbaRegisterModule,
+    StoredproceduresRawModule,
 
     CustomerExistsModule,
     ConfirmRegistrationModule,
@@ -66,8 +66,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     GetPlanDescriptionFromPlanNameModule,
     GetStateFromSerialModule,
     IntegrationsConfigurationModule,
-    StoredproceduresRawModule,
-    LoginModule,
     OracleConfigurationModule,
     PlanByClassClientModule,
     SecurityConfigurationModule,
