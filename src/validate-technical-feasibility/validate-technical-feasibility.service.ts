@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 
+import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/step-2/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-error.exception';
@@ -48,17 +49,13 @@ import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-d
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetDataFromRequestsResponse } from './get-data-from-requests/get-data-from-requests-response.interface';
 import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
-import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
-import { IsPrepaidVoiceLineException } from './is-prepaid-voice-line/is-a-prepaid-voice-line.exception';
-import { IsPrepaidVoiceLineIsPrepaidConstants } from './is-prepaid-voice-line/is-prepaid-voice-line-is-prepaid.constants';
 import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
 import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { IReadIABAOrderResponse } from './read-iaba-order/read-iaba-order-response.interface';
 import { IsOccupiedPortConstants } from './Is-occupied-port/is-occupied-port.constants';
 import { IsOccupiedPortInternalErrorException } from './Is-occupied-port/is-occupied-port-internal-error.exception';
 import { IsOccupiedPortTherIsNoDataException } from './Is-occupied-port/is-occupied-port-there-is-no-data.exception';
-import { IsPrepaidVoiceLineStatusConstants } from './is-prepaid-voice-line/is-prepaid-voice-line-status.constants';
 import { IsValidIpAddressConstants } from './is-valid-ip-address/is-valid-ip-address.constants';
 import { IVerifiyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
@@ -82,6 +79,7 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
+    private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
     private readonly getABADataFromRequestsService: GetABADataFromRequestsService,
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
@@ -128,7 +126,11 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
-      data.isPrepaidVoiceLine = await this.isPrepaidVoiceLine(data);
+      data.isPrepaidVoiceLine =
+        await this.abaRegisterIsPrepaidVoiceLineService.execute({
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+        });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getAndRegisterQualifOfService',
@@ -416,38 +418,38 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   //   }
   // }
 
-  private async isPrepaidVoiceLine(
-    data: ValidateTechnicalFeasibilityData,
-  ): Promise<IIsPrepaidVoiceLineResponse> {
-    const parameters = {
-      Abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-      abaphonenumber: OracleHelper.stringBindIn(
-        data.requestDto.phoneNumber,
-        16,
-      ),
-      isPrepago: OracleHelper.numberBindOut(),
-      oStatus: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ACT_PACKAGE,
-      BossConstants.IS_PREPAID,
-      parameters,
-    );
-    const response: IIsPrepaidVoiceLineResponse = {
-      isPrepaid: (result?.outBinds?.isPrepago ??
-        IsPrepaidVoiceLineIsPrepaidConstants.IT_IS_NOT_A_PREPAID_VOICE_LINE) as IsPrepaidVoiceLineIsPrepaidConstants,
-      status: (result?.outBinds?.oStatus ??
-        IsPrepaidVoiceLineStatusConstants.ERROR) as IsPrepaidVoiceLineStatusConstants,
-    };
-    if (
-      response.isPrepaid ==
-        IsPrepaidVoiceLineIsPrepaidConstants.IT_IS_A_PREPAID_VOICE_LINE ||
-      response.status == IsPrepaidVoiceLineStatusConstants.ERROR
-    ) {
-      throw new IsPrepaidVoiceLineException();
-    }
-    return response;
-  }
+  // private async isPrepaidVoiceLine(
+  //   data: ValidateTechnicalFeasibilityData,
+  // ): Promise<IIsPrepaidVoiceLineResponse> {
+  //   const parameters = {
+  //     Abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
+  //     abaphonenumber: OracleHelper.stringBindIn(
+  //       data.requestDto.phoneNumber,
+  //       16,
+  //     ),
+  //     isPrepago: OracleHelper.numberBindOut(),
+  //     oStatus: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ACT_PACKAGE,
+  //     BossConstants.IS_PREPAID,
+  //     parameters,
+  //   );
+  //   const response: IIsPrepaidVoiceLineResponse = {
+  //     isPrepaid: (result?.outBinds?.isPrepago ??
+  //       IsPrepaidVoiceLineIsPrepaidConstants.IT_IS_NOT_A_PREPAID_VOICE_LINE) as IsPrepaidVoiceLineIsPrepaidConstants,
+  //     status: (result?.outBinds?.oStatus ??
+  //       IsPrepaidVoiceLineStatusConstants.ERROR) as IsPrepaidVoiceLineStatusConstants,
+  //   };
+  //   if (
+  //     response.isPrepaid ==
+  //       IsPrepaidVoiceLineIsPrepaidConstants.IT_IS_A_PREPAID_VOICE_LINE ||
+  //     response.status == IsPrepaidVoiceLineStatusConstants.ERROR
+  //   ) {
+  //     throw new IsPrepaidVoiceLineException();
+  //   }
+  //   return response;
+  // }
 
   private async getAndRegisterQualifOfService(
     data: ValidateTechnicalFeasibilityData,

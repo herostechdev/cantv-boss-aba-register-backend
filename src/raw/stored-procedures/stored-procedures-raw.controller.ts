@@ -7,10 +7,9 @@ import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales/
 import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
+import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
-import { IsIPAllowedRequestDto } from './is-ip-allowed/is-ip-allowed-request.dto';
-import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
 import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
 import { IIsIPAllowedResponse } from './is-ip-allowed/is-ip-allowed-response.interface';
 import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
@@ -18,7 +17,9 @@ import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/inse
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers/insert-dsl-aba-registers-request.dto';
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allowed-request.dto';
-import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
+import { IsIPAllowedRequestDto } from './is-ip-allowed/is-ip-allowed-request.dto';
+import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
+import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
@@ -34,6 +35,7 @@ export class StoredProceduresRawController {
     private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
     private readonly isIPAllowedRawService: IsIPAllowedRawService,
+    private readonly isPrepaidVoiceLineRawService: IsPrepaidVoiceLineRawService,
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {}

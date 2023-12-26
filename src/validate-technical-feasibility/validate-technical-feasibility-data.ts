@@ -11,7 +11,7 @@ import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../raw/stored-procedure
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
 import { IInsertDslAbaRegistersResponse } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
-import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
+import { IIsPrepaidVoiceLineResponse } from '../raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
 import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
 import { ILinkNetworkResponse } from 'src/raw/pic/get-asap-order-detail/Iink-network-response.interface';
