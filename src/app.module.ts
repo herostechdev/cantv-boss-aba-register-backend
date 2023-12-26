@@ -11,9 +11,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { AbaRegisterModule } from './aba-register-flow/aba-register.module';
+import { PICModule } from './raw/pic/pic.module';
 
 import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
-import { CustomersModule } from './customers/customers.module';
 import { CustomerExistsModule } from './customer-exists/customer-exists.module';
 import { DocumentsConfigurationModule } from './system/configuration/documents/documents-configuration.module';
 import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
@@ -50,10 +50,10 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
 
     AbaRegisterModule,
     StoredproceduresRawModule,
+    PICModule,
 
     CustomerExistsModule,
     ConfirmRegistrationModule,
-    CustomersModule,
     DocumentsConfigurationModule,
     DSLAuditLogsModule,
     EncryptionModule,

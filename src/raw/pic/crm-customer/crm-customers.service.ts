@@ -8,14 +8,15 @@ import { CRMCustomerInvalidQueryRequestException } from './crm-customer-query-in
 import { CRMCustomerRequestPayloadService } from './crm-customer-request-payload.service';
 import { ICRMCustomerRequestBody } from './crm-customer-request-body.interface';
 import { ICRMCustomerResponse } from './crm-customer-response.interface';
-import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
+
+import { SoapRequestService } from 'src/soap/requests/soap-request.service';
+import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 
 @Injectable()
-export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse> {
+export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse> {
   constructor(
     private readonly httpService: HttpService,
     private readonly requestPayloadService: CRMCustomerRequestPayloadService,
@@ -25,7 +26,7 @@ export class CRMCustomersService extends SOAPRequestService<ICRMCustomerResponse
     super();
   }
 
-  async get(dto: CRMCustomerDto): Promise<ICRMCustomerResponse> {
+  async execute(dto: CRMCustomerDto): Promise<ICRMCustomerResponse> {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),

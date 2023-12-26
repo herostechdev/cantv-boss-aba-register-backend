@@ -12,13 +12,13 @@ import { IGetASAPOrderDetailRequest } from './get-asap-order-detail-request.inte
 import { IGetASAPOrderDetailResponse } from './get-asap-order-detail-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 import { PICConstants } from 'src/boss-helpers/pic.constants';
-import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
+import { SoapRequestService } from 'src/soap/requests/soap-request.service';
 import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class GetASAPOrderDetailService extends SOAPRequestService<IGetASAPOrderDetailResponse> {
+export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderDetailResponse> {
   constructor(
     private readonly httpService: HttpService,
     private readonly requestPayloadService: GetASAPOrderDetailPayloadService,

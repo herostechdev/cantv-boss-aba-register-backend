@@ -5,7 +5,7 @@ import { HttpConstants } from 'src/system/infrastructure/http/http-constants';
 import { ISOAPCommonResponse } from './soap-common-response.interface';
 import { PICConstants } from 'src/boss-helpers/pic.constants';
 
-export abstract class SOAPRequestService<
+export abstract class SoapRequestService<
   RESPONSE extends ISOAPCommonResponse,
 > extends CommonService {
   protected getAxiosRequestConfig(soapAction: string): AxiosRequestConfig {

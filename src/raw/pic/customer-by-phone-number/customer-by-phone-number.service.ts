@@ -10,13 +10,13 @@ import { ICustomerByPhoneNumberRequestBody } from './customer-by-phone-number-re
 import { ICustomerByPhoneNumberResponse } from './customer-by-phone-number-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 import { PICConstants } from 'src/boss-helpers/pic.constants';
-import { SOAPRequestService } from 'src/soap/requests/soap-request.service';
+import { SoapRequestService } from 'src/soap/requests/soap-request.service';
 import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerByPhoneNumberResponse> {
+export class CustomerByPhoneNumberService extends SoapRequestService<ICustomerByPhoneNumberResponse> {
   constructor(
     private readonly httpService: HttpService,
     private readonly requestPayloadService: CustomerByPhoneNumberRequestPayloadService,
@@ -26,7 +26,7 @@ export class CustomerByPhoneNumberService extends SOAPRequestService<ICustomerBy
     super();
   }
 
-  async get(
+  async execute(
     dto: CustomerByPhoneNumberDto,
   ): Promise<ICustomerByPhoneNumberResponse> {
     try {
