@@ -4,18 +4,21 @@ import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
 import { StoredProceduresRawController } from './stored-procedures-raw.controller';
+import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
 
 @Global()
 @Module({
   imports: [],
   controllers: [StoredProceduresRawController],
   providers: [
+    GetDSLAreaCodesRawService,
     GetGroupAccessFromLoginRawService,
     GetOrderIdFromABASalesRawService,
     IsIPAllowedRawService,
     ISGActionAllowedRawService,
   ],
   exports: [
+    GetDSLAreaCodesRawService,
     GetGroupAccessFromLoginRawService,
     GetOrderIdFromABASalesRawService,
     IsIPAllowedRawService,

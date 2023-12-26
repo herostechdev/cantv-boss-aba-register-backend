@@ -3,12 +3,15 @@ import { AbaRegisterGetOrderIdFromAbaSalesService } from './step-2/get-order-id-
 import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-register-is-ip-allowed.service';
 import { AbaRegisterLoginRequestDto } from './step-1/login/aba-register-login-request.dto';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
+import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
+import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
 import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
 import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
+import { AbaRegisterGetDslAreaCodesService } from './step-2/get-dsl-area-codes/aba-register-get-dsl-area-codes.service';
 
 @Controller({
   path: 'abaRegister',
@@ -16,10 +19,20 @@ import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/i
 })
 export class AbaRegisterController {
   constructor(
+    private readonly abaRegisterGetDslAreaCodesService: AbaRegisterGetDslAreaCodesService,
     private readonly abaRegisterGetOrderIdFromAbaSalesService: AbaRegisterGetOrderIdFromAbaSalesService,
     private readonly abaRegisterIsIPAllowedService: AbaRegisterIsIPAllowedService,
     private readonly abaRegisterLoginService: AbaRegisterLoginService,
   ) {}
+
+  @Post('getDslAreaCodes')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getDslAreaCodes(
+    @Body() dto: GetDSLAreaCodesRequestDto,
+  ): Promise<IGetDSLAreaCodesResponse> {
+    return this.abaRegisterGetDslAreaCodesService.execute(dto);
+  }
 
   @Post('getOrderIdFromAbaSales')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)

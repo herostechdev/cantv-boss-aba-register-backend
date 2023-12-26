@@ -1,4 +1,6 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
+import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes/get-dsl-area-codes-request.dto';
+import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login/get-group-access-from-login-raw.service';
 import { GetGroupAccessFromLoginRequestDto } from './get-group-access-from-login/get-group-access-from-login-request.dto';
 import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
@@ -13,6 +15,7 @@ import { IIsIPAllowedResponse } from './is-ip-allowed/is-ip-allowed-response.int
 import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allowed-request.dto';
+import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
 
 @Controller({
   path: 'raw/sp',
@@ -20,11 +23,21 @@ import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allo
 })
 export class StoredProceduresRawController {
   constructor(
+    private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
     private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
     private readonly isIPAllowedRawService: IsIPAllowedRawService,
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
   ) {}
+
+  @Post('getDSLAreaCodes')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getDSLAreaCodes(
+    @Body() dto: GetDSLAreaCodesRequestDto,
+  ): Promise<IGetDSLAreaCodesResponse> {
+    return this.getDSLAreaCodesRawService.execute(dto);
+  }
 
   @Post('getGroupAccessFromLogin')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
