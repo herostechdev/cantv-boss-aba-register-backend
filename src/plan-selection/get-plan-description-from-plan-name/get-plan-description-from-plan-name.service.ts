@@ -8,14 +8,14 @@ import { IGetPlanDescriptionFromPlanNameResponse } from './get-plan-description-
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
-import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService);
   }

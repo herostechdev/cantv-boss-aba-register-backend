@@ -14,7 +14,7 @@ import { IntegrationsConfigurationService } from 'src/system/configuration/pic/i
 import { PICConstants } from 'src/boss-helpers/pic.constants';
 import { SoapRequestService } from 'src/soap/requests/soap-request.service';
 import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
-import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderD
   constructor(
     private readonly requestPayloadService: GetASAPOrderDetailPayloadService,
     private readonly picConfigurationService: IntegrationsConfigurationService,
-    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super();
   }

@@ -8,14 +8,14 @@ import { ExceptionsService } from 'src/system/infrastructure/services/exceptions
 import { DocumentsConfigurationService } from 'src/system/configuration/documents/documents-configuration.service';
 import { GetLegalDocumentsRequestDto } from './get-legal-documents-request.dto';
 import { IGetLegalDocuments } from './get-legal-documents-response.interface';
-import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class GetLegalDocumentsService extends ExceptionsService {
   constructor(
     private readonly documentsConfigurationService: DocumentsConfigurationService,
-    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super();
   }

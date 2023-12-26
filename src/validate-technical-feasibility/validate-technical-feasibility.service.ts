@@ -42,7 +42,7 @@ import { IDeleteOrderResponse } from './delete-order/delete-order-response.inter
 import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
-import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../dsl-aba-registers/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
+import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
@@ -74,7 +74,7 @@ import { ReadIABAOrderOrderIsOldException } from './read-iaba-order/read-iaba-or
 import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from './read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
 import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
 import { TheRecordAlreadyExistsException } from './insert-dsl-aba-registers/insert-dsl-aba-registers-the-record-already-exists.exception';
-import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidateTechnicalFeasibilityData } from './validate-technical-feasibility-data';
 import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-feasibility-request.dto';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
@@ -90,7 +90,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly getDHCPDataService: GetDHCPDataService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService);
   }

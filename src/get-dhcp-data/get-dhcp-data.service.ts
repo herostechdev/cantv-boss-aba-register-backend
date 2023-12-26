@@ -11,7 +11,7 @@ import { HttpConstants } from 'src/system/infrastructure/http/http-constants';
 import { HttpService } from '@nestjs/axios';
 import { IGetDHCPDataResponse } from './get-dhcp-data-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
-import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
@@ -20,7 +20,7 @@ export class GetDHCPDataService extends ExceptionsService {
   constructor(
     private readonly integrationsConfigurationService: IntegrationsConfigurationService,
     private readonly httpService: HttpService,
-    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super();
   }

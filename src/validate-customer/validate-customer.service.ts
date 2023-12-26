@@ -24,7 +24,7 @@ import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-a
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidateCustomerData } from './validate-customer-data';
 import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
@@ -35,7 +35,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
     private readonly clientExistsService: CustomerExistsService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
+    private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService);
   }
@@ -168,7 +168,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
               method: 'validateCustomer',
             });
             data.updateDslABARegistersResponse =
-              await this.updateDslAbaRegistersService.update({
+              await this.updateDslAbaRegistersRawService.execute({
                 areaCode: data.requestDto.areaCode,
                 phoneNumber: data.requestDto.phoneNumber,
                 registerStatus: BossConstants.NOT_PROCESSED,
@@ -189,7 +189,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
             method: 'validateCustomer',
           });
           data.updateDslABARegistersResponse =
-            await this.updateDslAbaRegistersService.update({
+            await this.updateDslAbaRegistersRawService.execute({
               areaCode: data.requestDto.areaCode,
               phoneNumber: data.requestDto.phoneNumber,
               registerStatus: BossConstants.NOT_PROCESSED,
@@ -206,7 +206,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         method: 'validateCustomer',
         error: error,
       });
-      await this.updateDslAbaRegistersService.errorUpdate({
+      await this.updateDslAbaRegistersRawService.errorUpdate({
         areaCode: dto.areaCode,
         phoneNumber: dto.phoneNumber,
         registerStatus: BossConstants.NOT_PROCESSED,

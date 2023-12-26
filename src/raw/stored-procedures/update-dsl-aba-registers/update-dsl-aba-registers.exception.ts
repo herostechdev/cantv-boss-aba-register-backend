@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class UpdateDslAbaRegistersInternalErrorException extends CustomBadRequestException {
+export class UpdateDslAbaRegistersException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',

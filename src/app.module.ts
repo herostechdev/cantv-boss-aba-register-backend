@@ -27,7 +27,6 @@ import { StoredproceduresRawModule } from './raw/stored-procedures/stored-proced
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/plan-by-class-client.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
-import { UpdateDslAbaRegistersModule } from './dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.module';
 import { ValidateCustomerModule } from './validate-customer/validate-customer.module';
 import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibility/validate-technical-feasibility.module';
 
@@ -63,7 +62,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     OracleConfigurationModule,
     PlanByClassClientModule,
     SecurityConfigurationModule,
-    UpdateDslAbaRegistersModule,
     ValidateCustomerModule,
     ValidateTechnicalFeasibilityModule,
   ],

@@ -8,7 +8,7 @@ import { IOracleRawExecute } from 'src/oracle/oracle-raw-execute.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { UpdateDslAbaRegistersService } from 'src/dsl-aba-registers/update-dsl-aba-registers/update-dsl-aba-registers.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
 export class GetOrderIdFromABASalesRawService
@@ -21,7 +21,7 @@ export class GetOrderIdFromABASalesRawService
 {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersService,
+    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService);
   }

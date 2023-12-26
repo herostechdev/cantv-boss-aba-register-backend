@@ -16,6 +16,9 @@ import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allow
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allowed-request.dto';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
+import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
+import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
+import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Controller({
   path: 'raw/sp',
@@ -28,6 +31,7 @@ export class StoredProceduresRawController {
     private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
     private readonly isIPAllowedRawService: IsIPAllowedRawService,
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
+    private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {}
 
   @Post('getDSLAreaCodes')
@@ -73,5 +77,14 @@ export class StoredProceduresRawController {
     @Body() dto: ISGActionAllowedRequestDto,
   ): Promise<IISGActionAllowedResponse> {
     return this.isgActionAllowedRawService.execute(dto);
+  }
+
+  @Post('updateDslAbaRegisters')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  updateDslAbaRegisters(
+    @Body() dto: UpdateDslAbaRegistersRequestDto,
+  ): Promise<IUpdateDslAbaRegistersResponse> {
+    return this.updateDslAbaRegistersRawService.execute(dto);
   }
 }

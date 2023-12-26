@@ -5,6 +5,7 @@ import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allo
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
 import { StoredProceduresRawController } from './stored-procedures-raw.controller';
 import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
+import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Global()
 @Module({
@@ -16,6 +17,7 @@ import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-cod
     GetOrderIdFromABASalesRawService,
     IsIPAllowedRawService,
     ISGActionAllowedRawService,
+    UpdateDslAbaRegistersRawService,
   ],
   exports: [
     GetDSLAreaCodesRawService,
@@ -23,6 +25,7 @@ import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-cod
     GetOrderIdFromABASalesRawService,
     IsIPAllowedRawService,
     ISGActionAllowedRawService,
+    UpdateDslAbaRegistersRawService,
   ],
 })
 export class StoredproceduresRawModule {}
