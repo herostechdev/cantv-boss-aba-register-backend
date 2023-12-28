@@ -202,4 +202,13 @@ export abstract class OracleDatabaseService extends CommonService {
     });
     return `:${filteredParameters.join(', :')}`;
   }
+
+  async setTimestampFormat(): Promise<void> {
+    let sql =
+      "alter session set nls_timestamp_format = 'YYYY-MM-DD HH24:MI:SS.FF'";
+    await this.dbConnection.execute(sql);
+    sql =
+      "alter session set nls_timestamp_tz_format = 'YYYY-MM-DD HH24:MI:SS.FF'";
+    await this.dbConnection.execute(sql);
+  }
 }

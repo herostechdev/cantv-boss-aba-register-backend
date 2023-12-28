@@ -1,4 +1,5 @@
 import { Global, Module } from '@nestjs/common';
+import { GetDHCPDataRawService } from '../boss-api/get-dhcp-data/get-dhcp-data-raw.service';
 import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login/get-group-access-from-login-raw.service';
 import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';

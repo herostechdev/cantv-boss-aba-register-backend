@@ -6,6 +6,7 @@ export class BossConstants {
   public static ACT_PACKAGE = 'ACT_PACKAGE';
   public static BOSS_PACKAGE = 'BOSS_PACKAGE';
   public static SIGS_PACKAGE = 'SIGS_PACKAGE';
+  public static SAC_PACKAGE = 'sac';
   public static UTL_PACKAGE = 'UTL_PACKAGE';
 
   // STORED PROCEDURES

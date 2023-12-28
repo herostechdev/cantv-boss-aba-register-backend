@@ -4,6 +4,7 @@ import {
   STRING,
   NUMBER,
   BIND_OUT,
+  DATE,
   DB_TYPE_VARCHAR,
   DB_TYPE_NUMBER,
   DB_TYPE_DATE,
@@ -69,14 +70,15 @@ export class OracleHelper {
   public static dateBindIn(value: Date): BindParameters {
     return {
       val: value,
-      type: DB_TYPE_DATE,
+      type: DATE,
       dir: BIND_IN,
     };
   }
 
   public static dateBindOut(): BindParameters {
     return {
-      type: DB_TYPE_DATE,
+      // type: DB_TYPE_DATE,
+      type: DATE,
       dir: BIND_OUT,
     };
   }

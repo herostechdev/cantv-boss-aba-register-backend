@@ -30,7 +30,7 @@ import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-d
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDataFromRequestsStatusConstants } from './get-data-from-requests/get-data-from-requests-status.constants';
 import { GetDataFromRequestsException } from './get-data-from-requests/get-data-from-requests.exception';
-import { GetDHCPDataService } from 'src/get-dhcp-data/get-dhcp-data.service';
+import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-raw.service';
 import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
 import { GetDownstreamFromPlanThereIsNoDataException } from './get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
 import { GetInfoFromABARequestsException } from './get-info-from-aba-requests/get-info-from-aba-requests.exception';
@@ -44,7 +44,7 @@ import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interf
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
-import { IGetDHCPDataResponse } from 'src/get-dhcp-data/get-dhcp-data-response.interface';
+import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetDataFromRequestsResponse } from './get-data-from-requests/get-data-from-requests-response.interface';
@@ -82,8 +82,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
     private readonly getABADataFromRequestsService: GetABADataFromRequestsService,
+    private readonly getDHCPDataService: GetDHCPDataRawService,
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
-    private readonly getDHCPDataService: GetDHCPDataService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
@@ -292,14 +292,16 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           });
           await this.modifyNetworkAccessLog(data);
         }
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'deleteOrder',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateTechnicalFeasibilityService.name,
-          method: 'validateTechnicalFeasibility',
-        });
-        data.deleteOrderResponse = await this.deleteOrder(data);
+
+        // Wlog.instance.info({
+        //   phoneNumber: BossHelper.getPhoneNumber(dto),
+        //   message: 'deleteOrder',
+        //   input: BossHelper.getPhoneNumber(dto),
+        //   clazz: ValidateTechnicalFeasibilityService.name,
+        //   method: 'validateTechnicalFeasibility',
+        // });
+        // data.deleteOrderResponse = await this.deleteOrder(data);
+
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getDSLCentralCoIdByDSLAMPortId',
@@ -317,6 +319,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           method: 'validateTechnicalFeasibility',
         });
         data.readIABAOrderResponse = await this.readIABAOrder(data);
+
+        // frpl
+        return data;
+
         if (
           data.readIABAOrderResponse.errorCode ===
           ReadIABAOrderErrorCodeConstants.SUCCESSFULL
@@ -796,7 +802,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   private queryDHCP(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDHCPDataResponse> {
-    return this.getDHCPDataService.get({
+    return this.getDHCPDataService.execute({
       areaCode: data.requestDto.areaCode,
       phoneNumber: data.requestDto.phoneNumber,
       ipAddress: data.requestDto.ipAddress,
@@ -1002,10 +1008,11 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDataFromDSLAMPortIdResponse> {
     const parameters = {
-      abadslamportid: OracleHelper.stringBindIn(
-        String(data.getPortIdFromIpResponse.dslamportId),
+      abadslamportid: OracleHelper.numberBindIn(
+        data.getPortIdFromIpResponse.dslamportId,
       ),
-      abarack: OracleHelper.tableOfNumberBindOut(),
+
+      abarack: OracleHelper.tableOfStringBindOut(),
       abadslamposition: OracleHelper.tableOfStringBindOut(),
       abaslot: OracleHelper.tableOfNumberBindOut(),
       abaport: OracleHelper.tableOfNumberBindOut(),
@@ -1029,7 +1036,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       abapairad: OracleHelper.getFirstItem(result, 'abapairad'),
       abaprovider: OracleHelper.getFirstItem(result, 'abaprovider'),
       abasistema: OracleHelper.getFirstItem(result, 'abasistema'),
-      status: (result?.outBinds?.Status ??
+      status: (OracleHelper.getFirstItem(result, 'status') ??
         GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR) as GetDataFromDSLAMPortIdStatusConstants,
     };
     switch (response.status) {
@@ -1083,20 +1090,32 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   private async getDSLCentralCoIdByDSLAMPortId(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IGetDSLCentralCoIdByDSLAMPortIdResponse> {
+    // const parameters = {
+    //   i_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
+    //   i_invalidvpi: OracleHelper.numberBindIn(
+    //     Number(data.queryDHCPResponse.vpi),
+    //   ),
+
+    //   result: OracleHelper.numberBindOut(),
+    // };
+
     const parameters = {
       l_dslamportid: OracleHelper.numberBindIn(
         data.getPortIdFromIpResponse.dslamportId ??
           data.getPortIdResponse.portId,
       ),
-      sz_Coid: OracleHelper.stringBindOut(),
+
+      result: OracleHelper.stringBindOut(),
     };
-    const result = await super.executeStoredProcedure(
-      null,
+
+    const result = await super.executeFunction(
       BossConstants.GET_DSL_CENTRAL_CO_ID_BY_DSLAM_PORT_ID,
+      // BossConstants.SAC_PACKAGE,
+      null,
       parameters,
     );
     const response: IGetDSLCentralCoIdByDSLAMPortIdResponse = {
-      coId: result?.outBinds?.sz_Coid,
+      coId: result?.outBinds?.result,
     };
     return response;
   }
@@ -1104,10 +1123,33 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   private async readIABAOrder(
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IReadIABAOrderResponse> {
-    const orderDate = DateTime.fromFormat(
-      data?.getABADataResponse?.abaorderdate,
-      'dd/MM/yyyy',
-    );
+    console.log();
+    console.log('readIABAOrder', data?.getABADataResponse?.abaorderdate);
+
+    const dateTimeOrderDate = data?.getABADataResponse?.abaorderdate
+      ? DateTime.fromFormat(
+          data?.getABADataResponse?.abaorderdate,
+          BossConstants.DEFAULT_DATE_FORMAT,
+        )
+      : DateTime.now();
+
+    // const orderDate = dateTimeOrderDate.isValid
+    //   ? // ? dateTimeOrderDate.toJSDate().toFormat(BossConstants.DEFAULT_DATE_FORMAT)
+    //     dateTimeOrderDate.toJSDate()
+    //   : null;
+
+    // const orderDate = '2023-12-26';
+    // const orderDate = '2003-10-23 14:50:30.123Z';
+    // const orderDate = '2003-10-23 14:50:30';
+    // const orderDate = '27/12/2023 14:50:30';
+    // const orderDate = new Date(2003, 9, 23, 11, 50, 30, 123);
+    // const orderDate = new Date(2003, 9, 23, 11, 50, 30);
+    // const orderDate = new Date(2003, 9, 23);
+    const orderDate = new Date('2019-07-24');
+
+    console.log();
+    console.log('orderDate', orderDate);
+
     const parameters = {
       sz_ncc: OracleHelper.stringBindIn(
         this.getValue(
@@ -1130,9 +1172,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           data.requestDto.lineType,
         ),
       ),
-      sz_orderdate: OracleHelper.dateBindIn(
-        orderDate.isValid ? orderDate.toJSDate() : null,
-      ),
+
+      sz_orderdate: OracleHelper.dateBindIn(orderDate),
+
       sz_rack: OracleHelper.stringBindIn(
         this.getValue(
           data.requestDto.orderIsAtBoss,
@@ -1186,7 +1228,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         16,
       ),
       sz_room: OracleHelper.stringBindIn(BossConstants.ADSL, 32),
-      n_recursive: OracleHelper.numberBindIn(BossConstants.ZERO),
+      // n_recursive: OracleHelper.numberBindIn(BossConstants.ZERO),
       sz_sistema: OracleHelper.stringBindIn(null),
       iCoid: OracleHelper.stringBindIn(
         data.getDSLCentralCoIdByDSLAMPortIdResponse.coId,
@@ -1198,8 +1240,19 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           ? BossConstants.ONE
           : BossConstants.ZERO,
       ),
+
       l_errorcode: OracleHelper.tableOfNumberBindOut(),
     };
+
+    console.log();
+    console.log('parameters');
+    console.log(parameters);
+
+    console.log();
+    console.log('setTimestampFormat');
+
+    await this.setTimestampFormat();
+
     const result = await super.executeStoredProcedure(
       BossConstants.UTL_PACKAGE,
       BossConstants.READ_IABA_ORDER,

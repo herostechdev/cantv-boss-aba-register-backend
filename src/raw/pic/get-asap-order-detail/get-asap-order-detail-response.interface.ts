@@ -6,6 +6,7 @@ export interface IGetASAPOrderDetailResponse extends ISOAPCommonResponse {
   CTVDTACTIVAAS: string;
   CTVCODFACAS: string;
   CTVSTATUSAS: string;
+  CTVSTATUSASCODE: number;
   CTVDIRINSAS: string;
   CTVCNTSRVAS: string;
   CTVSERVAS: string;
