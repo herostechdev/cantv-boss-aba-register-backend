@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { GetDHCPDataRawService } from '../boss-api/get-dhcp-data/get-dhcp-data-raw.service';
+import { GetAndRegisterQualifOfServiceRawService } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login/get-group-access-from-login-raw.service';
 import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
@@ -15,6 +15,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
   imports: [],
   controllers: [StoredProceduresRawController],
   providers: [
+    GetAndRegisterQualifOfServiceRawService,
     GetDSLAreaCodesRawService,
     GetGroupAccessFromLoginRawService,
     GetOrderIdFromABASalesRawService,
@@ -25,6 +26,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     UpdateDslAbaRegistersRawService,
   ],
   exports: [
+    GetAndRegisterQualifOfServiceRawService,
     GetDSLAreaCodesRawService,
     GetGroupAccessFromLoginRawService,
     GetOrderIdFromABASalesRawService,

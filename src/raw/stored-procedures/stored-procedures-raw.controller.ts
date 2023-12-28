@@ -1,4 +1,6 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
+import { GetAndRegisterQualifOfServiceDto } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-request.dto';
+import { GetAndRegisterQualifOfServiceRawService } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login/get-group-access-from-login-raw.service';
@@ -7,6 +9,7 @@ import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales/
 import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
+import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
@@ -30,6 +33,7 @@ import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/upda
 })
 export class StoredProceduresRawController {
   constructor(
+    private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
     private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
     private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
@@ -39,6 +43,15 @@ export class StoredProceduresRawController {
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {}
+
+  @Post('getAndRegisterQualifOfService')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getAndRegisterQualifOfService(
+    @Body() dto: GetAndRegisterQualifOfServiceDto,
+  ): Promise<IGetAndRegisterQualifOfServiceResponse> {
+    return this.getAndRegisterQualifOfServiceRawService.execute(dto);
+  }
 
   @Post('getDSLAreaCodes')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)

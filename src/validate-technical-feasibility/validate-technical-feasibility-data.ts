@@ -2,7 +2,7 @@ import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
 import { IDeleteOrderResponse } from './delete-order/delete-order-response.interface';
 import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests/get-aba-data-from-requests-response.interface';
 import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interface';
-import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
+import { IGetAndRegisterQualifOfServiceResponse } from '../raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetASAPOrderDetailResponse } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';

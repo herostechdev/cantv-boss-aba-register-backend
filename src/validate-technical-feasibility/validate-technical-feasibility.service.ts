@@ -23,8 +23,7 @@ import { GetPortIdFromIpExecutionException } from './get-port-id-from-ip/get-por
 import { GetABADataConstants } from './get-aba-data/get-aba-data.constants';
 import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-execution-error.exception';
 import { GetABADataFromRequestsService } from './get-aba-data-from-requests/get-aba-data-from-requests.service';
-import { GetAndRegisterQualifOfServiceException } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service.exception';
-import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
+import { GetAndRegisterQualifOfServiceRawService } from 'src/raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
@@ -41,7 +40,6 @@ import { GetPortIdException } from './get-port-id/get-port-id.exception';
 import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
 import { IDeleteOrderResponse } from './delete-order/delete-order-response.interface';
 import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interface';
-import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
@@ -82,6 +80,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
     private readonly getABADataFromRequestsService: GetABADataFromRequestsService,
+    private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
     private readonly getDHCPDataService: GetDHCPDataRawService,
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
@@ -139,7 +138,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
       });
       data.getAndRegisterQualifOfServiceResponse =
-        await this.getAndRegisterQualifOfService(data);
+        await this.getAndRegisterQualifOfServiceRawService.execute({
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+        });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'verifyContractByPhone',
@@ -150,13 +152,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       data.verifyContractByPhoneResponse = await this.verifyContractByPhone(
         data,
       );
-      // Wlog.instance.info({
-      //   message: 'getDataFromRequests',
-      //   data: BossHelper.getPhoneNumber(dto),
-      //   clazz: ValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // data.getDataFromRequestsResponse = await this.getDataFromRequests(data);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getABADataFromRequests',
@@ -201,8 +196,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
 
       if (
         ValidationHelper.isDefined(data.getPortIdFromIpResponse.dslamportId)
-        // data.getPortIdFromIpResponse.status ===
-        // GetPortIdFromIpConstants.SUCCESSFULL
       ) {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -457,45 +450,45 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   //   return response;
   // }
 
-  private async getAndRegisterQualifOfService(
-    data: ValidateTechnicalFeasibilityData,
-  ): Promise<IGetAndRegisterQualifOfServiceResponse> {
-    const parameters = {
-      i_clientserviceid: OracleHelper.numberBindIn(null), // Iván indica enviar siempre null 2023-12-11
-      i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
-      i_phonenumber: OracleHelper.stringBindIn(
-        data.requestDto.phoneNumber,
-        256,
-      ),
-      o_qualifpossible: OracleHelper.stringBindOut(),
-      o_modemstatus: OracleHelper.stringBindOut(),
-      o_maxdownstream: OracleHelper.stringBindOut(),
-      o_maxupstream: OracleHelper.stringBindOut(),
-      o_status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      null,
-      BossConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
-      parameters,
-    );
-    const status = (result?.outBinds?.o_status ??
-      GetAndRegisterQualifOfServiceStatusConstants.ERROR) as GetAndRegisterQualifOfServiceStatusConstants;
-    const response: IGetAndRegisterQualifOfServiceResponse = {
-      qualifpossible: result?.outBinds?.o_qualifpossible,
-      modemstatus: result?.outBinds?.o_modemstatus,
-      maxdownstream: result?.outBinds?.o_maxdownstream,
-      maxupstream: result?.outBinds?.o_maxupstream,
-      status: status,
-    };
-    switch (status) {
-      case GetAndRegisterQualifOfServiceStatusConstants.SUCCESSFULL:
-        return response;
-      case GetAndRegisterQualifOfServiceStatusConstants.ERROR:
-        throw new GetAndRegisterQualifOfServiceException(result);
-      default:
-        throw new GetAndRegisterQualifOfServiceException(result);
-    }
-  }
+  // private async getAndRegisterQualifOfService(
+  //   data: ValidateTechnicalFeasibilityData,
+  // ): Promise<IGetAndRegisterQualifOfServiceResponse> {
+  //   const parameters = {
+  //     i_clientserviceid: OracleHelper.numberBindIn(null), // Iván indica enviar siempre null 2023-12-11
+  //     i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
+  //     i_phonenumber: OracleHelper.stringBindIn(
+  //       data.requestDto.phoneNumber,
+  //       256,
+  //     ),
+  //     o_qualifpossible: OracleHelper.stringBindOut(),
+  //     o_modemstatus: OracleHelper.stringBindOut(),
+  //     o_maxdownstream: OracleHelper.stringBindOut(),
+  //     o_maxupstream: OracleHelper.stringBindOut(),
+  //     o_status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     null,
+  //     BossConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
+  //     parameters,
+  //   );
+  //   const status = (result?.outBinds?.o_status ??
+  //     GetAndRegisterQualifOfServiceStatusConstants.ERROR) as GetAndRegisterQualifOfServiceStatusConstants;
+  //   const response: IGetAndRegisterQualifOfServiceResponse = {
+  //     qualifpossible: result?.outBinds?.o_qualifpossible,
+  //     modemstatus: result?.outBinds?.o_modemstatus,
+  //     maxdownstream: result?.outBinds?.o_maxdownstream,
+  //     maxupstream: result?.outBinds?.o_maxupstream,
+  //     status: status,
+  //   };
+  //   switch (status) {
+  //     case GetAndRegisterQualifOfServiceStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetAndRegisterQualifOfServiceStatusConstants.ERROR:
+  //       throw new GetAndRegisterQualifOfServiceException(result);
+  //     default:
+  //       throw new GetAndRegisterQualifOfServiceException(result);
+  //   }
+  // }
 
   private async verifyContractByPhone(
     data: ValidateTechnicalFeasibilityData,
