@@ -36,14 +36,6 @@ export class GetAndRegisterQualifOfServiceRawService
         this.getParameters(dto),
       );
       return this.getResponse(result);
-      // switch (status) {
-      //   case GetAndRegisterQualifOfServiceStatusConstants.SUCCESSFULL:
-      //     return response;
-      //   case GetAndRegisterQualifOfServiceStatusConstants.ERROR:
-      //     throw new GetAndRegisterQualifOfServiceException(result);
-      //   default:
-      //     throw new GetAndRegisterQualifOfServiceException(result);
-      // }
     } catch (error) {
       super.exceptionHandler(error, dto);
     } finally {

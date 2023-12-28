@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 
 import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/step-2/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
+import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/step-2/get-and-register-qualif-of-service/get-and-register-qualif-of-service.service';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-error.exception';
@@ -23,7 +24,6 @@ import { GetPortIdFromIpExecutionException } from './get-port-id-from-ip/get-por
 import { GetABADataConstants } from './get-aba-data/get-aba-data.constants';
 import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-execution-error.exception';
 import { GetABADataFromRequestsService } from './get-aba-data-from-requests/get-aba-data-from-requests.service';
-import { GetAndRegisterQualifOfServiceRawService } from 'src/raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
@@ -78,9 +78,9 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
+    private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
     private readonly getABADataFromRequestsService: GetABADataFromRequestsService,
-    private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
     private readonly getDHCPDataService: GetDHCPDataRawService,
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
@@ -138,7 +138,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
       });
       data.getAndRegisterQualifOfServiceResponse =
-        await this.getAndRegisterQualifOfServiceRawService.execute({
+        await this.abaRegisterGetAndRegisterQualifOfServiceService.execute({
           areaCode: dto.areaCode,
           phoneNumber: dto.phoneNumber,
         });

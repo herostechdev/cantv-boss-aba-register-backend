@@ -8,11 +8,13 @@ import { AbaRegisterISGActionAllowedService } from './step-1/login/aba-register-
 import { AbaRegisterIsPrepaidVoiceLineService } from './step-2/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
+import { AbaRegisterGetAndRegisterQualifOfServiceService } from './step-2/get-and-register-qualif-of-service/get-and-register-qualif-of-service.service';
 
 @Module({
   imports: [EncryptionModule],
   controllers: [AbaRegisterController],
   providers: [
+    AbaRegisterGetAndRegisterQualifOfServiceService,
     AbaRegisterGetDslAreaCodesService,
     AbaRegisterGetGroupAccessFromLoginService,
     AbaRegisterGetOrderIdFromAbaSalesService,
@@ -21,6 +23,9 @@ import { EncryptionModule } from 'src/system/infrastructure/security/encryption/
     AbaRegisterIsPrepaidVoiceLineService,
     AbaRegisterLoginService,
   ],
-  exports: [AbaRegisterIsPrepaidVoiceLineService],
+  exports: [
+    AbaRegisterGetAndRegisterQualifOfServiceService,
+    AbaRegisterIsPrepaidVoiceLineService,
+  ],
 })
 export class AbaRegisterModule {}
