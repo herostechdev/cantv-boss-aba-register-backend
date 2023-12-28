@@ -1125,20 +1125,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           BossConstants.DEFAULT_DATE_FORMAT,
         )
       : DateTime.now();
-
-    // const orderDate = dateTimeOrderDate.isValid
-    //   ? // ? dateTimeOrderDate.toJSDate().toFormat(BossConstants.DEFAULT_DATE_FORMAT)
-    //     dateTimeOrderDate.toJSDate()
-    //   : null;
-
-    // const orderDate = '2023-12-26';
-    // const orderDate = '2003-10-23 14:50:30.123Z';
-    // const orderDate = '2003-10-23 14:50:30';
-    // const orderDate = '27/12/2023 14:50:30';
-    // const orderDate = new Date(2003, 9, 23, 11, 50, 30, 123);
-    // const orderDate = new Date(2003, 9, 23, 11, 50, 30);
-    // const orderDate = new Date(2003, 9, 23);
-    const orderDate = new Date('2019-07-24');
+    const orderDate = dateTimeOrderDate.isValid
+      ? dateTimeOrderDate.toJSDate()
+      : null;
+    // const orderDate = new Date('2019-07-24');
 
     console.log();
     console.log('orderDate', orderDate);
