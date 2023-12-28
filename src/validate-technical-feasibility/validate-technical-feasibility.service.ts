@@ -9,7 +9,6 @@ import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-er
 import { CheckIpStatusConstants } from './check-ip/check-ip-status.constants';
 import { DeleteOrderStatusConstants } from './delete-order/delete-order-status.constants';
 import { DeleteOrderExecutionErrorException } from './delete-order/delete-order-execution-error.exception';
-import { DeleteOrderThereIsNoDataException } from './delete-order/delete-order-there-is-no-data.exception';
 import { DeleteOrderThePortIsOccupiedByAnotherContractException } from './delete-order/delete-order-the-is-occupied-by-another-contract.exception';
 import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
@@ -73,6 +72,7 @@ import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.h
 import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from './verify-contract-by-phone/verify-contract-by-phone-status.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { ASAPOrderStateIsInvalidException } from './exceptions/asap-order-state-is-invalid.exception';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -93,6 +93,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   async validateTechnicalFeasibility(
     dto: ValidateTechnicalFeasibilityRequestDto,
   ): Promise<ValidateTechnicalFeasibilityData> {
+    console.clear();
+
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -237,8 +239,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         await this.getPortIdFlow(data);
       }
 
-      // TODO: HABILITAR VALIDACIÓN DE RESPUESTA GET ORDER DETAIL
-
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getABAData',
@@ -286,14 +286,14 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           await this.modifyNetworkAccessLog(data);
         }
 
-        // Wlog.instance.info({
-        //   phoneNumber: BossHelper.getPhoneNumber(dto),
-        //   message: 'deleteOrder',
-        //   input: BossHelper.getPhoneNumber(dto),
-        //   clazz: ValidateTechnicalFeasibilityService.name,
-        //   method: 'validateTechnicalFeasibility',
-        // });
-        // data.deleteOrderResponse = await this.deleteOrder(data);
+        Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
+          message: 'deleteOrder',
+          input: BossHelper.getPhoneNumber(dto),
+          clazz: ValidateTechnicalFeasibilityService.name,
+          method: 'validateTechnicalFeasibility',
+        });
+        data.deleteOrderResponse = await this.deleteOrder(data);
 
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -312,9 +312,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           method: 'validateTechnicalFeasibility',
         });
         data.readIABAOrderResponse = await this.readIABAOrder(data);
-
-        // frpl
-        return data;
 
         if (
           data.readIABAOrderResponse.errorCode ===
@@ -754,6 +751,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: data.requestDto.phoneNumber,
         orderId: String(data.requestDto.orderId),
       });
+
+    if (
+      data.getASAPOrderDetailResponse.CTVSTATUSASCODE !==
+      BossConstants.ASAP_ORDER_COMRED_STATUS
+    ) {
+      throw new ASAPOrderStateIsInvalidException();
+    }
     this.setLinkNetwork(data);
   }
 
@@ -1054,8 +1058,10 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
   ): Promise<IDeleteOrderResponse> {
     const parameters = {
-      abadslamportid: data.getPortIdFromIpResponse.dslamportId,
-      Status: OracleHelper.tableOfNumberBindOut(),
+      abadslamportid: OracleHelper.numberBindIn(
+        data.getPortIdFromIpResponse.dslamportId,
+      ),
+      Status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
       BossConstants.BOSS_PACKAGE,
@@ -1072,7 +1078,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case DeleteOrderStatusConstants.EXECUTION_ERROR:
         throw new DeleteOrderExecutionErrorException();
       case DeleteOrderStatusConstants.THERE_IS_NO_DATA:
-        throw new DeleteOrderThereIsNoDataException();
+        return response;
       case DeleteOrderStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
         throw new DeleteOrderThePortIsOccupiedByAnotherContractException();
       default:
@@ -1148,6 +1154,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         16,
       ),
       orderid: OracleHelper.stringBindIn(String(data.requestDto.orderId), 12),
+
       sz_clienttype: OracleHelper.stringBindIn(
         this.getValue(
           data.requestDto.orderIsAtBoss,

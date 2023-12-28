@@ -125,7 +125,7 @@ export abstract class OracleDatabaseService extends CommonService {
     );
     console.log();
     console.log('parameters');
-    console.log(JSON.stringify(parameters));
+    console.log(parameters);
 
     Wlog.instance.info({
       phoneNumber: additionalData?.phoneNumber,

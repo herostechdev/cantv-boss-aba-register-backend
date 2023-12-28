@@ -72,6 +72,7 @@ export class BossConstants {
 
   // GENERAL
   public static ADSL = 'ADSL';
+  public static ASAP_ORDER_COMRED_STATUS = 399;
   public static CANTV_BILLING = 'FACTURA_CANTV';
   public static FISCAL_IDENTIFICATION_DOCUMENT_TYPE = 'NO_RIF';
   public static INSTALL_ABA = 'INSTALAR_ABA';
