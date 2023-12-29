@@ -9,6 +9,9 @@ import { GetCustomerClassNameFromIdValueDto } from './get-customer-class-name-fr
 import { GetCustomerClassNameFromIdValueRawService } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
 import { GetCustomerInstanceIdFromIdValueRawService } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
 import { GetCustomerInstanceIdFromIdValueRequestDto } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-request.dto';
+import { GetDebtFromCustomerRawService } from './get-debt-from-customer/get-debt-from-customer-raw.service';
+import { GetDebtFromCustomerRequestDto } from './get-debt-from-customer/get-debt-from-customer-request.dto';
+import { IGetDebtFromCustomerResponse } from './get-debt-from-customer/get-debt-from-customer-response.interface';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetFirstLetterFromABARequestDto } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-request.dto';
@@ -55,6 +58,7 @@ export class StoredProceduresRawController {
     private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
     private readonly getCustomerInstanceIdFromIdValueRawService: GetCustomerInstanceIdFromIdValueRawService,
+    private readonly getDebtFromCustomerRawService: GetDebtFromCustomerRawService,
     private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
@@ -65,7 +69,6 @@ export class StoredProceduresRawController {
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {}
-
   @Post('customerExists')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
@@ -118,6 +121,15 @@ export class StoredProceduresRawController {
     @Body() dto: GetDSLAreaCodesRequestDto,
   ): Promise<IGetDSLAreaCodesResponse> {
     return this.getDSLAreaCodesRawService.execute(dto);
+  }
+
+  @Post('getDebtFromCustomer')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getDebtFromCustomer(
+    @Body() dto: GetDebtFromCustomerRequestDto,
+  ): Promise<IGetDebtFromCustomerResponse> {
+    return this.getDebtFromCustomerRawService.execute(dto);
   }
 
   @Post('getFirstLetterFromABARequest')

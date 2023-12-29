@@ -28,28 +28,28 @@ export abstract class OracleExecuteStoredProcedureRawService<
       );
       return this.getResponse(result);
     } catch (error) {
-      await this.updateDslAbaRegisters(dto);
+      // await this.updateDslAbaRegisters(dto);
       super.exceptionHandler(error, dto);
     } finally {
       await super.closeConnection(ValidationHelper.isDefined(dbConnection));
     }
   }
 
-  private async updateDslAbaRegisters(dto: DTO): Promise<void> {
-    if (
-      ValidationHelper.isDefined(dto) &&
-      dto.hasOwnProperty('areaCode') &&
-      ValidationHelper.isDefined(dto['areaCode']) &&
-      dto.hasOwnProperty('phoneNumber') &&
-      ValidationHelper.isDefined(dto['phoneNumber'])
-    ) {
-      await this.updateDslAbaRegistersService.errorUpdate({
-        areaCode: dto['areaCode'],
-        phoneNumber: dto['phoneNumber'],
-        registerStatus: BossConstants.NOT_PROCESSED,
-      });
-    }
-  }
+  // private async updateDslAbaRegisters(dto: DTO): Promise<void> {
+  //   if (
+  //     ValidationHelper.isDefined(dto) &&
+  //     dto.hasOwnProperty('areaCode') &&
+  //     ValidationHelper.isDefined(dto['areaCode']) &&
+  //     dto.hasOwnProperty('phoneNumber') &&
+  //     ValidationHelper.isDefined(dto['phoneNumber'])
+  //   ) {
+  //     await this.updateDslAbaRegistersService.errorUpdate({
+  //       areaCode: dto['areaCode'],
+  //       phoneNumber: dto['phoneNumber'],
+  //       registerStatus: BossConstants.NOT_PROCESSED,
+  //     });
+  //   }
+  // }
 
   protected abstract getParameters(dto: DTO): any;
 

@@ -12,14 +12,12 @@ import { GetCustomerClassNameFromIdValueRawService } from 'src/raw/stored-proced
 import { GetCustomerClassNameFromIdValueStatusConstants } from '../raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
 import { GetCustomerInstanceIdFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
 import { GetCustomerInstanceIdFromIdValueStatusConstants } from '../raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
-import { GetDebtFromCustomerInternalErrorException } from './get-debt-from-client/get-debt-from-customer-internal-error.exception';
-import { GetDebtFromCustomerStatusConstants } from './get-debt-from-client/get-debt-from-customer-status.constants';
+import { GetDebtFromCustomerRawService } from 'src/raw/stored-procedures/get-debt-from-customer/get-debt-from-customer-raw.service';
+import { GetDebtFromCustomerStatusConstants } from '../raw/stored-procedures/get-debt-from-customer/get-debt-from-customer-status.constants';
 import { GetFirstLetterFromABARequestRawService } from 'src/raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
 import { GetFirstLetterFromABARequestStatusConstants } from '../raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
-import { IGetDebtFromCustomerResponse } from './get-debt-from-client/get-debt-from-customer-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
-import { OracleHelper } from 'src/oracle/oracle.helper';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidateCustomerData } from './validate-customer-data';
 import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
@@ -33,6 +31,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
     private readonly getCustomerInstanceIdFromIdValueRawService: GetCustomerInstanceIdFromIdValueRawService,
+    private readonly getDebtFromCustomerRawService: GetDebtFromCustomerRawService,
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
@@ -171,9 +170,13 @@ export class ValidateCustomerService extends OracleDatabaseService {
             clazz: ValidateCustomerService.name,
             method: 'validateCustomer',
           });
-          data.getDebtFromClientResponse = await this.getDebtFromClient(
-            data.getClientInstanceIdFromIdValueResponse.customerInstanceId,
-          );
+          data.getDebtFromClientResponse =
+            await this.getDebtFromCustomerRawService.execute({
+              areaCode: dto.areaCode,
+              phoneNumber: dto.phoneNumber,
+              customerInstanceId:
+                data.getClientInstanceIdFromIdValueResponse.customerInstanceId,
+            });
           if (
             data.getDebtFromClientResponse.status ===
             GetDebtFromCustomerStatusConstants.SUCCESSFULL
@@ -235,23 +238,23 @@ export class ValidateCustomerService extends OracleDatabaseService {
     }
   }
 
-  private async callAuditLog(
-    data: ValidateCustomerData,
-    description: string,
-  ): Promise<void> {
-    await this.dslAuditLogsService.log({
-      areaCode: data.requestDto.areaCode,
-      phoneNumber: data.requestDto.phoneNumber,
-      orderId: data.requestDto.orderId,
-      ipAddress: data.requestDto.ipAddress,
-      activationLogin: null,
-      webPage: null,
-      code: null,
-      description: description,
-      comments: null,
-      planName: null,
-    });
-  }
+  // private async callAuditLog(
+  //   data: ValidateCustomerData,
+  //   description: string,
+  // ): Promise<void> {
+  //   await this.dslAuditLogsService.log({
+  //     areaCode: data.requestDto.areaCode,
+  //     phoneNumber: data.requestDto.phoneNumber,
+  //     orderId: data.requestDto.orderId,
+  //     ipAddress: data.requestDto.ipAddress,
+  //     activationLogin: null,
+  //     webPage: null,
+  //     code: null,
+  //     description: description,
+  //     comments: null,
+  //     planName: null,
+  //   });
+  // }
 
   // private async getAllValuesFromCustomerValues(
   //   className: string,
@@ -393,33 +396,33 @@ export class ValidateCustomerService extends OracleDatabaseService {
   //   }
   // }
 
-  private async getDebtFromClient(
-    customerInstanceId: number,
-  ): Promise<IGetDebtFromCustomerResponse> {
-    const parameters = {
-      l_cltinstanceid: OracleHelper.numberBindIn(customerInstanceId),
-      d_Amount: OracleHelper.numberBindOut(),
-      status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ACT_PACKAGE,
-      BossConstants.GET_DEBT_FROM_CUSTOMER,
-      parameters,
-    );
-    const response: IGetDebtFromCustomerResponse = {
-      amount: result?.outBinds?.d_Amount,
-      status: (result?.outBinds?.status ??
-        GetDebtFromCustomerStatusConstants.INTERNAL_ERROR) as GetDebtFromCustomerStatusConstants,
-    };
-    switch (response.status) {
-      case GetDebtFromCustomerStatusConstants.SUCCESSFULL:
-        return response;
-      case GetDebtFromCustomerStatusConstants.INTERNAL_ERROR:
-        throw new GetDebtFromCustomerInternalErrorException();
-      case GetDebtFromCustomerStatusConstants.THERE_IS_NO_DATA:
-        return response;
-      default:
-        throw new GetDebtFromCustomerInternalErrorException();
-    }
-  }
+  // private async getDebtFromClient(
+  //   customerInstanceId: number,
+  // ): Promise<IGetDebtFromCustomerResponse> {
+  //   const parameters = {
+  //     l_cltinstanceid: OracleHelper.numberBindIn(customerInstanceId),
+  //     d_Amount: OracleHelper.numberBindOut(),
+  //     status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ACT_PACKAGE,
+  //     BossConstants.GET_DEBT_FROM_CUSTOMER,
+  //     parameters,
+  //   );
+  //   const response: IGetDebtFromCustomerResponse = {
+  //     amount: result?.outBinds?.d_Amount,
+  //     status: (result?.outBinds?.status ??
+  //       GetDebtFromCustomerStatusConstants.ERROR) as GetDebtFromCustomerStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case GetDebtFromCustomerStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetDebtFromCustomerStatusConstants.ERROR:
+  //       throw new GetDebtFromCustomerException();
+  //     case GetDebtFromCustomerStatusConstants.THERE_IS_NO_DATA:
+  //       return response;
+  //     default:
+  //       throw new GetDebtFromCustomerException();
+  //   }
+  // }
 }

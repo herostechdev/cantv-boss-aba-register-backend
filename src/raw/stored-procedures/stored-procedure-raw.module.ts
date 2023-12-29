@@ -4,6 +4,7 @@ import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-
 import { GetAndRegisterQualifOfServiceRawService } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetCustomerClassNameFromIdValueRawService } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
 import { GetCustomerInstanceIdFromIdValueRawService } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
+import { GetDebtFromCustomerRawService } from './get-debt-from-customer/get-debt-from-customer-raw.service';
 import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetFirstLetterFromABARequestRawService } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
 import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login/get-group-access-from-login-raw.service';
@@ -25,6 +26,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     GetAndRegisterQualifOfServiceRawService,
     GetCustomerClassNameFromIdValueRawService,
     GetCustomerInstanceIdFromIdValueRawService,
+    GetDebtFromCustomerRawService,
     GetDSLAreaCodesRawService,
     GetFirstLetterFromABARequestRawService,
     GetGroupAccessFromLoginRawService,
@@ -41,6 +43,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     GetAndRegisterQualifOfServiceRawService,
     GetCustomerClassNameFromIdValueRawService,
     GetCustomerInstanceIdFromIdValueRawService,
+    GetDebtFromCustomerRawService,
     GetDSLAreaCodesRawService,
     GetFirstLetterFromABARequestRawService,
     GetGroupAccessFromLoginRawService,
