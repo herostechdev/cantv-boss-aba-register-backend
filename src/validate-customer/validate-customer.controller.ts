@@ -6,13 +6,13 @@ import { ValidateCustomerData } from './validate-customer-data';
 import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
 
 @Controller({
-  path: 'validateCustomer',
+  path: 'abaRegister',
   version: '1',
 })
 export class ValidateCustomerController {
   constructor(private readonly service: ValidateCustomerService) {}
 
-  @Post()
+  @Post('validateCustomer')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
   validateClient(

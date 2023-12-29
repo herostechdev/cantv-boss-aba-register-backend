@@ -6,13 +6,13 @@ import { ConfirmRegistrationData } from './confirm-registration-data';
 import { ConfirmRegistrationRequestDto } from './confirm-registration-request.dto';
 
 @Controller({
-  path: 'confirmRegistration',
+  path: 'abaRegister',
   version: '1',
 })
 export class ConfirmRegistrationController {
   constructor(private readonly service: ConfirmRegistrationService) {}
 
-  @Post()
+  @Post('confirmRegistration')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
   ConfirmRegistration(

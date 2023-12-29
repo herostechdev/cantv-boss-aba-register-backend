@@ -6,13 +6,13 @@ import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-fea
 import { ValidateTechnicalFeasibilityData } from './validate-technical-feasibility-data';
 
 @Controller({
-  path: 'validateTechnicalFeasibility',
+  path: 'abaRegister',
   version: '1',
 })
 export class ValidateTechnicalFeasibilityController {
   constructor(private readonly service: ValidateTechnicalFeasibilityService) {}
 
-  @Post()
+  @Post('validateTechnicalFeasibility')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
   ValidateTechnicalFeasibility(
