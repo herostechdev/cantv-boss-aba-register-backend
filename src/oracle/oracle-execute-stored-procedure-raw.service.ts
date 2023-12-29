@@ -1,13 +1,14 @@
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { Connection } from 'oracledb';
+import { IOracleExecute } from './oracle-execute.interface';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
-export abstract class OracleExecuteStoredProcedureRawService<
-  DTO,
-  RESPONSE,
-> extends OracleDatabaseService {
+export abstract class OracleExecuteStoredProcedureRawService<DTO, RESPONSE>
+  extends OracleDatabaseService
+  implements IOracleExecute<DTO, RESPONSE>
+{
   constructor(
     protected readonly packageName: string,
     protected readonly storedProcedureName: string,
@@ -27,28 +28,11 @@ export abstract class OracleExecuteStoredProcedureRawService<
       );
       return this.getResponse(result);
     } catch (error) {
-      // await this.updateDslAbaRegisters(dto);
       super.exceptionHandler(error, dto);
     } finally {
       await super.closeConnection(ValidationHelper.isDefined(dbConnection));
     }
   }
-
-  // private async updateDslAbaRegisters(dto: DTO): Promise<void> {
-  //   if (
-  //     ValidationHelper.isDefined(dto) &&
-  //     dto.hasOwnProperty('areaCode') &&
-  //     ValidationHelper.isDefined(dto['areaCode']) &&
-  //     dto.hasOwnProperty('phoneNumber') &&
-  //     ValidationHelper.isDefined(dto['phoneNumber'])
-  //   ) {
-  //     await this.updateDslAbaRegistersService.errorUpdate({
-  //       areaCode: dto['areaCode'],
-  //       phoneNumber: dto['phoneNumber'],
-  //       registerStatus: BossConstants.NOT_PROCESSED,
-  //     });
-  //   }
-  // }
 
   protected abstract getParameters(dto: DTO): any;
 
