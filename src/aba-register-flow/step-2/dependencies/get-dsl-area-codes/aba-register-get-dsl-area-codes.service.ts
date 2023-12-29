@@ -6,7 +6,7 @@ import { GetDSLAreaCodesRawService } from 'src/raw/stored-procedures/get-dsl-are
 import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesStatusConstants } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-status.constants';
 import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()

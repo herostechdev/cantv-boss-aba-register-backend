@@ -7,7 +7,7 @@ import { GetOrderIdFromABASalesRawService } from 'src/raw/stored-procedures/get-
 import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesStatusConstants } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-status.constants';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()

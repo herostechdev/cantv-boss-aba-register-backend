@@ -7,7 +7,7 @@ import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is
 import { IsIPAllowedRawService } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-raw.service';
 import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
 import { IsIpAllowedStatusConstants } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-status.constants';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()

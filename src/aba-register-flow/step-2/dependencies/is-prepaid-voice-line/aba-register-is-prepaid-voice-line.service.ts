@@ -8,7 +8,7 @@ import { IsPrepaidVoiceLineRawService } from 'src/raw/stored-procedures/is-prepa
 import { IsPrepaidVoiceLineRequestDto } from 'src/raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-request.dto';
 import { IsPrepaidVoiceLineStatusConstants } from 'src/raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-status.constants';
 
-import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()

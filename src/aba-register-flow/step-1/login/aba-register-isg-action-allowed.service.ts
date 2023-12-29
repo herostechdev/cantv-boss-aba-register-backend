@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
 import { ISGActionAllowedException } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed.exception';
 import { ISGActionAllowedRawService } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-raw.service';
 import { ISGActionAllowedRequestDto } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-request.dto';

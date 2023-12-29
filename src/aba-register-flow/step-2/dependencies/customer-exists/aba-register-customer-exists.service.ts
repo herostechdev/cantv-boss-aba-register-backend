@@ -6,7 +6,7 @@ import { CustomerExistsRawService } from 'src/raw/stored-procedures/customer-exi
 import { CustomerExistsRequestDto } from 'src/raw/stored-procedures/customer-exists/customer-exists-request.dto';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 import { ICustomerExistsResponse } from 'src/raw/stored-procedures/customer-exists/customer-exists-response.interface';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AbaRegisterController } from './aba-register.controller';
 import { AbaRegisterCustomerExistsService } from './step-2/dependencies/customer-exists/aba-register-customer-exists.service';
-import { AbaRegisterGetAndRegisterQualifOfServiceService } from './step-2/dependencies/get-and-register-qualif-of-service/get-and-register-qualif-of-service.service';
+import { AbaRegisterGetAndRegisterQualifOfServiceService } from './step-2/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterGetDslAreaCodesService } from './step-2/dependencies/get-dsl-area-codes/aba-register-get-dsl-area-codes.service';
 import { AbaRegisterGetGroupAccessFromLoginService } from './step-1/login/aba-register-get-group-access-from-login.service';
 import { AbaRegisterGetLegalDocumentsService } from './step-4/get-legal-documents/aba-register-get-legal-documents.service';

@@ -9,7 +9,7 @@ import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { HashService } from 'src/system/infrastructure/security/encryption/hash.service';
 import { IAbaRegisterLoginResponse } from './aba-register-login-response.interface';
 import { InvalidPasswordException } from 'src/exceptions/invalid-password.exception';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()

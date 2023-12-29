@@ -6,7 +6,7 @@ import { GetAndRegisterQualifOfServiceException } from 'src/raw/stored-procedure
 import { GetAndRegisterQualifOfServiceRawService } from 'src/raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetAndRegisterQualifOfServiceStatusConstants } from 'src/raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service-status.constants';
 import { IGetAndRegisterQualifOfServiceResponse } from 'src/raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
