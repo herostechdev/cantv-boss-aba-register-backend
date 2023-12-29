@@ -10,13 +10,13 @@ import { GetAllValuesFromCustomerValuesRawService } from 'src/raw/stored-procedu
 import { GetAllValuesFromCustomerValuesStatusConstants } from '../raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-status.constants';
 import { GetCustomerClassNameFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
 import { GetCustomerClassNameFromIdValueStatusConstants } from '../raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
-import { GetCustomerInstanceIdFromIdValueStatusConstants } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
-import { GetCustomerInstanceIdFromIdValueInternalErrorException } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-internal-error.exception';
+import { GetCustomerInstanceIdFromIdValueStatusConstants } from '../raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
+import { GetCustomerInstanceIdFromIdValueException } from '../raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value.exception';
 import { GetDebtFromCustomerInternalErrorException } from './get-debt-from-client/get-debt-from-customer-internal-error.exception';
 import { GetDebtFromCustomerStatusConstants } from './get-debt-from-client/get-debt-from-customer-status.constants';
 import { GetFirstLetterFromABARequestRawService } from 'src/raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
 import { GetFirstLetterFromABARequestStatusConstants } from '../raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
-import { IGetCustomerInstanceIdFromIdValueResponse } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
+import { IGetCustomerInstanceIdFromIdValueResponse } from '../raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
 import { IGetDebtFromCustomerResponse } from './get-debt-from-client/get-debt-from-customer-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
@@ -342,18 +342,18 @@ export class ValidateCustomerService extends OracleDatabaseService {
     const response: IGetCustomerInstanceIdFromIdValueResponse = {
       customerInstanceId: result?.outBinds?.l_cltinstanceid,
       status: (result?.outBinds?.status ??
-        GetCustomerInstanceIdFromIdValueStatusConstants.INTERNAL_ERROR) as GetCustomerInstanceIdFromIdValueStatusConstants,
+        GetCustomerInstanceIdFromIdValueStatusConstants.ERROR) as GetCustomerInstanceIdFromIdValueStatusConstants,
     };
     switch (response.status) {
       case GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL:
         return response;
-      case GetCustomerInstanceIdFromIdValueStatusConstants.INTERNAL_ERROR:
-        throw new GetCustomerInstanceIdFromIdValueInternalErrorException();
+      case GetCustomerInstanceIdFromIdValueStatusConstants.ERROR:
+        throw new GetCustomerInstanceIdFromIdValueException();
       case GetCustomerInstanceIdFromIdValueStatusConstants.THERE_IS_NO_DATA:
         // throw new GetCustomerInstanceIdFromIdValueThereIsNoDataException();
         return response;
       default:
-        throw new GetCustomerInstanceIdFromIdValueInternalErrorException();
+        throw new GetCustomerInstanceIdFromIdValueException();
     }
   }
 

@@ -2,10 +2,13 @@ import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { CustomerExistsRequestDto } from './customer-exists/customer-exists-request.dto';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
 import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
+import { GetAllValuesFromCustomerValuesRequestDto } from './get-all-values-from-customer-values/get-all-values-from-customer-values-request.dto';
 import { GetAndRegisterQualifOfServiceDto } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-request.dto';
 import { GetAndRegisterQualifOfServiceRawService } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetCustomerClassNameFromIdValueDto } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-request.dto';
 import { GetCustomerClassNameFromIdValueRawService } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
+import { GetCustomerInstanceIdFromIdValueRawService } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
+import { GetCustomerInstanceIdFromIdValueRequestDto } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-request.dto';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetFirstLetterFromABARequestDto } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-request.dto';
@@ -17,8 +20,10 @@ import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
+import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetCustomerClassNameFromIdValueResponse } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
+import { IGetCustomerInstanceIdFromIdValueResponse } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
@@ -38,8 +43,6 @@ import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line/is-prepaid
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
-import { GetAllValuesFromCustomerValuesRequestDto } from './get-all-values-from-customer-values/get-all-values-from-customer-values-request.dto';
-import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
 
 @Controller({
   path: 'raw/sp',
@@ -51,6 +54,7 @@ export class StoredProceduresRawController {
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
+    private readonly getCustomerInstanceIdFromIdValueRawService: GetCustomerInstanceIdFromIdValueRawService,
     private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
@@ -96,6 +100,15 @@ export class StoredProceduresRawController {
     @Body() dto: GetCustomerClassNameFromIdValueDto,
   ): Promise<IGetCustomerClassNameFromIdValueResponse> {
     return this.getCustomerClassNameFromIdValueRawService.execute(dto);
+  }
+
+  @Post('getCustomerInstanceIdFromIdValue')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getCustomerInstanceIdFromIdValue(
+    @Body() dto: GetCustomerInstanceIdFromIdValueRequestDto,
+  ): Promise<IGetCustomerInstanceIdFromIdValueResponse> {
+    return this.getCustomerInstanceIdFromIdValueRawService.execute(dto);
   }
 
   @Post('getDSLAreaCodes')
