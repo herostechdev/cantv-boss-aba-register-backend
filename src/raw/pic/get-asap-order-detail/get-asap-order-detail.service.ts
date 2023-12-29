@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import axios, { AxiosInstance } from 'axios';
 import * as https from 'https';
 import { xml2js } from 'xml-js';
