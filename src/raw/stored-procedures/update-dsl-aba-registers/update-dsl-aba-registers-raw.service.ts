@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { IOracleRawExecute } from 'src/oracle/oracle-raw-execute.interface';
+import { IOracleExecuteRaw } from 'src/oracle/oracle-execute-raw.interface';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
@@ -15,7 +15,7 @@ import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.h
 export class UpdateDslAbaRegistersRawService
   extends OracleDatabaseService
   implements
-    IOracleRawExecute<
+    IOracleExecuteRaw<
       UpdateDslAbaRegistersRequestDto,
       IUpdateDslAbaRegistersResponse
     >

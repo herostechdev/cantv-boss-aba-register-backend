@@ -3,7 +3,7 @@ import { Connection } from 'oracledb';
 import { DateTime } from 'luxon';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers-response.interface';
-import { IOracleRawExecute } from 'src/oracle/oracle-raw-execute.interface';
+import { IOracleExecuteRaw } from 'src/oracle/oracle-execute-raw.interface';
 import { InsertDslAbaRegisterException } from './insert-dsl-aba-register.exception';
 import { InsertDslAbaRegisterStatusConstants } from './insert-dsl-aba-register-status.constants';
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers-request.dto';
@@ -16,7 +16,7 @@ import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.h
 export class InsertDslAbaRegistersRawService
   extends OracleDatabaseService
   implements
-    IOracleRawExecute<
+    IOracleExecuteRaw<
       InsertDslAbaRegistersRequestDto,
       IInsertDslAbaRegistersResponse
     >

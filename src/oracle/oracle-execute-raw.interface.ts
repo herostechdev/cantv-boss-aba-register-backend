@@ -1,6 +1,6 @@
 import { Connection } from 'oracledb';
 
-export interface IOracleRawExecute<DTO, RESPONSE> {
+export interface IOracleExecuteRaw<DTO, RESPONSE> {
   execute(dto: DTO, dbConnection?: Connection): Promise<RESPONSE>;
 
   getParameters(dto: DTO): any;

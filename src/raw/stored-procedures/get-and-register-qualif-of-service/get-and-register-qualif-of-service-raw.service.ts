@@ -1,51 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'oracledb';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { GetAndRegisterQualifOfServiceDto } from './get-and-register-qualif-of-service-request.dto';
 import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service-status.constants';
-import { IOracleRawExecute } from 'src/oracle/oracle-raw-execute.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
+import { OracleExecuteStoredProcedureRawService } from 'src/oracle/oracle-execute-stored-procedure-raw.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
+import { UpdateDslAbaRegistersRawService } from '../update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
-export class GetAndRegisterQualifOfServiceRawService
-  extends OracleDatabaseService
-  implements
-    IOracleRawExecute<
-      GetAndRegisterQualifOfServiceDto,
-      IGetAndRegisterQualifOfServiceResponse
-    >
-{
+export class GetAndRegisterQualifOfServiceRawService extends OracleExecuteStoredProcedureRawService<
+  GetAndRegisterQualifOfServiceDto,
+  IGetAndRegisterQualifOfServiceResponse
+> {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
+    protected readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
-    super(oracleConfigurationService);
+    super(
+      null,
+      BossConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
+      oracleConfigurationService,
+      updateDslAbaRegistersService,
+    );
   }
 
-  async execute(
-    dto: GetAndRegisterQualifOfServiceDto,
-    dbConnection?: Connection,
-  ): Promise<IGetAndRegisterQualifOfServiceResponse> {
-    try {
-      await super.connect(dbConnection);
-      const result = await super.executeStoredProcedure(
-        null,
-        BossConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
-        this.getParameters(dto),
-      );
-      return this.getResponse(result);
-    } catch (error) {
-      super.exceptionHandler(error, dto);
-    } finally {
-      await super.closeConnection(dbConnection !== null);
-    }
-  }
-
-  getParameters(dto: GetAndRegisterQualifOfServiceDto): any {
+  protected getParameters(dto: GetAndRegisterQualifOfServiceDto): any {
     return {
-      i_clientserviceid: OracleHelper.numberBindIn(null), // Iván indica enviar siempre null 2023-12-11
+      i_clientserviceid: OracleHelper.numberBindIn(null),
       i_areacode: OracleHelper.stringBindIn(dto.areaCode, 256),
       i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 256),
 
@@ -57,7 +39,7 @@ export class GetAndRegisterQualifOfServiceRawService
     };
   }
 
-  getResponse(result: any): IGetAndRegisterQualifOfServiceResponse {
+  protected getResponse(result: any): IGetAndRegisterQualifOfServiceResponse {
     return {
       qualifpossible: result?.outBinds?.o_qualifpossible,
       modemstatus: result?.outBinds?.o_modemstatus,

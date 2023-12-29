@@ -4,44 +4,46 @@ import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { GetGroupAccessFromLoginRequestDto } from './get-group-access-from-login-request.dto';
 import { GetGroupAccessFromLoginStatusConstants } from './get-group-access-from-login-status.constants';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login-response.interface';
-import { IOracleRawExecute } from 'src/oracle/oracle-raw-execute.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
+import { OracleExecuteStoredProcedureRawService } from 'src/oracle/oracle-execute-stored-procedure-raw.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
+import { UpdateDslAbaRegistersRawService } from '../update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
-export class GetGroupAccessFromLoginRawService
-  extends OracleDatabaseService
-  implements
-    IOracleRawExecute<
-      GetGroupAccessFromLoginRequestDto,
-      IGetGroupAccessFromLoginResponse
-    >
-{
+export class GetGroupAccessFromLoginRawService extends OracleExecuteStoredProcedureRawService<
+  GetGroupAccessFromLoginRequestDto,
+  IGetGroupAccessFromLoginResponse
+> {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
+    protected readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
-    super(oracleConfigurationService);
+    super(
+      BossConstants.SIGS_PACKAGE,
+      BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
+      oracleConfigurationService,
+      updateDslAbaRegistersService,
+    );
   }
 
-  async execute(
-    dto: GetGroupAccessFromLoginRequestDto,
-    dbConnection?: Connection,
-  ): Promise<IGetGroupAccessFromLoginResponse> {
-    try {
-      await super.connect(dbConnection);
-      const result = await super.executeStoredProcedure(
-        BossConstants.SIGS_PACKAGE,
-        BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
-        this.getParameters(dto),
-      );
-      return this.getResponse(result);
-    } catch (error) {
-      super.exceptionHandler(error, dto);
-    } finally {
-      await super.closeConnection(dbConnection !== null);
-    }
-  }
+  // async execute(
+  //   dto: GetGroupAccessFromLoginRequestDto,
+  //   dbConnection?: Connection,
+  // ): Promise<IGetGroupAccessFromLoginResponse> {
+  //   try {
+  //     await super.connect(dbConnection);
+  //     const result = await super.executeStoredProcedure(
+  //       BossConstants.SIGS_PACKAGE,
+  //       BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
+  //       this.getParameters(dto),
+  //     );
+  //     return this.getResponse(result);
+  //   } catch (error) {
+  //     super.exceptionHandler(error, dto);
+  //   } finally {
+  //     await super.closeConnection(dbConnection !== null);
+  //   }
+  // }
 
   getParameters(dto: GetGroupAccessFromLoginRequestDto): any {
     return {
