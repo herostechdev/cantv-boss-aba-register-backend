@@ -3,6 +3,7 @@ import { CommonService } from './common.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { Wlog } from '../winston-logger/winston-logger.service';
+import { ValidationHelper } from '../helpers/validation.helper';
 
 export abstract class OracleDatabaseService extends CommonService {
   constructor(
@@ -14,7 +15,7 @@ export abstract class OracleDatabaseService extends CommonService {
   protected dbConnection: Connection;
 
   protected async connect(dbConnection?: Connection): Promise<void> {
-    if (dbConnection) {
+    if (ValidationHelper.isDefined(dbConnection)) {
       this.dbConnection = dbConnection;
       return;
     }
@@ -55,7 +56,7 @@ export abstract class OracleDatabaseService extends CommonService {
     );
     console.log();
     console.log('parameters');
-    console.log(JSON.stringify(parameters));
+    console.log(parameters);
 
     Wlog.instance.info({
       phoneNumber: additionalData?.phoneNumber,

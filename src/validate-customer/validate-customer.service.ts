@@ -95,6 +95,22 @@ export class ValidateCustomerService extends OracleDatabaseService {
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
+
+        console.log();
+        console.log('dto.customerClassName');
+        console.log(dto.customerClassName);
+        console.log('fin dto.customerClassName');
+
+        console.log();
+        console.log('attributeName');
+        console.log(
+          BossHelper.getIdentificationDocumentType(dto.customerClassName),
+        );
+
+        console.log();
+        console.log('attributeValue');
+        console.log(dto.customerIdentificationDocument);
+
         data.clientExistsResponse = await this.clientExistsService.clientExists(
           {
             attributeName: BossHelper.getIdentificationDocumentType(
@@ -102,6 +118,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
             ),
             attributeValue: dto.customerIdentificationDocument,
           },
+          this.dbConnection,
         );
         if (
           data.clientExistsResponse.status ===
@@ -348,12 +365,9 @@ export class ValidateCustomerService extends OracleDatabaseService {
     data: ValidateCustomerData,
   ): Promise<IGetFirstLetterFromABARequestResponse> {
     const parameters = {
-      sz_Areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
-      s_Phonenumber: OracleHelper.stringBindIn(
-        data.requestDto.phoneNumber,
-        256,
-      ),
-      sz_FirstLetter: OracleHelper.stringBindOut(1),
+      sz_Areacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
+      s_Phonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
+      sz_FirstLetter: OracleHelper.stringBindOut(),
       o_status: OracleHelper.numberBindOut(),
     };
     const result = await super.executeStoredProcedure(
