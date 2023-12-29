@@ -1,7 +1,11 @@
 import { Connection } from 'oracledb';
+import { CommonService } from 'src/system/infrastructure/services/common.service';
 
-export interface IOracleExecute<DTO, RESPONSE> {
-  execute(dto: DTO, dbConnection?: Connection): Promise<RESPONSE>;
+export abstract class OracleFinalExecuteService<
+  DTO,
+  RESPONSE,
+> extends CommonService {
+  abstract execute(dto: DTO, dbConnection?: Connection): Promise<RESPONSE>;
 
-  processResponse(response: RESPONSE): RESPONSE;
+  protected abstract processResponse(response: RESPONSE): RESPONSE;
 }

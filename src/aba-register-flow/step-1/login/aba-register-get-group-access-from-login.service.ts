@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CommonService } from 'src/system/infrastructure/services/common.service';
 import { GetGroupAccessFromLoginException } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login.exception';
 import { GetGroupAccessFromLoginNotFoundException } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-not-found.exception';
 import { GetGroupAccessFromLoginRawService } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-raw.service';
@@ -9,18 +8,14 @@ import { GetGroupAccessFromLoginRequestDto } from 'src/raw/stored-procedures/get
 import { GetGroupAccessFromLoginStatusConstants } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-status.constants';
 import { GetGroupAccessFromLoginThereIsNoDataException } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-there-is-no-data.exception';
 import { IGetGroupAccessFromLoginResponse } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-response.interface';
-import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterGetGroupAccessFromLoginService
-  extends CommonService
-  implements
-    IOracleExecute<
-      GetGroupAccessFromLoginRequestDto,
-      IGetGroupAccessFromLoginResponse
-    >
-{
+export class AbaRegisterGetGroupAccessFromLoginService extends OracleFinalExecuteService<
+  GetGroupAccessFromLoginRequestDto,
+  IGetGroupAccessFromLoginResponse
+> {
   constructor(
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
   ) {
@@ -71,7 +66,7 @@ export class AbaRegisterGetGroupAccessFromLoginService
     }
   }
 
-  processResponse(
+  protected processResponse(
     response: IGetGroupAccessFromLoginResponse,
   ): IGetGroupAccessFromLoginResponse {
     switch (response.status) {

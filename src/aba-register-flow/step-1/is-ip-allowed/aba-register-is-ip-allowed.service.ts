@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CommonService } from 'src/system/infrastructure/services/common.service';
 import { ExpiredIpException } from 'src/raw/stored-procedures/is-ip-allowed/expired-ip.exception';
 import { IsIpAllowedException } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed.exception';
 import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
 import { IsIPAllowedRawService } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-raw.service';
 import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
 import { IsIpAllowedStatusConstants } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-status.constants';
-import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterIsIPAllowedService
-  extends CommonService
-  implements IOracleExecute<IsIPAllowedRequestDto, IIsIPAllowedResponse>
-{
+export class AbaRegisterIsIPAllowedService extends OracleFinalExecuteService<
+  IsIPAllowedRequestDto,
+  IIsIPAllowedResponse
+> {
   constructor(private readonly isIPAllowedRawService: IsIPAllowedRawService) {
     super();
   }
@@ -64,7 +63,9 @@ export class AbaRegisterIsIPAllowedService
     }
   }
 
-  processResponse(response: IIsIPAllowedResponse): IIsIPAllowedResponse {
+  protected processResponse(
+    response: IIsIPAllowedResponse,
+  ): IIsIPAllowedResponse {
     switch (response.status) {
       case IsIpAllowedStatusConstants.SUCCESSFULL:
         return response;

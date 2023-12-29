@@ -6,18 +6,17 @@ import { AbaRegisterLoginData } from './aba-register-login-data';
 import { AbaRegisterLoginRequestDto } from './aba-register-login-request.dto';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CommonService } from 'src/system/infrastructure/services/common.service';
 import { HashService } from 'src/system/infrastructure/security/encryption/hash.service';
 import { IAbaRegisterLoginResponse } from './aba-register-login-response.interface';
 import { InvalidPasswordException } from 'src/exceptions/invalid-password.exception';
-import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterLoginService
-  extends CommonService
-  implements IOracleExecute<AbaRegisterLoginRequestDto, void>
-{
+export class AbaRegisterLoginService extends OracleFinalExecuteService<
+  AbaRegisterLoginRequestDto,
+  void
+> {
   constructor(
     private readonly abaRegisterGetGroupAccessFromLoginService: AbaRegisterGetGroupAccessFromLoginService,
     private readonly hashService: HashService,
@@ -130,7 +129,7 @@ export class AbaRegisterLoginService
     }
   }
 
-  processResponse(response: void): IAbaRegisterLoginResponse {
+  protected processResponse(response: void): IAbaRegisterLoginResponse {
     return;
   }
 }

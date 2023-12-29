@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CommonService } from 'src/system/infrastructure/services/common.service';
-import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
 import { ISGActionAllowedException } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed.exception';
 import { ISGActionAllowedRawService } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-raw.service';
 import { ISGActionAllowedRequestDto } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-request.dto';
@@ -12,11 +11,10 @@ import { IISGActionAllowedResponse } from 'src/raw/stored-procedures/isg-action-
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterISGActionAllowedService
-  extends CommonService
-  implements
-    IOracleExecute<ISGActionAllowedRequestDto, IISGActionAllowedResponse>
-{
+export class AbaRegisterISGActionAllowedService extends OracleFinalExecuteService<
+  ISGActionAllowedRequestDto,
+  IISGActionAllowedResponse
+> {
   constructor(
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
   ) {
@@ -67,7 +65,7 @@ export class AbaRegisterISGActionAllowedService
     }
   }
 
-  processResponse(
+  protected processResponse(
     response: IISGActionAllowedResponse,
   ): IISGActionAllowedResponse {
     switch (response.status) {

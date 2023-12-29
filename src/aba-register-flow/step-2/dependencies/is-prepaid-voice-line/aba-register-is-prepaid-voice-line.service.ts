@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CommonService } from 'src/system/infrastructure/services/common.service';
 import { IsPrepaidVoiceLineException } from 'src/raw/stored-procedures/is-prepaid-voice-line/is-a-prepaid-voice-line.exception';
 import { IsPrepaidVoiceLineIsPrepaidConstants } from 'src/raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-is-prepaid.constants';
 import { IIsPrepaidVoiceLineResponse } from 'src/raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
@@ -9,15 +8,14 @@ import { IsPrepaidVoiceLineRawService } from 'src/raw/stored-procedures/is-prepa
 import { IsPrepaidVoiceLineRequestDto } from 'src/raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-request.dto';
 import { IsPrepaidVoiceLineStatusConstants } from 'src/raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-status.constants';
 
-import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterIsPrepaidVoiceLineService
-  extends CommonService
-  implements
-    IOracleExecute<IsPrepaidVoiceLineRequestDto, IIsPrepaidVoiceLineResponse>
-{
+export class AbaRegisterIsPrepaidVoiceLineService extends OracleFinalExecuteService<
+  IsPrepaidVoiceLineRequestDto,
+  IIsPrepaidVoiceLineResponse
+> {
   constructor(
     private readonly isPrepaidVoiceLineRawService: IsPrepaidVoiceLineRawService,
   ) {
@@ -68,7 +66,7 @@ export class AbaRegisterIsPrepaidVoiceLineService
     }
   }
 
-  processResponse(
+  protected processResponse(
     response: IIsPrepaidVoiceLineResponse,
   ): IIsPrepaidVoiceLineResponse {
     if (

@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CommonService } from 'src/system/infrastructure/services/common.service';
 import { CustomerExistsException } from 'src/raw/stored-procedures/customer-exists/customer-exists.exception';
 import { CustomerExistsRawService } from 'src/raw/stored-procedures/customer-exists/customer-exists-raw.service';
 import { CustomerExistsRequestDto } from 'src/raw/stored-procedures/customer-exists/customer-exists-request.dto';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 import { ICustomerExistsResponse } from 'src/raw/stored-procedures/customer-exists/customer-exists-response.interface';
-import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterCustomerExistsService
-  extends CommonService
-  implements IOracleExecute<CustomerExistsRequestDto, ICustomerExistsResponse>
-{
+export class AbaRegisterCustomerExistsService extends OracleFinalExecuteService<
+  CustomerExistsRequestDto,
+  ICustomerExistsResponse
+> {
   constructor(
     private readonly customerExistsRawService: CustomerExistsRawService,
   ) {
@@ -65,7 +64,9 @@ export class AbaRegisterCustomerExistsService
     }
   }
 
-  processResponse(response: ICustomerExistsResponse): ICustomerExistsResponse {
+  protected processResponse(
+    response: ICustomerExistsResponse,
+  ): ICustomerExistsResponse {
     switch (response.status) {
       case CustomerExistsStatusConstants.SUCCESSFULL:
         return response;

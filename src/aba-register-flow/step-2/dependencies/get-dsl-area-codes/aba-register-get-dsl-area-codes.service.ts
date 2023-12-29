@@ -1,21 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CommonService } from 'src/system/infrastructure/services/common.service';
 import { GetDSLAreaCodesException } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes.exception';
 import { GetDSLAreaCodesRawService } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesStatusConstants } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-status.constants';
 import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
-import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterGetDslAreaCodesService
-  extends CommonService
-  implements
-    IOracleExecute<GetDSLAreaCodesRequestDto, IGetDSLAreaCodesResponse>
-{
+export class AbaRegisterGetDslAreaCodesService extends OracleFinalExecuteService<
+  GetDSLAreaCodesRequestDto,
+  IGetDSLAreaCodesResponse
+> {
   constructor(
     private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
   ) {
@@ -66,7 +64,7 @@ export class AbaRegisterGetDslAreaCodesService
     }
   }
 
-  processResponse(
+  protected processResponse(
     response: IGetDSLAreaCodesResponse,
   ): IGetDSLAreaCodesResponse {
     switch (response.status) {

@@ -1,25 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CommonService } from 'src/system/infrastructure/services/common.service';
 import { Error2002Exception } from 'src/exceptions/error-2002.exception';
 import { GetOrderIdFromABASalesException } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales.exception';
 import { GetOrderIdFromABASalesRawService } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
 import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesStatusConstants } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-status.constants';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
-import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
+import { OracleFinalExecuteService } from 'src/oracle/oracle-execute.interface';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterGetOrderIdFromAbaSalesService
-  extends CommonService
-  implements
-    IOracleExecute<
-      GetOrderIdFromABASalesRequestDto,
-      IGetOrderIdFromABASalesResponse
-    >
-{
+export class AbaRegisterGetOrderIdFromAbaSalesService extends OracleFinalExecuteService<
+  GetOrderIdFromABASalesRequestDto,
+  IGetOrderIdFromABASalesResponse
+> {
   constructor(
     private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
   ) {
@@ -70,7 +65,7 @@ export class AbaRegisterGetOrderIdFromAbaSalesService
     }
   }
 
-  processResponse(
+  protected processResponse(
     response: IGetOrderIdFromABASalesResponse,
   ): IGetOrderIdFromABASalesResponse {
     switch (response.status) {
