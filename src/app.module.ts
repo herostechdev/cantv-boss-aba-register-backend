@@ -19,7 +19,6 @@ import { ConfirmRegistrationModule } from './confirm-registration/confirm-regist
 import { DocumentsConfigurationModule } from './system/configuration/documents/documents-configuration.module';
 import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
-import { GetLegalDocumentsModule } from './get-legal-documents/get-legal-documents.module';
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
 import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
 import { IntegrationsConfigurationModule } from './system/configuration/pic/integrations-configuration.module';
@@ -53,7 +52,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     DocumentsConfigurationModule,
     DSLAuditLogsModule,
     EncryptionModule,
-    GetLegalDocumentsModule,
     GetPlanDescriptionFromPlanNameModule,
     GetStateFromSerialModule,
     IntegrationsConfigurationModule,

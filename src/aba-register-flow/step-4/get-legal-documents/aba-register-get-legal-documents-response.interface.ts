@@ -1,4 +1,4 @@
-export interface IGetLegalDocuments {
+export interface IAbaRegisterGetLegalDocuments {
   contract: string;
   termsAndConditions: string;
 }

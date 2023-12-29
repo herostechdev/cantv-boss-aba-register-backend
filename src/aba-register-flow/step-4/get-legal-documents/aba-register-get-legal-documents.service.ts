@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
+import { AbaRegisterGetLegalDocumentsRequestDto } from './aba-register-get-legal-documents-request.dto';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CustomNotFoundException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-not-found-exception';
-import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { DocumentsConfigurationService } from 'src/system/configuration/documents/documents-configuration.service';
-import { GetLegalDocumentsRequestDto } from './get-legal-documents-request.dto';
-import { IGetLegalDocuments } from './get-legal-documents-response.interface';
+import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
+import { IAbaRegisterGetLegalDocuments } from './aba-register-get-legal-documents-response.interface';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class GetLegalDocumentsService extends ExceptionsService {
+export class AbaRegisterGetLegalDocumentsService extends ExceptionsService {
   constructor(
     private readonly documentsConfigurationService: DocumentsConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
@@ -20,17 +20,17 @@ export class GetLegalDocumentsService extends ExceptionsService {
     super();
   }
   public async get(
-    dto: GetLegalDocumentsRequestDto,
-  ): Promise<IGetLegalDocuments> {
+    dto: AbaRegisterGetLegalDocumentsRequestDto,
+  ): Promise<IAbaRegisterGetLegalDocuments> {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         input: JSON.stringify(dto),
-        clazz: GetLegalDocumentsService.name,
+        clazz: AbaRegisterGetLegalDocumentsService.name,
         method: 'get',
       });
-      const response: IGetLegalDocuments = {
+      const response: IAbaRegisterGetLegalDocuments = {
         contract: this.getContractDocument(),
         termsAndConditions: this.getTermsAndConditionsDocument(),
       };
@@ -38,7 +38,7 @@ export class GetLegalDocumentsService extends ExceptionsService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Fin',
         input: JSON.stringify(dto),
-        clazz: GetLegalDocumentsService.name,
+        clazz: AbaRegisterGetLegalDocumentsService.name,
         method: 'get',
       });
       return response;
@@ -46,7 +46,7 @@ export class GetLegalDocumentsService extends ExceptionsService {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: JSON.stringify(dto),
-        clazz: GetLegalDocumentsService.name,
+        clazz: AbaRegisterGetLegalDocumentsService.name,
         method: 'get',
         error: error,
       });

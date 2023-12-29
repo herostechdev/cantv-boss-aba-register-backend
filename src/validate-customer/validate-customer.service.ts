@@ -3,7 +3,7 @@ import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CustomerExistsRawService } from 'src/raw/stored-procedures/customer-exists/customer-exists-raw.service';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
-import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
+// import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1002Exception } from 'src/exceptions/error-1002.exception';
 import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
 import { GetAllValuesFromCustomerValuesRawService } from 'src/raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
@@ -27,7 +27,7 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 export class ValidateCustomerService extends OracleDatabaseService {
   constructor(
     private readonly customerExistsRawService: CustomerExistsRawService,
-    private readonly dslAuditLogsService: DSLAuditLogsService,
+    // private readonly dslAuditLogsService: DSLAuditLogsService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
     private readonly getCustomerInstanceIdFromIdValueRawService: GetCustomerInstanceIdFromIdValueRawService,
