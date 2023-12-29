@@ -25,6 +25,7 @@ import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales/g
 import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
 import { IIsIPAllowedResponse } from './is-ip-allowed/is-ip-allowed-response.interface';
 import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
+import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers/insert-dsl-aba-registers-request.dto';
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
@@ -32,6 +33,7 @@ import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allo
 import { IsIPAllowedRequestDto } from './is-ip-allowed/is-ip-allowed-request.dto';
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
+import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line/is-prepaid-voice-line-request.dto';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
@@ -144,6 +146,15 @@ export class StoredProceduresRawController {
     @Body() dto: ISGActionAllowedRequestDto,
   ): Promise<IISGActionAllowedResponse> {
     return this.isgActionAllowedRawService.execute(dto);
+  }
+
+  @Post('isPrepaidVoiceLine')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  isPrepaidVoiceLine(
+    @Body() dto: IsPrepaidVoiceLineRequestDto,
+  ): Promise<IIsPrepaidVoiceLineResponse> {
+    return this.isPrepaidVoiceLineRawService.execute(dto);
   }
 
   @Post('updateDslAbaRegisters')
