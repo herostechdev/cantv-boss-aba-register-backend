@@ -1,17 +1,20 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
-import { AbaRegisterGetDslAreaCodesService } from './step-2/get-dsl-area-codes/aba-register-get-dsl-area-codes.service';
+import { AbaRegisterGetDslAreaCodesService } from './step-2/dependencies/get-dsl-area-codes/aba-register-get-dsl-area-codes.service';
 import { AbaRegisterGetLegalDocumentsRequestDto } from './step-4/get-legal-documents/aba-register-get-legal-documents-request.dto';
 import { AbaRegisterGetLegalDocumentsService } from './step-4/get-legal-documents/aba-register-get-legal-documents.service';
 import { AbaRegisterGetOrderIdFromAbaSalesService } from './step-2/get-order-id-from-aba-sales/aba-register-get-order-id-from-aba-sales.service';
 import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-register-is-ip-allowed.service';
 import { AbaRegisterLoginRequestDto } from './step-1/login/aba-register-login-request.dto';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
+import { AbaRegisterValidateCustomerData } from './step-2/validate-customer/aba-register-validate-customer-data';
+import { AbaRegisterValidateCustomerRequestDto } from './step-2/validate-customer/aba-register-validate-customer-request.dto';
+import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
-import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IAbaRegisterGetLegalDocuments } from './step-4/get-legal-documents/aba-register-get-legal-documents-response.interface';
+import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
 import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
 import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
@@ -27,6 +30,7 @@ export class AbaRegisterController {
     private readonly abaRegisterGetOrderIdFromAbaSalesService: AbaRegisterGetOrderIdFromAbaSalesService,
     private readonly abaRegisterIsIPAllowedService: AbaRegisterIsIPAllowedService,
     private readonly abaRegisterLoginService: AbaRegisterLoginService,
+    private readonly abaRegisterValidateCustomerService: AbaRegisterValidateCustomerService,
   ) {}
 
   @Post('getDslAreaCodes')
@@ -70,5 +74,14 @@ export class AbaRegisterController {
   @UseFilters(new HttpExceptionFilter())
   login(@Body() dto: AbaRegisterLoginRequestDto): Promise<void> {
     return this.abaRegisterLoginService.execute(dto);
+  }
+
+  @Post('validateCustomer')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  validateCustomer(
+    @Body() dto: AbaRegisterValidateCustomerRequestDto,
+  ): Promise<AbaRegisterValidateCustomerData> {
+    return this.abaRegisterValidateCustomerService.validate(dto);
   }
 }

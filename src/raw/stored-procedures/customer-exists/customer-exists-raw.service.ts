@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { CustomerExistsException } from './customer-exists.exception';
 import { CustomerExistsRequestDto } from './customer-exists-request.dto';
 import { CustomerExistsStatusConstants } from './customer-exists-status.constants';
 import { ICustomerExistsResponse } from './customer-exists-response.interface';
@@ -76,20 +75,10 @@ export class CustomerExistsRawService extends OracleExecuteStoredProcedureRawSer
   }
 
   protected getResponse(result: any): ICustomerExistsResponse {
-    const response = {
+    return {
       customerClassName: result?.outBinds?.sz_cltclassname,
       status: (result?.outBinds?.status ??
         CustomerExistsStatusConstants.ERROR) as CustomerExistsStatusConstants,
     };
-    switch (response.status) {
-      case CustomerExistsStatusConstants.SUCCESSFULL:
-        return response;
-      case CustomerExistsStatusConstants.ERROR:
-        throw new CustomerExistsException();
-      case CustomerExistsStatusConstants.THERE_IS_NO_DATA:
-        return response;
-      default:
-        throw new CustomerExistsException();
-    }
   }
 }

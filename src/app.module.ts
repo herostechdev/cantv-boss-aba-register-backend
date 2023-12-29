@@ -25,7 +25,6 @@ import { IntegrationsConfigurationModule } from './system/configuration/pic/inte
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/plan-by-class-client.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
-import { ValidateCustomerModule } from './validate-customer/validate-customer.module';
 import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibility/validate-technical-feasibility.module';
 
 @Module({
@@ -58,7 +57,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     OracleConfigurationModule,
     PlanByClassClientModule,
     SecurityConfigurationModule,
-    ValidateCustomerModule,
     ValidateTechnicalFeasibilityModule,
   ],
   controllers: [AppController],

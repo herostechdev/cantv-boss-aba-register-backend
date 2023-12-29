@@ -1,7 +1,7 @@
 import { IsIP, IsInt, IsOptional, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
-export class ValidateCustomerRequestDto implements IPhoneNumber {
+export class AbaRegisterValidateCustomerRequestDto implements IPhoneNumber {
   @IsString()
   areaCode: string;
 

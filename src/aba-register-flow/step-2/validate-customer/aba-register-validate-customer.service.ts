@@ -1,32 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CustomerExistsRawService } from 'src/raw/stored-procedures/customer-exists/customer-exists-raw.service';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 // import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1002Exception } from 'src/exceptions/error-1002.exception';
 import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
 import { GetAllValuesFromCustomerValuesRawService } from 'src/raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
-import { GetAllValuesFromCustomerValuesStatusConstants } from '../raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-status.constants';
+import { GetAllValuesFromCustomerValuesStatusConstants } from '../../../raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-status.constants';
 import { GetCustomerClassNameFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
-import { GetCustomerClassNameFromIdValueStatusConstants } from '../raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
+import { GetCustomerClassNameFromIdValueStatusConstants } from '../../../raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
 import { GetCustomerInstanceIdFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
-import { GetCustomerInstanceIdFromIdValueStatusConstants } from '../raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
+import { GetCustomerInstanceIdFromIdValueStatusConstants } from '../../../raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
 import { GetDebtFromCustomerRawService } from 'src/raw/stored-procedures/get-debt-from-customer/get-debt-from-customer-raw.service';
-import { GetDebtFromCustomerStatusConstants } from '../raw/stored-procedures/get-debt-from-customer/get-debt-from-customer-status.constants';
+import { GetDebtFromCustomerStatusConstants } from '../../../raw/stored-procedures/get-debt-from-customer/get-debt-from-customer-status.constants';
 import { GetFirstLetterFromABARequestRawService } from 'src/raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
-import { GetFirstLetterFromABARequestStatusConstants } from '../raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
+import { GetFirstLetterFromABARequestStatusConstants } from '../../../raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { ValidateCustomerData } from './validate-customer-data';
-import { ValidateCustomerRequestDto } from './validate-customer-request.dto';
+import { AbaRegisterValidateCustomerData } from './aba-register-validate-customer-data';
+import { AbaRegisterValidateCustomerRequestDto } from './aba-register-validate-customer-request.dto';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
 
 @Injectable()
-export class ValidateCustomerService extends OracleDatabaseService {
+export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
   constructor(
-    private readonly customerExistsRawService: CustomerExistsRawService,
+    private readonly abaRegisterCustomerExistsService: AbaRegisterCustomerExistsService,
     // private readonly dslAuditLogsService: DSLAuditLogsService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
@@ -39,18 +39,18 @@ export class ValidateCustomerService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  async validateCustomer(
-    dto: ValidateCustomerRequestDto,
-  ): Promise<ValidateCustomerData> {
+  async validate(
+    dto: AbaRegisterValidateCustomerRequestDto,
+  ): Promise<AbaRegisterValidateCustomerData> {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Inicio',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateCustomerService.name,
+        clazz: AbaRegisterValidateCustomerService.name,
         method: 'validateCustomer',
       });
-      const data = new ValidateCustomerData();
+      const data = new AbaRegisterValidateCustomerData();
       data.requestDto = dto;
       await super.connect();
       if (BossHelper.isNaturalPerson(dto.customerClassName)) {
@@ -58,7 +58,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getClientClassNameFromIdValue',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateCustomerService.name,
+          clazz: AbaRegisterValidateCustomerService.name,
           method: 'validateCustomer',
         });
         data.getClientClassNameFromIdValueResponse =
@@ -79,7 +79,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getFirstLetterFromABARequest',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateCustomerService.name,
+          clazz: AbaRegisterValidateCustomerService.name,
           method: 'validateCustomer',
         });
         data.getFirstLetterFromABARequestResponse =
@@ -98,20 +98,21 @@ export class ValidateCustomerService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'clientExists',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateCustomerService.name,
+          clazz: AbaRegisterValidateCustomerService.name,
           method: 'validateCustomer',
         });
-        data.clientExistsResponse = await this.customerExistsRawService.execute(
-          {
-            areaCode: dto.areaCode,
-            phoneNumber: dto.phoneNumber,
-            attributeName: BossHelper.getIdentificationDocumentType(
-              dto.customerClassName,
-            ),
-            attributeValue: dto.customerIdentificationDocument,
-          },
-          this.dbConnection,
-        );
+        data.clientExistsResponse =
+          await this.abaRegisterCustomerExistsService.execute(
+            {
+              areaCode: dto.areaCode,
+              phoneNumber: dto.phoneNumber,
+              attributeName: BossHelper.getIdentificationDocumentType(
+                dto.customerClassName,
+              ),
+              attributeValue: dto.customerIdentificationDocument,
+            },
+            this.dbConnection,
+          );
         if (
           data.clientExistsResponse.status ===
           CustomerExistsStatusConstants.SUCCESSFULL
@@ -126,7 +127,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getAllValuesFromClientValues',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateCustomerService.name,
+        clazz: AbaRegisterValidateCustomerService.name,
         method: 'validateCustomer',
       });
       data.getAllValuesFromClientValuesResponse =
@@ -147,7 +148,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getClientInstanceIdFromIdValue',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateCustomerService.name,
+          clazz: AbaRegisterValidateCustomerService.name,
           method: 'validateCustomer',
         });
         data.getClientInstanceIdFromIdValueResponse =
@@ -167,7 +168,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
             phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'getDebtFromClient',
             input: BossHelper.getPhoneNumber(dto),
-            clazz: ValidateCustomerService.name,
+            clazz: AbaRegisterValidateCustomerService.name,
             method: 'validateCustomer',
           });
           data.getDebtFromClientResponse =
@@ -185,7 +186,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
               phoneNumber: BossHelper.getPhoneNumber(dto),
               message: 'updateDslABARegisters',
               input: BossHelper.getPhoneNumber(dto),
-              clazz: ValidateCustomerService.name,
+              clazz: AbaRegisterValidateCustomerService.name,
               method: 'validateCustomer',
             });
             data.updateDslABARegistersResponse =
@@ -206,7 +207,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
             phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'updateDslABARegisters',
             input: BossHelper.getPhoneNumber(dto),
-            clazz: ValidateCustomerService.name,
+            clazz: AbaRegisterValidateCustomerService.name,
             method: 'validateCustomer',
           });
           data.updateDslABARegistersResponse =
@@ -223,7 +224,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateCustomerService.name,
+        clazz: AbaRegisterValidateCustomerService.name,
         method: 'validateCustomer',
         error: error,
       });
