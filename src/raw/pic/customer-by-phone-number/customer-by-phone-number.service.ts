@@ -158,6 +158,7 @@ export class CustomerByPhoneNumberService extends SoapRequestService<ICustomerBy
       ERROR_MESSAGE: super.getString(source, 'ns1:DESCERROR'),
     };
   }
+
   private getBodyPayload(bodyPayload: ICustomerByPhoneNumberRequestBody): any {
     return this.requestPayloadService.get({
       soapTagType: SoapTagTypesConstants.INCLUDE_SOAP_ENV,

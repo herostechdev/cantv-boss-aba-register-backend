@@ -3,24 +3,16 @@ import { Connection } from 'oracledb';
 import { DateTime } from 'luxon';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers-response.interface';
-import { IOracleExecuteRaw } from 'src/oracle/oracle-execute-raw.interface';
 import { InsertDslAbaRegisterException } from './insert-dsl-aba-register.exception';
 import { InsertDslAbaRegisterStatusConstants } from './insert-dsl-aba-register-status.constants';
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers-request.dto';
-import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
+import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
 @Injectable()
-export class InsertDslAbaRegistersRawService
-  extends OracleDatabaseService
-  implements
-    IOracleExecuteRaw<
-      InsertDslAbaRegistersRequestDto,
-      IInsertDslAbaRegistersResponse
-    >
-{
+export class InsertDslAbaRegistersRawService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
   ) {
@@ -54,15 +46,7 @@ export class InsertDslAbaRegistersRawService
     }
   }
 
-  async errorInsert(
-    dto: InsertDslAbaRegistersRequestDto,
-  ): Promise<IInsertDslAbaRegistersResponse> {
-    try {
-      return await this.execute(dto);
-    } catch (error) {}
-  }
-
-  getParameters(dto: InsertDslAbaRegistersRequestDto): any {
+  private getParameters(dto: InsertDslAbaRegistersRequestDto): any {
     const registerDate = DateTime.fromFormat(
       dto.registerDate,
       BossConstants.DEFAULT_DATE_FORMAT,
@@ -78,10 +62,26 @@ export class InsertDslAbaRegistersRawService
     };
   }
 
-  getResponse(result: any): IInsertDslAbaRegistersResponse {
-    return {
+  private getResponse(result: any): IInsertDslAbaRegistersResponse {
+    const response = {
       status: (result?.outBinds?.status ??
         InsertDslAbaRegisterStatusConstants.ERROR) as InsertDslAbaRegisterStatusConstants,
     };
+    switch (response.status) {
+      case InsertDslAbaRegisterStatusConstants.SUCCESSFULL:
+        return response;
+      case InsertDslAbaRegisterStatusConstants.ERROR:
+        throw new InsertDslAbaRegisterException();
+      default:
+        throw new InsertDslAbaRegisterException();
+    }
+  }
+
+  async errorInsert(
+    dto: InsertDslAbaRegistersRequestDto,
+  ): Promise<IInsertDslAbaRegistersResponse> {
+    try {
+      return await this.execute(dto);
+    } catch (error) {}
   }
 }

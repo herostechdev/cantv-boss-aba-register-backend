@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { IOracleExecuteRaw } from 'src/oracle/oracle-execute-raw.interface';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers-response.interface';
-import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
+import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { UpdateDslAbaRegistersException } from './update-dsl-aba-registers.exception';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers-request.dto';
@@ -12,14 +11,7 @@ import { UpdateDslAbaRegistersStatusConstants } from './update-dsl-aba-registers
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
 @Injectable()
-export class UpdateDslAbaRegistersRawService
-  extends OracleDatabaseService
-  implements
-    IOracleExecuteRaw<
-      UpdateDslAbaRegistersRequestDto,
-      IUpdateDslAbaRegistersResponse
-    >
-{
+export class UpdateDslAbaRegistersRawService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
   ) {
@@ -53,15 +45,7 @@ export class UpdateDslAbaRegistersRawService
     }
   }
 
-  async errorUpdate(
-    dto: UpdateDslAbaRegistersRequestDto,
-  ): Promise<IUpdateDslAbaRegistersResponse> {
-    try {
-      return await this.execute(dto);
-    } catch (error) {}
-  }
-
-  getParameters(dto: UpdateDslAbaRegistersRequestDto): any {
+  private getParameters(dto: UpdateDslAbaRegistersRequestDto): any {
     return {
       iAreaCode: OracleHelper.stringBindIn(dto.areaCode, 3),
       iPhoneNumber: OracleHelper.stringBindIn(dto.phoneNumber, 7),
@@ -71,10 +55,26 @@ export class UpdateDslAbaRegistersRawService
     };
   }
 
-  getResponse(result: any): IUpdateDslAbaRegistersResponse {
-    return {
+  private getResponse(result: any): IUpdateDslAbaRegistersResponse {
+    const response = {
       status: (result?.outBinds?.status ??
         UpdateDslAbaRegistersStatusConstants.ERROR) as UpdateDslAbaRegistersStatusConstants,
     };
+    switch (response.status) {
+      case UpdateDslAbaRegistersStatusConstants.SUCCESSFULL:
+        return response;
+      case UpdateDslAbaRegistersStatusConstants.ERROR:
+        throw new UpdateDslAbaRegistersException();
+      default:
+        throw new UpdateDslAbaRegistersException();
+    }
+  }
+
+  async errorUpdate(
+    dto: UpdateDslAbaRegistersRequestDto,
+  ): Promise<IUpdateDslAbaRegistersResponse> {
+    try {
+      return await this.execute(dto);
+    } catch (error) {}
   }
 }

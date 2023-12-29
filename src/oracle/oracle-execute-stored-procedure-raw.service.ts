@@ -1,7 +1,6 @@
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { Connection } from 'oracledb';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
