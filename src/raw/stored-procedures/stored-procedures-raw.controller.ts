@@ -1,6 +1,7 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { CustomerExistsRequestDto } from './customer-exists/customer-exists-request.dto';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
+import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
 import { GetAndRegisterQualifOfServiceDto } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-request.dto';
 import { GetAndRegisterQualifOfServiceRawService } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetCustomerClassNameFromIdValueDto } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-request.dto';
@@ -37,6 +38,8 @@ import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line/is-prepaid
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
+import { GetAllValuesFromCustomerValuesRequestDto } from './get-all-values-from-customer-values/get-all-values-from-customer-values-request.dto';
+import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
 
 @Controller({
   path: 'raw/sp',
@@ -45,6 +48,7 @@ import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/upda
 export class StoredProceduresRawController {
   constructor(
     private readonly customerExistsRawService: CustomerExistsRawService,
+    private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
     private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
@@ -65,6 +69,15 @@ export class StoredProceduresRawController {
     @Body() dto: CustomerExistsRequestDto,
   ): Promise<ICustomerExistsResponse> {
     return this.customerExistsRawService.execute(dto);
+  }
+
+  @Post('getAllValuesFromCustomerValues')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getAllValuesFromCustomerValues(
+    @Body() dto: GetAllValuesFromCustomerValuesRequestDto,
+  ): Promise<IGetAllValuesFromCustomerValuesResponse> {
+    return this.getAllValuesFromCustomerValuesRawService.execute(dto);
   }
 
   @Post('getAndRegisterQualifOfService')

@@ -6,8 +6,8 @@ import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/custome
 import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1002Exception } from 'src/exceptions/error-1002.exception';
 import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
-import { GetAllValuesFromClientValuesStatusConstants } from './get-all-values-from-client-values/get-all-values-from-client-values-status.constants';
-import { GetAllValuesFromClientvaluesInternalErrorException } from './get-all-values-from-client-values/get-all-values-from-client-values-internal-error.exception';
+import { GetAllValuesFromCustomerValuesRawService } from 'src/raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
+import { GetAllValuesFromCustomerValuesStatusConstants } from '../raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-status.constants';
 import { GetCustomerClassNameFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
 import { GetCustomerClassNameFromIdValueStatusConstants } from '../raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
 import { GetCustomerInstanceIdFromIdValueStatusConstants } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
@@ -16,7 +16,6 @@ import { GetDebtFromCustomerInternalErrorException } from './get-debt-from-clien
 import { GetDebtFromCustomerStatusConstants } from './get-debt-from-client/get-debt-from-customer-status.constants';
 import { GetFirstLetterFromABARequestRawService } from 'src/raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
 import { GetFirstLetterFromABARequestStatusConstants } from '../raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
-import { IGetAllValuesFromClientValuesResponse } from './get-all-values-from-client-values/get-all-values-from-client-values-response.interface';
 import { IGetCustomerInstanceIdFromIdValueResponse } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
 import { IGetDebtFromCustomerResponse } from './get-debt-from-client/get-debt-from-customer-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
@@ -32,6 +31,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
   constructor(
     private readonly customerExistsRawService: CustomerExistsRawService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
+    private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
@@ -131,14 +131,18 @@ export class ValidateCustomerService extends OracleDatabaseService {
         method: 'validateCustomer',
       });
       data.getAllValuesFromClientValuesResponse =
-        await this.getAllValuesFromClientValues(
-          dto.customerClassName,
-          BossHelper.getIdentificationDocumentType(dto.customerClassName),
-          dto.customerIdentificationDocument,
-        );
+        await this.getAllValuesFromCustomerValuesRawService.execute({
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+          className: dto.customerClassName,
+          attributeName: BossHelper.getIdentificationDocumentType(
+            dto.customerClassName,
+          ),
+          value: dto.customerIdentificationDocument,
+        });
       if (
         data.getAllValuesFromClientValuesResponse.status ===
-        GetAllValuesFromClientValuesStatusConstants.SUCCESSFULL
+        GetAllValuesFromCustomerValuesStatusConstants.SUCCESSFULL
       ) {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -189,7 +193,7 @@ export class ValidateCustomerService extends OracleDatabaseService {
       } else {
         if (
           data.getAllValuesFromClientValuesResponse.status !==
-          GetAllValuesFromClientValuesStatusConstants.THERE_IS_NO_DATA
+          GetAllValuesFromCustomerValuesStatusConstants.THERE_IS_NO_DATA
         ) {
           Wlog.instance.info({
             phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -245,42 +249,42 @@ export class ValidateCustomerService extends OracleDatabaseService {
     });
   }
 
-  private async getAllValuesFromClientValues(
-    className: string,
-    attributeName: string,
-    value: string,
-  ): Promise<IGetAllValuesFromClientValuesResponse> {
-    const parameters = {
-      classname: OracleHelper.stringBindIn(className),
-      attrname: OracleHelper.stringBindIn(attributeName),
-      avalue: OracleHelper.stringBindIn(value),
-      aname: OracleHelper.tableOfStringBindOut(),
-      cltvalue: OracleHelper.tableOfStringBindOut(),
-      status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.SIGS_PACKAGE,
-      BossConstants.GET_ALL_VALUES_FROM_CUSTOMER_VALUES,
-      parameters,
-    );
-    const response: IGetAllValuesFromClientValuesResponse = {
-      name: OracleHelper.getFirstItem(result, 'aname'),
-      value: OracleHelper.getFirstItem(result, 'cltvalue'),
-      status: (result?.outBinds?.status ??
-        GetAllValuesFromClientValuesStatusConstants.INTERNAL_ERROR) as GetAllValuesFromClientValuesStatusConstants,
-    };
-    switch (response.status) {
-      case GetAllValuesFromClientValuesStatusConstants.SUCCESSFULL:
-        return response;
-      case GetAllValuesFromClientValuesStatusConstants.INTERNAL_ERROR:
-        throw new GetAllValuesFromClientvaluesInternalErrorException();
-      case GetAllValuesFromClientValuesStatusConstants.THERE_IS_NO_DATA:
-        return response;
-      // throw new ClientExistsThereIsNoDataException();
-      default:
-        throw new GetAllValuesFromClientvaluesInternalErrorException();
-    }
-  }
+  // private async getAllValuesFromCustomerValues(
+  //   className: string,
+  //   attributeName: string,
+  //   value: string,
+  // ): Promise<IGetAllValuesFromCustomerValuesResponse> {
+  //   const parameters = {
+  //     classname: OracleHelper.stringBindIn(className),
+  //     attrname: OracleHelper.stringBindIn(attributeName),
+  //     avalue: OracleHelper.stringBindIn(value),
+  //     aname: OracleHelper.tableOfStringBindOut(),
+  //     cltvalue: OracleHelper.tableOfStringBindOut(),
+  //     status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.SIGS_PACKAGE,
+  //     BossConstants.GET_ALL_VALUES_FROM_CUSTOMER_VALUES,
+  //     parameters,
+  //   );
+  //   const response: IGetAllValuesFromCustomerValuesResponse = {
+  //     name: OracleHelper.getFirstItem(result, 'aname'),
+  //     value: OracleHelper.getFirstItem(result, 'cltvalue'),
+  //     status: (result?.outBinds?.status ??
+  //       GetAllValuesFromCustomerValuesStatusConstants.INTERNAL_ERROR) as GetAllValuesFromCustomerValuesStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case GetAllValuesFromCustomerValuesStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetAllValuesFromCustomerValuesStatusConstants.INTERNAL_ERROR:
+  //       throw new GetAllValuesFromCustomerValuesException();
+  //     case GetAllValuesFromCustomerValuesStatusConstants.THERE_IS_NO_DATA:
+  //       return response;
+  //     // throw new ClientExistsThereIsNoDataException();
+  //     default:
+  //       throw new GetAllValuesFromCustomerValuesException();
+  //   }
+  // }
 
   // private async getCustomerClassNameFromIdValue(
   //   customerAttributeName: string,
