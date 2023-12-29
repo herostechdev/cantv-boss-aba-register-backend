@@ -3,5 +3,5 @@ import { GetCustomerClassNameFromIdValueStatusConstants } from './get-customer-c
 
 export interface IGetCustomerClassNameFromIdValueResponse
   extends IStatusResponse<GetCustomerClassNameFromIdValueStatusConstants> {
-  clientClassName: string;
+  customerClassName: string;
 }

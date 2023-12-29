@@ -1,26 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
-import { CustomerExistsStatusConstants } from 'src/customer-exists/customer-exists-status.constants';
+import { CustomerExistsRawService } from 'src/raw/stored-procedures/customer-exists/customer-exists-raw.service';
+import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1002Exception } from 'src/exceptions/error-1002.exception';
 import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
 import { GetAllValuesFromClientValuesStatusConstants } from './get-all-values-from-client-values/get-all-values-from-client-values-status.constants';
 import { GetAllValuesFromClientvaluesInternalErrorException } from './get-all-values-from-client-values/get-all-values-from-client-values-internal-error.exception';
-import { GetCustomerClassNameFromIdValueInternalErrorException } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-internal-error.exception';
-import { GetCustomerClassNameFromIdValueStatusConstants } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
+import { GetCustomerClassNameFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
+import { GetCustomerClassNameFromIdValueStatusConstants } from '../raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
 import { GetCustomerInstanceIdFromIdValueStatusConstants } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
 import { GetCustomerInstanceIdFromIdValueInternalErrorException } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-internal-error.exception';
 import { GetDebtFromCustomerInternalErrorException } from './get-debt-from-client/get-debt-from-customer-internal-error.exception';
 import { GetDebtFromCustomerStatusConstants } from './get-debt-from-client/get-debt-from-customer-status.constants';
-import { GetFirstLetterFromABARequestStatusConstants } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
-import { GetFirstLetterFromABARequestInternalErrorException } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-internal-error.exception';
+import { GetFirstLetterFromABARequestRawService } from 'src/raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
+import { GetFirstLetterFromABARequestStatusConstants } from '../raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
 import { IGetAllValuesFromClientValuesResponse } from './get-all-values-from-client-values/get-all-values-from-client-values-response.interface';
-import { IGetCustomerClassNameFromIdValueResponse } from './get-client-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
 import { IGetCustomerInstanceIdFromIdValueResponse } from './get-client-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
 import { IGetDebtFromCustomerResponse } from './get-debt-from-client/get-debt-from-customer-response.interface';
-import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
@@ -32,8 +30,10 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 @Injectable()
 export class ValidateCustomerService extends OracleDatabaseService {
   constructor(
-    private readonly clientExistsService: CustomerExistsService,
+    private readonly customerExistsRawService: CustomerExistsRawService,
     private readonly dslAuditLogsService: DSLAuditLogsService,
+    private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
+    private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
@@ -63,10 +63,14 @@ export class ValidateCustomerService extends OracleDatabaseService {
           method: 'validateCustomer',
         });
         data.getClientClassNameFromIdValueResponse =
-          await this.getCustomerClassNameFromIdValue(
-            BossHelper.getIdentificationDocumentType(dto.customerClassName),
-            dto.customerIdentificationDocument,
-          );
+          await this.getCustomerClassNameFromIdValueRawService.execute({
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+            customerAttributeName: BossHelper.getIdentificationDocumentType(
+              dto.customerClassName,
+            ),
+            value: dto.customerIdentificationDocument,
+          });
         if (
           data.getClientClassNameFromIdValueResponse.status !==
           GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL
@@ -80,7 +84,10 @@ export class ValidateCustomerService extends OracleDatabaseService {
           method: 'validateCustomer',
         });
         data.getFirstLetterFromABARequestResponse =
-          await this.getFirstLetterFromABARequest(data);
+          await this.getFirstLetterFromABARequestRawService.execute({
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+          });
         if (
           data.getFirstLetterFromABARequestResponse.status ===
           GetFirstLetterFromABARequestStatusConstants.SUCCESSFULL
@@ -95,8 +102,10 @@ export class ValidateCustomerService extends OracleDatabaseService {
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
-        data.clientExistsResponse = await this.clientExistsService.clientExists(
+        data.clientExistsResponse = await this.customerExistsRawService.execute(
           {
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
             attributeName: BossHelper.getIdentificationDocumentType(
               dto.customerClassName,
             ),
@@ -273,41 +282,40 @@ export class ValidateCustomerService extends OracleDatabaseService {
     }
   }
 
-  private async getCustomerClassNameFromIdValue(
-    customerAttributeName: string,
-    value: string,
-  ): Promise<IGetCustomerClassNameFromIdValueResponse> {
-    const parameters = {
-      sz_IdValue: OracleHelper.stringBindIn(value, 256),
-      sz_Cltattributename: OracleHelper.stringBindIn(
-        customerAttributeName,
-        256,
-      ),
-      sz_Cltclassname: OracleHelper.stringBindOut(1),
-      o_status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ACT_PACKAGE,
-      BossConstants.GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE,
-      parameters,
-    );
-    const response: IGetCustomerClassNameFromIdValueResponse = {
-      clientClassName: result?.outBinds?.sz_Cltclassname,
-      status: (result?.outBinds?.o_status ??
-        GetCustomerClassNameFromIdValueStatusConstants.ERROR) as GetCustomerClassNameFromIdValueStatusConstants,
-    };
-    switch (response.status) {
-      case GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL:
-        return response;
-      case GetCustomerClassNameFromIdValueStatusConstants.ERROR:
-        throw new GetCustomerClassNameFromIdValueInternalErrorException();
-      case GetCustomerClassNameFromIdValueStatusConstants.THERE_IS_NO_DATA:
-        // throw new GetCustomerClassNameFromIdValueThereIsNoDataException();
-        return response;
-      default:
-        throw new GetCustomerClassNameFromIdValueInternalErrorException();
-    }
-  }
+  // private async getCustomerClassNameFromIdValue(
+  //   customerAttributeName: string,
+  //   value: string,
+  // ): Promise<IGetCustomerClassNameFromIdValueResponse> {
+  //   const parameters = {
+  //     sz_IdValue: OracleHelper.stringBindIn(value, 256),
+  //     sz_Cltattributename: OracleHelper.stringBindIn(
+  //       customerAttributeName,
+  //       256,
+  //     ),
+  //     sz_Cltclassname: OracleHelper.stringBindOut(1),
+  //     o_status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ACT_PACKAGE,
+  //     BossConstants.GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE,
+  //     parameters,
+  //   );
+  //   const response: IGetCustomerClassNameFromIdValueResponse = {
+  //     customerClassName: result?.outBinds?.sz_Cltclassname,
+  //     status: (result?.outBinds?.o_status ??
+  //       GetCustomerClassNameFromIdValueStatusConstants.ERROR) as GetCustomerClassNameFromIdValueStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetCustomerClassNameFromIdValueStatusConstants.ERROR:
+  //       throw new GetCustomerClassNameFromIdValueException();
+  //     case GetCustomerClassNameFromIdValueStatusConstants.THERE_IS_NO_DATA:
+  //       return response;
+  //     default:
+  //       throw new GetCustomerClassNameFromIdValueException();
+  //   }
+  // }
 
   private async getClientInstanceIdFromIdValue(
     customerAttributeName: string,
@@ -345,37 +353,37 @@ export class ValidateCustomerService extends OracleDatabaseService {
     }
   }
 
-  private async getFirstLetterFromABARequest(
-    data: ValidateCustomerData,
-  ): Promise<IGetFirstLetterFromABARequestResponse> {
-    const parameters = {
-      sz_Areacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
-      s_Phonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
-      sz_FirstLetter: OracleHelper.stringBindOut(),
-      o_status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ACT_PACKAGE,
-      BossConstants.GET_FIRST_LETTER_FROM_ABA_REQUEST,
-      parameters,
-    );
-    const response: IGetFirstLetterFromABARequestResponse = {
-      firstLetter: result?.outBinds?.sz_FirstLetter,
-      status: (result?.outBinds?.o_status ??
-        GetFirstLetterFromABARequestStatusConstants.ERROR) as GetFirstLetterFromABARequestStatusConstants,
-    };
-    switch (response.status) {
-      case GetFirstLetterFromABARequestStatusConstants.SUCCESSFULL:
-        return response;
-      case GetFirstLetterFromABARequestStatusConstants.ERROR:
-        throw new GetFirstLetterFromABARequestInternalErrorException();
-      case GetFirstLetterFromABARequestStatusConstants.THERE_IS_NO_DATA:
-        // throw new GetFirstLetterFromABARequestThereIsNoDataException();
-        return response;
-      default:
-        throw new GetFirstLetterFromABARequestInternalErrorException();
-    }
-  }
+  // private async getFirstLetterFromABARequest(
+  //   data: ValidateCustomerData,
+  // ): Promise<IGetFirstLetterFromABARequestResponse> {
+  //   const parameters = {
+  //     sz_Areacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
+  //     s_Phonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
+  //     sz_FirstLetter: OracleHelper.stringBindOut(),
+  //     o_status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ACT_PACKAGE,
+  //     BossConstants.GET_FIRST_LETTER_FROM_ABA_REQUEST,
+  //     parameters,
+  //   );
+  //   const response: IGetFirstLetterFromABARequestResponse = {
+  //     firstLetter: result?.outBinds?.sz_FirstLetter,
+  //     status: (result?.outBinds?.o_status ??
+  //       GetFirstLetterFromABARequestStatusConstants.ERROR) as GetFirstLetterFromABARequestStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case GetFirstLetterFromABARequestStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetFirstLetterFromABARequestStatusConstants.ERROR:
+  //       throw new GetFirstLetterFromABARequestInternalErrorException();
+  //     case GetFirstLetterFromABARequestStatusConstants.THERE_IS_NO_DATA:
+  //       // throw new GetFirstLetterFromABARequestThereIsNoDataException();
+  //       return response;
+  //     default:
+  //       throw new GetFirstLetterFromABARequestInternalErrorException();
+  //   }
+  // }
 
   private async getDebtFromClient(
     customerInstanceId: number,

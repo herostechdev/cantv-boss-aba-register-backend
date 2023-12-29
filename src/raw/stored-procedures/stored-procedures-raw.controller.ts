@@ -1,16 +1,25 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
+import { CustomerExistsRequestDto } from './customer-exists/customer-exists-request.dto';
+import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
 import { GetAndRegisterQualifOfServiceDto } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-request.dto';
 import { GetAndRegisterQualifOfServiceRawService } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
+import { GetCustomerClassNameFromIdValueDto } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-request.dto';
+import { GetCustomerClassNameFromIdValueRawService } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
+import { GetFirstLetterFromABARequestDto } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-request.dto';
+import { GetFirstLetterFromABARequestRawService } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
 import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login/get-group-access-from-login-raw.service';
 import { GetGroupAccessFromLoginRequestDto } from './get-group-access-from-login/get-group-access-from-login-request.dto';
 import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
+import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
+import { IGetCustomerClassNameFromIdValueResponse } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
+import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
 import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
@@ -33,8 +42,11 @@ import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/upda
 })
 export class StoredProceduresRawController {
   constructor(
+    private readonly customerExistsRawService: CustomerExistsRawService,
     private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
+    private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
     private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
+    private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
     private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
@@ -44,13 +56,31 @@ export class StoredProceduresRawController {
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {}
 
+  @Post('customerExists')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  customerExists(
+    @Body() dto: CustomerExistsRequestDto,
+  ): Promise<ICustomerExistsResponse> {
+    return this.customerExistsRawService.execute(dto);
+  }
+
   @Post('getAndRegisterQualifOfService')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
-  getAndRegisterQualifOfService(
+  getCustomerClassNameFromIdValue(
     @Body() dto: GetAndRegisterQualifOfServiceDto,
   ): Promise<IGetAndRegisterQualifOfServiceResponse> {
     return this.getAndRegisterQualifOfServiceRawService.execute(dto);
+  }
+
+  @Post('getCustomerClassNameFromIdValue')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getAndRegisterQualifOfService(
+    @Body() dto: GetCustomerClassNameFromIdValueDto,
+  ): Promise<IGetCustomerClassNameFromIdValueResponse> {
+    return this.getCustomerClassNameFromIdValueRawService.execute(dto);
   }
 
   @Post('getDSLAreaCodes')
@@ -60,6 +90,15 @@ export class StoredProceduresRawController {
     @Body() dto: GetDSLAreaCodesRequestDto,
   ): Promise<IGetDSLAreaCodesResponse> {
     return this.getDSLAreaCodesRawService.execute(dto);
+  }
+
+  @Post('getFirstLetterFromABARequest')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getFirstLetterFromABARequest(
+    @Body() dto: GetFirstLetterFromABARequestDto,
+  ): Promise<IGetFirstLetterFromABARequestResponse> {
+    return this.getFirstLetterFromABARequestRawService.execute(dto);
   }
 
   @Post('getGroupAccessFromLogin')

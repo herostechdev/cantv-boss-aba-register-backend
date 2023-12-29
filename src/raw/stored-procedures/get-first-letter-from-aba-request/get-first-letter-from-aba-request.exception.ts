@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class GetFirstLetterFromABARequestInternalErrorException extends CustomBadRequestException {
+export class GetFirstLetterFromABARequestException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',

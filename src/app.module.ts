@@ -16,7 +16,6 @@ import { PICModule } from './raw/pic/pic.module';
 import { StoredproceduresRawModule } from './raw/stored-procedures/stored-procedure-raw.module';
 
 import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
-import { CustomerExistsModule } from './customer-exists/customer-exists.module';
 import { DocumentsConfigurationModule } from './system/configuration/documents/documents-configuration.module';
 import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
@@ -50,7 +49,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     StoredproceduresRawModule,
     PICModule,
 
-    CustomerExistsModule,
     ConfirmRegistrationModule,
     DocumentsConfigurationModule,
     DSLAuditLogsModule,

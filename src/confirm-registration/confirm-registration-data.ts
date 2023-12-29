@@ -2,7 +2,7 @@ import { ConfirmRegistrationRequestDto } from './confirm-registration-request.dt
 import { IABARegisterResponse } from './aba-register/aba-register-response.interface';
 import { ICreateAndProvisioningCustomerResponse } from './create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICreateAndProvisioningMasterActResponse } from './create-and-provisioning-master-act/create-and-provisioning-master-act-response.interface';
-import { ICustomerExistsResponse } from 'src/customer-exists/customer-exists-response.interface';
+import { ICustomerExistsResponse } from 'src/raw/stored-procedures/customer-exists/customer-exists-response.interface';
 import { IGetPlanABAFromKenanResponse } from './get-plan-aba-from-kenan/get-plan-aba-from-kenan-response.interface';
 import { IInsertModifyCustomerAttributeResponse } from './insert-modify-customer-attribute/insert-modify-customer-attribute-response.interface';
 import { IIsReservedLoginResponse } from './is-reserved-login/is-reserved-login-response.interface';

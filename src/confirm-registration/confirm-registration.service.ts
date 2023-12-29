@@ -24,8 +24,8 @@ import { CreatingHostingChargeException } from './create-and-provisioning-master
 import { CreatingMasterAccountException } from './create-and-provisioning-master-act/creating-master-account.exception';
 import { CreatingPaymentInstanceException } from './create-and-provisioning-master-act/creating-payment-instance.exception';
 import { CreatingSubaccountException } from './create-and-provisioning-master-act/creating-subaccount.exception';
-import { CustomerExistsService } from 'src/customer-exists/customer-exists.service';
-import { CustomerExistsStatusConstants } from 'src/customer-exists/customer-exists-status.constants';
+import { CustomerExistsRawService } from 'src/raw/stored-procedures/customer-exists/customer-exists-raw.service';
+import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 import { Error10023Exception } from 'src/exceptions/error-1002-3.exception';
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
 import { IABARegisterResponse } from './aba-register/aba-register-response.interface';
@@ -52,7 +52,7 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 export class ConfirmRegistrationService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly customerExistsService: CustomerExistsService,
+    private readonly customerExistsRawService: CustomerExistsRawService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService);
@@ -87,13 +87,16 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      data.customerExistsResponse =
-        await this.customerExistsService.clientExists({
+      data.customerExistsResponse = await this.customerExistsRawService.execute(
+        {
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
           attributeName: BossHelper.getIdentificationDocumentType(
             data.requestDto.customerClassName,
           ),
           attributeValue: data.requestDto.customerIdentificationDocument,
-        });
+        },
+      );
       if (
         data.customerExistsResponse.status ===
         CustomerExistsStatusConstants.SUCCESSFULL

@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class CustomerExistsInternalErrorException extends CustomBadRequestException {
+export class CustomerExistsException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',
