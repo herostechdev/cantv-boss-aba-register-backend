@@ -95,22 +95,6 @@ export class ValidateCustomerService extends OracleDatabaseService {
           clazz: ValidateCustomerService.name,
           method: 'validateCustomer',
         });
-
-        console.log();
-        console.log('dto.customerClassName');
-        console.log(dto.customerClassName);
-        console.log('fin dto.customerClassName');
-
-        console.log();
-        console.log('attributeName');
-        console.log(
-          BossHelper.getIdentificationDocumentType(dto.customerClassName),
-        );
-
-        console.log();
-        console.log('attributeValue');
-        console.log(dto.customerIdentificationDocument);
-
         data.clientExistsResponse = await this.clientExistsService.clientExists(
           {
             attributeName: BossHelper.getIdentificationDocumentType(
@@ -271,8 +255,8 @@ export class ValidateCustomerService extends OracleDatabaseService {
       parameters,
     );
     const response: IGetAllValuesFromClientValuesResponse = {
-      name: result?.outBinds?.aname,
-      value: result?.outBinds?.cltvalue,
+      name: OracleHelper.getFirstItem(result, 'aname'),
+      value: OracleHelper.getFirstItem(result, 'cltvalue'),
       status: (result?.outBinds?.status ??
         GetAllValuesFromClientValuesStatusConstants.INTERNAL_ERROR) as GetAllValuesFromClientValuesStatusConstants,
     };
