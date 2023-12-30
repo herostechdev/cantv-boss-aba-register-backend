@@ -10,7 +10,7 @@ import { CheckIpStatusConstants } from './check-ip/check-ip-status.constants';
 import { DeleteOrderStatusConstants } from './delete-order/delete-order-status.constants';
 import { DeleteOrderExecutionErrorException } from './delete-order/delete-order-execution-error.exception';
 import { DeleteOrderThePortIsOccupiedByAnotherContractException } from './delete-order/delete-order-the-is-occupied-by-another-contract.exception';
-import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
+import { DSLAuditLogsService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30031Exception } from 'src/exceptions/error-3003-1.exception';
 import { Error30032Exception } from 'src/exceptions/error-3003-2.exception';
