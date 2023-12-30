@@ -25,7 +25,7 @@ export class AbaRegisterGetLegalDocumentsService extends ExceptionsService {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetLegalDocumentsService.name,
         method: 'get',
@@ -36,7 +36,7 @@ export class AbaRegisterGetLegalDocumentsService extends ExceptionsService {
       };
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetLegalDocumentsService.name,
         method: 'get',

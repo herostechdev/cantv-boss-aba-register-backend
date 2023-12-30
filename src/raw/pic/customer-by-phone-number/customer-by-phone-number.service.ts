@@ -52,7 +52,7 @@ export class CustomerByPhoneNumberService extends SoapRequestService<ICustomerBy
       const response = await this.getCustomer(dto);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         clazz: CustomerByPhoneNumberService.name,
         method: 'get',
       });

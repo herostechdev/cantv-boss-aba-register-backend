@@ -31,7 +31,7 @@ export class GetDHCPDataRawService extends ExceptionsService {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: JSON.stringify(dto),
         clazz: GetDHCPDataRawService.name,
         method: 'get',
@@ -79,7 +79,7 @@ export class GetDHCPDataRawService extends ExceptionsService {
       }
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: JSON.stringify(dto),
         clazz: GetDHCPDataRawService.name,
         method: 'get',

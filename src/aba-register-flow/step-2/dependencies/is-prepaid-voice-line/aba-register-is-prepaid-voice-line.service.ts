@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { IsPrepaidVoiceLineException } from 'src/raw/stored-procedures/is-prepaid-voice-line/is-a-prepaid-voice-line.exception';
 import { IsPrepaidVoiceLineIsPrepaidConstants } from 'src/raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-is-prepaid.constants';
@@ -29,17 +30,17 @@ export class AbaRegisterIsPrepaidVoiceLineService extends OracleFinalExecuteServ
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: JSON.stringify(dto),
         clazz: AbaRegisterIsPrepaidVoiceLineService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Obteniendo información de linea prepago',
         input: JSON.stringify(dto),
         clazz: AbaRegisterIsPrepaidVoiceLineService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       const response = await this.isPrepaidVoiceLineRawService.execute(
         dto,
@@ -48,10 +49,10 @@ export class AbaRegisterIsPrepaidVoiceLineService extends OracleFinalExecuteServ
       this.processResponse(response);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: JSON.stringify(dto),
         clazz: AbaRegisterIsPrepaidVoiceLineService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       return response;
     } catch (error) {
@@ -59,7 +60,7 @@ export class AbaRegisterIsPrepaidVoiceLineService extends OracleFinalExecuteServ
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: JSON.stringify(dto),
         clazz: AbaRegisterIsPrepaidVoiceLineService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
         error: error,
       });
       super.exceptionHandler(error, JSON.stringify(dto));

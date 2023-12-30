@@ -33,7 +33,7 @@ export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderD
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
@@ -56,7 +56,7 @@ export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderD
       const response = await this.invoke(dto);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: dto.orderId,
         clazz: GetASAPOrderDetailService.name,
         method: 'getASAPOrderDetail',
@@ -132,7 +132,7 @@ export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderD
       PICConstants.PIC_OK_4_ZEROS_ERROR_CODE,
     );
     console.log();
-    console.log('Fin');
+    console.log(BossConstants.END);
     return asapOrderDetailResponse;
   }
 

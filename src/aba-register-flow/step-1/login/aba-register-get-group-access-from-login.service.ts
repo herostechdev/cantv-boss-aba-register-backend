@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { GetGroupAccessFromLoginException } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login.exception';
 import { GetGroupAccessFromLoginNotFoundException } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-not-found.exception';
@@ -29,17 +30,17 @@ export class AbaRegisterGetGroupAccessFromLoginService extends OracleFinalExecut
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetGroupAccessFromLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Obtiene la informacón del grupo de acceso del usuario',
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetGroupAccessFromLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       const response = await this.getGroupAccessFromLoginRawService.execute(
         dto,
@@ -48,10 +49,10 @@ export class AbaRegisterGetGroupAccessFromLoginService extends OracleFinalExecut
       this.processResponse(response);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetGroupAccessFromLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       return response;
     } catch (error) {
@@ -59,7 +60,7 @@ export class AbaRegisterGetGroupAccessFromLoginService extends OracleFinalExecut
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetGroupAccessFromLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
         error: error,
       });
       super.exceptionHandler(error, JSON.stringify(dto));

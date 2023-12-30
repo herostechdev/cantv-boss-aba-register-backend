@@ -74,6 +74,8 @@ export class BossConstants {
   public static ADSL = 'ADSL';
   public static ASAP_ORDER_COMRED_STATUS = 399;
   public static CANTV_BILLING = 'FACTURA_CANTV';
+  public static END = 'Fin';
+  public static EXECUTE = 'execute';
   public static FISCAL_IDENTIFICATION_DOCUMENT_TYPE = 'NO_RIF';
   public static INSTALL_ABA = 'INSTALAR_ABA';
   public static INTERNET_ACCESS = 'Acceso Internet';
@@ -88,6 +90,7 @@ export class BossConstants {
   public static OK_RESPONSE = '0000';
   public static PROCESSED = 'PROCESADO';
   public static REGISTER = 'Registro';
+  public static START = 'Inicio';
   public static USERS = 'USUARIOS';
   public static UNKNOWN = 'UNKNOWN';
   public static VENEZUELA = 'VENEZUELA';

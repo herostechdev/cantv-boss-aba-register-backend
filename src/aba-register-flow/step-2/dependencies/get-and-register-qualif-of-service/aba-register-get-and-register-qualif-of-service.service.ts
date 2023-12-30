@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { GetAndRegisterQualifOfServiceDto } from 'src/raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service-request.dto';
 import { GetAndRegisterQualifOfServiceException } from 'src/raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service.exception';
@@ -27,17 +28,17 @@ export class AbaRegisterGetAndRegisterQualifOfServiceService extends OracleFinal
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetAndRegisterQualifOfServiceService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Ejecutando el servicio GetAndRegisterQualifOfServiceService',
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetAndRegisterQualifOfServiceService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       const response =
         await this.getAndRegisterQualifOfServiceRawService.execute(
@@ -47,10 +48,10 @@ export class AbaRegisterGetAndRegisterQualifOfServiceService extends OracleFinal
       this.processResponse(response);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetAndRegisterQualifOfServiceService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       return response;
     } catch (error) {
@@ -58,7 +59,7 @@ export class AbaRegisterGetAndRegisterQualifOfServiceService extends OracleFinal
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetAndRegisterQualifOfServiceService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
         error: error,
       });
       super.exceptionHandler(error, JSON.stringify(dto));

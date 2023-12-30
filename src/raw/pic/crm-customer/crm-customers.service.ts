@@ -30,7 +30,7 @@ export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
         clazz: CRMCustomersService.name,
         method: 'get',
@@ -88,7 +88,7 @@ export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse
     const response = await this.invoke(dto, { CUST_ID: dto.customerId });
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: 'Fin',
+      message: BossConstants.END,
       input: dto.customerId,
       clazz: CRMCustomersService.name,
       method: 'get',
@@ -111,7 +111,7 @@ export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse
     });
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: 'Fin',
+      message: BossConstants.END,
       input: dto.identificationDocument,
       clazz: CRMCustomersService.name,
       method: 'get',
@@ -132,7 +132,7 @@ export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse
     const response = await this.invoke(dto, { TAXPAYER_ID: dto.fiscalNumber });
     Wlog.instance.info({
       phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: 'Fin',
+      message: BossConstants.END,
       input: dto.fiscalNumber,
       clazz: CRMCustomersService.name,
       method: 'get',

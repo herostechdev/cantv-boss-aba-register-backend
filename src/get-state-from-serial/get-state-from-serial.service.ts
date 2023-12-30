@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { GetStateFromSerialRequestDto } from './get-state-from-serial-request.dto';
 import { GetStateFromSerialStatusConstants } from './get-state-from-serial-status.constants';
 import { GetStateFromSerialException } from './get-state-from-serial.exception';
 import { IGetStateFromSerialResponse } from './get-state-from-serial-response.interface';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
@@ -26,7 +26,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: BossHelper.getPhoneNumber(dto),
         clazz: GetStateFromSerialService.name,
         method: 'getStateFromSerial',
@@ -62,7 +62,7 @@ export class GetStateFromSerialService extends OracleDatabaseService {
       }
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: BossHelper.getPhoneNumber(dto),
         clazz: GetStateFromSerialService.name,
         method: 'getStateFromSerial',

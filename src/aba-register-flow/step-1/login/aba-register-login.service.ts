@@ -32,10 +32,10 @@ export class AbaRegisterLoginService extends OracleFinalExecuteService<
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: JSON.stringify(dto),
         clazz: AbaRegisterLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       const data = new AbaRegisterLoginData();
       data.requestDto = dto;
@@ -44,7 +44,7 @@ export class AbaRegisterLoginService extends OracleFinalExecuteService<
         message: 'Obtener permisología del usuario',
         input: JSON.stringify(dto),
         clazz: AbaRegisterLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       data.getGroupAccessFromLoginResponse =
         await this.abaRegisterGetGroupAccessFromLoginService.execute(
@@ -56,7 +56,7 @@ export class AbaRegisterLoginService extends OracleFinalExecuteService<
         message: 'Validar contraseña',
         input: dto.userlogin,
         clazz: AbaRegisterLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       this.validatePassword(
         dto.password,
@@ -67,7 +67,7 @@ export class AbaRegisterLoginService extends OracleFinalExecuteService<
         message: 'Validar permisos',
         input: dto.userlogin,
         clazz: AbaRegisterLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       data.isgActionAllowedResponse =
         await this.abaRegisterISGActionAllowedService.execute({
@@ -78,17 +78,17 @@ export class AbaRegisterLoginService extends OracleFinalExecuteService<
         });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: JSON.stringify(dto),
         clazz: AbaRegisterLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: JSON.stringify(dto),
         clazz: AbaRegisterLoginService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
         error: error,
       });
       super.exceptionHandler(error, JSON.stringify(dto));

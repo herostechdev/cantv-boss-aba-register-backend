@@ -26,7 +26,7 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: BossHelper.getPhoneNumber(dto),
         clazz: GetPlanDescriptionFromPlanNameService.name,
         method: 'getPlanDescriptionFromPlanName',
@@ -60,7 +60,7 @@ export class GetPlanDescriptionFromPlanNameService extends OracleDatabaseService
       }
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: BossHelper.getPhoneNumber(dto),
         clazz: GetPlanDescriptionFromPlanNameService.name,
         method: 'getPlanDescriptionFromPlanName',

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { ExpiredIpException } from 'src/raw/stored-procedures/is-ip-allowed/expired-ip.exception';
 import { IsIpAllowedException } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed.exception';
@@ -26,17 +27,17 @@ export class AbaRegisterIsIPAllowedService extends OracleFinalExecuteService<
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: JSON.stringify(dto),
         clazz: AbaRegisterIsIPAllowedService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Verifica si la IP es permisada',
         input: JSON.stringify(dto),
         clazz: AbaRegisterIsIPAllowedService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       const response = await this.isIPAllowedRawService.execute(
         dto,
@@ -45,10 +46,10 @@ export class AbaRegisterIsIPAllowedService extends OracleFinalExecuteService<
       this.processResponse(response);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: JSON.stringify(dto),
         clazz: AbaRegisterIsIPAllowedService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       return response;
     } catch (error) {
@@ -56,7 +57,7 @@ export class AbaRegisterIsIPAllowedService extends OracleFinalExecuteService<
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: JSON.stringify(dto),
         clazz: AbaRegisterIsIPAllowedService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
         error: error,
       });
       super.exceptionHandler(error, JSON.stringify(dto));

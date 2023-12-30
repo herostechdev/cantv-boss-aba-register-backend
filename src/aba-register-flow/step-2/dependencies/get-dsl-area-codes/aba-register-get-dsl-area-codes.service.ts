@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
+import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { GetDSLAreaCodesException } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes.exception';
 import { GetDSLAreaCodesRawService } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-raw.service';
@@ -27,17 +28,17 @@ export class AbaRegisterGetDslAreaCodesService extends OracleFinalExecuteService
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetDslAreaCodesService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Obtiene los códigos de área',
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetDslAreaCodesService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       const response = await this.getDSLAreaCodesRawService.execute(
         dto,
@@ -46,10 +47,10 @@ export class AbaRegisterGetDslAreaCodesService extends OracleFinalExecuteService
       this.processResponse(response);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetDslAreaCodesService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
       });
       return response;
     } catch (error) {
@@ -57,7 +58,7 @@ export class AbaRegisterGetDslAreaCodesService extends OracleFinalExecuteService
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: JSON.stringify(dto),
         clazz: AbaRegisterGetDslAreaCodesService.name,
-        method: 'execute',
+        method: BossConstants.EXECUTE,
         error: error,
       });
       super.exceptionHandler(error, JSON.stringify(dto));

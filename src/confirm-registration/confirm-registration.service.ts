@@ -64,7 +64,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio',
+        message: BossConstants.START,
         input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
@@ -161,7 +161,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Fin',
+        message: BossConstants.END,
         input: BossHelper.getPhoneNumber(dto),
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
