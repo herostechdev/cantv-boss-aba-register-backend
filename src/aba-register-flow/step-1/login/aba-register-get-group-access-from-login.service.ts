@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'oracledb';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
 import { GetGroupAccessFromLoginException } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login.exception';
 import { GetGroupAccessFromLoginNotFoundException } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-not-found.exception';
 import { GetGroupAccessFromLoginRawService } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-raw.service';
@@ -9,62 +7,20 @@ import { GetGroupAccessFromLoginRequestDto } from 'src/raw/stored-procedures/get
 import { GetGroupAccessFromLoginStatusConstants } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-status.constants';
 import { GetGroupAccessFromLoginThereIsNoDataException } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-there-is-no-data.exception';
 import { IGetGroupAccessFromLoginResponse } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-response.interface';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterGetGroupAccessFromLoginService extends OracleFinalExecuteService<
+export class AbaRegisterGetGroupAccessFromLoginService extends AbaRegisterExecuteService<
   GetGroupAccessFromLoginRequestDto,
   IGetGroupAccessFromLoginResponse
 > {
   constructor(
-    private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
+    protected readonly rawService: GetGroupAccessFromLoginRawService,
   ) {
-    super();
-  }
-
-  async execute(
-    dto: GetGroupAccessFromLoginRequestDto,
-    dbConnection?: Connection,
-  ): Promise<IGetGroupAccessFromLoginResponse> {
-    try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.START,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetGroupAccessFromLoginService.name,
-        method: BossConstants.EXECUTE,
-      });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Obtiene la informacón del grupo de acceso del usuario',
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetGroupAccessFromLoginService.name,
-        method: BossConstants.EXECUTE,
-      });
-      const response = await this.getGroupAccessFromLoginRawService.execute(
-        dto,
-        dbConnection,
-      );
-      this.processResponse(response);
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.END,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetGroupAccessFromLoginService.name,
-        method: BossConstants.EXECUTE,
-      });
-      return response;
-    } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetGroupAccessFromLoginService.name,
-        method: BossConstants.EXECUTE,
-        error: error,
-      });
-      super.exceptionHandler(error, JSON.stringify(dto));
-    }
+    super(
+      AbaRegisterGetGroupAccessFromLoginService.name,
+      'Obtiene la informacón del grupo de acceso del usuario',
+      rawService,
+    );
   }
 
   protected processResponse(

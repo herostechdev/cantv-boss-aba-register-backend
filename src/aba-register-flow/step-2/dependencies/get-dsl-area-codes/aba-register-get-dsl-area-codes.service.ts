@@ -1,68 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'oracledb';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
 import { GetDSLAreaCodesException } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes.exception';
 import { GetDSLAreaCodesRawService } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesStatusConstants } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-status.constants';
 import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterGetDslAreaCodesService extends OracleFinalExecuteService<
+export class AbaRegisterGetDslAreaCodesService extends AbaRegisterExecuteService<
   GetDSLAreaCodesRequestDto,
   IGetDSLAreaCodesResponse
 > {
-  constructor(
-    private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
-  ) {
-    super();
-  }
-
-  async execute(
-    dto: GetDSLAreaCodesRequestDto,
-    dbConnection?: Connection,
-  ): Promise<IGetDSLAreaCodesResponse> {
-    try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.START,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetDslAreaCodesService.name,
-        method: BossConstants.EXECUTE,
-      });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Obtiene los códigos de área',
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetDslAreaCodesService.name,
-        method: BossConstants.EXECUTE,
-      });
-      const response = await this.getDSLAreaCodesRawService.execute(
-        dto,
-        dbConnection,
-      );
-      this.processResponse(response);
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.END,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetDslAreaCodesService.name,
-        method: BossConstants.EXECUTE,
-      });
-      return response;
-    } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetDslAreaCodesService.name,
-        method: BossConstants.EXECUTE,
-        error: error,
-      });
-      super.exceptionHandler(error, JSON.stringify(dto));
-    }
+  constructor(protected readonly rawService: GetDSLAreaCodesRawService) {
+    super(
+      AbaRegisterGetDslAreaCodesService.name,
+      'Obteniendo los códigos de área',
+      rawService,
+    );
   }
 
   protected processResponse(

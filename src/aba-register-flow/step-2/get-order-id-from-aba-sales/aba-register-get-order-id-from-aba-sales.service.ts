@@ -1,69 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'oracledb';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
 import { Error2002Exception } from 'src/exceptions/error-2002.exception';
 import { GetOrderIdFromABASalesException } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales.exception';
 import { GetOrderIdFromABASalesRawService } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
 import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesStatusConstants } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-status.constants';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterGetOrderIdFromAbaSalesService extends OracleFinalExecuteService<
+export class AbaRegisterGetOrderIdFromAbaSalesService extends AbaRegisterExecuteService<
   GetOrderIdFromABASalesRequestDto,
   IGetOrderIdFromABASalesResponse
 > {
-  constructor(
-    private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
-  ) {
-    super();
-  }
-
-  async execute(
-    dto: GetOrderIdFromABASalesRequestDto,
-    dbConnection?: Connection,
-  ): Promise<IGetOrderIdFromABASalesResponse> {
-    try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.START,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetOrderIdFromAbaSalesService.name,
-        method: BossConstants.EXECUTE,
-      });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Verifica si la IP es permisada',
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetOrderIdFromAbaSalesService.name,
-        method: BossConstants.EXECUTE,
-      });
-      const response = await this.getOrderIdFromABASalesRawService.execute(
-        dto,
-        dbConnection,
-      );
-      this.processResponse(response);
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.END,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetOrderIdFromAbaSalesService.name,
-        method: BossConstants.EXECUTE,
-      });
-      return response;
-    } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterGetOrderIdFromAbaSalesService.name,
-        method: BossConstants.EXECUTE,
-        error: error,
-      });
-      super.exceptionHandler(error, JSON.stringify(dto));
-    }
+  constructor(protected readonly rawService: GetOrderIdFromABASalesRawService) {
+    super(
+      AbaRegisterGetOrderIdFromAbaSalesService.name,
+      'Verifica si la IP es permisada',
+      rawService,
+    );
   }
 
   protected processResponse(

@@ -1,67 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'oracledb';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
 import { ExpiredIpException } from 'src/raw/stored-procedures/is-ip-allowed/expired-ip.exception';
 import { IsIpAllowedException } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed.exception';
 import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
 import { IsIPAllowedRawService } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-raw.service';
 import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
 import { IsIpAllowedStatusConstants } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-status.constants';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class AbaRegisterIsIPAllowedService extends OracleFinalExecuteService<
+export class AbaRegisterIsIPAllowedService extends AbaRegisterExecuteService<
   IsIPAllowedRequestDto,
   IIsIPAllowedResponse
 > {
-  constructor(private readonly isIPAllowedRawService: IsIPAllowedRawService) {
-    super();
-  }
-
-  async execute(
-    dto: IsIPAllowedRequestDto,
-    dbConnection?: Connection,
-  ): Promise<IIsIPAllowedResponse> {
-    try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.START,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterIsIPAllowedService.name,
-        method: BossConstants.EXECUTE,
-      });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Verifica si la IP es permisada',
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterIsIPAllowedService.name,
-        method: BossConstants.EXECUTE,
-      });
-      const response = await this.isIPAllowedRawService.execute(
-        dto,
-        dbConnection,
-      );
-      this.processResponse(response);
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.END,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterIsIPAllowedService.name,
-        method: BossConstants.EXECUTE,
-      });
-      return response;
-    } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterIsIPAllowedService.name,
-        method: BossConstants.EXECUTE,
-        error: error,
-      });
-      super.exceptionHandler(error, JSON.stringify(dto));
-    }
+  constructor(protected readonly rawService: IsIPAllowedRawService) {
+    super(
+      AbaRegisterIsIPAllowedService.name,
+      'Verifica si la IP es permisada',
+      rawService,
+    );
   }
 
   protected processResponse(
