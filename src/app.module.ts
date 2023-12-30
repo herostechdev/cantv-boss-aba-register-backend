@@ -11,7 +11,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { AbaRegisterModule } from './aba-register-flow/aba-register.module';
-import { BossApiRawModule } from './raw/boss-api/boss-api-raw.module';
+import { BossApiModule } from './raw/boss-api/boss-api-raw.module';
 import { PICModule } from './raw/pic/pic.module';
 import { StoredproceduresRawModule } from './raw/stored-procedures/stored-procedure-raw.module';
 
@@ -20,7 +20,6 @@ import { DocumentsConfigurationModule } from './system/configuration/documents/d
 import { DSLAuditLogsModule } from './dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
-import { GetStateFromSerialModule } from './get-state-from-serial/get-state-from-serial.module';
 import { IntegrationsConfigurationModule } from './system/configuration/pic/integrations-configuration.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { PlanByClassClientModule } from './plan-selection/plan-by-class-client/plan-by-class-client.module';
@@ -43,7 +42,7 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     ApplicationConfigurationModule,
 
     AbaRegisterModule,
-    BossApiRawModule,
+    BossApiModule,
     StoredproceduresRawModule,
     PICModule,
 
@@ -52,7 +51,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     DSLAuditLogsModule,
     EncryptionModule,
     GetPlanDescriptionFromPlanNameModule,
-    GetStateFromSerialModule,
     IntegrationsConfigurationModule,
     OracleConfigurationModule,
     PlanByClassClientModule,

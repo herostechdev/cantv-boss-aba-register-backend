@@ -6,6 +6,7 @@ import { AbaRegisterGetDslAreaCodesService } from './step-2/dependencies/get-dsl
 import { AbaRegisterGetGroupAccessFromLoginService } from './step-1/login/aba-register-get-group-access-from-login.service';
 import { AbaRegisterGetLegalDocumentsService } from './step-4/get-legal-documents/aba-register-get-legal-documents.service';
 import { AbaRegisterGetOrderIdFromAbaSalesService } from './step-2/get-order-id-from-aba-sales/aba-register-get-order-id-from-aba-sales.service';
+import { AbaRegisterGetStateFromSerialService } from './step-4/get-state-from-serial/aba-register-get-state-from-serial.service';
 import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-register-is-ip-allowed.service';
 import { AbaRegisterISGActionAllowedService } from './step-1/login/aba-register-isg-action-allowed.service';
 import { AbaRegisterIsPrepaidVoiceLineService } from './step-2/dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
@@ -23,6 +24,7 @@ import { EncryptionModule } from 'src/system/infrastructure/security/encryption/
     AbaRegisterGetGroupAccessFromLoginService,
     AbaRegisterGetLegalDocumentsService,
     AbaRegisterGetOrderIdFromAbaSalesService,
+    AbaRegisterGetStateFromSerialService,
     AbaRegisterISGActionAllowedService,
     AbaRegisterIsIPAllowedService,
     AbaRegisterIsPrepaidVoiceLineService,

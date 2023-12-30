@@ -20,6 +20,8 @@ import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login
 import { GetGroupAccessFromLoginRequestDto } from './get-group-access-from-login/get-group-access-from-login-request.dto';
 import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
+import { GetStateFromSerialRequestDto } from './get-state-from-serial/get-state-from-serial-request.dto';
+import { GetStateFromSerialRawService } from './get-state-from-serial/get-state-from-serial-raw.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
@@ -31,6 +33,7 @@ import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-code
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
+import { IGetStateFromSerialResponse } from './get-state-from-serial/get-state-from-serial-response.interface';
 import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
 import { IIsIPAllowedResponse } from './is-ip-allowed/is-ip-allowed-response.interface';
 import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
@@ -63,6 +66,7 @@ export class StoredProceduresRawController {
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
     private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
+    private readonly getStateFromSerialService: GetStateFromSerialRawService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
     private readonly isIPAllowedRawService: IsIPAllowedRawService,
     private readonly isPrepaidVoiceLineRawService: IsPrepaidVoiceLineRawService,
@@ -157,6 +161,15 @@ export class StoredProceduresRawController {
     @Body() dto: GetOrderIdFromABASalesRequestDto,
   ): Promise<IGetOrderIdFromABASalesResponse> {
     return this.getOrderIdFromABASalesRawService.execute(dto);
+  }
+
+  @Post('getStateFromSerial')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getStateFromSerial(
+    @Body() dto: GetStateFromSerialRequestDto,
+  ): Promise<IGetStateFromSerialResponse> {
+    return this.getStateFromSerialService.execute(dto);
   }
 
   @Post('insertDslAbaRegisters')

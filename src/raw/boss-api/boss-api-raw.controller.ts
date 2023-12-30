@@ -9,7 +9,7 @@ import { IGetDHCPDataResponse } from './get-dhcp-data/get-dhcp-data-response.int
   path: 'raw/bossApi',
   version: '1',
 })
-export class BossApiRawController {
+export class BossApiController {
   constructor(private readonly getDHCPDataRawService: GetDHCPDataRawService) {}
 
   @Post('getDHCPData')

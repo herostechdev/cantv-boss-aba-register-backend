@@ -3,6 +3,7 @@ import { AbaRegisterGetDslAreaCodesService } from './step-2/dependencies/get-dsl
 import { AbaRegisterGetLegalDocumentsRequestDto } from './step-4/get-legal-documents/aba-register-get-legal-documents-request.dto';
 import { AbaRegisterGetLegalDocumentsService } from './step-4/get-legal-documents/aba-register-get-legal-documents.service';
 import { AbaRegisterGetOrderIdFromAbaSalesService } from './step-2/get-order-id-from-aba-sales/aba-register-get-order-id-from-aba-sales.service';
+import { AbaRegisterGetStateFromSerialService } from './step-4/get-state-from-serial/aba-register-get-state-from-serial.service';
 import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-register-is-ip-allowed.service';
 import { AbaRegisterLoginRequestDto } from './step-1/login/aba-register-login-request.dto';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
@@ -11,11 +12,13 @@ import { AbaRegisterValidateCustomerRequestDto } from './step-2/validate-custome
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
+import { GetStateFromSerialRequestDto } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-request.dto';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IAbaRegisterGetLegalDocuments } from './step-4/get-legal-documents/aba-register-get-legal-documents-response.interface';
 import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
+import { IGetStateFromSerialResponse } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-response.interface';
 import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
 import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
 
@@ -27,6 +30,7 @@ export class AbaRegisterController {
   constructor(
     private readonly abaRegisterGetDslAreaCodesService: AbaRegisterGetDslAreaCodesService,
     private readonly abaRegisterGetLegalDocumentsService: AbaRegisterGetLegalDocumentsService,
+    private readonly abaRegisterGetStateFromSerialService: AbaRegisterGetStateFromSerialService,
     private readonly abaRegisterGetOrderIdFromAbaSalesService: AbaRegisterGetOrderIdFromAbaSalesService,
     private readonly abaRegisterIsIPAllowedService: AbaRegisterIsIPAllowedService,
     private readonly abaRegisterLoginService: AbaRegisterLoginService,
@@ -49,6 +53,15 @@ export class AbaRegisterController {
     @Body() dto: AbaRegisterGetLegalDocumentsRequestDto,
   ): Promise<IAbaRegisterGetLegalDocuments> {
     return this.abaRegisterGetLegalDocumentsService.get(dto);
+  }
+
+  @Post('getStateFromSerial')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getStateFromSerial(
+    @Body() dto: GetStateFromSerialRequestDto,
+  ): Promise<IGetStateFromSerialResponse> {
+    return this.abaRegisterGetStateFromSerialService.execute(dto);
   }
 
   @Post('getOrderIdFromAbaSales')
