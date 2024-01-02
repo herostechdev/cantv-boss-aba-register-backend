@@ -1,6 +1,8 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { CustomerExistsRequestDto } from './customer-exists/customer-exists-request.dto';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
+import { DSLAuditLogsRequestDto } from './dsl-audit-logs/dsl-audit-logs-request.dto';
+import { DSLAuditLogsRawService } from './dsl-audit-logs/dsl-audit-logs-raw.service';
 import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
 import { GetAllValuesFromCustomerValuesRequestDto } from './get-all-values-from-customer-values/get-all-values-from-customer-values-request.dto';
 import { GetAndRegisterQualifOfServiceDto } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-request.dto';
@@ -41,6 +43,7 @@ import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allow
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers/insert-dsl-aba-registers-request.dto';
+import { IPlansByCustomerClassListResponse } from './plans-by-customer-class/plans-by-customer-class-list-response.interface';
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allowed-request.dto';
 import { IsIPAllowedRequestDto } from './is-ip-allowed/is-ip-allowed-request.dto';
@@ -51,8 +54,8 @@ import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/updat
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
 
-import { DSLAuditLogsRequestDto } from './dsl-audit-logs/dsl-audit-logs-request.dto';
-import { DSLAuditLogsRawService } from './dsl-audit-logs/dsl-audit-logs-raw.service';
+import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-by-customer-class-request.dto';
+import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
 
 @Controller({
   path: 'raw/sp',
@@ -76,6 +79,7 @@ export class StoredProceduresRawController {
     private readonly isIPAllowedRawService: IsIPAllowedRawService,
     private readonly isPrepaidVoiceLineRawService: IsPrepaidVoiceLineRawService,
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
+    private readonly planByCiustomerClassRawService: PlansByCustomerClassRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {}
   @Post('customerExists')
@@ -220,6 +224,15 @@ export class StoredProceduresRawController {
     @Body() dto: IsPrepaidVoiceLineRequestDto,
   ): Promise<IIsPrepaidVoiceLineResponse> {
     return this.isPrepaidVoiceLineRawService.execute(dto);
+  }
+
+  @Post()
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  ConfirmRegistration(
+    @Body() dto: PlansByCustomerClassRequestDto,
+  ): Promise<IPlansByCustomerClassListResponse> {
+    return this.planByCiustomerClassRawService.execute(dto);
   }
 
   @Post('updateDslAbaRegisters')

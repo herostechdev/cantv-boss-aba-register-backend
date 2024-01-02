@@ -15,6 +15,7 @@ import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/inse
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
+import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
 import { StoredProceduresRawController } from './stored-procedures-raw.controller';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
@@ -39,6 +40,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     IsIPAllowedRawService,
     ISGActionAllowedRawService,
     IsPrepaidVoiceLineRawService,
+    PlansByCustomerClassRawService,
     UpdateDslAbaRegistersRawService,
   ],
   exports: [
@@ -58,7 +60,8 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     IsIPAllowedRawService,
     ISGActionAllowedRawService,
     IsPrepaidVoiceLineRawService,
+    PlansByCustomerClassRawService,
     UpdateDslAbaRegistersRawService,
   ],
 })
-export class StoredproceduresRawModule {}
+export class StoredProceduresRawModule {}

@@ -7,6 +7,7 @@ import { AbaRegisterGetStateFromSerialService } from './step-4/get-state-from-se
 import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-register-is-ip-allowed.service';
 import { AbaRegisterLoginRequestDto } from './step-1/login/aba-register-login-request.dto';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
+import { AbaRegisterPlansByCustomerClassService } from './step-4/plans-by-customer-class/plans-by-customer-class.service';
 import { AbaRegisterValidateCustomerData } from './step-2/validate-customer/aba-register-validate-customer-data';
 import { AbaRegisterValidateCustomerRequestDto } from './step-2/validate-customer/aba-register-validate-customer-request.dto';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
@@ -19,8 +20,10 @@ import { IAbaRegisterGetLegalDocuments } from './step-4/get-legal-documents/aba-
 import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
 import { IGetStateFromSerialResponse } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-response.interface';
+import { IPlansByCustomerClassListResponse } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class-list-response.interface';
 import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
 import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
+import { PlansByCustomerClassRequestDto } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class-request.dto';
 
 @Controller({
   path: 'abaRegister',
@@ -34,6 +37,7 @@ export class AbaRegisterController {
     private readonly abaRegisterGetOrderIdFromAbaSalesService: AbaRegisterGetOrderIdFromAbaSalesService,
     private readonly abaRegisterIsIPAllowedService: AbaRegisterIsIPAllowedService,
     private readonly abaRegisterLoginService: AbaRegisterLoginService,
+    private readonly abaRegisterPlansByCustomerClassService: AbaRegisterPlansByCustomerClassService,
     private readonly abaRegisterValidateCustomerService: AbaRegisterValidateCustomerService,
   ) {}
 
@@ -87,6 +91,15 @@ export class AbaRegisterController {
   @UseFilters(new HttpExceptionFilter())
   login(@Body() dto: AbaRegisterLoginRequestDto): Promise<void> {
     return this.abaRegisterLoginService.execute(dto);
+  }
+
+  @Post('plansByCustomerClass')
+  @HttpCode(HttpCodeConstants.HTTP_204_NO_CONTENT)
+  @UseFilters(new HttpExceptionFilter())
+  plansByCustomerClass(
+    @Body() dto: PlansByCustomerClassRequestDto,
+  ): Promise<IPlansByCustomerClassListResponse> {
+    return this.abaRegisterPlansByCustomerClassService.execute(dto);
   }
 
   @Post('validateCustomer')

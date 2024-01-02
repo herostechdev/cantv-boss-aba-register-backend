@@ -11,6 +11,7 @@ import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-regist
 import { AbaRegisterISGActionAllowedService } from './step-1/login/aba-register-isg-action-allowed.service';
 import { AbaRegisterIsPrepaidVoiceLineService } from './step-2/dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
+import { AbaRegisterPlansByCustomerClassService } from './step-4/plans-by-customer-class/plans-by-customer-class.service';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
 
@@ -29,6 +30,7 @@ import { EncryptionModule } from 'src/system/infrastructure/security/encryption/
     AbaRegisterIsIPAllowedService,
     AbaRegisterIsPrepaidVoiceLineService,
     AbaRegisterLoginService,
+    AbaRegisterPlansByCustomerClassService,
     AbaRegisterValidateCustomerService,
   ],
   exports: [

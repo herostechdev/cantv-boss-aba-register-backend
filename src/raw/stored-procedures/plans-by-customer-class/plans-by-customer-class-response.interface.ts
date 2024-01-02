@@ -1,4 +1,4 @@
-export interface IPlanByClassClientResponse {
+export interface IPlansByCustomerClassResponse {
   plan: string;
   planDesired: string;
   shortName: string;
