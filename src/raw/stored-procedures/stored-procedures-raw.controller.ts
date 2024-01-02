@@ -11,7 +11,6 @@ import { GetCustomerInstanceIdFromIdValueRawService } from './get-customer-insta
 import { GetCustomerInstanceIdFromIdValueRequestDto } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-request.dto';
 import { GetDebtFromCustomerRawService } from './get-debt-from-customer/get-debt-from-customer-raw.service';
 import { GetDebtFromCustomerRequestDto } from './get-debt-from-customer/get-debt-from-customer-request.dto';
-import { IGetDebtFromCustomerResponse } from './get-debt-from-customer/get-debt-from-customer-response.interface';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetFirstLetterFromABARequestDto } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-request.dto';
@@ -25,10 +24,12 @@ import { GetStateFromSerialRawService } from './get-state-from-serial/get-state-
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
+import { IDSLAuditLogsResponse } from './dsl-audit-logs/dsl-audit-logs-response.interface';
 import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetCustomerClassNameFromIdValueResponse } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
 import { IGetCustomerInstanceIdFromIdValueResponse } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
+import { IGetDebtFromCustomerResponse } from './get-debt-from-customer/get-debt-from-customer-response.interface';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
@@ -50,6 +51,9 @@ import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/updat
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
 
+import { DSLAuditLogsRequestDto } from './dsl-audit-logs/dsl-audit-logs-request.dto';
+import { DSLAuditLogsRawService } from './dsl-audit-logs/dsl-audit-logs-raw.service';
+
 @Controller({
   path: 'raw/sp',
   version: '1',
@@ -57,6 +61,7 @@ import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/upda
 export class StoredProceduresRawController {
   constructor(
     private readonly customerExistsRawService: CustomerExistsRawService,
+    private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
@@ -80,6 +85,15 @@ export class StoredProceduresRawController {
     @Body() dto: CustomerExistsRequestDto,
   ): Promise<ICustomerExistsResponse> {
     return this.customerExistsRawService.execute(dto);
+  }
+
+  @Post()
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  DSLAuditLogs(
+    @Body() dto: DSLAuditLogsRequestDto,
+  ): Promise<IDSLAuditLogsResponse> {
+    return this.dslAuditLogsService.execute(dto);
   }
 
   @Post('getAllValuesFromCustomerValues')

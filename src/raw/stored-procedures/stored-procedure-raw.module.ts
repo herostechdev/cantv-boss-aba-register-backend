@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
+import { DSLAuditLogsRawService } from './dsl-audit-logs/dsl-audit-logs-raw.service';
 import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
 import { GetAndRegisterQualifOfServiceRawService } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetCustomerClassNameFromIdValueRawService } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
@@ -23,6 +24,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
   controllers: [StoredProceduresRawController],
   providers: [
     CustomerExistsRawService,
+    DSLAuditLogsRawService,
     GetAllValuesFromCustomerValuesRawService,
     GetAndRegisterQualifOfServiceRawService,
     GetCustomerClassNameFromIdValueRawService,
@@ -41,6 +43,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
   ],
   exports: [
     CustomerExistsRawService,
+    DSLAuditLogsRawService,
     GetAllValuesFromCustomerValuesRawService,
     GetAndRegisterQualifOfServiceRawService,
     GetCustomerClassNameFromIdValueRawService,

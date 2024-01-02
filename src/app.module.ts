@@ -17,7 +17,6 @@ import { StoredproceduresRawModule } from './raw/stored-procedures/stored-proced
 
 import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
 import { DocumentsConfigurationModule } from './system/configuration/documents/documents-configuration.module';
-import { DSLAuditLogsModule } from './raw/stored-procedures/dsl-audit-logs/dsl-audit-logs.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
 import { IntegrationsConfigurationModule } from './system/configuration/pic/integrations-configuration.module';
@@ -48,7 +47,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
 
     ConfirmRegistrationModule,
     DocumentsConfigurationModule,
-    DSLAuditLogsModule,
     EncryptionModule,
     GetPlanDescriptionFromPlanNameModule,
     IntegrationsConfigurationModule,
