@@ -18,7 +18,6 @@ import { StoredProceduresRawModule } from './raw/stored-procedures/stored-proced
 import { ConfirmRegistrationModule } from './confirm-registration/confirm-registration.module';
 import { DocumentsConfigurationModule } from './system/configuration/documents/documents-configuration.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
-import { GetPlanDescriptionFromPlanNameModule } from './plan-selection/get-plan-description-from-plan-name/get-plan-description-from-plan-name.module';
 import { IntegrationsConfigurationModule } from './system/configuration/pic/integrations-configuration.module';
 import { OracleConfigurationModule } from './system/configuration/oracle/oracle-configuration.module';
 import { SecurityConfigurationModule } from './system/configuration/security/security-configuration.module';
@@ -50,7 +49,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     StoredProceduresRawModule,
 
     ConfirmRegistrationModule,
-    GetPlanDescriptionFromPlanNameModule,
     ValidateTechnicalFeasibilityModule,
   ],
   controllers: [AppController],

@@ -34,7 +34,7 @@ export class GetAllValuesFromCustomerValuesRawService extends OracleExecuteStore
 
       aname: OracleHelper.tableOfStringBindOut(),
       cltvalue: OracleHelper.tableOfStringBindOut(),
-      status: OracleHelper.numberBindOut(),
+      status: OracleHelper.tableOfNumberBindOut(),
     };
   }
 
@@ -42,7 +42,7 @@ export class GetAllValuesFromCustomerValuesRawService extends OracleExecuteStore
     const response = {
       name: OracleHelper.getFirstItem(result, 'aname'),
       value: OracleHelper.getFirstItem(result, 'cltvalue'),
-      status: (result?.outBinds?.status ??
+      status: (OracleHelper.getFirstItem(result, 'status') ??
         GetAllValuesFromCustomerValuesStatusConstants.INTERNAL_ERROR) as GetAllValuesFromCustomerValuesStatusConstants,
     };
     switch (response.status) {
@@ -52,7 +52,6 @@ export class GetAllValuesFromCustomerValuesRawService extends OracleExecuteStore
         throw new GetAllValuesFromCustomerValuesException();
       case GetAllValuesFromCustomerValuesStatusConstants.THERE_IS_NO_DATA:
         return response;
-      // throw new ClientExistsThereIsNoDataException();
       default:
         throw new GetAllValuesFromCustomerValuesException();
     }
