@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
@@ -21,7 +22,6 @@ import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/updat
 import { AbaRegisterValidateCustomerData } from './aba-register-validate-customer-data';
 import { AbaRegisterValidateCustomerRequestDto } from './aba-register-validate-customer-request.dto';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
 
 @Injectable()
 export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
@@ -138,7 +138,9 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
           attributeName: BossHelper.getIdentificationDocumentType(
             dto.customerClassName,
           ),
-          value: dto.customerIdentificationDocument,
+          value: BossHelper.getIdentificationDocument(
+            dto.customerIdentificationDocument,
+          ),
         });
       if (
         data.getAllValuesFromClientValuesResponse.status ===
@@ -158,7 +160,9 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
             customerAttributeName: BossHelper.getIdentificationDocumentType(
               dto.customerClassName,
             ),
-            value: dto.customerIdentificationDocument,
+            value: BossHelper.getIdentificationDocument(
+              dto.customerIdentificationDocument,
+            ),
           });
         if (
           data.getClientInstanceIdFromIdValueResponse.status ===
@@ -180,7 +184,8 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
             });
           if (
             data.getDebtFromClientResponse.status ===
-            GetDebtFromCustomerStatusConstants.SUCCESSFULL
+              GetDebtFromCustomerStatusConstants.SUCCESSFULL &&
+            data.getDebtFromClientResponse.amount > BossConstants.ZERO
           ) {
             Wlog.instance.info({
               phoneNumber: BossHelper.getPhoneNumber(dto),

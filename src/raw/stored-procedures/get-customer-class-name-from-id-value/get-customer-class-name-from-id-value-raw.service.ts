@@ -31,7 +31,7 @@ export class GetCustomerClassNameFromIdValueRawService extends OracleExecuteStor
       sz_IdValue: OracleHelper.stringBindIn(dto.value, 256),
       sz_Cltattributename: OracleHelper.stringBindIn(dto.customerAttributeName),
 
-      sz_Cltclassname: OracleHelper.stringBindOut(1),
+      sz_Cltclassname: OracleHelper.stringBindOut(),
       o_status: OracleHelper.numberBindOut(),
     };
   }

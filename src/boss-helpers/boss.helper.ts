@@ -1,6 +1,7 @@
 import { BossConstants } from './boss.constants';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 import { StringHelper } from 'src/system/infrastructure/helpers/string.helper';
+import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
 export class BossHelper {
   public static get applicationName(): string {
@@ -35,5 +36,19 @@ export class BossHelper {
     customerIdentificationDocument: string,
   ): string {
     return `${areaCode}${phoneNumber}_${customerIdentificationDocument}`;
+  }
+
+  public static getIdentificationDocument(
+    identificationDocument: string,
+  ): string {
+    if (
+      !ValidationHelper.isDefined(identificationDocument) ||
+      !['V', 'E', 'P', 'J', 'G', 'T'].includes(
+        identificationDocument.substring(0, 1),
+      )
+    ) {
+      return identificationDocument;
+    }
+    return identificationDocument.substring(1);
   }
 }
