@@ -107,7 +107,7 @@ export class AbaRegisterController {
   }
 
   @Post('plansByCustomerClass')
-  @HttpCode(HttpCodeConstants.HTTP_204_NO_CONTENT)
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
   plansByCustomerClass(
     @Body() dto: PlansByCustomerClassRequestDto,
