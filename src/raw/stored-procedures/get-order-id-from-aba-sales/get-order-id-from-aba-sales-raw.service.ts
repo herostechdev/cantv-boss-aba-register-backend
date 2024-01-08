@@ -25,30 +25,6 @@ export class GetOrderIdFromABASalesRawService extends OracleExecuteStoredProcedu
     );
   }
 
-  // async execute(
-  //   dto: GetOrderIdFromABASalesRequestDto,
-  //   dbConnection?: Connection,
-  // ): Promise<IGetOrderIdFromABASalesResponse> {
-  //   try {
-  //     await super.connect(dbConnection);
-  //     const result = await super.executeStoredProcedure(
-  //       BossConstants.ACT_PACKAGE,
-  //       BossConstants.GET_ORDER_ID_FROM_ABA_SALES,
-  //       this.getParameters(dto),
-  //     );
-  //     return this.getResponse(result);
-  //   } catch (error) {
-  //     await this.updateDslAbaRegistersService.errorUpdate({
-  //       areaCode: String(dto.areaCode),
-  //       phoneNumber: String(dto.phoneNumber),
-  //       registerStatus: BossConstants.NOT_PROCESSED,
-  //     });
-  //     super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
-  //   } finally {
-  //     await this.closeConnection(dbConnection !== null, dto);
-  //   }
-  // }
-
   protected getParameters(dto: GetOrderIdFromABASalesRequestDto): any {
     return {
       str_areacode: OracleHelper.stringBindIn(dto.areaCode),
@@ -60,11 +36,10 @@ export class GetOrderIdFromABASalesRawService extends OracleExecuteStoredProcedu
   }
 
   protected getResponse(result: any): IGetOrderIdFromABASalesResponse {
-    const status = (result?.outBinds?.str_status ??
-      GetOrderIdFromABASalesStatusConstants.ERROR) as GetOrderIdFromABASalesStatusConstants;
     return {
       orderId: result?.outBinds?.str_orderid,
-      status: status,
+      status: (result?.outBinds?.str_status ??
+        GetOrderIdFromABASalesStatusConstants.ERROR) as GetOrderIdFromABASalesStatusConstants,
     };
   }
 }
