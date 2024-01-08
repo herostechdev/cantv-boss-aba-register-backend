@@ -1,5 +1,5 @@
 import { ConfirmRegistrationRequestDto } from './confirm-registration-request.dto';
-import { IABARegisterResponse } from './aba-register/aba-register-response.interface';
+import { IAbaRegisterResponse } from '../raw/stored-procedures/aba-register/aba-register-response.interface';
 import { ICreateAndProvisioningCustomerResponse } from './create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICreateAndProvisioningMasterActResponse } from './create-and-provisioning-master-act/create-and-provisioning-master-act-response.interface';
 import { ICustomerExistsResponse } from 'src/raw/stored-procedures/customer-exists/customer-exists-response.interface';
@@ -16,6 +16,6 @@ export class ConfirmRegistrationData {
   createAndProvisioningMasterActResponse: ICreateAndProvisioningMasterActResponse;
   insertModifyCustomerAttributeResponse: IInsertModifyCustomerAttributeResponse;
   isReservedLoginResponse: IIsReservedLoginResponse;
-  abaRegisterResponse: IABARegisterResponse;
+  abaRegisterResponse: IAbaRegisterResponse;
   cancelABAInstallationResponse: ICancelABAInstallationResponse;
 }

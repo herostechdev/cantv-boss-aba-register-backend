@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BIND_OUT, STRING } from 'oracledb';
-import { ABARegisterStatusConstants } from './aba-register/aba-register-status.constants';
-import { ABARegisterInternalErrorException } from './aba-register/aba-register-internal-error.exception';
+import { AbaRegisterService } from 'src/aba-register-flow/step-4/dependencies/aba-register/aba-register.service';
 import { BillingException } from './create-and-provisioning-master-act/billing.exception';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
@@ -26,9 +24,7 @@ import { CreatingPaymentInstanceException } from './create-and-provisioning-mast
 import { CreatingSubaccountException } from './create-and-provisioning-master-act/creating-subaccount.exception';
 import { CustomerExistsRawService } from 'src/raw/stored-procedures/customer-exists/customer-exists-raw.service';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
-import { Error10023Exception } from 'src/exceptions/error-1002-3.exception';
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
-import { IABARegisterResponse } from './aba-register/aba-register-response.interface';
 import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
 import { ICreateAndProvisioningCustomerResponse } from './create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICreateAndProvisioningMasterActResponse } from './create-and-provisioning-master-act/create-and-provisioning-master-act-response.interface';
@@ -51,8 +47,9 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 @Injectable()
 export class ConfirmRegistrationService extends OracleDatabaseService {
   constructor(
-    protected readonly oracleConfigurationService: OracleConfigurationService,
+    private readonly abaRegisterService: AbaRegisterService,
     private readonly customerExistsRawService: CustomerExistsRawService,
+    protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService);
@@ -148,7 +145,13 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      data.abaRegisterResponse = await this.abaRegister(data);
+      data.abaRegisterResponse = await this.abaRegisterService.execute({
+        areaCode: dto.areaCode,
+        phoneNumber: dto.phoneNumber,
+        dslamPortId: dto.dslamPortId,
+        customerServiceId: dto.customerServiceId,
+        attributeValues: dto.attributeValues,
+      });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'cancelABAInstallation',
@@ -186,50 +189,43 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     }
   }
 
+  private async getPlanAbaFromKenan(
+    data: ConfirmRegistrationData,
+  ): Promise<IGetPlanABAFromKenanResponse> {
+    const parameters = {
+      abaplan: OracleHelper.stringBindIn(data.requestDto.technicalPlanName),
+      result: OracleHelper.stringBindOut(),
+    };
+    const result = await super.executeFunction(
+      BossConstants.GET_PLAN_ABA_FROM_KENAN,
+      null,
+      parameters,
+    );
+    const response: IGetPlanABAFromKenanResponse = {
+      abaPlanCode: result?.outBinds?.result,
+    };
+    return response;
+  }
+
   // private async getPlanAbaFromKenan(
   //   data: ConfirmRegistrationData,
   // ): Promise<IGetPlanABAFromKenanResponse> {
   //   console.log();
   //   console.log('getPlanAbaFromKenan');
-  //   const parameters = {
-  //     abaplan: OracleHelper.stringBindIn(data.requestDto.abaPlan),
-  //   };
-  //   console.log('execute function');
-  //   const result = await super.executeFunction(
-  //     BossConstants.GET_PLAN_ABA_FROM_KENAN,
-  //     null,
-  //     parameters,
+  //   const result = await this.dbConnection.execute(
+  //     `BEGIN
+  //        :result := GetPlanAbaFromKenan(:abaplan);
+  //      END;`,
+  //     {
+  //       result: { dir: BIND_OUT, type: STRING, maxSize: 500 },
+  //       // Agrega tus parámetros aquí, por ejemplo:
+  //       abaplan: 'ABA_PLAN',
+  //     },
   //   );
   //   console.log('result');
-  //   console.log(JSON.stringify(result));
-  //   const response: IGetPlanABAFromKenanResponse = {
-  //     // abaPlanCode: result?.outBinds?.abaPlanCode,
-  //     abaPlanCode: result,
-  //   };
-  //   console.log('response');
-  //   console.log(response);
-  //   return response;
+  //   console.log(result.outBinds['result']);
+  //   return null;
   // }
-
-  private async getPlanAbaFromKenan(
-    data: ConfirmRegistrationData,
-  ): Promise<IGetPlanABAFromKenanResponse> {
-    console.log();
-    console.log('getPlanAbaFromKenan');
-    const result = await this.dbConnection.execute(
-      `BEGIN
-         :result := GetPlanAbaFromKenan(:abaplan);
-       END;`,
-      {
-        result: { dir: BIND_OUT, type: STRING, maxSize: 500 },
-        // Agrega tus parámetros aquí, por ejemplo:
-        abaplan: 'ABA_PLAN',
-      },
-    );
-    console.log('result');
-    console.log(result.outBinds['result']);
-    return null;
-  }
 
   private async createAndProvisioningCustomer(
     data: ConfirmRegistrationData,
@@ -439,39 +435,39 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     }
   }
 
-  private async abaRegister(
-    data: ConfirmRegistrationData,
-  ): Promise<IABARegisterResponse> {
-    const parameters = {
-      abadslamportid: OracleHelper.stringBindIn(
-        data.requestDto.installerLogin,
-        32,
-      ),
-      abaclientserviceid: OracleHelper.stringBindIn(null),
-      abaattrvalues: OracleHelper.stringBindIn(null),
-      tstatus: OracleHelper.tableOfNumberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ACT_PACKAGE,
-      BossConstants.ABA_REGISTER,
-      parameters,
-    );
+  // private async abaRegister(
+  //   data: ConfirmRegistrationData,
+  // ): Promise<IAbaRegisterResponse> {
+  //   const parameters = {
+  //     abadslamportid: OracleHelper.stringBindIn(
+  //       data.requestDto.installerLogin,
+  //       32,
+  //     ),
+  //     abaclientserviceid: OracleHelper.stringBindIn(null),
+  //     abaattrvalues: OracleHelper.stringBindIn(null),
+  //     tstatus: OracleHelper.tableOfNumberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ACT_PACKAGE,
+  //     BossConstants.ABA_REGISTER,
+  //     parameters,
+  //   );
 
-    const response: IABARegisterResponse = {
-      status: (OracleHelper.getFirstItem(result, 'tstatus') ??
-        ABARegisterStatusConstants.INTERNAL_ERROR) as ABARegisterStatusConstants,
-    };
-    switch (response.status) {
-      case ABARegisterStatusConstants.SUCCESSFULL:
-        return response;
-      case ABARegisterStatusConstants.INTERNAL_ERROR:
-        throw new ABARegisterInternalErrorException();
-      case ABARegisterStatusConstants.THERE_IS_NO_DATA:
-        throw new Error10023Exception();
-      default:
-        throw new ABARegisterInternalErrorException();
-    }
-  }
+  //   const response: IAbaRegisterResponse = {
+  //     status: (OracleHelper.getFirstItem(result, 'tstatus') ??
+  //       AbaRegisterStatusConstants.ERROR) as AbaRegisterStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case AbaRegisterStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case AbaRegisterStatusConstants.ERROR:
+  //       throw new ABARegisterException();
+  //     case AbaRegisterStatusConstants.THERE_IS_NO_DATA:
+  //       throw new Error10023Exception();
+  //     default:
+  //       throw new ABARegisterException();
+  //   }
+  // }
 
   private async cancelABAInstallation(
     data: ConfirmRegistrationData,

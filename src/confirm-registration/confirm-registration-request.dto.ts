@@ -29,6 +29,12 @@ export class ConfirmRegistrationRequestDto implements IPhoneNumber {
   @IsString()
   customerState: string; // GetDataFromRequests.state
 
+  @IsString()
+  dslamPortId: string; // TODO: source
+
+  @IsString()
+  customerServiceId: string; // TODO: source
+
   /**
    * Ejemplo persona natural:
    * CEDULA_IDENTIDAD:13456789,PRIMERA_LETRA_CEDULA:V,CIUDAD:CARACAS,ESTADO:DISTRITO CAPITAL,FECHA_NACIMIENTO:13/10/1990,PRIMER_NOMBRE:JESUS,PRIMER_APELLIDO:PEREZ

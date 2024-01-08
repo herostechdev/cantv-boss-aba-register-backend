@@ -1,4 +1,6 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
+import { AbaRegisterRawService } from './aba-register/aba-register-raw.service';
+import { AbaRegisterRequestDto } from './aba-register/aba-register-request.dto';
 import { CustomerExistsRequestDto } from './customer-exists/customer-exists-request.dto';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
 import { DSLAuditLogsRequestDto } from './dsl-audit-logs/dsl-audit-logs-request.dto';
@@ -25,6 +27,7 @@ import { GetStateFromSerialRequestDto } from './get-state-from-serial/get-state-
 import { GetStateFromSerialRawService } from './get-state-from-serial/get-state-from-serial-raw.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
+import { IAbaRegisterResponse } from './aba-register/aba-register-response.interface';
 import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
 import { IDSLAuditLogsResponse } from './dsl-audit-logs/dsl-audit-logs-response.interface';
 import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
@@ -51,11 +54,10 @@ import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
 import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line/is-prepaid-voice-line-request.dto';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
-import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
-
 import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-by-customer-class-request.dto';
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
+import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
 
 @Controller({
   path: 'raw/sp',
@@ -63,6 +65,7 @@ import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-
 })
 export class StoredProceduresRawController {
   constructor(
+    private readonly abaRegisterRawService: AbaRegisterRawService,
     private readonly customerExistsRawService: CustomerExistsRawService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
@@ -82,6 +85,15 @@ export class StoredProceduresRawController {
     private readonly planByCiustomerClassRawService: PlansByCustomerClassRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {}
+  @Post('abaRegister')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  abaRegister(
+    @Body() dto: AbaRegisterRequestDto,
+  ): Promise<IAbaRegisterResponse> {
+    return this.abaRegisterRawService.execute(dto);
+  }
+
   @Post('customerExists')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
