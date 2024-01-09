@@ -30,7 +30,7 @@ export abstract class OracleDatabaseService extends CommonService {
       if (!this.dbConnection || !closeConnection) {
         return;
       }
-      return this.dbConnection?.close();
+      return await this.dbConnection?.close();
     } catch (error) {
       Wlog.instance.error({
         phoneNumber: additionalData?.phoneNumber,
