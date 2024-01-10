@@ -1,6 +1,4 @@
 export class BossConstants {
-  // insertdslauditlogs
-
   // PACKAGES
   public static ABA_PACKAGE = 'ABA_PACKAGE';
   public static ACT_PACKAGE = 'ACT_PACKAGE';
@@ -8,6 +6,9 @@ export class BossConstants {
   public static SIGS_PACKAGE = 'SIGS_PACKAGE';
   public static SAC_PACKAGE = 'sac';
   public static UTL_PACKAGE = 'UTL_PACKAGE';
+
+  // FUNCTIONS
+  public static GET_ABA_PLAN_FOR_KENAN = 'GetPlanAbaForKenan';
 
   // STORED PROCEDURES
   public static ABA_REGISTER = 'AbaRegister';
@@ -19,7 +20,6 @@ export class BossConstants {
     'CreateAndProvisionMasterAct';
   public static DELETE_ORDER = 'DeleteOrder';
   public static INSERT_DSL_AUDIT_LOGS = 'insertdslauditlogs';
-  public static GET_ABA_PLAN_FOR_KENAN = 'GetPlanAbaForKenan';
   public static GET_AND_REGISTER_QUALIF_OF_SERVICE =
     'GetAndRegisterQualifOfServ';
   public static GET_ABA_DATA = 'GetAbaData';
