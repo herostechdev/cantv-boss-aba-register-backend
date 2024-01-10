@@ -53,6 +53,7 @@ import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers/insert-dsl-aba-registers-request.dto';
 import { IPlansByCustomerClassListResponse } from './plans-by-customer-class/plans-by-customer-class-list-response.interface';
+import { IsReservedLoginRawService } from './is-reserved-login/is-reserved-login-raw.service';
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allowed-request.dto';
 import { IsIPAllowedRequestDto } from './is-ip-allowed/is-ip-allowed-request.dto';
@@ -64,6 +65,8 @@ import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
+import { IsReservedLoginRequestDto } from './is-reserved-login/is-reserved-login-request.dto';
+import { IIsReservedLoginResponse } from './is-reserved-login/is-reserved-login-response.interface';
 
 @Controller({
   path: 'raw/sp',
@@ -90,7 +93,8 @@ export class StoredProceduresRawController {
     private readonly isIPAllowedRawService: IsIPAllowedRawService,
     private readonly isPrepaidVoiceLineRawService: IsPrepaidVoiceLineRawService,
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
-    private readonly planByCiustomerClassRawService: PlansByCustomerClassRawService,
+    private readonly isReservedLoginRawService: IsReservedLoginRawService,
+    private readonly planByCustomerClassRawService: PlansByCustomerClassRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {}
   @Post('abaRegister')
@@ -264,13 +268,22 @@ export class StoredProceduresRawController {
     return this.isPrepaidVoiceLineRawService.execute(dto);
   }
 
-  @Post()
+  @Post('isReservedLogin')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
-  ConfirmRegistration(
+  isReservedLogin(
+    @Body() dto: IsReservedLoginRequestDto,
+  ): Promise<IIsReservedLoginResponse> {
+    return this.isReservedLoginRawService.execute(dto);
+  }
+
+  @Post('planByCustomerClass')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  planByCustomerClass(
     @Body() dto: PlansByCustomerClassRequestDto,
   ): Promise<IPlansByCustomerClassListResponse> {
-    return this.planByCiustomerClassRawService.execute(dto);
+    return this.planByCustomerClassRawService.execute(dto);
   }
 
   @Post('updateDslAbaRegisters')

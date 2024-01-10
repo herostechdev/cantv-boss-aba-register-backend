@@ -7,7 +7,7 @@ import { ICustomerExistsResponse } from 'src/raw/stored-procedures/customer-exis
 import { IGetAbaPlanForKenanResponse } from '../../../raw/functions/get-aba-plan-for-kenan/get-aba-plan-for-kenan-response.interface';
 import { IGetCSIdAndPlanNameFromLoginResponse } from 'src/raw/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-response.interface';
 import { IInsertModifyCustomerAttributeResponse } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-response.interface';
-import { IIsReservedLoginResponse } from '../../../confirm-registration/is-reserved-login/is-reserved-login-response.interface';
+import { IIsReservedLoginResponse } from '../../../raw/stored-procedures/is-reserved-login/is-reserved-login-response.interface';
 
 export class AbaRegisterConfirmRegistrationResponse {
   requestDto: AbaRegisterConfirmRegistrationRequestDto;

@@ -14,6 +14,7 @@ import { AbaRegisterGetStateFromSerialService } from './step-4/get-state-from-se
 import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-register-is-ip-allowed.service';
 import { AbaRegisterISGActionAllowedService } from './step-1/login/aba-register-isg-action-allowed.service';
 import { AbaRegisterIsPrepaidVoiceLineService } from './step-2/dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
+import { AbaRegisterIsReservedLoginService } from './step-4/dependencies/is-reserved-login/is-reserved-login.service';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
 import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-customer-class/plans-by-customer-class.service';
 import { AbaRegisterService } from './step-4/dependencies/aba-register/aba-register.service';
@@ -40,6 +41,7 @@ import { FunctionsRawModule } from 'src/raw/functions/functions-raw.module';
     AbaRegisterISGActionAllowedService,
     AbaRegisterIsIPAllowedService,
     AbaRegisterIsPrepaidVoiceLineService,
+    AbaRegisterIsReservedLoginService,
     AbaRegisterLoginService,
     AbaRegisterPlansByCustomerClassService,
     AbaRegisterValidateCustomerService,

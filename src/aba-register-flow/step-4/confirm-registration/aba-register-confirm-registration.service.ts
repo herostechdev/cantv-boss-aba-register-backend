@@ -3,6 +3,7 @@ import { AbaRegisterCancelAbaInstallationService } from '../dependencies/cancel-
 import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
 import { AbaRegisterGetCSIdAndPlanNameFromLoginService } from '../dependencies/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login.service';
 import { AbaRegisterGetAbaPlanForKenanService } from '../dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
+import { AbaRegisterIsReservedLoginService } from '../dependencies/is-reserved-login/is-reserved-login.service';
 import { AbaRegisterService } from 'src/aba-register-flow/step-4/dependencies/aba-register/aba-register.service';
 import { BillingException } from '../../../confirm-registration/create-and-provisioning-master-act/billing.exception';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
@@ -27,13 +28,6 @@ import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/custome
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
 import { ICreateAndProvisioningCustomerResponse } from '../../../confirm-registration/create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICreateAndProvisioningMasterActResponse } from '../../../confirm-registration/create-and-provisioning-master-act/create-and-provisioning-master-act-response.interface';
-// import { IInsertModifyCustomerAttributeResponse } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-response.interface';
-import { IIsReservedLoginResponse } from '../../../confirm-registration/is-reserved-login/is-reserved-login-response.interface';
-// import { InsertModifyCustomerAttributeStatusConstants } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-status.constants';
-// import { InsertModifyCustomerAttributeInternalErrorException } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-internal-error.exception';
-import { IsReservedLoginStatusConstants } from '../../../confirm-registration/is-reserved-login/is-reserved-login-status.constants';
-import { IsReservedLoginInternalErrorException } from '../../../confirm-registration/is-reserved-login/is-reserved-login-internal-error.exception';
-import { IsReservedLoginThereIsNoDataException } from '../../../confirm-registration/is-reserved-login/is-reserved-login-there-is-no-data.exception';
 import { LoginAlreadyExistsException } from '../../../confirm-registration/create-and-provisioning-master-act/login-already-exists.exception';
 import { ObtainingInstanceFromAttributeListException } from '../../../confirm-registration/create-and-provisioning-master-act/obtaining-instance-from-attribute-list.exception';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
@@ -51,6 +45,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
     private readonly abaRegisterCustomerExistsService: AbaRegisterCustomerExistsService,
     private readonly abaRegisterGetCSIdAndPlanNameFromLoginService: AbaRegisterGetCSIdAndPlanNameFromLoginService,
     private readonly abaRegisterGetAbaPlanForKenanService: AbaRegisterGetAbaPlanForKenanService,
+    private readonly abaRegisterIsReservedLoginService: AbaRegisterIsReservedLoginService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
@@ -143,11 +138,20 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      data.isReservedLoginResponse = await this.isReservedLogin(data);
+      data.isReservedLoginResponse =
+        await this.abaRegisterIsReservedLoginService.execute({
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+          login: BossHelper.getAutomaticCustomerUserName(
+            dto.areaCode,
+            dto.phoneNumber,
+            dto.customerIdentificationDocument,
+          ),
+        });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'abaRegisterGetCSIdAndPlanNameFromLogin',
-        input: BossHelper.getPhoneNumber(dto),
+        input: JSON.stringify(dto),
         clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
@@ -434,41 +438,41 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
   //   }
   // }
 
-  private async isReservedLogin(
-    data: AbaRegisterConfirmRegistrationResponse,
-  ): Promise<IIsReservedLoginResponse> {
-    const parameters = {
-      sz_Login: OracleHelper.stringBindIn(
-        BossHelper.getAutomaticCustomerUserName(
-          data.requestDto.areaCode,
-          data.requestDto.phoneNumber,
-          data.requestDto.customerIdentificationDocument,
-        ),
-      ),
-      l_result: OracleHelper.numberBindOut(),
-      o_status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ACT_PACKAGE,
-      BossConstants.IS_RESERVED_LOGIN,
-      parameters,
-    );
-    const response: IIsReservedLoginResponse = {
-      result: result?.outBinds?.l_result,
-      status: (result?.outBinds?.o_status ??
-        IsReservedLoginStatusConstants.INTERNAL_ERROR) as IsReservedLoginStatusConstants,
-    };
-    switch (response.status) {
-      case IsReservedLoginStatusConstants.SUCCESSFULL:
-        return response;
-      case IsReservedLoginStatusConstants.INTERNAL_ERROR:
-        throw new IsReservedLoginInternalErrorException();
-      case IsReservedLoginStatusConstants.THERE_IS_NO_DATA:
-        throw new IsReservedLoginThereIsNoDataException();
-      default:
-        throw new IsReservedLoginInternalErrorException();
-    }
-  }
+  // private async isReservedLogin(
+  //   data: AbaRegisterConfirmRegistrationResponse,
+  // ): Promise<IIsReservedLoginResponse> {
+  //   const parameters = {
+  //     sz_Login: OracleHelper.stringBindIn(
+  //       BossHelper.getAutomaticCustomerUserName(
+  //         data.requestDto.areaCode,
+  //         data.requestDto.phoneNumber,
+  //         data.requestDto.customerIdentificationDocument,
+  //       ),
+  //     ),
+  //     l_result: OracleHelper.numberBindOut(),
+  //     o_status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ACT_PACKAGE,
+  //     BossConstants.IS_RESERVED_LOGIN,
+  //     parameters,
+  //   );
+  //   const response: IIsReservedLoginResponse = {
+  //     result: result?.outBinds?.l_result,
+  //     status: (result?.outBinds?.o_status ??
+  //       IsReservedLoginStatusConstants.ERROR) as IsReservedLoginStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case IsReservedLoginStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case IsReservedLoginStatusConstants.ERROR:
+  //       throw new IsReservedLoginException();
+  //     case IsReservedLoginStatusConstants.THERE_IS_NO_DATA:
+  //       throw new IsReservedLoginThereIsNoDataException();
+  //     default:
+  //       throw new IsReservedLoginException();
+  //   }
+  // }
 
   // private async abaRegister(
   //   data: ConfirmRegistrationData,
