@@ -26,6 +26,8 @@ export class BossConstants {
   public static GET_ABA_DATA_FROM_REQUESTS = 'GetABADataFromRequests';
   public static GET_ALL_VALUES_FROM_CUSTOMER_VALUES =
     'GetAllValuesFromCltvalues';
+  public static GET_CSID_AND_PLAN_NAME_FROM_LOGIN =
+    'GetCSIdAndPlanNameFromLogin';
   public static GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE =
     'GetCltClassNameFromIdValue';
   public static GET_CUSTOMER_INSTANCE_ID_FROM_ID_VALUE =

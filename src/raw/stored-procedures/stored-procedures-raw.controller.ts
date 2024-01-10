@@ -15,6 +15,8 @@ import { GetCustomerClassNameFromIdValueDto } from './get-customer-class-name-fr
 import { GetCustomerClassNameFromIdValueRawService } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
 import { GetCustomerInstanceIdFromIdValueRawService } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
 import { GetCustomerInstanceIdFromIdValueRequestDto } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-request.dto';
+import { GetCSIdAndPlanNameFromLoginRawService } from './get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-raw.service';
+import { GetCSIdAndPlanNameFromLoginRequestDto } from './get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-request.dto';
 import { GetDebtFromCustomerRawService } from './get-debt-from-customer/get-debt-from-customer-raw.service';
 import { GetDebtFromCustomerRequestDto } from './get-debt-from-customer/get-debt-from-customer-request.dto';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes/get-dsl-area-codes-request.dto';
@@ -37,6 +39,7 @@ import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-c
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetCustomerClassNameFromIdValueResponse } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
 import { IGetCustomerInstanceIdFromIdValueResponse } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
+import { IGetCSIdAndPlanNameFromLoginResponse } from './get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-response.interface';
 import { IGetDebtFromCustomerResponse } from './get-debt-from-customer/get-debt-from-customer-response.interface';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
@@ -76,6 +79,7 @@ export class StoredProceduresRawController {
     private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
     private readonly getCustomerInstanceIdFromIdValueRawService: GetCustomerInstanceIdFromIdValueRawService,
+    private readonly getCSIdAndPlanNameFromLoginRawService: GetCSIdAndPlanNameFromLoginRawService,
     private readonly getDebtFromCustomerRawService: GetDebtFromCustomerRawService,
     private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
@@ -116,10 +120,10 @@ export class StoredProceduresRawController {
     return this.customerExistsRawService.execute(dto);
   }
 
-  @Post()
+  @Post('dslAuditLogs')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
-  DSLAuditLogs(
+  dslAuditLogs(
     @Body() dto: DSLAuditLogsRequestDto,
   ): Promise<IDSLAuditLogsResponse> {
     return this.dslAuditLogsService.execute(dto);
@@ -159,6 +163,15 @@ export class StoredProceduresRawController {
     @Body() dto: GetCustomerInstanceIdFromIdValueRequestDto,
   ): Promise<IGetCustomerInstanceIdFromIdValueResponse> {
     return this.getCustomerInstanceIdFromIdValueRawService.execute(dto);
+  }
+
+  @Post('getCSIdAndPlanNameFromLogin')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getCSIdAndPlanNameFromLogin(
+    @Body() dto: GetCSIdAndPlanNameFromLoginRequestDto,
+  ): Promise<IGetCSIdAndPlanNameFromLoginResponse> {
+    return this.getCSIdAndPlanNameFromLoginRawService.execute(dto);
   }
 
   @Post('getDSLAreaCodes')

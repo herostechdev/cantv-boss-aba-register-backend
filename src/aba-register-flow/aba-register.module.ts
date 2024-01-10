@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
+import { AbaRegisterCancelAbaInstallationService } from './step-4/dependencies/cancel-aba-installation/cancel-aba-installation.service';
 import { AbaRegisterController } from './aba-register.controller';
 import { AbaRegisterConfirmRegistrationService } from './step-4/confirm-registration/aba-register-confirm-registration.service';
 import { AbaRegisterCustomerExistsService } from './step-2/dependencies/customer-exists/aba-register-customer-exists.service';
 import { AbaRegisterGetAbaPlanForKenanService } from './step-4/dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from './step-2/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
+import { AbaRegisterGetCSIdAndPlanNameFromLoginService } from './step-4/dependencies/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login.service';
 import { AbaRegisterGetDslAreaCodesService } from './step-2/dependencies/get-dsl-area-codes/aba-register-get-dsl-area-codes.service';
 import { AbaRegisterGetGroupAccessFromLoginService } from './step-1/login/aba-register-get-group-access-from-login.service';
 import { AbaRegisterGetLegalDocumentsService } from './step-4/get-legal-documents/aba-register-get-legal-documents.service';
@@ -18,7 +20,6 @@ import { AbaRegisterService } from './step-4/dependencies/aba-register/aba-regis
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
 import { FunctionsRawModule } from 'src/raw/functions/functions-raw.module';
-import { AbaRegisterCancelAbaInstallationService } from './step-4/dependencies/cancel-aba-installation/cancel-aba-installation.service';
 
 @Module({
   imports: [EncryptionModule, FunctionsRawModule],
@@ -30,6 +31,7 @@ import { AbaRegisterCancelAbaInstallationService } from './step-4/dependencies/c
     AbaRegisterCustomerExistsService,
     AbaRegisterGetAbaPlanForKenanService,
     AbaRegisterGetAndRegisterQualifOfServiceService,
+    AbaRegisterGetCSIdAndPlanNameFromLoginService,
     AbaRegisterGetDslAreaCodesService,
     AbaRegisterGetGroupAccessFromLoginService,
     AbaRegisterGetLegalDocumentsService,
