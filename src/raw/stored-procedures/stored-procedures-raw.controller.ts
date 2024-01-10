@@ -3,6 +3,8 @@ import { AbaRegisterRawService } from './aba-register/aba-register-raw.service';
 import { AbaRegisterRequestDto } from './aba-register/aba-register-request.dto';
 import { CancelAbaInstallationRawService } from './cancel-aba-installation/cancel-aba-installation-raw.service';
 import { CancelAbaInstallationRequestDto } from './cancel-aba-installation/cancel-aba-installation-request.dto';
+import { CreateAndProvisioningCustomerRawService } from './create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
+import { CreateAndProvisioningCustomerRequestDto } from './create-and-provisioning-customer/create-and-provisioning-customer-request.dto';
 import { CustomerExistsRequestDto } from './customer-exists/customer-exists-request.dto';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
 import { DSLAuditLogsRequestDto } from './dsl-audit-logs/dsl-audit-logs-request.dto';
@@ -33,6 +35,7 @@ import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-c
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IAbaRegisterResponse } from './aba-register/aba-register-response.interface';
 import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
+import { ICreateAndProvisioningCustomerResponse } from './create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
 import { IDSLAuditLogsResponse } from './dsl-audit-logs/dsl-audit-logs-response.interface';
 import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
@@ -50,6 +53,7 @@ import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers/inser
 import { IIsIPAllowedResponse } from './is-ip-allowed/is-ip-allowed-response.interface';
 import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
+import { IIsReservedLoginResponse } from './is-reserved-login/is-reserved-login-response.interface';
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers/insert-dsl-aba-registers-request.dto';
 import { IPlansByCustomerClassListResponse } from './plans-by-customer-class/plans-by-customer-class-list-response.interface';
@@ -60,13 +64,12 @@ import { IsIPAllowedRequestDto } from './is-ip-allowed/is-ip-allowed-request.dto
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
 import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line/is-prepaid-voice-line-request.dto';
+import { IsReservedLoginRequestDto } from './is-reserved-login/is-reserved-login-request.dto';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-by-customer-class-request.dto';
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
-import { IsReservedLoginRequestDto } from './is-reserved-login/is-reserved-login-request.dto';
-import { IIsReservedLoginResponse } from './is-reserved-login/is-reserved-login-response.interface';
 
 @Controller({
   path: 'raw/sp',
@@ -76,6 +79,7 @@ export class StoredProceduresRawController {
   constructor(
     private readonly abaRegisterRawService: AbaRegisterRawService,
     private readonly cancelAbaInstallationRawService: CancelAbaInstallationRawService,
+    private readonly createAndProvisioningCustomerRawService: CreateAndProvisioningCustomerRawService,
     private readonly customerExistsRawService: CustomerExistsRawService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
@@ -113,6 +117,15 @@ export class StoredProceduresRawController {
     @Body() dto: CancelAbaInstallationRequestDto,
   ): Promise<ICancelABAInstallationResponse> {
     return this.cancelAbaInstallationRawService.execute(dto);
+  }
+
+  @Post('createAndProvisioningCustomer')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  createAndProvisioningCustomer(
+    @Body() dto: CreateAndProvisioningCustomerRequestDto,
+  ): Promise<ICreateAndProvisioningCustomerResponse> {
+    return this.createAndProvisioningCustomerRawService.execute(dto);
   }
 
   @Post('customerExists')

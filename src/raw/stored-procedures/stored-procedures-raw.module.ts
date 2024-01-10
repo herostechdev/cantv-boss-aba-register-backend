@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AbaRegisterRawService } from './aba-register/aba-register-raw.service';
 import { CancelAbaInstallationRawService } from './cancel-aba-installation/cancel-aba-installation-raw.service';
+import { CreateAndProvisioningCustomerRawService } from './create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
 import { DSLAuditLogsRawService } from './dsl-audit-logs/dsl-audit-logs-raw.service';
 import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
@@ -29,6 +30,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
   providers: [
     AbaRegisterRawService,
     CancelAbaInstallationRawService,
+    CreateAndProvisioningCustomerRawService,
     CustomerExistsRawService,
     DSLAuditLogsRawService,
     GetAllValuesFromCustomerValuesRawService,
@@ -53,6 +55,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
   exports: [
     AbaRegisterRawService,
     CancelAbaInstallationRawService,
+    CreateAndProvisioningCustomerRawService,
     CustomerExistsRawService,
     DSLAuditLogsRawService,
     GetAllValuesFromCustomerValuesRawService,

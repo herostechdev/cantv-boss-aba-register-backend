@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AbaRegisterCancelAbaInstallationService } from './step-4/dependencies/cancel-aba-installation/cancel-aba-installation.service';
-import { AbaRegisterController } from './aba-register.controller';
 import { AbaRegisterConfirmRegistrationService } from './step-4/confirm-registration/aba-register-confirm-registration.service';
+import { AbaRegisterController } from './aba-register.controller';
+import { AbaRegisterCreateAndProvisioningCustomerService } from './step-4/dependencies/create-and-provisioning-customer/create-and-provisioning-customer.service';
 import { AbaRegisterCustomerExistsService } from './step-2/dependencies/customer-exists/aba-register-customer-exists.service';
 import { AbaRegisterGetAbaPlanForKenanService } from './step-4/dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from './step-2/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
@@ -29,7 +30,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
   providers: [
     AbaRegisterCancelAbaInstallationService,
     AbaRegisterConfirmRegistrationService,
-    AbaRegisterService,
+    AbaRegisterCreateAndProvisioningCustomerService,
     AbaRegisterCustomerExistsService,
     AbaRegisterGetAbaPlanForKenanService,
     AbaRegisterGetAndRegisterQualifOfServiceService,
@@ -45,6 +46,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterIsReservedLoginService,
     AbaRegisterLoginService,
     AbaRegisterPlansByCustomerClassService,
+    AbaRegisterService,
     AbaRegisterValidateCustomerService,
   ],
   exports: [
