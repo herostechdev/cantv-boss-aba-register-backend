@@ -752,12 +752,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         orderId: String(data.requestDto.orderId),
       });
 
-    if (
-      data.getASAPOrderDetailResponse.CTVSTATUSASCODE !==
-      BossConstants.ASAP_ORDER_COMRED_STATUS
-    ) {
-      throw new ASAPOrderStateIsInvalidException();
-    }
+    // if (
+    //   data.getASAPOrderDetailResponse.CTVSTATUSASCODE !==
+    //   BossConstants.ASAP_ORDER_COMRED_STATUS
+    // ) {
+    //   throw new ASAPOrderStateIsInvalidException();
+    // }
     this.setLinkNetwork(data);
   }
 

@@ -1,4 +1,4 @@
-import { IsIP, IsInt, IsString } from 'class-validator';
+import { IsIP, IsInt, IsOptional, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
 export class ConfirmRegistrationRequestDto implements IPhoneNumber {
@@ -21,7 +21,8 @@ export class ConfirmRegistrationRequestDto implements IPhoneNumber {
   customerAddress1: string; // GetDataFromRequests.address1
 
   @IsString()
-  customerAddress2: string; // GetDataFromRequests.address2
+  @IsOptional()
+  customerAddress2?: string; // GetDataFromRequests.address2
 
   @IsString()
   customerCity: string; // GetDataFromRequests.city
@@ -29,11 +30,11 @@ export class ConfirmRegistrationRequestDto implements IPhoneNumber {
   @IsString()
   customerState: string; // GetDataFromRequests.state
 
-  @IsString()
-  dslamPortId: string; // TODO: source
+  @IsInt()
+  dslamPortId: number; // TODO: source
 
-  @IsString()
-  customerServiceId: string; // TODO: source
+  @IsInt()
+  customerServiceId: number; // TODO: source
 
   /**
    * Ejemplo persona natural:
@@ -52,8 +53,10 @@ export class ConfirmRegistrationRequestDto implements IPhoneNumber {
   orderId: number;
 
   @IsString()
-  installerLogin: string;
+  @IsOptional()
+  installerLogin?: string;
 
   @IsString()
-  zipCode: string;
+  @IsOptional()
+  zipCode?: string;
 }

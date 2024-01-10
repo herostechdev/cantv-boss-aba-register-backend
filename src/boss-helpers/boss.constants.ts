@@ -42,7 +42,7 @@ export class BossConstants {
   public static GET_IF_REMOTE_INSTALLER_IP = 'GetlfRemoteInstallerIP';
   public static GET_INFO_FROM_ABA_REQUESTS = 'GetInfoFromABARequests';
   public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
-  public static GET_PLAN_ABA_FROM_KENAN = 'GetPlanAbaFromKenan';
+  public static GET_PLAN_ABA_FOR_KENAN = 'GetPlanAbaForKenan';
   public static GET_PLAN_DESCRIPTION_FROM_PLAN_NAME =
     'GetPlanDescriptionFromPlanName';
   public static GET_PORT_ID = 'GetPortId';
@@ -88,6 +88,8 @@ export class BossConstants {
   public static NOT_AVAILABLE = 'NO_DISPONIBLE';
   public static OCCUPIED_PORT = 1;
   public static OK_RESPONSE = '0000';
+  public static PHONE = 'TELEFONO';
+  public static PHONE_AREA_CODE = 'CODIGO_TLF_AREA';
   public static PROCESSED = 'PROCESADO';
   public static REGISTER = 'Registro';
   public static START = 'Inicio';

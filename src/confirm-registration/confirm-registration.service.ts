@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
 import { AbaRegisterService } from 'src/aba-register-flow/step-4/dependencies/aba-register/aba-register.service';
 import { BillingException } from './create-and-provisioning-master-act/billing.exception';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
@@ -12,7 +13,7 @@ import { ContactAdministratorException } from './create-and-provisioning-master-
 import { CreateAndProvisioningCustomerStatusConstants } from './create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
 import { CreateAndProvisioningCustomerInternalErrorException } from './create-and-provisioning-customer/create-and-provisioning-customer-internal-error.exception';
 import { CreateAndProvisioningMasterActStatusConstants } from './create-and-provisioning-master-act/create-and-provisioning-master-act-status.constants';
-import { CreateAndProvisioningMasterActInternalErrorException } from './create-and-provisioning-master-act/create-and-provisioning-master-act-internal-error.exception';
+import { CreateAndProvisioningMasterActException } from './create-and-provisioning-master-act/create-and-provisioning-master-act.exception';
 import { CreateUserInstanceException } from './create-and-provisioning-master-act/create-user-instance.exception';
 import { CreatingAccountStatementException } from './create-and-provisioning-master-act/creating-account-statement.exception';
 import { CreatingBillingChargeException } from './create-and-provisioning-master-act/creating-billing-charge.exception';
@@ -22,7 +23,6 @@ import { CreatingHostingChargeException } from './create-and-provisioning-master
 import { CreatingMasterAccountException } from './create-and-provisioning-master-act/creating-master-account.exception';
 import { CreatingPaymentInstanceException } from './create-and-provisioning-master-act/creating-payment-instance.exception';
 import { CreatingSubaccountException } from './create-and-provisioning-master-act/creating-subaccount.exception';
-import { CustomerExistsRawService } from 'src/raw/stored-procedures/customer-exists/customer-exists-raw.service';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
 import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
@@ -36,6 +36,7 @@ import { InsertModifyCustomerAttributeInternalErrorException } from './insert-mo
 import { IsReservedLoginStatusConstants } from './is-reserved-login/is-reserved-login-status.constants';
 import { IsReservedLoginInternalErrorException } from './is-reserved-login/is-reserved-login-internal-error.exception';
 import { IsReservedLoginThereIsNoDataException } from './is-reserved-login/is-reserved-login-there-is-no-data.exception';
+import { LoginAlreadyExistsException } from './create-and-provisioning-master-act/login-already-exists.exception';
 import { ObtainingInstanceFromAttributeListException } from './create-and-provisioning-master-act/obtaining-instance-from-attribute-list.exception';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
@@ -48,7 +49,7 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 export class ConfirmRegistrationService extends OracleDatabaseService {
   constructor(
     private readonly abaRegisterService: AbaRegisterService,
-    private readonly customerExistsRawService: CustomerExistsRawService,
+    private readonly abaRegisterCustomerExistsService: AbaRegisterCustomerExistsService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
@@ -76,7 +77,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      data.getPlanAbaFromKenanResponse = await this.getPlanAbaFromKenan(data);
+      data.getPlanAbaFromKenanResponse = await this.getPlanAbaForKenan(data);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Verifica que el cliente existe',
@@ -84,16 +85,15 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         clazz: ConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      data.customerExistsResponse = await this.customerExistsRawService.execute(
-        {
+      data.customerExistsResponse =
+        await this.abaRegisterCustomerExistsService.execute({
           areaCode: dto.areaCode,
           phoneNumber: dto.phoneNumber,
           attributeName: BossHelper.getIdentificationDocumentType(
             data.requestDto.customerClassName,
           ),
           attributeValue: data.requestDto.customerIdentificationDocument,
-        },
-      );
+        });
       if (
         data.customerExistsResponse.status ===
         CustomerExistsStatusConstants.SUCCESSFULL
@@ -189,7 +189,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     }
   }
 
-  private async getPlanAbaFromKenan(
+  private async getPlanAbaForKenan(
     data: ConfirmRegistrationData,
   ): Promise<IGetPlanABAFromKenanResponse> {
     const parameters = {
@@ -197,7 +197,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       result: OracleHelper.stringBindOut(),
     };
     const result = await super.executeFunction(
-      BossConstants.GET_PLAN_ABA_FROM_KENAN,
+      BossConstants.GET_PLAN_ABA_FOR_KENAN,
       null,
       parameters,
     );
@@ -206,26 +206,6 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     };
     return response;
   }
-
-  // private async getPlanAbaFromKenan(
-  //   data: ConfirmRegistrationData,
-  // ): Promise<IGetPlanABAFromKenanResponse> {
-  //   console.log();
-  //   console.log('getPlanAbaFromKenan');
-  //   const result = await this.dbConnection.execute(
-  //     `BEGIN
-  //        :result := GetPlanAbaFromKenan(:abaplan);
-  //      END;`,
-  //     {
-  //       result: { dir: BIND_OUT, type: STRING, maxSize: 500 },
-  //       // Agrega tus parámetros aquí, por ejemplo:
-  //       abaplan: 'ABA_PLAN',
-  //     },
-  //   );
-  //   console.log('result');
-  //   console.log(result.outBinds['result']);
-  //   return null;
-  // }
 
   private async createAndProvisioningCustomer(
     data: ConfirmRegistrationData,
@@ -252,7 +232,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       PLAN: OracleHelper.stringBindIn(data.requestDto.technicalPlanName), // PlansByClassClient.O_PLANDESIRED
       PAYCLASS: OracleHelper.stringBindIn(BossConstants.CANTV_BILLING),
       PAYATTRVALUES: OracleHelper.stringBindIn(
-        BossHelper.getPhoneNumber({
+        BossHelper.getKeyPhoneNumber({
           areaCode: data.requestDto.areaCode,
           phoneNumber: data.requestDto.phoneNumber,
         }),
@@ -314,21 +294,28 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       PASSWORD: OracleHelper.stringBindIn(BossConstants.NOT_AVAILABLE),
       PLAN: OracleHelper.stringBindIn(data.requestDto.technicalPlanName), // PlansByClassClient.O_PLANDESIRED
       PAYCLASS: OracleHelper.stringBindIn(BossConstants.CANTV_BILLING),
-      ATTRVALUES: OracleHelper.stringBindIn(data.requestDto.attributeValues),
-      TAXCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
+      ATTRVALUES: OracleHelper.stringBindIn(
+        BossHelper.getKeyPhoneNumber({
+          areaCode: data.requestDto.areaCode,
+          phoneNumber: data.requestDto.phoneNumber,
+        }),
+      ),
       DISCOUNTCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
+      TAXCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
       SERVICETYPENAME: OracleHelper.stringBindIn(BossConstants.INTERNET_ACCESS),
       USERCLASSNAME: OracleHelper.stringBindIn(BossConstants.USERS),
       USERVALUES: OracleHelper.stringBindIn(data.requestDto.attributeValues),
       DIRECTION1: OracleHelper.stringBindIn(data.requestDto.customerAddress1),
-      DIRECTION2: OracleHelper.stringBindIn(data.requestDto.customerAddress2),
+      DIRECTION2: OracleHelper.stringBindIn(
+        data.requestDto.customerAddress2 ?? BossConstants.NOT_AVAILABLE,
+      ),
       CITY: OracleHelper.stringBindIn(data.requestDto.customerCity),
       STATE: OracleHelper.stringBindIn(data.requestDto.customerState),
       ZIPCODE: OracleHelper.stringBindIn(data.requestDto.zipCode),
       COUNTRY: OracleHelper.stringBindIn(BossConstants.VENEZUELA),
       CREATEDBY: OracleHelper.stringBindIn(BossConstants.REGISTER),
       PAYINST: OracleHelper.stringBindIn(null),
-      STATUS: OracleHelper.tableOfStringBindOut(),
+      STATUS: OracleHelper.tableOfNumberBindOut(),
     };
     const result = await super.executeStoredProcedure(
       BossConstants.SIGS_PACKAGE,
@@ -337,13 +324,15 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     );
     const response: ICreateAndProvisioningMasterActResponse = {
       status: (OracleHelper.getFirstItem(result, 'STATUS') ??
-        CreateAndProvisioningMasterActStatusConstants.INTERNAL_ERROR) as CreateAndProvisioningMasterActStatusConstants,
+        CreateAndProvisioningMasterActStatusConstants.ERROR) as CreateAndProvisioningMasterActStatusConstants,
     };
     switch (response.status) {
       case CreateAndProvisioningMasterActStatusConstants.SUCCESSFULL:
         return response;
-      case CreateAndProvisioningMasterActStatusConstants.INTERNAL_ERROR:
-        throw new CreateAndProvisioningMasterActInternalErrorException();
+      case CreateAndProvisioningMasterActStatusConstants.ERROR:
+        throw new CreateAndProvisioningMasterActException();
+      case CreateAndProvisioningMasterActStatusConstants.LOGIN_ALREADY_EXISTS:
+        throw new LoginAlreadyExistsException();
       case CreateAndProvisioningMasterActStatusConstants.CREATE_USER_INSTANCE_ERROR:
         throw new CreateUserInstanceException();
       case CreateAndProvisioningMasterActStatusConstants.OBTAINING_INSTANCE_FROM_ATTRIBUTE_LIST_ERROR:
@@ -371,7 +360,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       case CreateAndProvisioningMasterActStatusConstants.CREATING_DISCOUNT_ERROR:
         throw new CreatingDiscountException();
       default:
-        throw new CreateAndProvisioningMasterActInternalErrorException();
+        throw new CreateAndProvisioningMasterActException();
     }
   }
 
@@ -409,7 +398,13 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     data: ConfirmRegistrationData,
   ): Promise<IIsReservedLoginResponse> {
     const parameters = {
-      sz_Login: OracleHelper.stringBindIn(data.requestDto.installerLogin, 32),
+      sz_Login: OracleHelper.stringBindIn(
+        BossHelper.getAutomaticCustomerUserName(
+          data.requestDto.areaCode,
+          data.requestDto.phoneNumber,
+          data.requestDto.customerIdentificationDocument,
+        ),
+      ),
       l_result: OracleHelper.numberBindOut(),
       o_status: OracleHelper.numberBindOut(),
     };

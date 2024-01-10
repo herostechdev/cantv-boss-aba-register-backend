@@ -13,6 +13,11 @@ export class BossHelper {
     return `${data.areaCode}${delimiter ?? '-'}${data.phoneNumber}`;
   }
 
+  public static getKeyPhoneNumber(data: IPhoneNumber): string {
+    if (!data || !data.areaCode || !data.phoneNumber) return null;
+    return `${BossConstants.PHONE_AREA_CODE}:${data.areaCode},${BossConstants.PHONE}:${data.phoneNumber}`;
+  }
+
   public static getSerial(phoneNumber: string | number): string {
     if (!phoneNumber || StringHelper.isEmpty(String(phoneNumber))) return null;
     return String(phoneNumber).trim().substring(0, 3);

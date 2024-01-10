@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class CreateAndProvisioningMasterActInternalErrorException extends CustomBadRequestException {
+export class CreateAndProvisioningMasterActException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',

@@ -27,8 +27,10 @@ export class AbaRegisterRawService extends OracleExecuteStoredProcedureRawServic
 
   protected getParameters(dto: AbaRegisterRequestDto): any {
     return {
-      abadslamportid: OracleHelper.stringBindIn(dto.dslamPortId),
-      abaclientserviceid: OracleHelper.stringBindIn(dto.customerServiceId),
+      abadslamportid: OracleHelper.stringBindIn(String(dto.dslamPortId)),
+      abaclientserviceid: OracleHelper.stringBindIn(
+        String(dto.customerServiceId),
+      ),
       abaattrvalues: OracleHelper.stringBindIn(dto.attributeValues),
 
       tstatus: OracleHelper.tableOfNumberBindOut(),

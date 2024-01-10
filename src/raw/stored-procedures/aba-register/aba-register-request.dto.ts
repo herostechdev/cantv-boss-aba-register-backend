@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsInt, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
 export class AbaRegisterRequestDto implements IPhoneNumber {
@@ -8,11 +8,11 @@ export class AbaRegisterRequestDto implements IPhoneNumber {
   @IsString()
   phoneNumber: string;
 
-  @IsString()
-  dslamPortId: string;
+  @IsInt()
+  dslamPortId: number;
 
-  @IsString()
-  customerServiceId: string;
+  @IsInt()
+  customerServiceId: number;
 
   @IsString()
   attributeValues: string;
