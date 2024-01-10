@@ -22,8 +22,8 @@ export abstract class OracleExecuteFunctionRawService<DTO, RESPONSE>
     try {
       await super.connect(dbConnection);
       const result = await super.executeFunction(
-        this.packageName,
         this.functionName,
+        this.packageName,
         this.getParameters(dto),
       );
       return this.getResponse(result);
