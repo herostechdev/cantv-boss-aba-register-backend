@@ -1,4 +1,4 @@
-import { IsIP, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsIP, IsInt, IsOptional, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 
 export class AbaRegisterConfirmRegistrationRequestDto implements IPhoneNumber {
@@ -56,4 +56,7 @@ export class AbaRegisterConfirmRegistrationRequestDto implements IPhoneNumber {
   @IsString()
   @IsOptional()
   zipCode?: string;
+
+  @IsBoolean()
+  isAutoInstallation: boolean;
 }

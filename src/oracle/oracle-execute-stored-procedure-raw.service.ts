@@ -18,13 +18,19 @@ export abstract class OracleExecuteStoredProcedureRawService<DTO, RESPONSE>
     super(oracleConfigurationService);
   }
 
-  async execute(dto: DTO, dbConnection?: Connection): Promise<RESPONSE> {
+  async execute(
+    dto: DTO,
+    dbConnection?: Connection,
+    autoCommit = false,
+  ): Promise<RESPONSE> {
     try {
       await super.connect(dbConnection);
       const result = await super.executeStoredProcedure(
         this.packageName,
         this.storedProcedureName,
         this.getParameters(dto),
+        null,
+        autoCommit,
       );
       return this.getResponse(result);
     } catch (error) {

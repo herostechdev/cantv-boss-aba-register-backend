@@ -43,7 +43,7 @@ export class CancelAbaInstallationRawService extends OracleExecuteStoredProcedur
 
   protected getResponse(result: any): ICancelABAInstallationResponse {
     return {
-      status: (result?.outBinds?.status ??
+      status: (OracleHelper.getFirstItem(result, 'status') ??
         CancelABAInstallationStatusConstants.ERROR) as CancelABAInstallationStatusConstants,
     };
   }

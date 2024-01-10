@@ -15,7 +15,12 @@ export class BossHelper {
 
   public static getKeyPhoneNumber(data: IPhoneNumber): string {
     if (!data || !data.areaCode || !data.phoneNumber) return null;
-    return `${BossConstants.PHONE_AREA_CODE}:${data.areaCode},${BossConstants.PHONE}:${data.phoneNumber}`;
+    return `${BossConstants.PHONE_AREA_CODE}:${data.areaCode},${BossConstants.PHONE}:${data.phoneNumber};`;
+  }
+
+  public static getKeyAbaPhoneNumber(data: IPhoneNumber): string {
+    if (!data || !data.areaCode || !data.phoneNumber) return null;
+    return `${BossConstants.ABA_PHONE_AREA_CODE}:${data.areaCode},${BossConstants.ABA_PHONE}:${data.phoneNumber};`;
   }
 
   public static getSerial(phoneNumber: string | number): string {

@@ -13,7 +13,4 @@ export class AbaRegisterRequestDto implements IPhoneNumber {
 
   @IsInt()
   customerServiceId: number;
-
-  @IsString()
-  attributeValues: string;
 }

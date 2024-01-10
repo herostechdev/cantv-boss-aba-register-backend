@@ -20,7 +20,11 @@ export abstract class AbaRegisterExecuteService<
     super();
   }
 
-  async execute(dto: DTO, dbConnection?: Connection): Promise<RESPONSE> {
+  async execute(
+    dto: DTO,
+    dbConnection?: Connection,
+    autoCommit = false,
+  ): Promise<RESPONSE> {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -36,7 +40,11 @@ export abstract class AbaRegisterExecuteService<
         clazz: this.className,
         method: BossConstants.EXECUTE,
       });
-      const response = await this.rawService.execute(dto, dbConnection);
+      const response = await this.rawService.execute(
+        dto,
+        dbConnection,
+        autoCommit,
+      );
       this.processResponse(response);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),

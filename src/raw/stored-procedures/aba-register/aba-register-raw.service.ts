@@ -7,6 +7,7 @@ import { OracleConfigurationService } from 'src/system/configuration/oracle/orac
 import { OracleExecuteStoredProcedureRawService } from 'src/oracle/oracle-execute-stored-procedure-raw.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { UpdateDslAbaRegistersRawService } from '../update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { BossHelper } from 'src/boss-helpers/boss.helper';
 
 @Injectable()
 export class AbaRegisterRawService extends OracleExecuteStoredProcedureRawService<
@@ -31,7 +32,12 @@ export class AbaRegisterRawService extends OracleExecuteStoredProcedureRawServic
       abaclientserviceid: OracleHelper.stringBindIn(
         String(dto.customerServiceId),
       ),
-      abaattrvalues: OracleHelper.stringBindIn(dto.attributeValues),
+      abaattrvalues: OracleHelper.stringBindIn(
+        BossHelper.getKeyAbaPhoneNumber({
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+        }),
+      ),
 
       tstatus: OracleHelper.tableOfNumberBindOut(),
     };

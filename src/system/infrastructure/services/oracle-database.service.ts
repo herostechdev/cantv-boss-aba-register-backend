@@ -1,4 +1,10 @@
-import { getConnection, Connection, BindParameter, BIND_OUT } from 'oracledb';
+import {
+  getConnection,
+  Connection,
+  BindParameter,
+  BIND_OUT,
+  ExecuteOptions,
+} from 'oracledb';
 import { CommonService } from './common.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from 'src/oracle/oracle.constants';
@@ -27,11 +33,16 @@ export abstract class OracleDatabaseService extends CommonService {
     additionalData?: any,
   ): Promise<void> {
     try {
+      console.log('IN   closeConnection');
       if (!this.dbConnection || !closeConnection) {
+        console.log('!this.dbConnection || !closeConnection');
         return;
       }
+      console.log('this.dbConnection?.close()');
       return await this.dbConnection?.close();
     } catch (error) {
+      console.log('ERROR');
+      console.log(JSON.stringify(error));
       Wlog.instance.error({
         phoneNumber: additionalData?.phoneNumber,
         input: `closeConnection: ${closeConnection}`,
@@ -47,6 +58,7 @@ export abstract class OracleDatabaseService extends CommonService {
     storedProcedure: string,
     parameters?: any,
     additionalData?: any,
+    autoCommit = false,
   ): Promise<any> {
     console.log();
     console.log('============================================================');
@@ -84,7 +96,11 @@ export abstract class OracleDatabaseService extends CommonService {
       clazz: OracleDatabaseService.name,
       method: 'executeStoredProcedure',
     });
-    const response = await this.dbConnection.execute(sql, parameters);
+
+    const options: ExecuteOptions = {
+      autoCommit: autoCommit,
+    };
+    const response = await this.dbConnection.execute(sql, parameters, options);
 
     console.log();
     console.log('response');

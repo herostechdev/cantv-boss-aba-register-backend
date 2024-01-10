@@ -35,6 +35,7 @@ import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ThereIsNoDataException } from '../../../confirm-registration/create-and-provisioning-master-act/there-is-no-data.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { Connection } from 'oracledb';
 
 @Injectable()
 export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService {
@@ -74,11 +75,14 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         method: 'confirmRegistrationFlow',
       });
       data.getAbaPlanForKenanResponse =
-        await this.abaRegisterGetAbaPlanForKenanService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-          technicalPlanName: dto.technicalPlanName,
-        });
+        await this.abaRegisterGetAbaPlanForKenanService.execute(
+          {
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+            technicalPlanName: dto.technicalPlanName,
+          },
+          // this.dbConnection,
+        );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Verifica que el cliente existe',
@@ -87,14 +91,17 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         method: 'confirmRegistrationFlow',
       });
       data.customerExistsResponse =
-        await this.abaRegisterCustomerExistsService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-          attributeName: BossHelper.getIdentificationDocumentType(
-            data.requestDto.customerClassName,
-          ),
-          attributeValue: data.requestDto.customerIdentificationDocument,
-        });
+        await this.abaRegisterCustomerExistsService.execute(
+          {
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+            attributeName: BossHelper.getIdentificationDocumentType(
+              data.requestDto.customerClassName,
+            ),
+            attributeValue: data.requestDto.customerIdentificationDocument,
+          },
+          // this.dbConnection,
+        );
       if (
         data.customerExistsResponse.status ===
         CustomerExistsStatusConstants.SUCCESSFULL
@@ -107,7 +114,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
           method: 'confirmRegistrationFlow',
         });
         data.createAndProvisioningMasterActResponse =
-          await this.createAndProvisioningMasterAct(data);
+          await this.createAndProvisioningMasterAct(data, this.dbConnection);
         if (
           data.createAndProvisioningMasterActResponse.status !==
           CreateAndProvisioningMasterActStatusConstants.SUCCESSFULL
@@ -123,19 +130,23 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
           method: 'confirmRegistrationFlow',
         });
         data.createAndProvisioningCustomerResponse =
-          await this.abaRegisterCreateAndProvisioningCustomerService.execute({
-            areaCode: dto.areaCode,
-            phoneNumber: dto.phoneNumber,
-            attributeValues: dto.attributeValues,
-            customerAddress1: dto.customerAddress1,
-            customerAddress2: dto.customerAddress2,
-            customerCity: dto.customerCity,
-            customerClassName: dto.customerClassName,
-            customerIdentificationDocument: dto.customerIdentificationDocument,
-            customerState: dto.customerState,
-            technicalPlanName: dto.technicalPlanName,
-            zipCode: dto.zipCode,
-          });
+          await this.abaRegisterCreateAndProvisioningCustomerService.execute(
+            {
+              areaCode: dto.areaCode,
+              phoneNumber: dto.phoneNumber,
+              attributeValues: dto.attributeValues,
+              customerAddress1: dto.customerAddress1,
+              customerAddress2: dto.customerAddress2,
+              customerCity: dto.customerCity,
+              customerClassName: dto.customerClassName,
+              customerIdentificationDocument:
+                dto.customerIdentificationDocument,
+              customerState: dto.customerState,
+              technicalPlanName: dto.technicalPlanName,
+              zipCode: dto.zipCode,
+            },
+            // this.dbConnection,
+          );
         if (
           data.createAndProvisioningCustomerResponse.status !==
           CreateAndProvisioningCustomerStatusConstants.SUCCESSFULL
@@ -151,15 +162,18 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         method: 'confirmRegistrationFlow',
       });
       data.isReservedLoginResponse =
-        await this.abaRegisterIsReservedLoginService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-          login: BossHelper.getAutomaticCustomerUserName(
-            dto.areaCode,
-            dto.phoneNumber,
-            dto.customerIdentificationDocument,
-          ),
-        });
+        await this.abaRegisterIsReservedLoginService.execute(
+          {
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+            login: BossHelper.getAutomaticCustomerUserName(
+              dto.areaCode,
+              dto.phoneNumber,
+              dto.customerIdentificationDocument,
+            ),
+          },
+          // this.dbConnection,
+        );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'abaRegisterGetCSIdAndPlanNameFromLogin',
@@ -168,15 +182,18 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         method: 'confirmRegistrationFlow',
       });
       data.getCSIdAndPlanNameFromLoginResponse =
-        await this.abaRegisterGetCSIdAndPlanNameFromLoginService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-          login: BossHelper.getAutomaticCustomerUserName(
-            data.requestDto.areaCode,
-            data.requestDto.phoneNumber,
-            data.requestDto.customerIdentificationDocument,
-          ),
-        });
+        await this.abaRegisterGetCSIdAndPlanNameFromLoginService.execute(
+          {
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+            login: BossHelper.getAutomaticCustomerUserName(
+              data.requestDto.areaCode,
+              data.requestDto.phoneNumber,
+              data.requestDto.customerIdentificationDocument,
+            ),
+          },
+          // this.dbConnection,
+        );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'abaRegister',
@@ -184,28 +201,40 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      data.abaRegisterResponse = await this.abaRegisterService.execute({
-        areaCode: dto.areaCode,
-        phoneNumber: dto.phoneNumber,
-        dslamPortId: dto.dslamPortId,
-        customerServiceId:
-          data.getCSIdAndPlanNameFromLoginResponse.customerServiceId,
-        attributeValues: dto.attributeValues,
-      });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'cancelABAInstallation',
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: AbaRegisterConfirmRegistrationService.name,
-        method: 'confirmRegistrationFlow',
-      });
-      data.cancelABAInstallationResponse =
-        await this.abaRegisterCancelAbaInstallationService.execute({
+      data.abaRegisterResponse = await this.abaRegisterService.execute(
+        {
           areaCode: dto.areaCode,
           phoneNumber: dto.phoneNumber,
-          customerIdentificationDocument: dto.customerIdentificationDocument,
-          installerLogin: dto.installerLogin,
+          dslamPortId: dto.dslamPortId,
+          customerServiceId:
+            data.getCSIdAndPlanNameFromLoginResponse.customerServiceId,
+        },
+        // this.dbConnection,
+        null,
+        true,
+      );
+      if (dto.isAutoInstallation === true) {
+        Wlog.instance.info({
+          phoneNumber: BossHelper.getPhoneNumber(dto),
+          message: 'cancelABAInstallation',
+          input: BossHelper.getPhoneNumber(dto),
+          clazz: AbaRegisterConfirmRegistrationService.name,
+          method: 'confirmRegistrationFlow',
         });
+        data.cancelABAInstallationResponse =
+          await this.abaRegisterCancelAbaInstallationService.execute(
+            {
+              areaCode: dto.areaCode,
+              phoneNumber: dto.phoneNumber,
+              customerIdentificationDocument:
+                dto.customerIdentificationDocument,
+              installerLogin: dto.installerLogin,
+            },
+            // this.dbConnection,
+            null,
+            true,
+          );
+      }
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'updateDslAbaRegistersService',
@@ -213,11 +242,14 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      await this.updateDslAbaRegistersService.errorUpdate({
-        areaCode: dto.areaCode,
-        phoneNumber: dto.phoneNumber,
-        registerStatus: BossConstants.PROCESSED,
-      });
+      await this.updateDslAbaRegistersService.execute(
+        {
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+          registerStatus: BossConstants.PROCESSED,
+        },
+        // this.dbConnection,
+      );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: BossConstants.END,
@@ -241,6 +273,8 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
       });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
+      console.log();
+      console.log('invoke   closeConnection');
       await this.closeConnection();
     }
   }
@@ -329,6 +363,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
 
   private async createAndProvisioningMasterAct(
     data: AbaRegisterConfirmRegistrationResponse,
+    dbConnection?: Connection,
   ): Promise<ICreateAndProvisioningMasterActResponse> {
     const parameters = {
       CLASSNAME: OracleHelper.stringBindIn(data.requestDto.customerClassName),
@@ -377,6 +412,8 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
       BossConstants.SIGS_PACKAGE,
       BossConstants.CREATE_AND_PROVISIONING_MASTER_ACT,
       parameters,
+      null,
+      true,
     );
     const response: ICreateAndProvisioningMasterActResponse = {
       status: (OracleHelper.getFirstItem(result, 'STATUS') ??

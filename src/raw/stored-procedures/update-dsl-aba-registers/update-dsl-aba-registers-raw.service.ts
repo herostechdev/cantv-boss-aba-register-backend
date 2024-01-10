@@ -23,6 +23,10 @@ export class UpdateDslAbaRegistersRawService extends OracleDatabaseService {
     dbConnection?: Connection,
   ): Promise<IUpdateDslAbaRegistersResponse> {
     try {
+      console.log();
+      console.log('UpdateDslAbaRegistersRawService');
+      console.log(dto);
+      console.log();
       await super.connect(dbConnection);
       const result = await super.executeStoredProcedure(
         BossConstants.ABA_PACKAGE,
