@@ -192,6 +192,18 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
+        message: 'updateDslAbaRegistersService',
+        input: BossHelper.getPhoneNumber(dto),
+        clazz: AbaRegisterConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
+      await this.updateDslAbaRegistersService.errorUpdate({
+        areaCode: dto.areaCode,
+        phoneNumber: dto.phoneNumber,
+        registerStatus: BossConstants.PROCESSED,
+      });
+      Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: BossConstants.END,
         input: BossHelper.getPhoneNumber(dto),
         clazz: AbaRegisterConfirmRegistrationService.name,
