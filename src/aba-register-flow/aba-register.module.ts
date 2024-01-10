@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AbaRegisterController } from './aba-register.controller';
+import { AbaRegisterConfirmRegistrationService } from './step-4/confirm-registration/aba-register-confirm-registration.service';
 import { AbaRegisterCustomerExistsService } from './step-2/dependencies/customer-exists/aba-register-customer-exists.service';
+import { AbaRegisterGetAbaPlanForKenanService } from './step-4/dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from './step-2/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterGetDslAreaCodesService } from './step-2/dependencies/get-dsl-area-codes/aba-register-get-dsl-area-codes.service';
 import { AbaRegisterGetGroupAccessFromLoginService } from './step-1/login/aba-register-get-group-access-from-login.service';
@@ -15,13 +17,16 @@ import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-custom
 import { AbaRegisterService } from './step-4/dependencies/aba-register/aba-register.service';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
+import { FunctionsRawModule } from 'src/raw/functions/functions-raw.module';
 
 @Module({
-  imports: [EncryptionModule],
+  imports: [EncryptionModule, FunctionsRawModule],
   controllers: [AbaRegisterController],
   providers: [
+    AbaRegisterConfirmRegistrationService,
     AbaRegisterService,
     AbaRegisterCustomerExistsService,
+    AbaRegisterGetAbaPlanForKenanService,
     AbaRegisterGetAndRegisterQualifOfServiceService,
     AbaRegisterGetDslAreaCodesService,
     AbaRegisterGetGroupAccessFromLoginService,

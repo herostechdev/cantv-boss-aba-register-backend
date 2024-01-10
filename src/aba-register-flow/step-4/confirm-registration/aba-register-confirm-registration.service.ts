@@ -1,88 +1,94 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
 import { AbaRegisterService } from 'src/aba-register-flow/step-4/dependencies/aba-register/aba-register.service';
-import { BillingException } from './create-and-provisioning-master-act/billing.exception';
+import { BillingException } from '../../../confirm-registration/create-and-provisioning-master-act/billing.exception';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CancelABAInstallationStatusConstants } from './cancel-aba-installation/cancel-aba-installation-status.constants';
-import { CancelABAInstallationInternalErrorException } from './cancel-aba-installation/cancel-aba-installation-internal-error.exception';
-import { CancelABAInstallationThereIsNoDataException } from './cancel-aba-installation/cancel-aba-installation-there-is-no-data.exception';
-import { ConfirmRegistrationRequestDto } from './confirm-registration-request.dto';
-import { ConfirmRegistrationData } from './confirm-registration-data';
-import { ContactAdministratorException } from './create-and-provisioning-master-act/contact-administrator.exception';
-import { CreateAndProvisioningCustomerStatusConstants } from './create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
-import { CreateAndProvisioningCustomerInternalErrorException } from './create-and-provisioning-customer/create-and-provisioning-customer-internal-error.exception';
-import { CreateAndProvisioningMasterActStatusConstants } from './create-and-provisioning-master-act/create-and-provisioning-master-act-status.constants';
-import { CreateAndProvisioningMasterActException } from './create-and-provisioning-master-act/create-and-provisioning-master-act.exception';
-import { CreateUserInstanceException } from './create-and-provisioning-master-act/create-user-instance.exception';
-import { CreatingAccountStatementException } from './create-and-provisioning-master-act/creating-account-statement.exception';
-import { CreatingBillingChargeException } from './create-and-provisioning-master-act/creating-billing-charge.exception';
-import { CreatingContractException } from './create-and-provisioning-master-act/creating-contract.exception';
-import { CreatingDiscountException } from './create-and-provisioning-master-act/creating-discount.exception';
-import { CreatingHostingChargeException } from './create-and-provisioning-master-act/creating-hosting-charge.exception';
-import { CreatingMasterAccountException } from './create-and-provisioning-master-act/creating-master-account.exception';
-import { CreatingPaymentInstanceException } from './create-and-provisioning-master-act/creating-payment-instance.exception';
-import { CreatingSubaccountException } from './create-and-provisioning-master-act/creating-subaccount.exception';
+import { CancelABAInstallationStatusConstants } from '../../../confirm-registration/cancel-aba-installation/cancel-aba-installation-status.constants';
+import { CancelABAInstallationInternalErrorException } from '../../../confirm-registration/cancel-aba-installation/cancel-aba-installation-internal-error.exception';
+import { CancelABAInstallationThereIsNoDataException } from '../../../confirm-registration/cancel-aba-installation/cancel-aba-installation-there-is-no-data.exception';
+import { AbaRegisterConfirmRegistrationRequestDto } from './aba-register-confirm-registration-request.dto';
+import { AbaRegisterConfirmRegistrationData } from './aba-register-confirm-registration-data';
+import { ContactAdministratorException } from '../../../confirm-registration/create-and-provisioning-master-act/contact-administrator.exception';
+import { CreateAndProvisioningCustomerStatusConstants } from '../../../confirm-registration/create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
+import { CreateAndProvisioningCustomerInternalErrorException } from '../../../confirm-registration/create-and-provisioning-customer/create-and-provisioning-customer-internal-error.exception';
+import { CreateAndProvisioningMasterActStatusConstants } from '../../../confirm-registration/create-and-provisioning-master-act/create-and-provisioning-master-act-status.constants';
+import { CreateAndProvisioningMasterActException } from '../../../confirm-registration/create-and-provisioning-master-act/create-and-provisioning-master-act.exception';
+import { CreateUserInstanceException } from '../../../confirm-registration/create-and-provisioning-master-act/create-user-instance.exception';
+import { CreatingAccountStatementException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-account-statement.exception';
+import { CreatingBillingChargeException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-billing-charge.exception';
+import { CreatingContractException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-contract.exception';
+import { CreatingDiscountException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-discount.exception';
+import { CreatingHostingChargeException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-hosting-charge.exception';
+import { CreatingMasterAccountException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-master-account.exception';
+import { CreatingPaymentInstanceException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-payment-instance.exception';
+import { CreatingSubaccountException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-subaccount.exception';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
-import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
-import { ICreateAndProvisioningCustomerResponse } from './create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
-import { ICreateAndProvisioningMasterActResponse } from './create-and-provisioning-master-act/create-and-provisioning-master-act-response.interface';
-import { IGetPlanABAFromKenanResponse } from './get-plan-aba-from-kenan/get-plan-aba-from-kenan-response.interface';
-import { IInsertModifyCustomerAttributeResponse } from './insert-modify-customer-attribute/insert-modify-customer-attribute-response.interface';
-import { IIsReservedLoginResponse } from './is-reserved-login/is-reserved-login-response.interface';
-import { InsertModifyCustomerAttributeStatusConstants } from './insert-modify-customer-attribute/insert-modify-customer-attribute-status.constants';
-import { InsertModifyCustomerAttributeInternalErrorException } from './insert-modify-customer-attribute/insert-modify-customer-attribute-internal-error.exception';
-import { IsReservedLoginStatusConstants } from './is-reserved-login/is-reserved-login-status.constants';
-import { IsReservedLoginInternalErrorException } from './is-reserved-login/is-reserved-login-internal-error.exception';
-import { IsReservedLoginThereIsNoDataException } from './is-reserved-login/is-reserved-login-there-is-no-data.exception';
-import { LoginAlreadyExistsException } from './create-and-provisioning-master-act/login-already-exists.exception';
-import { ObtainingInstanceFromAttributeListException } from './create-and-provisioning-master-act/obtaining-instance-from-attribute-list.exception';
+import { ICancelABAInstallationResponse } from '../../../confirm-registration/cancel-aba-installation/cancel-aba-installation-response.interface';
+import { ICreateAndProvisioningCustomerResponse } from '../../../confirm-registration/create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
+import { ICreateAndProvisioningMasterActResponse } from '../../../confirm-registration/create-and-provisioning-master-act/create-and-provisioning-master-act-response.interface';
+import { IInsertModifyCustomerAttributeResponse } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-response.interface';
+import { IIsReservedLoginResponse } from '../../../confirm-registration/is-reserved-login/is-reserved-login-response.interface';
+import { InsertModifyCustomerAttributeStatusConstants } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-status.constants';
+import { InsertModifyCustomerAttributeInternalErrorException } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-internal-error.exception';
+import { IsReservedLoginStatusConstants } from '../../../confirm-registration/is-reserved-login/is-reserved-login-status.constants';
+import { IsReservedLoginInternalErrorException } from '../../../confirm-registration/is-reserved-login/is-reserved-login-internal-error.exception';
+import { IsReservedLoginThereIsNoDataException } from '../../../confirm-registration/is-reserved-login/is-reserved-login-there-is-no-data.exception';
+import { LoginAlreadyExistsException } from '../../../confirm-registration/create-and-provisioning-master-act/login-already-exists.exception';
+import { ObtainingInstanceFromAttributeListException } from '../../../confirm-registration/create-and-provisioning-master-act/obtaining-instance-from-attribute-list.exception';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { ThereIsNoDataException } from './create-and-provisioning-master-act/there-is-no-data.exception';
+import { ThereIsNoDataException } from '../../../confirm-registration/create-and-provisioning-master-act/there-is-no-data.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { AbaRegisterGetAbaPlanForKenanService } from '../dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 
 @Injectable()
-export class ConfirmRegistrationService extends OracleDatabaseService {
+export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService {
   constructor(
     private readonly abaRegisterService: AbaRegisterService,
     private readonly abaRegisterCustomerExistsService: AbaRegisterCustomerExistsService,
+    private readonly abaRegisterGetAbaPlanForKenanService: AbaRegisterGetAbaPlanForKenanService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService);
   }
 
-  async confirmRegistrationFlow(
-    dto: ConfirmRegistrationRequestDto,
-  ): Promise<ConfirmRegistrationData> {
+  async execute(
+    dto: AbaRegisterConfirmRegistrationRequestDto,
+  ): Promise<AbaRegisterConfirmRegistrationData> {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: BossConstants.START,
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ConfirmRegistrationService.name,
+        clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      const data = new ConfirmRegistrationData();
+      const data = new AbaRegisterConfirmRegistrationData();
       data.requestDto = dto;
       await super.connect();
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getPlanAbaFromKenan',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ConfirmRegistrationService.name,
+        clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      data.getPlanAbaFromKenanResponse = await this.getPlanAbaForKenan(data);
+      data.getAbaPlanForKenanResponse =
+        await this.abaRegisterGetAbaPlanForKenanService.execute({
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+          technicalPlanName: dto.technicalPlanName,
+        });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'Verifica que el cliente existe',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ConfirmRegistrationService.name,
+        clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
       data.customerExistsResponse =
@@ -102,7 +108,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'createAndProvisioningMasterAct',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ConfirmRegistrationService.name,
+          clazz: AbaRegisterConfirmRegistrationService.name,
           method: 'confirmRegistrationFlow',
         });
         data.createAndProvisioningMasterActResponse =
@@ -118,7 +124,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'createAndProvisioningCustomer',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ConfirmRegistrationService.name,
+          clazz: AbaRegisterConfirmRegistrationService.name,
           method: 'confirmRegistrationFlow',
         });
         data.createAndProvisioningCustomerResponse =
@@ -134,7 +140,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'isReservedLogin',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ConfirmRegistrationService.name,
+        clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
       data.isReservedLoginResponse = await this.isReservedLogin(data);
@@ -142,7 +148,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'abaRegister',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ConfirmRegistrationService.name,
+        clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
       data.abaRegisterResponse = await this.abaRegisterService.execute({
@@ -156,7 +162,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'cancelABAInstallation',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ConfirmRegistrationService.name,
+        clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
       data.cancelABAInstallationResponse = await this.cancelABAInstallation(
@@ -166,7 +172,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: BossConstants.END,
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ConfirmRegistrationService.name,
+        clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
       return data;
@@ -174,7 +180,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ConfirmRegistrationService.name,
+        clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
         error: error,
       });
@@ -189,26 +195,26 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
     }
   }
 
-  private async getPlanAbaForKenan(
-    data: ConfirmRegistrationData,
-  ): Promise<IGetPlanABAFromKenanResponse> {
-    const parameters = {
-      abaplan: OracleHelper.stringBindIn(data.requestDto.technicalPlanName),
-      result: OracleHelper.stringBindOut(),
-    };
-    const result = await super.executeFunction(
-      BossConstants.GET_PLAN_ABA_FOR_KENAN,
-      null,
-      parameters,
-    );
-    const response: IGetPlanABAFromKenanResponse = {
-      abaPlanCode: result?.outBinds?.result,
-    };
-    return response;
-  }
+  // private async getPlanAbaForKenan(
+  //   data: AbaRegisterConfirmRegistrationData,
+  // ): Promise<IGetAbaPlanForKenanResponse> {
+  //   const parameters = {
+  //     abaplan: OracleHelper.stringBindIn(data.requestDto.technicalPlanName),
+  //     result: OracleHelper.stringBindOut(),
+  //   };
+  //   const result = await super.executeFunction(
+  //     BossConstants.GET_ABA_PLAN_FOR_KENAN,
+  //     null,
+  //     parameters,
+  //   );
+  //   const response: IGetAbaPlanForKenanResponse = {
+  //     planCode: result?.outBinds?.result,
+  //   };
+  //   return response;
+  // }
 
   private async createAndProvisioningCustomer(
-    data: ConfirmRegistrationData,
+    data: AbaRegisterConfirmRegistrationData,
   ): Promise<ICreateAndProvisioningCustomerResponse> {
     const parameters = {
       CLASSNAME: OracleHelper.stringBindIn(data.requestDto.customerClassName),
@@ -272,7 +278,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
   }
 
   private async createAndProvisioningMasterAct(
-    data: ConfirmRegistrationData,
+    data: AbaRegisterConfirmRegistrationData,
   ): Promise<ICreateAndProvisioningMasterActResponse> {
     const parameters = {
       CLASSNAME: OracleHelper.stringBindIn(data.requestDto.customerClassName),
@@ -395,7 +401,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
   }
 
   private async isReservedLogin(
-    data: ConfirmRegistrationData,
+    data: AbaRegisterConfirmRegistrationData,
   ): Promise<IIsReservedLoginResponse> {
     const parameters = {
       sz_Login: OracleHelper.stringBindIn(
@@ -465,7 +471,7 @@ export class ConfirmRegistrationService extends OracleDatabaseService {
   // }
 
   private async cancelABAInstallation(
-    data: ConfirmRegistrationData,
+    data: AbaRegisterConfirmRegistrationData,
   ): Promise<ICancelABAInstallationResponse> {
     const parameters = {
       contractlogin: OracleHelper.stringBindIn(

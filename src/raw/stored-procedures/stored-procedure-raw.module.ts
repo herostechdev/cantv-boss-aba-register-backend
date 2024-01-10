@@ -11,7 +11,7 @@ import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-cod
 import { GetFirstLetterFromABARequestRawService } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
 import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login/get-group-access-from-login-raw.service';
 import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
-import { GetStateFromSerialRawService } from './get-state-from-serial/get-state-from-serial-raw.service';
+import { GetStateFromSerialRawService } from './insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial-raw.service';
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';

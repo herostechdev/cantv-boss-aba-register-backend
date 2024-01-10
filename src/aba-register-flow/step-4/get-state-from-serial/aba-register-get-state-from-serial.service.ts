@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { GetStateFromSerialException } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial.exception';
-import { GetStateFromSerialRawService } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-raw.service';
-import { GetStateFromSerialRequestDto } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-request.dto';
-import { GetStateFromSerialStatusConstants } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-status.constants';
-import { IGetStateFromSerialResponse } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-response.interface';
+import { GetStateFromSerialException } from 'src/raw/stored-procedures/insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial.exception';
+import { GetStateFromSerialRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial-raw.service';
+import { GetStateFromSerialRequestDto } from 'src/raw/stored-procedures/insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial-request.dto';
+import { GetStateFromSerialStatusConstants } from 'src/raw/stored-procedures/insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial-status.constants';
+import { IGetStateFromSerialResponse } from 'src/raw/stored-procedures/insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial-response.interface';
 
 @Injectable()
 export class AbaRegisterGetStateFromSerialService extends AbaRegisterExecuteService<

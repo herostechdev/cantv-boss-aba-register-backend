@@ -19,6 +19,7 @@ export class BossConstants {
     'CreateAndProvisionMasterAct';
   public static DELETE_ORDER = 'DeleteOrder';
   public static INSERT_DSL_AUDIT_LOGS = 'insertdslauditlogs';
+  public static GET_ABA_PLAN_FOR_KENAN = 'GetPlanAbaForKenan';
   public static GET_AND_REGISTER_QUALIF_OF_SERVICE =
     'GetAndRegisterQualifOfServ';
   public static GET_ABA_DATA = 'GetAbaData';
@@ -42,7 +43,6 @@ export class BossConstants {
   public static GET_IF_REMOTE_INSTALLER_IP = 'GetlfRemoteInstallerIP';
   public static GET_INFO_FROM_ABA_REQUESTS = 'GetInfoFromABARequests';
   public static GET_ORDER_ID_FROM_ABA_SALES = 'GetOrderidFromAbaSales';
-  public static GET_PLAN_ABA_FOR_KENAN = 'GetPlanAbaForKenan';
   public static GET_PLAN_DESCRIPTION_FROM_PLAN_NAME =
     'GetPlanDescriptionFromPlanName';
   public static GET_PORT_ID = 'GetPortId';
