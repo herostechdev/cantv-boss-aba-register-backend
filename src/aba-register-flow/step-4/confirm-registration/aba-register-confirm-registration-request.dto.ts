@@ -33,9 +33,6 @@ export class AbaRegisterConfirmRegistrationRequestDto implements IPhoneNumber {
   @IsInt()
   dslamPortId: number; // TODO: source
 
-  @IsInt()
-  customerServiceId: number; // TODO: source
-
   /**
    * Ejemplo persona natural:
    * CEDULA_IDENTIDAD:13456789,PRIMERA_LETRA_CEDULA:V,CIUDAD:CARACAS,ESTADO:DISTRITO CAPITAL,FECHA_NACIMIENTO:13/10/1990,PRIMER_NOMBRE:JESUS,PRIMER_APELLIDO:PEREZ

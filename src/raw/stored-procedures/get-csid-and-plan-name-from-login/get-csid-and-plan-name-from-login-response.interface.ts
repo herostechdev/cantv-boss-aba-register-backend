@@ -3,6 +3,6 @@ import { IStatusResponse } from 'src/responses/status-response.interface';
 
 export interface IGetCSIdAndPlanNameFromLoginResponse
   extends IStatusResponse<GetCSIdAndPlanNameFromLoginStatusConstants> {
-  customerServiceId: string;
+  customerServiceId: number;
   planName: string;
 }

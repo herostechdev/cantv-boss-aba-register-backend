@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterCancelAbaInstallationService } from '../dependencies/cancel-aba-installation/cancel-aba-installation.service';
 import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
+import { AbaRegisterGetCSIdAndPlanNameFromLoginService } from '../dependencies/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login.service';
 import { AbaRegisterGetAbaPlanForKenanService } from '../dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 import { AbaRegisterService } from 'src/aba-register-flow/step-4/dependencies/aba-register/aba-register.service';
 import { BillingException } from '../../../confirm-registration/create-and-provisioning-master-act/billing.exception';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { AbaRegisterConfirmRegistrationRequestDto } from './aba-register-confirm-registration-request.dto';
-import { AbaRegisterConfirmRegistrationData } from './aba-register-confirm-registration-data';
+import { AbaRegisterConfirmRegistrationResponse } from './aba-register-confirm-registration-response';
 import { ContactAdministratorException } from '../../../confirm-registration/create-and-provisioning-master-act/contact-administrator.exception';
 import { CreateAndProvisioningCustomerStatusConstants } from '../../../confirm-registration/create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
 import { CreateAndProvisioningCustomerInternalErrorException } from '../../../confirm-registration/create-and-provisioning-customer/create-and-provisioning-customer-internal-error.exception';
@@ -48,6 +49,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
     private readonly abaRegisterCancelAbaInstallationService: AbaRegisterCancelAbaInstallationService,
     private readonly abaRegisterService: AbaRegisterService,
     private readonly abaRegisterCustomerExistsService: AbaRegisterCustomerExistsService,
+    private readonly abaRegisterGetCSIdAndPlanNameFromLoginService: AbaRegisterGetCSIdAndPlanNameFromLoginService,
     private readonly abaRegisterGetAbaPlanForKenanService: AbaRegisterGetAbaPlanForKenanService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
@@ -57,7 +59,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
 
   async execute(
     dto: AbaRegisterConfirmRegistrationRequestDto,
-  ): Promise<AbaRegisterConfirmRegistrationData> {
+  ): Promise<AbaRegisterConfirmRegistrationResponse> {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -66,7 +68,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      const data = new AbaRegisterConfirmRegistrationData();
+      const data = new AbaRegisterConfirmRegistrationResponse();
       data.requestDto = dto;
       await super.connect();
       Wlog.instance.info({
@@ -144,6 +146,23 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
       data.isReservedLoginResponse = await this.isReservedLogin(data);
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
+        message: 'abaRegisterGetCSIdAndPlanNameFromLogin',
+        input: BossHelper.getPhoneNumber(dto),
+        clazz: AbaRegisterConfirmRegistrationService.name,
+        method: 'confirmRegistrationFlow',
+      });
+      data.getCSIdAndPlanNameFromLoginResponse =
+        await this.abaRegisterGetCSIdAndPlanNameFromLoginService.execute({
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+          login: BossHelper.getAutomaticCustomerUserName(
+            data.requestDto.areaCode,
+            data.requestDto.phoneNumber,
+            data.requestDto.customerIdentificationDocument,
+          ),
+        });
+      Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'abaRegister',
         input: BossHelper.getPhoneNumber(dto),
         clazz: AbaRegisterConfirmRegistrationService.name,
@@ -153,7 +172,8 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         areaCode: dto.areaCode,
         phoneNumber: dto.phoneNumber,
         dslamPortId: dto.dslamPortId,
-        customerServiceId: dto.customerServiceId,
+        customerServiceId:
+          data.getCSIdAndPlanNameFromLoginResponse.customerServiceId,
         attributeValues: dto.attributeValues,
       });
       Wlog.instance.info({
@@ -216,7 +236,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
   // }
 
   private async createAndProvisioningCustomer(
-    data: AbaRegisterConfirmRegistrationData,
+    data: AbaRegisterConfirmRegistrationResponse,
   ): Promise<ICreateAndProvisioningCustomerResponse> {
     const parameters = {
       CLASSNAME: OracleHelper.stringBindIn(data.requestDto.customerClassName),
@@ -280,7 +300,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
   }
 
   private async createAndProvisioningMasterAct(
-    data: AbaRegisterConfirmRegistrationData,
+    data: AbaRegisterConfirmRegistrationResponse,
   ): Promise<ICreateAndProvisioningMasterActResponse> {
     const parameters = {
       CLASSNAME: OracleHelper.stringBindIn(data.requestDto.customerClassName),
@@ -403,7 +423,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
   // }
 
   private async isReservedLogin(
-    data: AbaRegisterConfirmRegistrationData,
+    data: AbaRegisterConfirmRegistrationResponse,
   ): Promise<IIsReservedLoginResponse> {
     const parameters = {
       sz_Login: OracleHelper.stringBindIn(

@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
-import { AbaRegisterConfirmRegistrationData } from './step-4/confirm-registration/aba-register-confirm-registration-data';
+import { AbaRegisterConfirmRegistrationResponse } from './step-4/confirm-registration/aba-register-confirm-registration-response';
 import { AbaRegisterConfirmRegistrationRequestDto } from './step-4/confirm-registration/aba-register-confirm-registration-request.dto';
 import { AbaRegisterConfirmRegistrationService } from './step-4/confirm-registration/aba-register-confirm-registration.service';
 import { AbaRegisterGetDslAreaCodesService } from './step-2/dependencies/get-dsl-area-codes/aba-register-get-dsl-area-codes.service';
@@ -63,7 +63,7 @@ export class AbaRegisterController {
   @UseFilters(new HttpExceptionFilter())
   confirmRegistration(
     @Body() dto: AbaRegisterConfirmRegistrationRequestDto,
-  ): Promise<AbaRegisterConfirmRegistrationData> {
+  ): Promise<AbaRegisterConfirmRegistrationResponse> {
     return this.abaRegisterConfirmRegistrationService.execute(dto);
   }
 
