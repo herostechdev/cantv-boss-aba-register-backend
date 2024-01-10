@@ -1,11 +1,11 @@
-import { Global, Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
-import { GetDHCPDataRawService } from './get-dhcp-data/get-dhcp-data-raw.service';
+import { Module } from '@nestjs/common';
 import { BossApiController } from './boss-api-raw.controller';
+import { GetDHCPDataRawService } from './get-dhcp-data/get-dhcp-data-raw.service';
+import { HttpModule } from '@nestjs/axios';
+import { StoredProceduresRawModule } from '../stored-procedures/stored-procedures-raw.module';
 
-@Global()
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, StoredProceduresRawModule],
   controllers: [BossApiController],
   providers: [GetDHCPDataRawService],
   exports: [GetDHCPDataRawService],

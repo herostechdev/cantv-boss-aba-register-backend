@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AbaRegisterRawService } from './aba-register/aba-register-raw.service';
 import { CancelAbaInstallationRawService } from './cancel-aba-installation/cancel-aba-installation-raw.service';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
@@ -23,7 +23,6 @@ import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-
 import { StoredProceduresRawController } from './stored-procedures-raw.controller';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
-@Global()
 @Module({
   imports: [],
   controllers: [StoredProceduresRawController],
