@@ -1,6 +1,8 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { AbaRegisterRawService } from './aba-register/aba-register-raw.service';
 import { AbaRegisterRequestDto } from './aba-register/aba-register-request.dto';
+import { CancelAbaInstallationRawService } from './cancel-aba-installation/cancel-aba-installation-raw.service';
+import { CancelAbaInstallationRequestDto } from './cancel-aba-installation/cancel-aba-installation-request.dto';
 import { CustomerExistsRequestDto } from './customer-exists/customer-exists-request.dto';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
 import { DSLAuditLogsRequestDto } from './dsl-audit-logs/dsl-audit-logs-request.dto';
@@ -28,6 +30,7 @@ import { GetStateFromSerialRawService } from './insert-dsl-aba-registers/get-sta
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IAbaRegisterResponse } from './aba-register/aba-register-response.interface';
+import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
 import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
 import { IDSLAuditLogsResponse } from './dsl-audit-logs/dsl-audit-logs-response.interface';
 import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
@@ -66,6 +69,7 @@ import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/upda
 export class StoredProceduresRawController {
   constructor(
     private readonly abaRegisterRawService: AbaRegisterRawService,
+    private readonly cancelAbaInstallationRawService: CancelAbaInstallationRawService,
     private readonly customerExistsRawService: CustomerExistsRawService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
@@ -92,6 +96,15 @@ export class StoredProceduresRawController {
     @Body() dto: AbaRegisterRequestDto,
   ): Promise<IAbaRegisterResponse> {
     return this.abaRegisterRawService.execute(dto);
+  }
+
+  @Post('cancelAbaInstallation')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  cancelAbaInstallation(
+    @Body() dto: CancelAbaInstallationRequestDto,
+  ): Promise<ICancelABAInstallationResponse> {
+    return this.cancelAbaInstallationRawService.execute(dto);
   }
 
   @Post('customerExists')

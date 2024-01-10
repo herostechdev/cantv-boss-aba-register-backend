@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { AbaRegisterCancelAbaInstallationService } from '../dependencies/cancel-aba-installation/cancel-aba-installation.service';
 import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
+import { AbaRegisterGetAbaPlanForKenanService } from '../dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 import { AbaRegisterService } from 'src/aba-register-flow/step-4/dependencies/aba-register/aba-register.service';
 import { BillingException } from '../../../confirm-registration/create-and-provisioning-master-act/billing.exception';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
-import { CancelABAInstallationStatusConstants } from '../../../confirm-registration/cancel-aba-installation/cancel-aba-installation-status.constants';
-import { CancelABAInstallationInternalErrorException } from '../../../confirm-registration/cancel-aba-installation/cancel-aba-installation-internal-error.exception';
-import { CancelABAInstallationThereIsNoDataException } from '../../../confirm-registration/cancel-aba-installation/cancel-aba-installation-there-is-no-data.exception';
 import { AbaRegisterConfirmRegistrationRequestDto } from './aba-register-confirm-registration-request.dto';
 import { AbaRegisterConfirmRegistrationData } from './aba-register-confirm-registration-data';
 import { ContactAdministratorException } from '../../../confirm-registration/create-and-provisioning-master-act/contact-administrator.exception';
@@ -25,13 +24,12 @@ import { CreatingPaymentInstanceException } from '../../../confirm-registration/
 import { CreatingSubaccountException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-subaccount.exception';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
-import { ICancelABAInstallationResponse } from '../../../confirm-registration/cancel-aba-installation/cancel-aba-installation-response.interface';
 import { ICreateAndProvisioningCustomerResponse } from '../../../confirm-registration/create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICreateAndProvisioningMasterActResponse } from '../../../confirm-registration/create-and-provisioning-master-act/create-and-provisioning-master-act-response.interface';
-import { IInsertModifyCustomerAttributeResponse } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-response.interface';
+// import { IInsertModifyCustomerAttributeResponse } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-response.interface';
 import { IIsReservedLoginResponse } from '../../../confirm-registration/is-reserved-login/is-reserved-login-response.interface';
-import { InsertModifyCustomerAttributeStatusConstants } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-status.constants';
-import { InsertModifyCustomerAttributeInternalErrorException } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-internal-error.exception';
+// import { InsertModifyCustomerAttributeStatusConstants } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-status.constants';
+// import { InsertModifyCustomerAttributeInternalErrorException } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-internal-error.exception';
 import { IsReservedLoginStatusConstants } from '../../../confirm-registration/is-reserved-login/is-reserved-login-status.constants';
 import { IsReservedLoginInternalErrorException } from '../../../confirm-registration/is-reserved-login/is-reserved-login-internal-error.exception';
 import { IsReservedLoginThereIsNoDataException } from '../../../confirm-registration/is-reserved-login/is-reserved-login-there-is-no-data.exception';
@@ -43,11 +41,11 @@ import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ThereIsNoDataException } from '../../../confirm-registration/create-and-provisioning-master-act/there-is-no-data.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { AbaRegisterGetAbaPlanForKenanService } from '../dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 
 @Injectable()
 export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService {
   constructor(
+    private readonly abaRegisterCancelAbaInstallationService: AbaRegisterCancelAbaInstallationService,
     private readonly abaRegisterService: AbaRegisterService,
     private readonly abaRegisterCustomerExistsService: AbaRegisterCustomerExistsService,
     private readonly abaRegisterGetAbaPlanForKenanService: AbaRegisterGetAbaPlanForKenanService,
@@ -165,9 +163,13 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      data.cancelABAInstallationResponse = await this.cancelABAInstallation(
-        data,
-      );
+      data.cancelABAInstallationResponse =
+        await this.abaRegisterCancelAbaInstallationService.execute({
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+          customerIdentificationDocument: dto.customerIdentificationDocument,
+          installerLogin: dto.installerLogin,
+        });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: BossConstants.END,
@@ -370,35 +372,35 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
     }
   }
 
-  private async insertModifyCustomerAttribute(
-    className: string,
-    attributeName: string,
-    attributeValue: string,
-  ): Promise<IInsertModifyCustomerAttributeResponse> {
-    const parameters = {
-      i_classname: OracleHelper.stringBindIn(className),
-      i_attrname: OracleHelper.stringBindIn(attributeName),
-      i_attrvalue: OracleHelper.stringBindIn(attributeValue),
-      status: OracleHelper.tableOfStringBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.BOSS_PACKAGE,
-      BossConstants.INSERT_MODIFY_CUSTOMER_ATTRIBUTE,
-      parameters,
-    );
-    const response: IInsertModifyCustomerAttributeResponse = {
-      status: (OracleHelper.getFirstItem(result, 'status') ??
-        InsertModifyCustomerAttributeStatusConstants.INTERNAL_ERROR) as InsertModifyCustomerAttributeStatusConstants,
-    };
-    switch (response.status) {
-      case InsertModifyCustomerAttributeStatusConstants.SUCCESSFULL:
-        return response;
-      case InsertModifyCustomerAttributeStatusConstants.INTERNAL_ERROR:
-        throw new InsertModifyCustomerAttributeInternalErrorException();
-      default:
-        throw new InsertModifyCustomerAttributeInternalErrorException();
-    }
-  }
+  // private async insertModifyCustomerAttribute(
+  //   className: string,
+  //   attributeName: string,
+  //   attributeValue: string,
+  // ): Promise<IInsertModifyCustomerAttributeResponse> {
+  //   const parameters = {
+  //     i_classname: OracleHelper.stringBindIn(className),
+  //     i_attrname: OracleHelper.stringBindIn(attributeName),
+  //     i_attrvalue: OracleHelper.stringBindIn(attributeValue),
+  //     status: OracleHelper.tableOfStringBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.BOSS_PACKAGE,
+  //     BossConstants.INSERT_MODIFY_CUSTOMER_ATTRIBUTE,
+  //     parameters,
+  //   );
+  //   const response: IInsertModifyCustomerAttributeResponse = {
+  //     status: (OracleHelper.getFirstItem(result, 'status') ??
+  //       InsertModifyCustomerAttributeStatusConstants.INTERNAL_ERROR) as InsertModifyCustomerAttributeStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case InsertModifyCustomerAttributeStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case InsertModifyCustomerAttributeStatusConstants.INTERNAL_ERROR:
+  //       throw new InsertModifyCustomerAttributeInternalErrorException();
+  //     default:
+  //       throw new InsertModifyCustomerAttributeInternalErrorException();
+  //   }
+  // }
 
   private async isReservedLogin(
     data: AbaRegisterConfirmRegistrationData,
@@ -470,42 +472,42 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
   //   }
   // }
 
-  private async cancelABAInstallation(
-    data: AbaRegisterConfirmRegistrationData,
-  ): Promise<ICancelABAInstallationResponse> {
-    const parameters = {
-      contractlogin: OracleHelper.stringBindIn(
-        BossHelper.getAutomaticCustomerUserName(
-          data.requestDto.areaCode,
-          data.requestDto.phoneNumber,
-          data.requestDto.customerIdentificationDocument,
-        ),
-        32,
-      ),
-      installerlogin: OracleHelper.stringBindIn(
-        data.requestDto.installerLogin,
-        32,
-      ),
-      status: OracleHelper.tableOfNumberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ACT_PACKAGE,
-      BossConstants.CANCEL_ABA_INSTALLATION,
-      parameters,
-    );
-    const response: ICancelABAInstallationResponse = {
-      status: (result?.outBinds?.status ??
-        CancelABAInstallationStatusConstants.INTERNAL_ERROR) as CancelABAInstallationStatusConstants,
-    };
-    switch (response.status) {
-      case CancelABAInstallationStatusConstants.SUCCESSFULL:
-        return response;
-      case CancelABAInstallationStatusConstants.INTERNAL_ERROR:
-        throw new CancelABAInstallationInternalErrorException();
-      case CancelABAInstallationStatusConstants.THERE_IS_NO_DATA:
-        throw new CancelABAInstallationThereIsNoDataException();
-      default:
-        throw new CancelABAInstallationInternalErrorException();
-    }
-  }
+  // private async cancelABAInstallation(
+  //   data: AbaRegisterConfirmRegistrationData,
+  // ): Promise<ICancelABAInstallationResponse> {
+  //   const parameters = {
+  //     contractlogin: OracleHelper.stringBindIn(
+  //       BossHelper.getAutomaticCustomerUserName(
+  //         data.requestDto.areaCode,
+  //         data.requestDto.phoneNumber,
+  //         data.requestDto.customerIdentificationDocument,
+  //       ),
+  //       32,
+  //     ),
+  //     installerlogin: OracleHelper.stringBindIn(
+  //       data.requestDto.installerLogin,
+  //       32,
+  //     ),
+  //     status: OracleHelper.tableOfNumberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ACT_PACKAGE,
+  //     BossConstants.CANCEL_ABA_INSTALLATION,
+  //     parameters,
+  //   );
+  //   const response: ICancelABAInstallationResponse = {
+  //     status: (result?.outBinds?.status ??
+  //       CancelABAInstallationStatusConstants.ERROR) as CancelABAInstallationStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case CancelABAInstallationStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case CancelABAInstallationStatusConstants.ERROR:
+  //       throw new CancelABAInstallationException();
+  //     case CancelABAInstallationStatusConstants.THERE_IS_NO_DATA:
+  //       throw new CancelABAInstallationThereIsNoDataException();
+  //     default:
+  //       throw new CancelABAInstallationException();
+  //   }
+  // }
 }

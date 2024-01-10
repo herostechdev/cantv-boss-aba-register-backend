@@ -1,5 +1,4 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
-import { AbaRegisterRequestDto } from 'src/raw/stored-procedures/aba-register/aba-register-request.dto';
 import { AbaRegisterConfirmRegistrationData } from './step-4/confirm-registration/aba-register-confirm-registration-data';
 import { AbaRegisterConfirmRegistrationRequestDto } from './step-4/confirm-registration/aba-register-confirm-registration-request.dto';
 import { AbaRegisterConfirmRegistrationService } from './step-4/confirm-registration/aba-register-confirm-registration.service';
@@ -12,6 +11,7 @@ import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-regist
 import { AbaRegisterLoginRequestDto } from './step-1/login/aba-register-login-request.dto';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
 import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-customer-class/plans-by-customer-class.service';
+import { AbaRegisterRequestDto } from 'src/raw/stored-procedures/aba-register/aba-register-request.dto';
 import { AbaRegisterService } from './step-4/dependencies/aba-register/aba-register.service';
 import { AbaRegisterValidateCustomerData } from './step-2/validate-customer/aba-register-validate-customer-data';
 import { AbaRegisterValidateCustomerRequestDto } from './step-2/validate-customer/aba-register-validate-customer-request.dto';

@@ -18,11 +18,13 @@ import { AbaRegisterService } from './step-4/dependencies/aba-register/aba-regis
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
 import { FunctionsRawModule } from 'src/raw/functions/functions-raw.module';
+import { AbaRegisterCancelAbaInstallationService } from './step-4/dependencies/cancel-aba-installation/cancel-aba-installation.service';
 
 @Module({
   imports: [EncryptionModule, FunctionsRawModule],
   controllers: [AbaRegisterController],
   providers: [
+    AbaRegisterCancelAbaInstallationService,
     AbaRegisterConfirmRegistrationService,
     AbaRegisterService,
     AbaRegisterCustomerExistsService,
