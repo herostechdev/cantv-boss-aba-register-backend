@@ -335,21 +335,21 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           }
         }
       }
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'updateDslAbaRegistersService',
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
-        method: 'validateTechnicalFeasibility',
-      });
-      await this.updateDslAbaRegistersService.execute(
-        {
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-          registerStatus: BossConstants.IN_PROGRESS,
-        },
-        this.dbConnection,
-      );
+      // Wlog.instance.info({
+      //   phoneNumber: BossHelper.getPhoneNumber(dto),
+      //   message: 'updateDslAbaRegistersService',
+      //   input: BossHelper.getPhoneNumber(dto),
+      //   clazz: ValidateTechnicalFeasibilityService.name,
+      //   method: 'validateTechnicalFeasibility',
+      // });
+      // await this.updateDslAbaRegistersService.execute(
+      //   {
+      //     areaCode: dto.areaCode,
+      //     phoneNumber: dto.phoneNumber,
+      //     registerStatus: BossConstants.IN_PROGRESS,
+      //   },
+      //   this.dbConnection,
+      // );
       return data;
     } catch (error) {
       Wlog.instance.error({

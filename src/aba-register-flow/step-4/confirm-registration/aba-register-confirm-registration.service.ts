@@ -48,7 +48,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
-      const data = new AbaRegisterConfirmRegistrationResponse();
+      const data = this.initializeResponse();
       data.requestDto = dto;
       await super.connect();
       Wlog.instance.info({
@@ -271,9 +271,21 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
       });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
-      console.log();
-      console.log('invoke   closeConnection');
       await this.closeConnection();
     }
+  }
+
+  private initializeResponse(): AbaRegisterConfirmRegistrationResponse {
+    const data = new AbaRegisterConfirmRegistrationResponse();
+    data.requestDto = null;
+    data.getAbaPlanForKenanResponse = null;
+    data.customerExistsResponse = null;
+    data.createAndProvisioningCustomerResponse = null;
+    data.createAndProvisioningMasterAccountResponse = null;
+    data.isReservedLoginResponse = null;
+    data.abaRegisterResponse = null;
+    data.cancelABAInstallationResponse = null;
+    data.getCSIdAndPlanNameFromLoginResponse = null;
+    return data;
   }
 }

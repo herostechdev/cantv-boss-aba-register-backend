@@ -3,7 +3,6 @@ import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/dependen
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
-// import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1002Exception } from 'src/exceptions/error-1002.exception';
 import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
 import { GetAllValuesFromCustomerValuesRawService } from 'src/raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
@@ -27,7 +26,6 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
   constructor(
     private readonly abaRegisterCustomerExistsService: AbaRegisterCustomerExistsService,
-    // private readonly dslAuditLogsService: DSLAuditLogsService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
     private readonly getCustomerInstanceIdFromIdValueRawService: GetCustomerInstanceIdFromIdValueRawService,
@@ -50,7 +48,7 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
         clazz: AbaRegisterValidateCustomerService.name,
         method: 'validateCustomer',
       });
-      const data = new AbaRegisterValidateCustomerData();
+      const data = this.initizializeResponse();
       data.requestDto = dto;
       await super.connect();
       if (BossHelper.isNaturalPerson(dto.customerClassName)) {
@@ -244,191 +242,16 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
     }
   }
 
-  // private async callAuditLog(
-  //   data: ValidateCustomerData,
-  //   description: string,
-  // ): Promise<void> {
-  //   await this.dslAuditLogsService.log({
-  //     areaCode: data.requestDto.areaCode,
-  //     phoneNumber: data.requestDto.phoneNumber,
-  //     orderId: data.requestDto.orderId,
-  //     ipAddress: data.requestDto.ipAddress,
-  //     activationLogin: null,
-  //     webPage: null,
-  //     code: null,
-  //     description: description,
-  //     comments: null,
-  //     planName: null,
-  //   });
-  // }
-
-  // private async getAllValuesFromCustomerValues(
-  //   className: string,
-  //   attributeName: string,
-  //   value: string,
-  // ): Promise<IGetAllValuesFromCustomerValuesResponse> {
-  //   const parameters = {
-  //     classname: OracleHelper.stringBindIn(className),
-  //     attrname: OracleHelper.stringBindIn(attributeName),
-  //     avalue: OracleHelper.stringBindIn(value),
-  //     aname: OracleHelper.tableOfStringBindOut(),
-  //     cltvalue: OracleHelper.tableOfStringBindOut(),
-  //     status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.SIGS_PACKAGE,
-  //     BossConstants.GET_ALL_VALUES_FROM_CUSTOMER_VALUES,
-  //     parameters,
-  //   );
-  //   const response: IGetAllValuesFromCustomerValuesResponse = {
-  //     name: OracleHelper.getFirstItem(result, 'aname'),
-  //     value: OracleHelper.getFirstItem(result, 'cltvalue'),
-  //     status: (result?.outBinds?.status ??
-  //       GetAllValuesFromCustomerValuesStatusConstants.INTERNAL_ERROR) as GetAllValuesFromCustomerValuesStatusConstants,
-  //   };
-  //   switch (response.status) {
-  //     case GetAllValuesFromCustomerValuesStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetAllValuesFromCustomerValuesStatusConstants.INTERNAL_ERROR:
-  //       throw new GetAllValuesFromCustomerValuesException();
-  //     case GetAllValuesFromCustomerValuesStatusConstants.THERE_IS_NO_DATA:
-  //       return response;
-  //     // throw new ClientExistsThereIsNoDataException();
-  //     default:
-  //       throw new GetAllValuesFromCustomerValuesException();
-  //   }
-  // }
-
-  // private async getCustomerClassNameFromIdValue(
-  //   customerAttributeName: string,
-  //   value: string,
-  // ): Promise<IGetCustomerClassNameFromIdValueResponse> {
-  //   const parameters = {
-  //     sz_IdValue: OracleHelper.stringBindIn(value, 256),
-  //     sz_Cltattributename: OracleHelper.stringBindIn(
-  //       customerAttributeName,
-  //       256,
-  //     ),
-  //     sz_Cltclassname: OracleHelper.stringBindOut(1),
-  //     o_status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.ACT_PACKAGE,
-  //     BossConstants.GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE,
-  //     parameters,
-  //   );
-  //   const response: IGetCustomerClassNameFromIdValueResponse = {
-  //     customerClassName: result?.outBinds?.sz_Cltclassname,
-  //     status: (result?.outBinds?.o_status ??
-  //       GetCustomerClassNameFromIdValueStatusConstants.ERROR) as GetCustomerClassNameFromIdValueStatusConstants,
-  //   };
-  //   switch (response.status) {
-  //     case GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetCustomerClassNameFromIdValueStatusConstants.ERROR:
-  //       throw new GetCustomerClassNameFromIdValueException();
-  //     case GetCustomerClassNameFromIdValueStatusConstants.THERE_IS_NO_DATA:
-  //       return response;
-  //     default:
-  //       throw new GetCustomerClassNameFromIdValueException();
-  //   }
-  // }
-
-  // private async getClientInstanceIdFromIdValue(
-  //   customerAttributeName: string,
-  //   value: string,
-  // ): Promise<IGetCustomerInstanceIdFromIdValueResponse> {
-  //   const parameters = {
-  //     sz_IdValue: OracleHelper.stringBindIn(value, 256),
-  //     sz_Cltattributename: OracleHelper.stringBindIn(
-  //       customerAttributeName,
-  //       256,
-  //     ),
-  //     l_cltinstanceid: OracleHelper.numberBindOut(),
-  //     status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.ACT_PACKAGE,
-  //     BossConstants.GET_CUSTOMER_INSTANCE_ID_FROM_ID_VALUE,
-  //     parameters,
-  //   );
-  //   const response: IGetCustomerInstanceIdFromIdValueResponse = {
-  //     customerInstanceId: result?.outBinds?.l_cltinstanceid,
-  //     status: (result?.outBinds?.status ??
-  //       GetCustomerInstanceIdFromIdValueStatusConstants.ERROR) as GetCustomerInstanceIdFromIdValueStatusConstants,
-  //   };
-  //   switch (response.status) {
-  //     case GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetCustomerInstanceIdFromIdValueStatusConstants.ERROR:
-  //       throw new GetCustomerInstanceIdFromIdValueException();
-  //     case GetCustomerInstanceIdFromIdValueStatusConstants.THERE_IS_NO_DATA:
-  //       // throw new GetCustomerInstanceIdFromIdValueThereIsNoDataException();
-  //       return response;
-  //     default:
-  //       throw new GetCustomerInstanceIdFromIdValueException();
-  //   }
-  // }
-
-  // private async getFirstLetterFromABARequest(
-  //   data: ValidateCustomerData,
-  // ): Promise<IGetFirstLetterFromABARequestResponse> {
-  //   const parameters = {
-  //     sz_Areacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
-  //     s_Phonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
-  //     sz_FirstLetter: OracleHelper.stringBindOut(),
-  //     o_status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.ACT_PACKAGE,
-  //     BossConstants.GET_FIRST_LETTER_FROM_ABA_REQUEST,
-  //     parameters,
-  //   );
-  //   const response: IGetFirstLetterFromABARequestResponse = {
-  //     firstLetter: result?.outBinds?.sz_FirstLetter,
-  //     status: (result?.outBinds?.o_status ??
-  //       GetFirstLetterFromABARequestStatusConstants.ERROR) as GetFirstLetterFromABARequestStatusConstants,
-  //   };
-  //   switch (response.status) {
-  //     case GetFirstLetterFromABARequestStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetFirstLetterFromABARequestStatusConstants.ERROR:
-  //       throw new GetFirstLetterFromABARequestInternalErrorException();
-  //     case GetFirstLetterFromABARequestStatusConstants.THERE_IS_NO_DATA:
-  //       // throw new GetFirstLetterFromABARequestThereIsNoDataException();
-  //       return response;
-  //     default:
-  //       throw new GetFirstLetterFromABARequestInternalErrorException();
-  //   }
-  // }
-
-  // private async getDebtFromClient(
-  //   customerInstanceId: number,
-  // ): Promise<IGetDebtFromCustomerResponse> {
-  //   const parameters = {
-  //     l_cltinstanceid: OracleHelper.numberBindIn(customerInstanceId),
-  //     d_Amount: OracleHelper.numberBindOut(),
-  //     status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.ACT_PACKAGE,
-  //     BossConstants.GET_DEBT_FROM_CUSTOMER,
-  //     parameters,
-  //   );
-  //   const response: IGetDebtFromCustomerResponse = {
-  //     amount: result?.outBinds?.d_Amount,
-  //     status: (result?.outBinds?.status ??
-  //       GetDebtFromCustomerStatusConstants.ERROR) as GetDebtFromCustomerStatusConstants,
-  //   };
-  //   switch (response.status) {
-  //     case GetDebtFromCustomerStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetDebtFromCustomerStatusConstants.ERROR:
-  //       throw new GetDebtFromCustomerException();
-  //     case GetDebtFromCustomerStatusConstants.THERE_IS_NO_DATA:
-  //       return response;
-  //     default:
-  //       throw new GetDebtFromCustomerException();
-  //   }
-  // }
+  private initizializeResponse(): AbaRegisterValidateCustomerData {
+    const data = new AbaRegisterValidateCustomerData();
+    data.requestDto = null;
+    data.clientExistsResponse = null;
+    data.getAllValuesFromClientValuesResponse = null;
+    data.getClientClassNameFromIdValueResponse = null;
+    data.getClientInstanceIdFromIdValueResponse = null;
+    data.getFirstLetterFromABARequestResponse = null;
+    data.getDebtFromClientResponse = null;
+    data.updateDslABARegistersResponse = null;
+    return data;
+  }
 }
