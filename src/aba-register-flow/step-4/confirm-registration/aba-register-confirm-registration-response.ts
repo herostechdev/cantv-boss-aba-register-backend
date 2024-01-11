@@ -6,7 +6,7 @@ import { ICreateAndProvisioningMasterAccountResponse } from '../../../raw/stored
 import { ICustomerExistsResponse } from 'src/raw/stored-procedures/customer-exists/customer-exists-response.interface';
 import { IGetAbaPlanForKenanResponse } from '../../../raw/functions/get-aba-plan-for-kenan/get-aba-plan-for-kenan-response.interface';
 import { IGetCSIdAndPlanNameFromLoginResponse } from 'src/raw/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-response.interface';
-import { IInsertModifyCustomerAttributeResponse } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-response.interface';
+// import { IInsertModifyCustomerAttributeResponse } from '../../../confirm-registration/insert-modify-customer-attribute/insert-modify-customer-attribute-response.interface';
 import { IIsReservedLoginResponse } from '../../../raw/stored-procedures/is-reserved-login/is-reserved-login-response.interface';
 
 export class AbaRegisterConfirmRegistrationResponse {
@@ -15,7 +15,7 @@ export class AbaRegisterConfirmRegistrationResponse {
   customerExistsResponse: ICustomerExistsResponse;
   createAndProvisioningCustomerResponse: ICreateAndProvisioningCustomerResponse;
   createAndProvisioningMasterAccountResponse: ICreateAndProvisioningMasterAccountResponse;
-  insertModifyCustomerAttributeResponse: IInsertModifyCustomerAttributeResponse;
+  // insertModifyCustomerAttributeResponse: IInsertModifyCustomerAttributeResponse;
   isReservedLoginResponse: IIsReservedLoginResponse;
   abaRegisterResponse: IAbaRegisterResponse;
   cancelABAInstallationResponse: ICancelABAInstallationResponse;
