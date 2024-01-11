@@ -75,6 +75,8 @@ export class BossConstants {
   // GENERAL
   public static ABA_PHONE_AREA_CODE = 'COD_AREA_ABA';
   public static ABA_PHONE = 'TLF_ABA';
+  public static ABA_SEND_OK_NOTIFICATION =
+    'Enviando notificación de registro exitoso al servicio ABA';
   public static ADSL = 'ADSL';
   public static ASAP_ORDER_COMRED_STATUS = 399;
   public static CANTV_BILLING = 'FACTURA_CANTV';

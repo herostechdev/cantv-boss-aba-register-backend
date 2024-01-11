@@ -18,6 +18,7 @@ import { AbaRegisterISGActionAllowedService } from './step-1/login/aba-register-
 import { AbaRegisterIsPrepaidVoiceLineService } from './dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
 import { AbaRegisterIsReservedLoginService } from './dependencies/is-reserved-login/is-reserved-login.service';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
+import { AbaRegisterMailService } from './step-5/mail/aba-register-mail.service';
 import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-customer-class/plans-by-customer-class.service';
 import { AbaRegisterService } from './dependencies/aba-register/aba-register.service';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
@@ -25,10 +26,14 @@ import { EncryptionModule } from 'src/system/infrastructure/security/encryption/
 import { FunctionsRawModule } from 'src/raw/functions/functions-raw.module';
 import { MailModule } from 'src/system/infrastructure/mail/mail.module';
 import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-procedures-raw.module';
-import { AbaRegisterMailService } from './step-5/mail/aba-register-mail.service';
 
 @Module({
-  imports: [EncryptionModule, FunctionsRawModule, StoredProceduresRawModule],
+  imports: [
+    EncryptionModule,
+    FunctionsRawModule,
+    MailModule,
+    StoredProceduresRawModule,
+  ],
   controllers: [AbaRegisterController],
   providers: [
     AbaRegisterCancelAbaInstallationService,
@@ -53,7 +58,6 @@ import { AbaRegisterMailService } from './step-5/mail/aba-register-mail.service'
     AbaRegisterPlansByCustomerClassService,
     AbaRegisterService,
     AbaRegisterValidateCustomerService,
-    MailModule,
   ],
   exports: [
     AbaRegisterGetAndRegisterQualifOfServiceService,
