@@ -85,6 +85,7 @@ export class BossConstants {
   public static FISCAL_IDENTIFICATION_DOCUMENT_TYPE = 'NO_RIF';
   public static INSTALL_ABA = 'INSTALAR_ABA';
   public static INTERNET_ACCESS = 'Acceso Internet';
+  public static EXECUTING = 'EN_EJECUCION';
   public static IN_PROGRESS = 'EN_PROCESO';
   public static NATIONAL_IDENTIFICATION_DOCUMENT_TYPE = 'CEDULA_IDENTIDAD';
   public static NATURAL_PERSON = 'NATURALES';

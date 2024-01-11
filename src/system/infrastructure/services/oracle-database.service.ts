@@ -108,6 +108,10 @@ export abstract class OracleDatabaseService extends CommonService {
     const options: ExecuteOptions = {
       autoCommit: autoCommit,
     };
+
+    console.log();
+    console.log('options', options);
+
     const response = await this.dbConnection.execute(sql, parameters, options);
 
     console.log();

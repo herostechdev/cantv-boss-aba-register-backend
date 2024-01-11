@@ -72,7 +72,6 @@ import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.h
 import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from './verify-contract-by-phone/verify-contract-by-phone-status.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { ASAPOrderStateIsInvalidException } from './exceptions/asap-order-state-is-invalid.exception';
 
 @Injectable()
 export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -103,7 +102,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
-      const data = new ValidateTechnicalFeasibilityData();
+      const data = this.initializeValidateTechnicalFeasibilityData();
       data.requestDto = dto;
       await super.connect();
       Wlog.instance.info({
@@ -336,6 +335,21 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           }
         }
       }
+      Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
+        message: 'updateDslAbaRegistersService',
+        input: BossHelper.getPhoneNumber(dto),
+        clazz: ValidateTechnicalFeasibilityService.name,
+        method: 'validateTechnicalFeasibility',
+      });
+      await this.updateDslAbaRegistersService.execute(
+        {
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+          registerStatus: BossConstants.IN_PROGRESS,
+        },
+        this.dbConnection,
+      );
       return data;
     } catch (error) {
       Wlog.instance.error({
@@ -354,6 +368,32 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     } finally {
       await this.closeConnection();
     }
+  }
+
+  private initializeValidateTechnicalFeasibilityData(): ValidateTechnicalFeasibilityData {
+    const data = new ValidateTechnicalFeasibilityData();
+    data.requestDto = null;
+    data.insertDslAbaRegistersResponse = null;
+    data.isPrepaidVoiceLine = null;
+    data.getAndRegisterQualifOfServiceResponse = null;
+    data.verifyContractByPhoneResponse = null;
+    data.getDownstreamFromPlanResponse = null;
+    data.getABADataFromRequestsResponse = null;
+    data.isValidIpAddressResponse = null;
+    data.getPortIdFromIpResponse = null;
+    data.queryDHCPResponse = null;
+    data.getValidVPIResponse = null;
+    data.getPortIdResponse = null;
+    data.isOccupiedPortResponse = null;
+    data.getASAPOrderDetailResponse = null;
+    data.linkNetworkResponse = null;
+    data.getABADataResponse = null;
+    data.checkIpResponse = null;
+    data.getDataFromDslamPortIdResponse = null;
+    data.deleteOrderResponse = null;
+    data.readIABAOrderResponse = null;
+    data.getDSLCentralCoIdByDSLAMPortIdResponse = null;
+    return data;
   }
 
   private async callAuditLog(
