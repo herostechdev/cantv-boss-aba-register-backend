@@ -30,7 +30,7 @@ export abstract class OracleExecuteFunctionRawService<DTO, RESPONSE>
     } catch (error) {
       super.exceptionHandler(error, dto);
     } finally {
-      await super.closeConnection(ValidationHelper.isDefined(dbConnection));
+      await super.closeConnection(!ValidationHelper.isDefined(dbConnection));
     }
   }
 

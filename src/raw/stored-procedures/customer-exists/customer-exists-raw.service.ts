@@ -25,45 +25,6 @@ export class CustomerExistsRawService extends OracleExecuteStoredProcedureRawSer
     );
   }
 
-  // async clientExists(
-  //   dto: CustomerExistsRequestDto,
-  //   dbConnection?: Connection,
-  // ): Promise<ICustomerExistsResponse> {
-  //   try {
-  //     await super.connect(dbConnection);
-  // const parameters = {
-  //   sz_attributename: OracleHelper.stringBindIn(dto.attributeName),
-  //   sz_attributevalue: OracleHelper.stringBindIn(dto.attributeValue),
-  //   sz_cltclassname: OracleHelper.stringBindOut(),
-  //   status: OracleHelper.numberBindOut(),
-  // };
-  //     const result = await super.executeStoredProcedure(
-  //       BossConstants.ACT_PACKAGE,
-  //       BossConstants.CUSTOMER_EXISTS,
-  //       parameters,
-  //     );
-  // const response: ICustomerExistsResponse = {
-  //   customerClassName: result?.outBinds?.sz_cltclassname,
-  //   status: (result?.outBinds?.status ??
-  //     CustomerExistsStatusConstants.ERROR) as CustomerExistsStatusConstants,
-  // };
-  //     switch (response.status) {
-  //       case CustomerExistsStatusConstants.SUCCESSFULL:
-  //         return response;
-  //       case CustomerExistsStatusConstants.ERROR:
-  //         throw new CustomerExistsException();
-  //       case CustomerExistsStatusConstants.THERE_IS_NO_DATA:
-  //         return response;
-  //       default:
-  //         throw new CustomerExistsException();
-  //     }
-  //   } catch (error) {
-  //     super.exceptionHandler(error, `${JSON.stringify(dto)}`);
-  //   } finally {
-  //     await this.closeConnection(ValidationHelper.isDefined(dbConnection));
-  //   }
-  // }
-
   protected getParameters(dto: CustomerExistsRequestDto): any {
     return {
       sz_attributename: OracleHelper.stringBindIn(dto.attributeName),

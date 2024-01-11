@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Connection } from 'oracledb';
 import { AbaRegisterCancelAbaInstallationService } from '../dependencies/cancel-aba-installation/cancel-aba-installation.service';
 import { AbaRegisterCreateAndProvisioningCustomerService } from '../dependencies/create-and-provisioning-customer/create-and-provisioning-customer.service';
 import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
@@ -35,7 +36,6 @@ import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ThereIsNoDataException } from '../../../confirm-registration/create-and-provisioning-master-act/there-is-no-data.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { Connection } from 'oracledb';
 
 @Injectable()
 export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService {
@@ -81,7 +81,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
             phoneNumber: dto.phoneNumber,
             technicalPlanName: dto.technicalPlanName,
           },
-          // this.dbConnection,
+          this.dbConnection,
         );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -100,7 +100,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
             ),
             attributeValue: data.requestDto.customerIdentificationDocument,
           },
-          // this.dbConnection,
+          this.dbConnection,
         );
       if (
         data.customerExistsResponse.status ===
@@ -145,7 +145,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
               technicalPlanName: dto.technicalPlanName,
               zipCode: dto.zipCode,
             },
-            // this.dbConnection,
+            this.dbConnection,
           );
         if (
           data.createAndProvisioningCustomerResponse.status !==
@@ -172,7 +172,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
               dto.customerIdentificationDocument,
             ),
           },
-          // this.dbConnection,
+          this.dbConnection,
         );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -192,7 +192,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
               data.requestDto.customerIdentificationDocument,
             ),
           },
-          // this.dbConnection,
+          this.dbConnection,
         );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -209,8 +209,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
           customerServiceId:
             data.getCSIdAndPlanNameFromLoginResponse.customerServiceId,
         },
-        // this.dbConnection,
-        null,
+        this.dbConnection,
         true,
       );
       if (dto.isAutoInstallation === true) {
@@ -230,8 +229,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
                 dto.customerIdentificationDocument,
               installerLogin: dto.installerLogin,
             },
-            // this.dbConnection,
-            null,
+            this.dbConnection,
             true,
           );
       }
@@ -248,7 +246,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
           phoneNumber: dto.phoneNumber,
           registerStatus: BossConstants.PROCESSED,
         },
-        // this.dbConnection,
+        this.dbConnection,
       );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -412,7 +410,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
       BossConstants.SIGS_PACKAGE,
       BossConstants.CREATE_AND_PROVISIONING_MASTER_ACT,
       parameters,
-      null,
+      dbConnection,
       true,
     );
     const response: ICreateAndProvisioningMasterActResponse = {

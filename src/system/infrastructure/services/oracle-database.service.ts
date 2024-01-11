@@ -33,13 +33,19 @@ export abstract class OracleDatabaseService extends CommonService {
     additionalData?: any,
   ): Promise<void> {
     try {
-      console.log('IN   closeConnection');
+      console.log('START   closeConnection');
+      console.log(
+        'isDefined(this.dbConnection)',
+        ValidationHelper.isDefined(this.dbConnection),
+      );
+      console.log('closeConnection', closeConnection);
       if (!this.dbConnection || !closeConnection) {
-        console.log('!this.dbConnection || !closeConnection');
+        console.log('DO NOT CLOSE CONNECTION');
         return;
       }
-      console.log('this.dbConnection?.close()');
-      return await this.dbConnection?.close();
+      console.log('DO CLOSE CONNECTION');
+      await this.dbConnection?.close();
+      console.log('CONNECTION CLOSED');
     } catch (error) {
       console.log('ERROR');
       console.log(JSON.stringify(error));
@@ -50,6 +56,8 @@ export abstract class OracleDatabaseService extends CommonService {
         method: 'closeConnection',
         error: error,
       });
+      console.log('END   closeConnection');
+      console.log();
     }
   }
 

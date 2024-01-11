@@ -36,7 +36,7 @@ export abstract class OracleExecuteStoredProcedureRawService<DTO, RESPONSE>
     } catch (error) {
       super.exceptionHandler(error, dto);
     } finally {
-      await super.closeConnection(ValidationHelper.isDefined(dbConnection));
+      await super.closeConnection(!ValidationHelper.isDefined(dbConnection));
     }
   }
 
