@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterRequestDto } from './aba-register-request.dto';
 import { AbaRegisterStatusConstants } from './aba-register-status.constants';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { IAbaRegisterResponse } from './aba-register-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleExecuteStoredProcedureRawService } from 'src/oracle/oracle-execute-stored-procedure-raw.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { UpdateDslAbaRegistersRawService } from '../update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossHelper } from 'src/boss/boss.helper';
 
 @Injectable()
 export class AbaRegisterRawService extends OracleExecuteStoredProcedureRawService<

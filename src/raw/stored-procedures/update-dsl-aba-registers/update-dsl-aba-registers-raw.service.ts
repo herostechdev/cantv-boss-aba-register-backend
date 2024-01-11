@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';

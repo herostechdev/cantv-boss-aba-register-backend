@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { DSLAuditLogsErrorException } from './dsl-audit-logs-error.exception';
 import { DSLAuditLogsRequestDto } from './dsl-audit-logs-request.dto';
 import { DSLAuditLogsStatusConstants } from './dsl-audit-logs-status.constants';

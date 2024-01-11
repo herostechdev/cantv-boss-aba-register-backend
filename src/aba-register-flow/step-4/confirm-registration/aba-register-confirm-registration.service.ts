@@ -7,8 +7,8 @@ import { AbaRegisterGetCSIdAndPlanNameFromLoginService } from '../../dependencie
 import { AbaRegisterGetAbaPlanForKenanService } from '../../dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 import { AbaRegisterIsReservedLoginService } from '../../dependencies/is-reserved-login/is-reserved-login.service';
 import { AbaRegisterService } from 'src/aba-register-flow/dependencies/aba-register/aba-register.service';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { AbaRegisterConfirmRegistrationRequestDto } from './aba-register-confirm-registration-request.dto';
 import { AbaRegisterConfirmRegistrationResponse } from './aba-register-confirm-registration-response';
 import { CreateAndProvisioningCustomerStatusConstants } from '../../../raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-status.constants';

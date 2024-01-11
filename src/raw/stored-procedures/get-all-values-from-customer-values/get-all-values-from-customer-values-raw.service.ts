@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { GetAllValuesFromCustomerValuesException } from './get-all-values-from-customer-values.exception';
 import { GetAllValuesFromCustomerValuesRequestDto } from './get-all-values-from-customer-values-request.dto';
 import { GetAllValuesFromCustomerValuesStatusConstants } from './get-all-values-from-customer-values-status.constants';

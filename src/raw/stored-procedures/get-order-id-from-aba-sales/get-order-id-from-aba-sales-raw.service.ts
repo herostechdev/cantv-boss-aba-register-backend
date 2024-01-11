@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesStatusConstants } from './get-order-id-from-aba-sales-status.constants';
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales-response.interface';

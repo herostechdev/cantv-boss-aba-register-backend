@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { DateTime } from 'luxon';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers-response.interface';
 import { InsertDslAbaRegisterException } from './insert-dsl-aba-register.exception';
 import { InsertDslAbaRegisterStatusConstants } from './insert-dsl-aba-register-status.constants';

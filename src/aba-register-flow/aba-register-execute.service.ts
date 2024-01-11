@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
 import { IPhoneNumber } from 'src/responses/phone-number.interface';
 import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';

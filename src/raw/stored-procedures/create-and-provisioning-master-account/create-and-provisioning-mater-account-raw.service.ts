@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { CreateAndProvisioningMasterAccountRequestDto } from './create-and-provisioning-master-account-request.dto';
 import { CreateAndProvisioningMasterAccountStatusConstants } from './create-and-provisioning-master-account-status.constants';
 import { ICreateAndProvisioningMasterAccountResponse } from './create-and-provisioning-master-account-response.interface';

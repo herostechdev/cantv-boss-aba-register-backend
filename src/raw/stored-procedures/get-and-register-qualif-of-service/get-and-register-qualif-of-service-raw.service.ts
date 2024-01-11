@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { GetAndRegisterQualifOfServiceDto } from './get-and-register-qualif-of-service-request.dto';
 import { GetAndRegisterQualifOfServiceStatusConstants } from './get-and-register-qualif-of-service-status.constants';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service-response.interface';

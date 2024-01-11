@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesStatusConstants } from './get-dsl-area-codes-status.constants';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes-response.interface';

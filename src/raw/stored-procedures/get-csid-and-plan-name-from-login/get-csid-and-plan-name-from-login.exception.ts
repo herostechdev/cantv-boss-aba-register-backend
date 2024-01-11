@@ -1,4 +1,4 @@
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 import { toIException } from 'src/system/infrastructure/exceptions/custom-exceptions/exception.interface';
 

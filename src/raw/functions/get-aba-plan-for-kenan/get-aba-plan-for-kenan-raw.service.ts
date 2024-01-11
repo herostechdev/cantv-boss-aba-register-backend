@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { GetAbaPlanForKenanRequestDto } from './get-aba-plan-for-kenan-request.dto';
 import { IGetAbaPlanForKenanResponse } from './get-aba-plan-for-kenan-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';

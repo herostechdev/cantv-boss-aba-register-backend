@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/dependencies/customer-exists/aba-register-customer-exists.service';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 // import { DSLAuditLogsService } from 'src/dsl-audit-logs/dsl-audit-logs.service';
 import { Error1002Exception } from 'src/exceptions/error-1002.exception';

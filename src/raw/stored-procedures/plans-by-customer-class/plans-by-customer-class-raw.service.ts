@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ArrayHelper } from 'src/system/infrastructure/helpers/array.helper';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { IPlansByCustomerClassRawResponse } from './plans-by-customer-class-raw-response.interface';
 import { IPlansByCustomerClassListResponse } from './plans-by-customer-class-list-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';

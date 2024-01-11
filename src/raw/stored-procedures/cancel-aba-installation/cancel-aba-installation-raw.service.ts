@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { CancelAbaInstallationRequestDto } from './cancel-aba-installation-request.dto';
 import { CancelABAInstallationStatusConstants } from './cancel-aba-installation-status.constants';
 import { ICancelABAInstallationResponse } from './cancel-aba-installation-response.interface';

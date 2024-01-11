@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { IISGActionAllowedResponse } from './isg-action-allowed-response.interface';
 import { ISGActionAllowedRequestDto } from './isg-action-allowed-request.dto';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';

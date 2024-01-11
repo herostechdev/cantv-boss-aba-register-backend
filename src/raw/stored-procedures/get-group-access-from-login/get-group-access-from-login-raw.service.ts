@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { GetGroupAccessFromLoginRequestDto } from './get-group-access-from-login-request.dto';
 import { GetGroupAccessFromLoginStatusConstants } from './get-group-access-from-login-status.constants';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login-response.interface';

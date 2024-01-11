@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { IsIPAllowedRequestDto } from './is-ip-allowed-request.dto';
 import { IIsIPAllowedResponse } from './is-ip-allowed-response.interface';
 import { IsIpAllowedStatusConstants } from './is-ip-allowed-status.constants';

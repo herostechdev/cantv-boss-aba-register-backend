@@ -8,7 +8,7 @@ import { IAbaRegisterWinstonErrorLogInputData } from './aba-register-winston-err
 import { IAbaRegisterWinstonLogInputData } from './aba-register-winston-log-input-data.interface';
 import { StringBuilder } from '../helpers/string.builder';
 import { WinstonLogConstants } from './winston-log.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossHelper } from 'src/boss/boss.helper';
 
 export class Wlog {
   private static _instance: Wlog;

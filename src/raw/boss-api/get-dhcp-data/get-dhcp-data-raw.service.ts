@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import * as https from 'https';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { GetDHCPDataException } from './get-dhcp-data.exception';
 import { GetDHCPDataInvalidResponseException } from './get-dhcp-data-invalid-response.exception';

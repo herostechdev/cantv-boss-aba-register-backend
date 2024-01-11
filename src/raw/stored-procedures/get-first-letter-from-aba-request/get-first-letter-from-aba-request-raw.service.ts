@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { GetFirstLetterFromABARequestDto } from './get-first-letter-from-aba-request-request.dto';
 import { GetFirstLetterFromABARequestStatusConstants } from './get-first-letter-from-aba-request-status.constants';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request-response.interface';

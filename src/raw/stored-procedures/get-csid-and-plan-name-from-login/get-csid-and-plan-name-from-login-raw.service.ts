@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { GetCSIdAndPlanNameFromLoginRequestDto } from './get-csid-and-plan-name-from-login-request.dto';
 import { GetCSIdAndPlanNameFromLoginStatusConstants } from './get-csid-and-plan-name-from-login-status.constants';
 import { IGetCSIdAndPlanNameFromLoginResponse } from './get-csid-and-plan-name-from-login-response.interface';

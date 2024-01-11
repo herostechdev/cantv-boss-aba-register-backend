@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { CustomerExistsRequestDto } from './customer-exists-request.dto';
 import { CustomerExistsStatusConstants } from './customer-exists-status.constants';
 import { ICustomerExistsResponse } from './customer-exists-response.interface';

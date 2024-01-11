@@ -3,8 +3,8 @@ import { DateTime } from 'luxon';
 
 import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-error.exception';
 import { CheckIpStatusConstants } from './check-ip/check-ip-status.constants';
 import { DeleteOrderStatusConstants } from './delete-order/delete-order-status.constants';

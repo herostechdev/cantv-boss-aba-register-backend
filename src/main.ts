@@ -13,7 +13,7 @@ import { ApplicationConfigurationService } from './system/configuration/applicat
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from './oracle/oracle.constants';
 import { Wlog } from './system/infrastructure/winston-logger/winston-logger.service';
-import { BossHelper } from './boss-helpers/boss.helper';
+import { BossHelper } from './boss/boss.helper';
 
 const initializePipes = (app: INestApplication) => {
   Wlog.instance.info({

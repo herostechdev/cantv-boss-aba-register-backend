@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line-response.interface';
 import { IsPrepaidVoiceLineIsPrepaidConstants } from './is-prepaid-voice-line-is-prepaid.constants';
 import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line-request.dto';

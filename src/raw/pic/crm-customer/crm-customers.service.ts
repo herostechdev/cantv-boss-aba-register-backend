@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { xml2js } from 'xml-js';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { CRMCustomerDto } from './crm-customer.dto';
 import { CRMCustomerInvalidQueryRequestException } from './crm-customer-query-invalid-request.exception';
 import { CRMCustomerRequestPayloadService } from './crm-customer-request-payload.service';

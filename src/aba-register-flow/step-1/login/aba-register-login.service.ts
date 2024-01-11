@@ -4,8 +4,8 @@ import { AbaRegisterGetGroupAccessFromLoginService } from './aba-register-get-gr
 import { AbaRegisterISGActionAllowedService } from './aba-register-isg-action-allowed.service';
 import { AbaRegisterLoginData } from './aba-register-login-data';
 import { AbaRegisterLoginRequestDto } from './aba-register-login-request.dto';
-import { BossConstants } from 'src/boss-helpers/boss.constants';
-import { BossHelper } from 'src/boss-helpers/boss.helper';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { HashService } from 'src/system/infrastructure/security/encryption/hash.service';
 import { IAbaRegisterLoginResponse } from './aba-register-login-response.interface';
 import { InvalidPasswordException } from 'src/exceptions/invalid-password.exception';
