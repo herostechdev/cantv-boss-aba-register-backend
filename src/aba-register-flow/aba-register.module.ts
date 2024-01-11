@@ -23,7 +23,9 @@ import { AbaRegisterService } from './dependencies/aba-register/aba-register.ser
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
 import { FunctionsRawModule } from 'src/raw/functions/functions-raw.module';
+import { MailModule } from 'src/system/infrastructure/mail/mail.module';
 import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-procedures-raw.module';
+import { AbaRegisterMailService } from './step-5/mail/aba-register-mail.service';
 
 @Module({
   imports: [EncryptionModule, FunctionsRawModule, StoredProceduresRawModule],
@@ -47,9 +49,11 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterIsPrepaidVoiceLineService,
     AbaRegisterIsReservedLoginService,
     AbaRegisterLoginService,
+    AbaRegisterMailService,
     AbaRegisterPlansByCustomerClassService,
     AbaRegisterService,
     AbaRegisterValidateCustomerService,
+    MailModule,
   ],
   exports: [
     AbaRegisterGetAndRegisterQualifOfServiceService,
