@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 
-import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/step-2/dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
-import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/step-2/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
+import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
+import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-error.exception';
