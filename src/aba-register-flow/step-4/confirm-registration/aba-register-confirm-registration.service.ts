@@ -1,39 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'oracledb';
 import { AbaRegisterCancelAbaInstallationService } from '../dependencies/cancel-aba-installation/cancel-aba-installation.service';
 import { AbaRegisterCreateAndProvisioningCustomerService } from '../dependencies/create-and-provisioning-customer/create-and-provisioning-customer.service';
+import { AbaRegisterCreateAndProvisioningMasterAccountService } from '../dependencies/create-and-provisioning-master-account/create-and-provisioning-master-account.service';
 import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/step-2/dependencies/customer-exists/aba-register-customer-exists.service';
 import { AbaRegisterGetCSIdAndPlanNameFromLoginService } from '../dependencies/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login.service';
 import { AbaRegisterGetAbaPlanForKenanService } from '../dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 import { AbaRegisterIsReservedLoginService } from '../dependencies/is-reserved-login/is-reserved-login.service';
 import { AbaRegisterService } from 'src/aba-register-flow/step-4/dependencies/aba-register/aba-register.service';
-import { BillingException } from '../../../confirm-registration/create-and-provisioning-master-act/billing.exception';
 import { BossConstants } from 'src/boss-helpers/boss.constants';
 import { BossHelper } from 'src/boss-helpers/boss.helper';
 import { AbaRegisterConfirmRegistrationRequestDto } from './aba-register-confirm-registration-request.dto';
 import { AbaRegisterConfirmRegistrationResponse } from './aba-register-confirm-registration-response';
-import { ContactAdministratorException } from '../../../confirm-registration/create-and-provisioning-master-act/contact-administrator.exception';
 import { CreateAndProvisioningCustomerStatusConstants } from '../../../raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
-import { CreateAndProvisioningMasterActStatusConstants } from '../../../confirm-registration/create-and-provisioning-master-act/create-and-provisioning-master-act-status.constants';
-import { CreateAndProvisioningMasterActException } from '../../../confirm-registration/create-and-provisioning-master-act/create-and-provisioning-master-act.exception';
-import { CreateUserInstanceException } from '../../../confirm-registration/create-and-provisioning-master-act/create-user-instance.exception';
-import { CreatingAccountStatementException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-account-statement.exception';
-import { CreatingBillingChargeException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-billing-charge.exception';
-import { CreatingContractException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-contract.exception';
-import { CreatingDiscountException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-discount.exception';
-import { CreatingHostingChargeException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-hosting-charge.exception';
-import { CreatingMasterAccountException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-master-account.exception';
-import { CreatingPaymentInstanceException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-payment-instance.exception';
-import { CreatingSubaccountException } from '../../../confirm-registration/create-and-provisioning-master-act/creating-subaccount.exception';
+import { CreateAndProvisioningMasterAccountStatusConstants } from '../../../raw/stored-procedures/create-and-provisioning-master-account/create-and-provisioning-master-account-status.constants';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
-import { ICreateAndProvisioningMasterActResponse } from '../../../confirm-registration/create-and-provisioning-master-act/create-and-provisioning-master-act-response.interface';
-import { LoginAlreadyExistsException } from '../../../confirm-registration/create-and-provisioning-master-act/login-already-exists.exception';
-import { ObtainingInstanceFromAttributeListException } from '../../../confirm-registration/create-and-provisioning-master-act/obtaining-instance-from-attribute-list.exception';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
-import { OracleHelper } from 'src/oracle/oracle.helper';
-import { ThereIsNoDataException } from '../../../confirm-registration/create-and-provisioning-master-act/there-is-no-data.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
@@ -42,6 +25,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
   constructor(
     private readonly abaRegisterCancelAbaInstallationService: AbaRegisterCancelAbaInstallationService,
     private readonly abaRegisterCreateAndProvisioningCustomerService: AbaRegisterCreateAndProvisioningCustomerService,
+    private readonly abaRegisterCreateAndProvisioningMasterAccountService: AbaRegisterCreateAndProvisioningMasterAccountService,
     private readonly abaRegisterCustomerExistsService: AbaRegisterCustomerExistsService,
     private readonly abaRegisterGetCSIdAndPlanNameFromLoginService: AbaRegisterGetCSIdAndPlanNameFromLoginService,
     private readonly abaRegisterGetAbaPlanForKenanService: AbaRegisterGetAbaPlanForKenanService,
@@ -108,16 +92,32 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
       ) {
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'createAndProvisioningMasterAct',
+          message: 'createAndProvisioningMasterAccount',
           input: BossHelper.getPhoneNumber(dto),
           clazz: AbaRegisterConfirmRegistrationService.name,
           method: 'confirmRegistrationFlow',
         });
-        data.createAndProvisioningMasterActResponse =
-          await this.createAndProvisioningMasterAct(data, this.dbConnection);
+        data.createAndProvisioningMasterAccountResponse =
+          await this.abaRegisterCreateAndProvisioningMasterAccountService.execute(
+            {
+              areaCode: dto.areaCode,
+              phoneNumber: dto.phoneNumber,
+              attributeValues: dto.attributeValues,
+              customerAddress1: dto.customerAddress1,
+              customerAddress2: dto.customerAddress2,
+              customerCity: dto.customerCity,
+              customerClassName: dto.customerClassName,
+              customerIdentificationDocument:
+                dto.customerIdentificationDocument,
+              customerState: dto.customerState,
+              technicalPlanName: dto.technicalPlanName,
+              zipCode: dto.zipCode,
+            },
+            this.dbConnection,
+          );
         if (
-          data.createAndProvisioningMasterActResponse.status !==
-          CreateAndProvisioningMasterActStatusConstants.SUCCESSFULL
+          data.createAndProvisioningMasterAccountResponse.status !==
+          CreateAndProvisioningMasterAccountStatusConstants.SUCCESSFULL
         ) {
           throw new Error10041Exception();
         }
@@ -359,101 +359,101 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
   //   }
   // }
 
-  private async createAndProvisioningMasterAct(
-    data: AbaRegisterConfirmRegistrationResponse,
-    dbConnection?: Connection,
-  ): Promise<ICreateAndProvisioningMasterActResponse> {
-    const parameters = {
-      CLASSNAME: OracleHelper.stringBindIn(data.requestDto.customerClassName),
-      IDATTRIBUTE: OracleHelper.stringBindIn(
-        BossHelper.getIdentificationDocumentType(
-          data.requestDto.customerClassName,
-        ),
-      ),
-      IDVALUE: OracleHelper.stringBindIn(
-        data.requestDto.customerIdentificationDocument,
-      ),
-      LOGIN: OracleHelper.stringBindIn(
-        BossHelper.getAutomaticCustomerUserName(
-          data.requestDto.areaCode,
-          data.requestDto.phoneNumber,
-          data.requestDto.customerIdentificationDocument,
-        ),
-      ),
-      PASSWORD: OracleHelper.stringBindIn(BossConstants.NOT_AVAILABLE),
-      PLAN: OracleHelper.stringBindIn(data.requestDto.technicalPlanName), // PlansByClassClient.O_PLANDESIRED
-      PAYCLASS: OracleHelper.stringBindIn(BossConstants.CANTV_BILLING),
-      ATTRVALUES: OracleHelper.stringBindIn(
-        BossHelper.getKeyPhoneNumber({
-          areaCode: data.requestDto.areaCode,
-          phoneNumber: data.requestDto.phoneNumber,
-        }),
-      ),
-      DISCOUNTCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
-      TAXCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
-      SERVICETYPENAME: OracleHelper.stringBindIn(BossConstants.INTERNET_ACCESS),
-      USERCLASSNAME: OracleHelper.stringBindIn(BossConstants.USERS),
-      USERVALUES: OracleHelper.stringBindIn(data.requestDto.attributeValues),
-      DIRECTION1: OracleHelper.stringBindIn(data.requestDto.customerAddress1),
-      DIRECTION2: OracleHelper.stringBindIn(
-        data.requestDto.customerAddress2 ?? BossConstants.NOT_AVAILABLE,
-      ),
-      CITY: OracleHelper.stringBindIn(data.requestDto.customerCity),
-      STATE: OracleHelper.stringBindIn(data.requestDto.customerState),
-      ZIPCODE: OracleHelper.stringBindIn(data.requestDto.zipCode),
-      COUNTRY: OracleHelper.stringBindIn(BossConstants.VENEZUELA),
-      CREATEDBY: OracleHelper.stringBindIn(BossConstants.REGISTER),
-      PAYINST: OracleHelper.stringBindIn(null),
-      STATUS: OracleHelper.tableOfNumberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.SIGS_PACKAGE,
-      BossConstants.CREATE_AND_PROVISIONING_MASTER_ACT,
-      parameters,
-      dbConnection,
-      true,
-    );
-    const response: ICreateAndProvisioningMasterActResponse = {
-      status: (OracleHelper.getFirstItem(result, 'STATUS') ??
-        CreateAndProvisioningMasterActStatusConstants.ERROR) as CreateAndProvisioningMasterActStatusConstants,
-    };
-    switch (response.status) {
-      case CreateAndProvisioningMasterActStatusConstants.SUCCESSFULL:
-        return response;
-      case CreateAndProvisioningMasterActStatusConstants.ERROR:
-        throw new CreateAndProvisioningMasterActException();
-      case CreateAndProvisioningMasterActStatusConstants.LOGIN_ALREADY_EXISTS:
-        throw new LoginAlreadyExistsException();
-      case CreateAndProvisioningMasterActStatusConstants.CREATE_USER_INSTANCE_ERROR:
-        throw new CreateUserInstanceException();
-      case CreateAndProvisioningMasterActStatusConstants.OBTAINING_INSTANCE_FROM_ATTRIBUTE_LIST_ERROR:
-        throw new ObtainingInstanceFromAttributeListException();
-      case CreateAndProvisioningMasterActStatusConstants.BILLING_ERROR:
-        throw new BillingException();
-      case CreateAndProvisioningMasterActStatusConstants.CREATING_MASTER_ACCOUNT_ERROR:
-        throw new CreatingMasterAccountException();
-      case CreateAndProvisioningMasterActStatusConstants.CREATING_ACCOUNT_STATEMENT_ERROR:
-        throw new CreatingAccountStatementException();
-      case CreateAndProvisioningMasterActStatusConstants.CREATING_BILLING_CHARGE_ERROR:
-        throw new CreatingBillingChargeException();
-      case CreateAndProvisioningMasterActStatusConstants.CREATING_HOSTING_CHARGE_ERROR:
-        throw new CreatingHostingChargeException();
-      case CreateAndProvisioningMasterActStatusConstants.CREATING_SUBACCOUNT_ERROR:
-        throw new CreatingSubaccountException();
-      case CreateAndProvisioningMasterActStatusConstants.CREATING_PAYMENT_INSTANCE_ERROR:
-        throw new CreatingPaymentInstanceException();
-      case CreateAndProvisioningMasterActStatusConstants.CREATING_CONTRACT_ERROR:
-        throw new CreatingContractException();
-      case CreateAndProvisioningMasterActStatusConstants.THERE_IS_NO_DATA_ERROR:
-        throw new ThereIsNoDataException();
-      case CreateAndProvisioningMasterActStatusConstants.CONTACT_ADMINISTRATOR_ERROR:
-        throw new ContactAdministratorException();
-      case CreateAndProvisioningMasterActStatusConstants.CREATING_DISCOUNT_ERROR:
-        throw new CreatingDiscountException();
-      default:
-        throw new CreateAndProvisioningMasterActException();
-    }
-  }
+  // private async createAndProvisioningMasterAccount(
+  //   data: AbaRegisterConfirmRegistrationResponse,
+  //   dbConnection?: Connection,
+  // ): Promise<ICreateAndProvisioningMasterAccountResponse> {
+  //   const parameters = {
+  //     CLASSNAME: OracleHelper.stringBindIn(data.requestDto.customerClassName),
+  //     IDATTRIBUTE: OracleHelper.stringBindIn(
+  //       BossHelper.getIdentificationDocumentType(
+  //         data.requestDto.customerClassName,
+  //       ),
+  //     ),
+  //     IDVALUE: OracleHelper.stringBindIn(
+  //       data.requestDto.customerIdentificationDocument,
+  //     ),
+  //     LOGIN: OracleHelper.stringBindIn(
+  //       BossHelper.getAutomaticCustomerUserName(
+  //         data.requestDto.areaCode,
+  //         data.requestDto.phoneNumber,
+  //         data.requestDto.customerIdentificationDocument,
+  //       ),
+  //     ),
+  //     PASSWORD: OracleHelper.stringBindIn(BossConstants.NOT_AVAILABLE),
+  //     PLAN: OracleHelper.stringBindIn(data.requestDto.technicalPlanName), // PlansByClassClient.O_PLANDESIRED
+  //     PAYCLASS: OracleHelper.stringBindIn(BossConstants.CANTV_BILLING),
+  //     ATTRVALUES: OracleHelper.stringBindIn(
+  //       BossHelper.getKeyPhoneNumber({
+  //         areaCode: data.requestDto.areaCode,
+  //         phoneNumber: data.requestDto.phoneNumber,
+  //       }),
+  //     ),
+  //     DISCOUNTCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
+  //     TAXCATEGORYDSC: OracleHelper.stringBindIn(BossConstants.NORMAL),
+  //     SERVICETYPENAME: OracleHelper.stringBindIn(BossConstants.INTERNET_ACCESS),
+  //     USERCLASSNAME: OracleHelper.stringBindIn(BossConstants.USERS),
+  //     USERVALUES: OracleHelper.stringBindIn(data.requestDto.attributeValues),
+  //     DIRECTION1: OracleHelper.stringBindIn(data.requestDto.customerAddress1),
+  //     DIRECTION2: OracleHelper.stringBindIn(
+  //       data.requestDto.customerAddress2 ?? BossConstants.NOT_AVAILABLE,
+  //     ),
+  //     CITY: OracleHelper.stringBindIn(data.requestDto.customerCity),
+  //     STATE: OracleHelper.stringBindIn(data.requestDto.customerState),
+  //     ZIPCODE: OracleHelper.stringBindIn(data.requestDto.zipCode),
+  //     COUNTRY: OracleHelper.stringBindIn(BossConstants.VENEZUELA),
+  //     CREATEDBY: OracleHelper.stringBindIn(BossConstants.REGISTER),
+  //     PAYINST: OracleHelper.stringBindIn(null),
+  //     STATUS: OracleHelper.tableOfNumberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.SIGS_PACKAGE,
+  //     BossConstants.CREATE_AND_PROVISIONING_MASTER_ACCOUNT,
+  //     parameters,
+  //     dbConnection,
+  //     true,
+  //   );
+  //   const response: ICreateAndProvisioningMasterAccountResponse = {
+  //     status: (OracleHelper.getFirstItem(result, 'STATUS') ??
+  //       CreateAndProvisioningMasterAccountStatusConstants.ERROR) as CreateAndProvisioningMasterAccountStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case CreateAndProvisioningMasterAccountStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case CreateAndProvisioningMasterAccountStatusConstants.ERROR:
+  //       throw new CreateAndProvisioningMasterAccountException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.LOGIN_ALREADY_EXISTS:
+  //       throw new LoginAlreadyExistsException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CREATE_USER_INSTANCE_ERROR:
+  //       throw new CreateUserInstanceException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.OBTAINING_INSTANCE_FROM_ATTRIBUTE_LIST_ERROR:
+  //       throw new ObtainingInstanceFromAttributeListException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.BILLING_ERROR:
+  //       throw new BillingException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CREATING_MASTER_ACCOUNT_ERROR:
+  //       throw new CreatingMasterAccountException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CREATING_ACCOUNT_STATEMENT_ERROR:
+  //       throw new CreatingAccountStatementException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CREATING_BILLING_CHARGE_ERROR:
+  //       throw new CreatingBillingChargeException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CREATING_HOSTING_CHARGE_ERROR:
+  //       throw new CreatingHostingChargeException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CREATING_SUBACCOUNT_ERROR:
+  //       throw new CreatingSubaccountException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CREATING_PAYMENT_INSTANCE_ERROR:
+  //       throw new CreatingPaymentInstanceException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CREATING_CONTRACT_ERROR:
+  //       throw new CreatingContractException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.THERE_IS_NO_DATA_ERROR:
+  //       throw new CreateAndProvisioningMasterAccountThereIsNoDataException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CONTACT_ADMINISTRATOR_ERROR:
+  //       throw new ContactAdministratorException();
+  //     case CreateAndProvisioningMasterAccountStatusConstants.CREATING_DISCOUNT_ERROR:
+  //       throw new CreatingDiscountException();
+  //     default:
+  //       throw new CreateAndProvisioningMasterAccountException();
+  //   }
+  // }
 
   // private async insertModifyCustomerAttribute(
   //   className: string,

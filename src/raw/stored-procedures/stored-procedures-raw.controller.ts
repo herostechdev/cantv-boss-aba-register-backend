@@ -5,6 +5,8 @@ import { CancelAbaInstallationRawService } from './cancel-aba-installation/cance
 import { CancelAbaInstallationRequestDto } from './cancel-aba-installation/cancel-aba-installation-request.dto';
 import { CreateAndProvisioningCustomerRawService } from './create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
 import { CreateAndProvisioningCustomerRequestDto } from './create-and-provisioning-customer/create-and-provisioning-customer-request.dto';
+import { CreateAndProvisioningMasterAccountRawService } from './create-and-provisioning-master-account/create-and-provisioning-mater-account-raw.service';
+import { CreateAndProvisioningMasterAccountRequestDto } from './create-and-provisioning-master-account/create-and-provisioning-master-account-request.dto';
 import { CustomerExistsRequestDto } from './customer-exists/customer-exists-request.dto';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
 import { DSLAuditLogsRequestDto } from './dsl-audit-logs/dsl-audit-logs-request.dto';
@@ -36,6 +38,7 @@ import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/except
 import { IAbaRegisterResponse } from './aba-register/aba-register-response.interface';
 import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
 import { ICreateAndProvisioningCustomerResponse } from './create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
+import { ICreateAndProvisioningMasterAccountResponse } from './create-and-provisioning-master-account/create-and-provisioning-master-account-response.interface';
 import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
 import { IDSLAuditLogsResponse } from './dsl-audit-logs/dsl-audit-logs-response.interface';
 import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
@@ -80,6 +83,7 @@ export class StoredProceduresRawController {
     private readonly abaRegisterRawService: AbaRegisterRawService,
     private readonly cancelAbaInstallationRawService: CancelAbaInstallationRawService,
     private readonly createAndProvisioningCustomerRawService: CreateAndProvisioningCustomerRawService,
+    private readonly createAndProvisioningMasterAccountRawService: CreateAndProvisioningMasterAccountRawService,
     private readonly customerExistsRawService: CustomerExistsRawService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
@@ -126,6 +130,15 @@ export class StoredProceduresRawController {
     @Body() dto: CreateAndProvisioningCustomerRequestDto,
   ): Promise<ICreateAndProvisioningCustomerResponse> {
     return this.createAndProvisioningCustomerRawService.execute(dto);
+  }
+
+  @Post('createAndProvisioningMasterAccount')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  createAndProvisioningMasterAccount(
+    @Body() dto: CreateAndProvisioningMasterAccountRequestDto,
+  ): Promise<ICreateAndProvisioningMasterAccountResponse> {
+    return this.createAndProvisioningMasterAccountRawService.execute(dto);
   }
 
   @Post('customerExists')

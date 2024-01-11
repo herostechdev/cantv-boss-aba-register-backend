@@ -1,4 +1,4 @@
-export enum CreateAndProvisioningMasterActStatusConstants {
+export enum CreateAndProvisioningMasterAccountStatusConstants {
   SUCCESSFULL,
   ERROR,
   CREATE_USER_INSTANCE_ERROR,

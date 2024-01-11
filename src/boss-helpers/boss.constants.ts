@@ -16,7 +16,7 @@ export class BossConstants {
   public static CHECK_IP = 'CheckIp';
   public static CUSTOMER_EXISTS = 'ClientExist';
   public static CREATE_AND_PROVISIONING_CUSTOMER = 'CreateAndProvisionClient';
-  public static CREATE_AND_PROVISIONING_MASTER_ACT =
+  public static CREATE_AND_PROVISIONING_MASTER_ACCOUNT =
     'CreateAndProvisionMasterAct';
   public static DELETE_ORDER = 'DeleteOrder';
   public static INSERT_DSL_AUDIT_LOGS = 'insertdslauditlogs';

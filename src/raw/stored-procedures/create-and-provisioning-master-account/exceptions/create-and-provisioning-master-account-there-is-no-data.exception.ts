@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class ThereIsNoDataException extends CustomBadRequestException {
+export class CreateAndProvisioningMasterAccountThereIsNoDataException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',
