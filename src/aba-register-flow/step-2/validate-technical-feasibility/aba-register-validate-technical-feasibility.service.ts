@@ -8,9 +8,6 @@ import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-registe
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
-import { DeleteOrderStatusConstants } from '../../../raw/stored-procedures/delete-order/delete-order-status.constants';
-import { DeleteOrderExecutionErrorException } from '../../../raw/stored-procedures/delete-order/delete-order-execution-error.exception';
-import { DeleteOrderThePortIsOccupiedByAnotherContractException } from '../../../raw/stored-procedures/delete-order/delete-order-the-is-occupied-by-another-contract.exception';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
@@ -34,7 +31,6 @@ import { GetPortIdFromIpConstants } from '../../../validate-technical-feasibilit
 import { GetPortIdStatusConstants } from '../../../validate-technical-feasibility/get-port-id/get-port-id-status.constants';
 import { GetPortIdException } from '../../../validate-technical-feasibility/get-port-id/get-port-id.exception';
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
-import { IDeleteOrderResponse } from '../../../raw/stored-procedures/delete-order/delete-order-response.interface';
 import { IGetABADataResponse } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
