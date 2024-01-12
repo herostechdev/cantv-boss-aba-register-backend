@@ -1,6 +1,6 @@
-import { IStatusResponse } from 'src/responses/status-response.interface';
+import { IStatusResponse } from 'src/boss/status-response.interface';
 import { GetDataFromRequestsStatusConstants } from './get-data-from-requests-status.constants';
-import { IPhoneNumber } from 'src/responses/phone-number.interface';
+import { IPhoneNumber } from 'src/boss/phone-number.interface';
 
 export interface IGetDataFromRequestsResponse
   extends IPhoneNumber,

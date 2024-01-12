@@ -1,4 +1,4 @@
-import { IStatusResponse } from 'src/responses/status-response.interface';
+import { IStatusResponse } from 'src/boss/status-response.interface';
 import { CustomerExistsStatusConstants } from './customer-exists-status.constants';
 
 export interface ICustomerExistsResponse

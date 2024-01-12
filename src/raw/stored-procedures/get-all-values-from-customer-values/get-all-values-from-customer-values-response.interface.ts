@@ -1,4 +1,4 @@
-import { IStatusResponse } from 'src/responses/status-response.interface';
+import { IStatusResponse } from 'src/boss/status-response.interface';
 import { GetAllValuesFromCustomerValuesStatusConstants } from './get-all-values-from-customer-values-status.constants';
 
 export interface IGetAllValuesFromCustomerValuesResponse

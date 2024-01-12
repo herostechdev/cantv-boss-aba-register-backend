@@ -1,4 +1,4 @@
-import { IStatusResponse } from 'src/responses/status-response.interface';
+import { IStatusResponse } from 'src/boss/status-response.interface';
 import { GetInfoFromABARequestsStatusConstants } from './get-info-from-aba-requests-status.constants';
 
 export interface IGetInfoFromABARequestsResponse

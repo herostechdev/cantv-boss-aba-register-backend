@@ -3,7 +3,7 @@ import { Connection } from 'oracledb';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
 import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
-import { IPhoneNumber } from 'src/responses/phone-number.interface';
+import { IPhoneNumber } from 'src/boss/phone-number.interface';
 import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 

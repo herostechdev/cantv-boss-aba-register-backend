@@ -4,7 +4,7 @@ import { Connection } from 'oracledb';
 import { GetABADataFromRequestsException } from './get-aba-data-from-requests.exception';
 import { GetABADataFromRequestsStatusConstants } from './get-aba-data-from-requests-status.constants';
 import { IGetABADataFromRequestsResponse } from './get-aba-data-from-requests-response.interface';
-import { IPhoneNumber } from 'src/responses/phone-number.interface';
+import { IPhoneNumber } from 'src/boss/phone-number.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { BossConstants } from 'src/boss/boss.constants';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';

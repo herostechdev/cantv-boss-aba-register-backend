@@ -1,5 +1,5 @@
 import { IsInt, IsOptional, IsString } from 'class-validator';
-import { IPhoneNumber } from 'src/responses/phone-number.interface';
+import { IPhoneNumber } from 'src/boss/phone-number.interface';
 
 export class PlansByCustomerClassRequestDto implements IPhoneNumber {
   @IsString()

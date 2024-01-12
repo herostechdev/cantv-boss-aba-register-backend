@@ -1,4 +1,4 @@
-import { IStatusResponse } from 'src/responses/status-response.interface';
+import { IStatusResponse } from 'src/boss/status-response.interface';
 import { GetPortIdStatusConstants } from './get-port-id-status.constants';
 
 export interface IGetPortIdResponse

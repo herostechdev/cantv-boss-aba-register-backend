@@ -1,4 +1,4 @@
-import { IStatusResponse } from 'src/responses/status-response.interface';
+import { IStatusResponse } from 'src/boss/status-response.interface';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id-status.constants';
 
 export interface IGetDataFromDSLAMPortIdResponse

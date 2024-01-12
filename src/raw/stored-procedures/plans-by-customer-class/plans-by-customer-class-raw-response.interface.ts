@@ -1,4 +1,4 @@
-import { IStatusResponse } from 'src/responses/status-response.interface';
+import { IStatusResponse } from 'src/boss/status-response.interface';
 import { PlansByCustomerClassStatusConstants } from './plans-by-customer-class-status.constants';
 
 export interface IPlansByCustomerClassRawResponse

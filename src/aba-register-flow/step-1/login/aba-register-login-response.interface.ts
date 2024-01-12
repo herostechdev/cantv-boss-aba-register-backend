@@ -1,4 +1,4 @@
-import { IStatusResponse } from 'src/responses/status-response.interface';
+import { IStatusResponse } from 'src/boss/status-response.interface';
 import { AbaRegisterLoginStatusConstants } from './aba-register-login.constans';
 
 export type IAbaRegisterLoginResponse =

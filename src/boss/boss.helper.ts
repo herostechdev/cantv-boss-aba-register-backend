@@ -1,5 +1,5 @@
 import { BossConstants } from './boss.constants';
-import { IPhoneNumber } from 'src/responses/phone-number.interface';
+import { IPhoneNumber } from 'src/boss/phone-number.interface';
 import { StringHelper } from 'src/system/infrastructure/helpers/string.helper';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
