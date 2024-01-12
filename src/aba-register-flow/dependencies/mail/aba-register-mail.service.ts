@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterMailDto } from './aba-register-mail.dto';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { IMailSendOptions } from 'src/system/infrastructure/mail/mail-send-options.interface';
 import { MailBodyType } from 'src/system/infrastructure/mail/mail-body-type.constants';
 import { MailService } from 'src/system/infrastructure/mail/mail.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { BossHelper } from 'src/boss/boss.helper';
-import { BossConstants } from 'src/boss/boss.constants';
 
 @Injectable()
 export class AbaRegisterMailService {
