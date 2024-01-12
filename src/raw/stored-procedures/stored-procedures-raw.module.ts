@@ -5,6 +5,7 @@ import { CheckIpRawService } from './check-ip/check-ip-raw.service';
 import { CreateAndProvisioningCustomerRawService } from './create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
 import { CreateAndProvisioningMasterAccountRawService } from './create-and-provisioning-master-account/create-and-provisioning-mater-account-raw.service';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
+import { DeleteOrderRawService } from './delete-order/delete-order-raw.service';
 import { DSLAuditLogsRawService } from './dsl-audit-logs/dsl-audit-logs-raw.service';
 import { GetABADataFromRequestsRawService } from 'src/validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
 import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
@@ -37,6 +38,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     CreateAndProvisioningCustomerRawService,
     CreateAndProvisioningMasterAccountRawService,
     CustomerExistsRawService,
+    DeleteOrderRawService,
     DSLAuditLogsRawService,
     GetABADataFromRequestsRawService,
     GetAllValuesFromCustomerValuesRawService,
@@ -65,6 +67,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     CreateAndProvisioningCustomerRawService,
     CreateAndProvisioningMasterAccountRawService,
     CustomerExistsRawService,
+    DeleteOrderRawService,
     DSLAuditLogsRawService,
     GetABADataFromRequestsRawService,
     GetAllValuesFromCustomerValuesRawService,

@@ -1,6 +1,6 @@
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { ICheckIpResponse } from '../../../raw/stored-procedures/check-ip/check-ip-response.interface';
-import { IDeleteOrderResponse } from '../../../validate-technical-feasibility/delete-order/delete-order-response.interface';
+import { IDeleteOrderResponse } from '../../../raw/stored-procedures/delete-order/delete-order-response.interface';
 import { IGetABADataFromRequestsResponse } from '../../../validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests-response.interface';
 import { IGetABADataResponse } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from '../../../raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';

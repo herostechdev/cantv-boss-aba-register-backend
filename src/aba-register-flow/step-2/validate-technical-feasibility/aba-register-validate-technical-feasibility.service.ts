@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 
 import { AbaRegisterCheckIpService } from 'src/aba-register-flow/dependencies/check-ip/check-ip.service';
+import { AbaRegisterDeleteOrderService } from 'src/aba-register-flow/dependencies/delete-order/delete-order.service';
 import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
-import { DeleteOrderStatusConstants } from '../../../validate-technical-feasibility/delete-order/delete-order-status.constants';
-import { DeleteOrderExecutionErrorException } from '../../../validate-technical-feasibility/delete-order/delete-order-execution-error.exception';
-import { DeleteOrderThePortIsOccupiedByAnotherContractException } from '../../../validate-technical-feasibility/delete-order/delete-order-the-is-occupied-by-another-contract.exception';
+import { DeleteOrderStatusConstants } from '../../../raw/stored-procedures/delete-order/delete-order-status.constants';
+import { DeleteOrderExecutionErrorException } from '../../../raw/stored-procedures/delete-order/delete-order-execution-error.exception';
+import { DeleteOrderThePortIsOccupiedByAnotherContractException } from '../../../raw/stored-procedures/delete-order/delete-order-the-is-occupied-by-another-contract.exception';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
@@ -33,7 +34,7 @@ import { GetPortIdFromIpConstants } from '../../../validate-technical-feasibilit
 import { GetPortIdStatusConstants } from '../../../validate-technical-feasibility/get-port-id/get-port-id-status.constants';
 import { GetPortIdException } from '../../../validate-technical-feasibility/get-port-id/get-port-id.exception';
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
-import { IDeleteOrderResponse } from '../../../validate-technical-feasibility/delete-order/delete-order-response.interface';
+import { IDeleteOrderResponse } from '../../../raw/stored-procedures/delete-order/delete-order-response.interface';
 import { IGetABADataResponse } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
@@ -70,6 +71,7 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
     private readonly abaRegisterCheckIpService: AbaRegisterCheckIpService,
+    private readonly abaRegisterDeleteOrderService: AbaRegisterDeleteOrderService,
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
@@ -300,7 +302,14 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
           clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
-        data.deleteOrderResponse = await this.deleteOrder(data);
+        data.deleteOrderResponse =
+          await this.abaRegisterDeleteOrderService.execute({
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+            dslamportId:
+              data.getPortIdFromIpResponse.dslamportId ??
+              data.getPortIdResponse.portId,
+          });
 
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -943,37 +952,37 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
     await this.callAuditLog(data, 'Modificar Red de Acceso');
   }
 
-  private async deleteOrder(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IDeleteOrderResponse> {
-    const parameters = {
-      abadslamportid: OracleHelper.numberBindIn(
-        data.getPortIdFromIpResponse.dslamportId,
-      ),
-      Status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.BOSS_PACKAGE,
-      BossConstants.DELETE_ORDER,
-      parameters,
-    );
-    const response: IDeleteOrderResponse = {
-      status: (result?.outBinds?.Status ??
-        DeleteOrderStatusConstants.EXECUTION_ERROR) as DeleteOrderStatusConstants,
-    };
-    switch (response.status) {
-      case DeleteOrderStatusConstants.SUCCESSFULL:
-        return response;
-      case DeleteOrderStatusConstants.EXECUTION_ERROR:
-        throw new DeleteOrderExecutionErrorException();
-      case DeleteOrderStatusConstants.THERE_IS_NO_DATA:
-        return response;
-      case DeleteOrderStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
-        throw new DeleteOrderThePortIsOccupiedByAnotherContractException();
-      default:
-        throw new DeleteOrderExecutionErrorException();
-    }
-  }
+  // private async deleteOrder(
+  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
+  // ): Promise<IDeleteOrderResponse> {
+  //   const parameters = {
+  //     abadslamportid: OracleHelper.numberBindIn(
+  //       data.getPortIdFromIpResponse.dslamportId,
+  //     ),
+  //     Status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.BOSS_PACKAGE,
+  //     BossConstants.DELETE_ORDER,
+  //     parameters,
+  //   );
+  //   const response: IDeleteOrderResponse = {
+  //     status: (result?.outBinds?.Status ??
+  //       DeleteOrderStatusConstants.ERROR) as DeleteOrderStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case DeleteOrderStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case DeleteOrderStatusConstants.ERROR:
+  //       throw new DeleteOrderExecutionErrorException();
+  //     case DeleteOrderStatusConstants.THERE_IS_NO_DATA:
+  //       return response;
+  //     case DeleteOrderStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
+  //       throw new DeleteOrderThePortIsOccupiedByAnotherContractException();
+  //     default:
+  //       throw new DeleteOrderExecutionErrorException();
+  //   }
+  // }
 
   private async getDSLCentralCoIdByDSLAMPortId(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,

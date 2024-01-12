@@ -4,12 +4,15 @@ import { AbaRegisterRequestDto } from './aba-register/aba-register-request.dto';
 import { CancelAbaInstallationRawService } from './cancel-aba-installation/cancel-aba-installation-raw.service';
 import { CancelAbaInstallationRequestDto } from './cancel-aba-installation/cancel-aba-installation-request.dto';
 import { CheckIpRawService } from './check-ip/check-ip-raw.service';
+import { CheckIpRequestDto } from './check-ip/check-ip-request.dto';
 import { CreateAndProvisioningCustomerRawService } from './create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
 import { CreateAndProvisioningCustomerRequestDto } from './create-and-provisioning-customer/create-and-provisioning-customer-request.dto';
 import { CreateAndProvisioningMasterAccountRawService } from './create-and-provisioning-master-account/create-and-provisioning-mater-account-raw.service';
 import { CreateAndProvisioningMasterAccountRequestDto } from './create-and-provisioning-master-account/create-and-provisioning-master-account-request.dto';
 import { CustomerExistsRequestDto } from './customer-exists/customer-exists-request.dto';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
+import { DeleteOrderRawService } from './delete-order/delete-order-raw.service';
+import { DeleteOrderRequestDto } from './delete-order/delete-order-request.dto';
 import { DSLAuditLogsRequestDto } from './dsl-audit-logs/dsl-audit-logs-request.dto';
 import { DSLAuditLogsRawService } from './dsl-audit-logs/dsl-audit-logs-raw.service';
 import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
@@ -38,9 +41,11 @@ import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-c
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IAbaRegisterResponse } from './aba-register/aba-register-response.interface';
 import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
+import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
 import { ICreateAndProvisioningCustomerResponse } from './create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICreateAndProvisioningMasterAccountResponse } from './create-and-provisioning-master-account/create-and-provisioning-master-account-response.interface';
 import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
+import { IDeleteOrderResponse } from './delete-order/delete-order-response.interface';
 import { IDSLAuditLogsResponse } from './dsl-audit-logs/dsl-audit-logs-response.interface';
 import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
@@ -74,8 +79,6 @@ import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
-import { CheckIpRequestDto } from './check-ip/check-ip-request.dto';
-import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
 
 @Controller({
   path: 'raw/sp',
@@ -89,6 +92,7 @@ export class StoredProceduresRawController {
     private readonly createAndProvisioningCustomerRawService: CreateAndProvisioningCustomerRawService,
     private readonly createAndProvisioningMasterAccountRawService: CreateAndProvisioningMasterAccountRawService,
     private readonly customerExistsRawService: CustomerExistsRawService,
+    private readonly deleteOrderRawService: DeleteOrderRawService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
@@ -159,6 +163,15 @@ export class StoredProceduresRawController {
     @Body() dto: CustomerExistsRequestDto,
   ): Promise<ICustomerExistsResponse> {
     return this.customerExistsRawService.execute(dto);
+  }
+
+  @Post('deleteOrder')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  deleteOrder(
+    @Body() dto: DeleteOrderRequestDto,
+  ): Promise<IDeleteOrderResponse> {
+    return this.deleteOrderRawService.execute(dto);
   }
 
   @Post('dslAuditLogs')
