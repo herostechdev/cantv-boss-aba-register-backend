@@ -42,7 +42,7 @@ export class InsertDslAbaRegistersRawService extends OracleDatabaseService {
     } catch (error) {
       super.exceptionHandler(error, `${JSON.stringify(dto)}`);
     } finally {
-      await this.closeConnection(ValidationHelper.isDefined(dbConnection));
+      await this.closeConnection(!ValidationHelper.isDefined(dbConnection));
     }
   }
 

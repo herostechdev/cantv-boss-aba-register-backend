@@ -26,8 +26,6 @@ import { GetABADataFromRequestsService } from './get-aba-data-from-requests/get-
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
-import { GetDataFromRequestsStatusConstants } from './get-data-from-requests/get-data-from-requests-status.constants';
-import { GetDataFromRequestsException } from './get-data-from-requests/get-data-from-requests.exception';
 import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-raw.service';
 import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
 import { GetDownstreamFromPlanThereIsNoDataException } from './get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
@@ -44,7 +42,6 @@ import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../raw/stored-procedure
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
-import { IGetDataFromRequestsResponse } from './get-data-from-requests/get-data-from-requests-response.interface';
 import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
 import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
 import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
@@ -102,7 +99,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         clazz: ValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
-      const data = this.initializeValidateTechnicalFeasibilityData();
+      const data = this.initializeResponse();
       data.requestDto = dto;
       await super.connect();
       Wlog.instance.info({
@@ -113,12 +110,15 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
       });
       data.insertDslAbaRegistersResponse =
-        await this.insertDslAbaRegistersRawService.execute({
-          areaCode: data.requestDto.areaCode,
-          phoneNumber: data.requestDto.phoneNumber,
-          registerDate: data.requestDto.registerDate,
-          registerStatus: BossConstants.IN_PROGRESS,
-        });
+        await this.insertDslAbaRegistersRawService.execute(
+          {
+            areaCode: data.requestDto.areaCode,
+            phoneNumber: data.requestDto.phoneNumber,
+            registerDate: data.requestDto.registerDate,
+            registerStatus: BossConstants.IN_PROGRESS,
+          },
+          this.dbConnection,
+        );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'isPrepaidVoiceLine',
@@ -127,10 +127,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
       });
       data.isPrepaidVoiceLine =
-        await this.abaRegisterIsPrepaidVoiceLineService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-        });
+        await this.abaRegisterIsPrepaidVoiceLineService.execute(
+          {
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+          },
+          this.dbConnection,
+        );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getAndRegisterQualifOfService',
@@ -139,10 +142,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         method: 'validateTechnicalFeasibility',
       });
       data.getAndRegisterQualifOfServiceResponse =
-        await this.abaRegisterGetAndRegisterQualifOfServiceService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-        });
+        await this.abaRegisterGetAndRegisterQualifOfServiceService.execute(
+          {
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+          },
+          this.dbConnection,
+        );
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'verifyContractByPhone',
@@ -370,7 +376,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  private initializeValidateTechnicalFeasibilityData(): ValidateTechnicalFeasibilityData {
+  private initializeResponse(): ValidateTechnicalFeasibilityData {
     const data = new ValidateTechnicalFeasibilityData();
     data.requestDto = null;
     data.insertDslAbaRegistersResponse = null;
@@ -400,132 +406,22 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     data: ValidateTechnicalFeasibilityData,
     description: string,
   ): Promise<void> {
-    await this.dslAuditLogsService.execute({
-      areaCode: data?.requestDto?.areaCode,
-      phoneNumber: data?.requestDto?.phoneNumber,
-      orderId: data?.requestDto?.orderId,
-      ipAddress: data?.requestDto?.ipAddress,
-      activationLogin: null,
-      webPage: null,
-      code: null,
-      description: description,
-      comments: null,
-      planName: data.getABADataFromRequestsResponse.desiredPlan,
-    });
+    await this.dslAuditLogsService.execute(
+      {
+        areaCode: data?.requestDto?.areaCode,
+        phoneNumber: data?.requestDto?.phoneNumber,
+        orderId: data?.requestDto?.orderId,
+        ipAddress: data?.requestDto?.ipAddress,
+        activationLogin: null,
+        webPage: null,
+        code: null,
+        description: description,
+        comments: null,
+        planName: data.getABADataFromRequestsResponse.desiredPlan,
+      },
+      this.dbConnection,
+    );
   }
-
-  // private async insertDslAbaRegisters(
-  //   data: ValidateTechnicalFeasibilityData,
-  // ): Promise<number> {
-  //   const registerDate = DateTime.fromFormat(
-  //     data.requestDto.registerDate,
-  //     BossConstants.DEFAULT_DATE_FORMAT,
-  //   ).toJSDate();
-  //   // .toFormat(BossConstants.DEFAULT_DATE_FORMAT);
-  //   const parameters = {
-  //     iAreaCode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-  //     iPhoneNumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber, 7),
-  //     iRegisterDate: OracleHelper.dateBindIn(registerDate),
-  //     iRegisterStatus: OracleHelper.stringBindIn(BossConstants.IN_PROGRESS, 16),
-  //     iLoginInstall: OracleHelper.stringBindIn(
-  //       data.requestDto.loginInstall,
-  //       32,
-  //     ),
-  //     status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.ABA_PACKAGE,
-  //     BossConstants.INSERT_DSL_ABA_REGISTERS,
-  //     parameters,
-  //   );
-  //   const status = (result?.outBinds?.status ??
-  //     InsertDslAbaRegisterConstants.INTERNAL_ERROR) as InsertDslAbaRegisterConstants;
-  //   switch (status) {
-  //     case InsertDslAbaRegisterConstants.SUCCESSFULL:
-  //       return status;
-  //     case InsertDslAbaRegisterConstants.INTERNAL_ERROR:
-  //       throw new InsertDslAbaRegisterException(result);
-  //     case InsertDslAbaRegisterConstants.THERE_IS_NO_DATA:
-  //       throw new InsertDslAbaRegisterThereIsNoDataException();
-  //     case InsertDslAbaRegisterConstants.REGISTERRED:
-  //       throw new TheRecordAlreadyExistsException();
-  //     default:
-  //       throw new InsertDslAbaRegisterException(result);
-  //   }
-  // }
-
-  // private async isPrepaidVoiceLine(
-  //   data: ValidateTechnicalFeasibilityData,
-  // ): Promise<IIsPrepaidVoiceLineResponse> {
-  //   const parameters = {
-  //     Abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-  //     abaphonenumber: OracleHelper.stringBindIn(
-  //       data.requestDto.phoneNumber,
-  //       16,
-  //     ),
-  //     isPrepago: OracleHelper.numberBindOut(),
-  //     oStatus: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.ACT_PACKAGE,
-  //     BossConstants.IS_PREPAID,
-  //     parameters,
-  //   );
-  //   const response: IIsPrepaidVoiceLineResponse = {
-  //     isPrepaid: (result?.outBinds?.isPrepago ??
-  //       IsPrepaidVoiceLineIsPrepaidConstants.IT_IS_NOT_A_PREPAID_VOICE_LINE) as IsPrepaidVoiceLineIsPrepaidConstants,
-  //     status: (result?.outBinds?.oStatus ??
-  //       IsPrepaidVoiceLineStatusConstants.ERROR) as IsPrepaidVoiceLineStatusConstants,
-  //   };
-  //   if (
-  //     response.isPrepaid ==
-  //       IsPrepaidVoiceLineIsPrepaidConstants.IT_IS_A_PREPAID_VOICE_LINE ||
-  //     response.status == IsPrepaidVoiceLineStatusConstants.ERROR
-  //   ) {
-  //     throw new IsPrepaidVoiceLineException();
-  //   }
-  //   return response;
-  // }
-
-  // private async getAndRegisterQualifOfService(
-  //   data: ValidateTechnicalFeasibilityData,
-  // ): Promise<IGetAndRegisterQualifOfServiceResponse> {
-  //   const parameters = {
-  //     i_clientserviceid: OracleHelper.numberBindIn(null), // Iván indica enviar siempre null 2023-12-11
-  //     i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
-  //     i_phonenumber: OracleHelper.stringBindIn(
-  //       data.requestDto.phoneNumber,
-  //       256,
-  //     ),
-  //     o_qualifpossible: OracleHelper.stringBindOut(),
-  //     o_modemstatus: OracleHelper.stringBindOut(),
-  //     o_maxdownstream: OracleHelper.stringBindOut(),
-  //     o_maxupstream: OracleHelper.stringBindOut(),
-  //     o_status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     null,
-  //     BossConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
-  //     parameters,
-  //   );
-  //   const status = (result?.outBinds?.o_status ??
-  //     GetAndRegisterQualifOfServiceStatusConstants.ERROR) as GetAndRegisterQualifOfServiceStatusConstants;
-  //   const response: IGetAndRegisterQualifOfServiceResponse = {
-  //     qualifpossible: result?.outBinds?.o_qualifpossible,
-  //     modemstatus: result?.outBinds?.o_modemstatus,
-  //     maxdownstream: result?.outBinds?.o_maxdownstream,
-  //     maxupstream: result?.outBinds?.o_maxupstream,
-  //     status: status,
-  //   };
-  //   switch (status) {
-  //     case GetAndRegisterQualifOfServiceStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetAndRegisterQualifOfServiceStatusConstants.ERROR:
-  //       throw new GetAndRegisterQualifOfServiceException(result);
-  //     default:
-  //       throw new GetAndRegisterQualifOfServiceException(result);
-  //   }
-  // }
 
   private async verifyContractByPhone(
     data: ValidateTechnicalFeasibilityData,
@@ -555,57 +451,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         throw new VerifyContractByPhoneException();
       default:
         throw new VerifyContractByPhoneException();
-    }
-  }
-
-  private async getDataFromRequests(
-    data: ValidateTechnicalFeasibilityData,
-  ): Promise<IGetDataFromRequestsResponse> {
-    const parameters = {
-      i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
-      i_phonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
-
-      o_id: OracleHelper.tableOfStringBindOut(),
-      o_firstname: OracleHelper.tableOfStringBindOut(),
-      o_lastname: OracleHelper.tableOfStringBindOut(),
-      o_email: OracleHelper.tableOfStringBindOut(),
-      o_phonenumber: OracleHelper.tableOfStringBindOut(),
-      o_address1: OracleHelper.tableOfStringBindOut(),
-      o_address2: OracleHelper.tableOfStringBindOut(),
-      o_city: OracleHelper.tableOfStringBindOut(),
-      o_state: OracleHelper.tableOfStringBindOut(),
-      Status: OracleHelper.tableOfNumberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.BOSS_PACKAGE,
-      BossConstants.GET_DATA_FROM_REQUESTS,
-      parameters,
-    );
-    const status = (OracleHelper.getFirstItem(result, 'Status') ??
-      GetDataFromRequestsStatusConstants.EXECUTION_ERROR) as GetDataFromRequestsStatusConstants;
-    const response: IGetDataFromRequestsResponse = {
-      id: OracleHelper.getFirstItem(result, 'o_id'),
-      firstname: OracleHelper.getFirstItem(result, 'o_firstname'),
-      lastname: OracleHelper.getFirstItem(result, 'o_lastname'),
-      email: OracleHelper.getFirstItem(result, 'o_email'),
-      areaCode: data.requestDto.areaCode,
-      phoneNumber: OracleHelper.getFirstItem(result, 'o_phonenumber'),
-      address1: OracleHelper.getFirstItem(result, 'o_address1'),
-      address2: OracleHelper.getFirstItem(result, 'o_address2'),
-      city: OracleHelper.getFirstItem(result, 'o_city'),
-      state: OracleHelper.getFirstItem(result, 'o_state'),
-      status: status,
-    };
-    switch (status) {
-      case GetDataFromRequestsStatusConstants.SUCCESSFULL:
-        return response;
-      case GetDataFromRequestsStatusConstants.EXECUTION_ERROR:
-        throw new GetDataFromRequestsException();
-      case GetDataFromRequestsStatusConstants.THERE_IS_NO_DATA:
-        // throw new GetDataFromRequestsThereIsNoDataException();
-        return response;
-      default:
-        throw new GetDataFromRequestsException();
     }
   }
 
