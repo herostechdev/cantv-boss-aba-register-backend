@@ -28,7 +28,15 @@ export class AbaRegisterMailService {
         clazz: AbaRegisterMailService.name,
         method: 'okNotification',
       });
-    } catch (error) {}
+    } catch (error) {
+      Wlog.instance.error({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
+        input: JSON.stringify(dto),
+        clazz: AbaRegisterMailService.name,
+        method: 'okNotification',
+        error: error,
+      });
+    }
   }
 
   public async notOkNotification(dto: AbaRegisterMailDto): Promise<void> {
@@ -48,7 +56,15 @@ export class AbaRegisterMailService {
         clazz: AbaRegisterMailService.name,
         method: 'notOkNotification',
       });
-    } catch (error) {}
+    } catch (error) {
+      Wlog.instance.error({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
+        input: JSON.stringify(dto),
+        clazz: AbaRegisterMailService.name,
+        method: 'notOkNotification',
+        error: error,
+      });
+    }
   }
 
   // TODO: getOkOptions
