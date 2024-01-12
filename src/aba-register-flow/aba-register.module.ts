@@ -24,8 +24,8 @@ import { AbaRegisterService } from './dependencies/aba-register/aba-register.ser
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { AbaRegisterValidateTechnicalFeasibilityService } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility.service';
 import { BossApiModule } from 'src/raw/boss-api/boss-api-raw.module';
+import { DatabaseFunctionsRawModule } from 'src/raw/database/functions/database-functions-raw.module';
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
-import { FunctionsRawModule } from 'src/raw/functions/functions-raw.module';
 import { MailModule } from 'src/system/infrastructure/mail/mail.module';
 import { PICModule } from 'src/raw/pic/pic.module';
 import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-procedures-raw.module';
@@ -34,7 +34,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
   imports: [
     BossApiModule,
     EncryptionModule,
-    FunctionsRawModule,
+    DatabaseFunctionsRawModule,
     MailModule,
     PICModule,
     StoredProceduresRawModule,

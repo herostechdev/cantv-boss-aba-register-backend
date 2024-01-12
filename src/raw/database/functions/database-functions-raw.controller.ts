@@ -6,10 +6,10 @@ import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/except
 import { IGetAbaPlanForKenanResponse } from './get-aba-plan-for-kenan/get-aba-plan-for-kenan-response.interface';
 
 @Controller({
-  path: 'raw/functions',
+  path: 'raw/databaseFunctions',
   version: '1',
 })
-export class FunctionsRawController {
+export class DatabaseFunctionsRawController {
   constructor(
     private readonly getAbaPlanForKenanRawService: GetAbaPlanForKenanRawService,
   ) {}

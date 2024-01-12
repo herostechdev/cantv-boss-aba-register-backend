@@ -4,7 +4,7 @@ import { ICancelABAInstallationResponse } from '../../../raw/stored-procedures/c
 import { ICreateAndProvisioningCustomerResponse } from '../../../raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICreateAndProvisioningMasterAccountResponse } from '../../../raw/stored-procedures/create-and-provisioning-master-account/create-and-provisioning-master-account-response.interface';
 import { ICustomerExistsResponse } from 'src/raw/stored-procedures/customer-exists/customer-exists-response.interface';
-import { IGetAbaPlanForKenanResponse } from '../../../raw/functions/get-aba-plan-for-kenan/get-aba-plan-for-kenan-response.interface';
+import { IGetAbaPlanForKenanResponse } from 'src/raw/database/functions/get-aba-plan-for-kenan/get-aba-plan-for-kenan-response.interface';
 import { IGetCSIdAndPlanNameFromLoginResponse } from 'src/raw/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-response.interface';
 import { IIsReservedLoginResponse } from '../../../raw/stored-procedures/is-reserved-login/is-reserved-login-response.interface';
 

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { FunctionsRawController } from './functions-raw.controller';
+import { DatabaseFunctionsRawController } from './database-functions-raw.controller';
 import { GetAbaPlanForKenanRawService } from './get-aba-plan-for-kenan/get-aba-plan-for-kenan-raw.service';
-import { StoredProceduresRawModule } from '../stored-procedures/stored-procedures-raw.module';
+import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-procedures-raw.module';
 
 @Module({
   imports: [StoredProceduresRawModule],
-  controllers: [FunctionsRawController],
+  controllers: [DatabaseFunctionsRawController],
   providers: [GetAbaPlanForKenanRawService],
   exports: [GetAbaPlanForKenanRawService],
 })
-export class FunctionsRawModule {}
+export class DatabaseFunctionsRawModule {}
