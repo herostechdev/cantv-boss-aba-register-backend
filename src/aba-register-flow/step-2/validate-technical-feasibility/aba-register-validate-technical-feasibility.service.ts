@@ -5,11 +5,11 @@ import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/depe
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
-import { CheckIpExecutionErrorException } from './check-ip/check-ip-execution-error.exception';
-import { CheckIpStatusConstants } from './check-ip/check-ip-status.constants';
-import { DeleteOrderStatusConstants } from './delete-order/delete-order-status.constants';
-import { DeleteOrderExecutionErrorException } from './delete-order/delete-order-execution-error.exception';
-import { DeleteOrderThePortIsOccupiedByAnotherContractException } from './delete-order/delete-order-the-is-occupied-by-another-contract.exception';
+import { CheckIpException } from '../../../raw/stored-procedures/check-ip/check-ip.exception';
+import { CheckIpStatusConstants } from '../../../raw/stored-procedures/check-ip/check-ip-status.constants';
+import { DeleteOrderStatusConstants } from '../../../validate-technical-feasibility/delete-order/delete-order-status.constants';
+import { DeleteOrderExecutionErrorException } from '../../../validate-technical-feasibility/delete-order/delete-order-execution-error.exception';
+import { DeleteOrderThePortIsOccupiedByAnotherContractException } from '../../../validate-technical-feasibility/delete-order/delete-order-the-is-occupied-by-another-contract.exception';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30031Exception } from 'src/exceptions/error-3003-1.exception';
@@ -18,65 +18,65 @@ import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
 import { Error30043Exception } from 'src/exceptions/error-3004-3.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
-import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
-import { GetPortIdFromIpExecutionException } from './get-port-id-from-ip/get-port-id-from-ip-execution.exception';
-import { GetABADataConstants } from './get-aba-data/get-aba-data.constants';
-import { GetABADataExecutionErrorException } from './get-aba-data/get-aba-data-execution-error.exception';
-import { GetABADataFromRequestsService } from './get-aba-data-from-requests/get-aba-data-from-requests.service';
+import { ErrorInsertingIABAFromRegisterException } from '../../../validate-technical-feasibility/exceptions/error-inserting-iaba-from-register.exception';
+import { GetPortIdFromIpExecutionException } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-execution.exception';
+import { GetABADataConstants } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data.constants';
+import { GetABADataExecutionErrorException } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data-execution-error.exception';
+import { GetABADataFromRequestsRawService } from '../../../validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
-import { GetDataFromDSLAMPortIdExecutionErrorException } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
-import { GetDataFromDSLAMPortIdStatusConstants } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
+import { GetDataFromDSLAMPortIdExecutionErrorException } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
+import { GetDataFromDSLAMPortIdStatusConstants } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-raw.service';
-import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan/get-downstream-from-plan-status.constants';
-import { GetDownstreamFromPlanThereIsNoDataException } from './get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
-import { GetInfoFromABARequestsException } from './get-info-from-aba-requests/get-info-from-aba-requests.exception';
-import { GetPortIdFromIpBadIpFormatException } from './get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
-import { GetPortIdFromIpConstants } from './get-port-id-from-ip/get-port-id-from-ip.constants';
-import { GetPortIdStatusConstants } from './get-port-id/get-port-id-status.constants';
-import { GetPortIdException } from './get-port-id/get-port-id.exception';
-import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
-import { IDeleteOrderResponse } from './delete-order/delete-order-response.interface';
-import { IGetABADataResponse } from './get-aba-data/get-aba-data-response.interface';
-import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
-import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
+import { GetDownstreamFromPlanStatusConstants } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-status.constants';
+import { GetDownstreamFromPlanThereIsNoDataException } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
+import { GetInfoFromABARequestsException } from '../../../validate-technical-feasibility/get-info-from-aba-requests/get-info-from-aba-requests.exception';
+import { GetPortIdFromIpBadIpFormatException } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
+import { GetPortIdFromIpConstants } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip.constants';
+import { GetPortIdStatusConstants } from '../../../validate-technical-feasibility/get-port-id/get-port-id-status.constants';
+import { GetPortIdException } from '../../../validate-technical-feasibility/get-port-id/get-port-id.exception';
+import { ICheckIpResponse } from '../../../raw/stored-procedures/check-ip/check-ip-response.interface';
+import { IDeleteOrderResponse } from '../../../validate-technical-feasibility/delete-order/delete-order-response.interface';
+import { IGetABADataResponse } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data-response.interface';
+import { IGetDataFromDSLAMPortIdResponse } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
+import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
-import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
-import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
-import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
-import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
-import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
+import { IGetDownstreamFromPlanResponse } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-response.interface';
+import { IGetPortIdFromIpResponse } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-response.interface';
+import { IGetPortIdResponse } from '../../../validate-technical-feasibility/get-port-id/get-port-id-response.interface';
+import { IIsValidIpAddressResponse } from '../../../validate-technical-feasibility/is-valid-ip-address/is-valid-ip-address-response.interface';
+import { IIsOccupiedPortResponse } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-response.interface';
 import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
-import { IReadIABAOrderResponse } from './read-iaba-order/read-iaba-order-response.interface';
-import { IsOccupiedPortConstants } from './Is-occupied-port/is-occupied-port.constants';
-import { IsOccupiedPortInternalErrorException } from './Is-occupied-port/is-occupied-port-internal-error.exception';
-import { IsOccupiedPortTherIsNoDataException } from './Is-occupied-port/is-occupied-port-there-is-no-data.exception';
-import { IsValidIpAddressConstants } from './is-valid-ip-address/is-valid-ip-address.constants';
-import { IVerifiyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
+import { IReadIABAOrderResponse } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-response.interface';
+import { IsOccupiedPortConstants } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port.constants';
+import { IsOccupiedPortInternalErrorException } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-internal-error.exception';
+import { IsOccupiedPortTherIsNoDataException } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-there-is-no-data.exception';
+import { IsValidIpAddressConstants } from '../../../validate-technical-feasibility/is-valid-ip-address/is-valid-ip-address.constants';
+import { IVerifiyContractByPhoneResponse } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { ReadIABAOrderErrorCodeConstants } from './read-iaba-order/read-iaba-order-error_code.constants';
-import { ReadIABAOrderGeneralDatabaseErrorException } from './read-iaba-order/read-iaba-order-general-database-error.exception';
-import { ReadIABAOrderAssignedPortException } from './read-iaba-order/read-iaba-order-assigned-port.exception';
-import { ReadIABAOrderOrderExistsException } from './read-iaba-order/read-iaba-order-order-exists.exception';
-import { ReadIABAOrderOrderIsOldException } from './read-iaba-order/read-iaba-order-order-is-old.exception';
-import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from './read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
-import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
+import { ReadIABAOrderErrorCodeConstants } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-error_code.constants';
+import { ReadIABAOrderGeneralDatabaseErrorException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-general-database-error.exception';
+import { ReadIABAOrderAssignedPortException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-assigned-port.exception';
+import { ReadIABAOrderOrderExistsException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-order-exists.exception';
+import { ReadIABAOrderOrderIsOldException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-order-is-old.exception';
+import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
+import { TheClientAlreadyHasABAServiceException } from '../../../validate-technical-feasibility/exceptions/the-client-already-has-aba-service.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { ValidateTechnicalFeasibilityData } from './validate-technical-feasibility-data';
-import { ValidateTechnicalFeasibilityRequestDto } from './validate-technical-feasibility-request.dto';
+import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
+import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
-import { VerifyContractByPhoneException } from './verify-contract-by-phone/verify-contract-by-phone.exception';
-import { VerifiyContractByPhoneStatusConstants } from './verify-contract-by-phone/verify-contract-by-phone-status.constants';
+import { VerifyContractByPhoneException } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone.exception';
+import { VerifiyContractByPhoneStatusConstants } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone-status.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
-export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
+export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
-    private readonly getABADataFromRequestsService: GetABADataFromRequestsService,
+    private readonly getABADataFromRequestsService: GetABADataFromRequestsRawService,
     private readonly getDHCPDataService: GetDHCPDataRawService,
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
@@ -86,17 +86,15 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  async validateTechnicalFeasibility(
-    dto: ValidateTechnicalFeasibilityRequestDto,
-  ): Promise<ValidateTechnicalFeasibilityData> {
-    console.clear();
-
+  async execute(
+    dto: AbaRegisterValidateTechnicalFeasibilityRequestDto,
+  ): Promise<IAbaRegisterValidateTechnicalFeasibilityResponse> {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: BossConstants.START,
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       const data = this.initializeResponse();
@@ -106,7 +104,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'insertDslAbaRegisters',
         input: JSON.stringify(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.insertDslAbaRegistersResponse =
@@ -123,7 +121,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'isPrepaidVoiceLine',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.isPrepaidVoiceLine =
@@ -138,7 +136,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getAndRegisterQualifOfService',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.getAndRegisterQualifOfServiceResponse =
@@ -153,7 +151,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'verifyContractByPhone',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.verifyContractByPhoneResponse = await this.verifyContractByPhone(
@@ -163,7 +161,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getABADataFromRequests',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.getABADataFromRequestsResponse =
@@ -175,7 +173,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getDownstreamFromPlan',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
@@ -188,7 +186,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'isValidIpAddress',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.isValidIpAddressResponse = await this.isValidIpAddress(data);
@@ -196,7 +194,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getPortIdFromIp',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.getPortIdFromIpResponse = await this.getPortIdFromIp(data);
@@ -208,7 +206,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'IsOccupiedPort',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateTechnicalFeasibilityService.name,
+          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
         data.isOccupiedPortResponse = await this.IsOccupiedPort(data);
@@ -218,7 +216,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'getPortIdFlow    (1)',
             input: BossHelper.getPhoneNumber(dto),
-            clazz: ValidateTechnicalFeasibilityService.name,
+            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
           await this.getPortIdFlow(data);
@@ -227,7 +225,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'getASAPOrderDetail',
             input: BossHelper.getPhoneNumber(dto),
-            clazz: ValidateTechnicalFeasibilityService.name,
+            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
           await this.rbeDoesNotExistLog(data);
@@ -238,7 +236,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getPortIdFlow   (2)',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateTechnicalFeasibilityService.name,
+          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
         await this.getPortIdFlow(data);
@@ -248,7 +246,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getABAData',
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
       data.getABADataResponse = await this.getABAData(data);
@@ -261,7 +259,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'checkIp',
             input: BossHelper.getPhoneNumber(dto),
-            clazz: ValidateTechnicalFeasibilityService.name,
+            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
           data.checkIpResponse = await this.checkIp(data);
@@ -271,7 +269,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getDataFromDslamPortId',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateTechnicalFeasibilityService.name,
+          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
         data.getDataFromDslamPortIdResponse = await this.getDataFromDslamPortId(
@@ -285,7 +283,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'modifyNetworkAccessLog',
             input: BossHelper.getPhoneNumber(dto),
-            clazz: ValidateTechnicalFeasibilityService.name,
+            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
           await this.modifyNetworkAccessLog(data);
@@ -295,7 +293,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'deleteOrder',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateTechnicalFeasibilityService.name,
+          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
         data.deleteOrderResponse = await this.deleteOrder(data);
@@ -304,7 +302,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getDSLCentralCoIdByDSLAMPortId',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateTechnicalFeasibilityService.name,
+          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
         data.getDSLCentralCoIdByDSLAMPortIdResponse =
@@ -313,7 +311,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'readIABAOrder',
           input: BossHelper.getPhoneNumber(dto),
-          clazz: ValidateTechnicalFeasibilityService.name,
+          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
         data.readIABAOrderResponse = await this.readIABAOrder(data);
@@ -326,7 +324,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
             phoneNumber: BossHelper.getPhoneNumber(dto),
             message: 'getABAData',
             input: BossHelper.getPhoneNumber(dto),
-            clazz: ValidateTechnicalFeasibilityService.name,
+            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
           data.getABADataResponse = await this.getABAData(data);
@@ -361,7 +359,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       Wlog.instance.error({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: BossHelper.getPhoneNumber(dto),
-        clazz: ValidateTechnicalFeasibilityService.name,
+        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
         error: error,
       });
@@ -376,34 +374,34 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     }
   }
 
-  private initializeResponse(): ValidateTechnicalFeasibilityData {
-    const data = new ValidateTechnicalFeasibilityData();
-    data.requestDto = null;
-    data.insertDslAbaRegistersResponse = null;
-    data.isPrepaidVoiceLine = null;
-    data.getAndRegisterQualifOfServiceResponse = null;
-    data.verifyContractByPhoneResponse = null;
-    data.getDownstreamFromPlanResponse = null;
-    data.getABADataFromRequestsResponse = null;
-    data.isValidIpAddressResponse = null;
-    data.getPortIdFromIpResponse = null;
-    data.queryDHCPResponse = null;
-    data.getValidVPIResponse = null;
-    data.getPortIdResponse = null;
-    data.isOccupiedPortResponse = null;
-    data.getASAPOrderDetailResponse = null;
-    data.linkNetworkResponse = null;
-    data.getABADataResponse = null;
-    data.checkIpResponse = null;
-    data.getDataFromDslamPortIdResponse = null;
-    data.deleteOrderResponse = null;
-    data.readIABAOrderResponse = null;
-    data.getDSLCentralCoIdByDSLAMPortIdResponse = null;
-    return data;
+  private initializeResponse(): IAbaRegisterValidateTechnicalFeasibilityResponse {
+    return {
+      requestDto: null,
+      insertDslAbaRegistersResponse: null,
+      isPrepaidVoiceLine: null,
+      getAndRegisterQualifOfServiceResponse: null,
+      verifyContractByPhoneResponse: null,
+      getDownstreamFromPlanResponse: null,
+      getABADataFromRequestsResponse: null,
+      isValidIpAddressResponse: null,
+      getPortIdFromIpResponse: null,
+      queryDHCPResponse: null,
+      getValidVPIResponse: null,
+      getPortIdResponse: null,
+      isOccupiedPortResponse: null,
+      getASAPOrderDetailResponse: null,
+      linkNetworkResponse: null,
+      getABADataResponse: null,
+      checkIpResponse: null,
+      getDataFromDslamPortIdResponse: null,
+      deleteOrderResponse: null,
+      readIABAOrderResponse: null,
+      getDSLCentralCoIdByDSLAMPortIdResponse: null,
+    };
   }
 
   private async callAuditLog(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
     description: string,
   ): Promise<void> {
     await this.dslAuditLogsService.execute(
@@ -424,7 +422,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async verifyContractByPhone(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IVerifiyContractByPhoneResponse> {
     const parameters = {
       i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
@@ -455,7 +453,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getDownstreamFromPlan(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetDownstreamFromPlanResponse> {
     const parameters = {
       i_planname: OracleHelper.stringBindIn(
@@ -489,7 +487,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async isValidIpAddress(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IIsValidIpAddressResponse> {
     const parameters = {
       abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
@@ -527,7 +525,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getPortIdFromIp(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetPortIdFromIpResponse> {
     const parameters = {
       i_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 15),
@@ -560,13 +558,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getPortIdFlow(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
     Wlog.instance.info({
       phoneNumber: null,
       message: 'queryDHCP',
       input: null,
-      clazz: ValidateTechnicalFeasibilityService.name,
+      clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
       method: 'getPortIdFlow',
     });
     data.queryDHCPResponse = await this.queryDHCP(data);
@@ -575,7 +573,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       phoneNumber: null,
       message: 'getValidVPI',
       input: null,
-      clazz: ValidateTechnicalFeasibilityService.name,
+      clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
       method: 'getPortIdFlow',
     });
     data.getValidVPIResponse = await this.getValidVPI(data);
@@ -584,7 +582,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       phoneNumber: null,
       message: 'getPortId',
       input: null,
-      clazz: ValidateTechnicalFeasibilityService.name,
+      clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
       method: 'getPortIdFlow',
     });
     data.getPortIdResponse = await this.getPortId(data);
@@ -593,7 +591,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       phoneNumber: null,
       message: 'validaciones validaciones',
       input: null,
-      clazz: ValidateTechnicalFeasibilityService.name,
+      clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
       method: 'getPortIdFlow',
     });
     if (ValidationHelper.isDefined(data.getPortIdResponse)) {
@@ -622,13 +620,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async rbeDoesNotExistLog(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
     await this.callAuditLog(data, 'RBE no existe');
   }
 
   private async setASAPOrderDetail(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
     data.getASAPOrderDetailResponse =
       await this.getASAPOrderDetailService.execute({
@@ -657,7 +655,9 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
    *  AUD45 => Tecnología de la Central
    *  PI =>
    */
-  private setLinkNetwork(data: ValidateTechnicalFeasibilityData): void {
+  private setLinkNetwork(
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
+  ): void {
     if (!ValidationHelper.isDefined(data.getASAPOrderDetailResponse.CTVOBSAS)) {
       return;
     }
@@ -682,7 +682,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private queryDHCP(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetDHCPDataResponse> {
     return this.getDHCPDataService.execute({
       areaCode: data.requestDto.areaCode,
@@ -692,7 +692,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getValidVPI(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<string> {
     const parameters = {
       i_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
@@ -710,7 +710,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getPortId(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetPortIdResponse> {
     const parameters = {
       s_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
@@ -744,7 +744,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async IsOccupiedPort(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IIsOccupiedPortResponse> {
     const parameters = {
       l_portid: OracleHelper.numberBindIn(
@@ -776,7 +776,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getABAData(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetABADataResponse> {
     const parameters = {
       abaorderid: OracleHelper.stringBindIn(
@@ -838,7 +838,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async checkIp(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<ICheckIpResponse> {
     const parameters = {
       abadslamportid: OracleHelper.stringBindIn(
@@ -862,13 +862,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     );
     const response: ICheckIpResponse = {
       status: (result?.outBinds?.Status ??
-        CheckIpStatusConstants.EXECUTION_ERROR) as CheckIpStatusConstants,
+        CheckIpStatusConstants.ERROR) as CheckIpStatusConstants,
     };
     switch (response.status) {
       case CheckIpStatusConstants.SUCCESSFULL:
         return response;
-      case CheckIpStatusConstants.EXECUTION_ERROR:
-        throw new CheckIpExecutionErrorException(result);
+      case CheckIpStatusConstants.ERROR:
+        throw new CheckIpException(result);
       case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PHONE_NUMBER:
         return response;
       case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PARAMETER:
@@ -882,12 +882,12 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
       case CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
         throw new Error30031Exception();
       default:
-        throw new CheckIpExecutionErrorException(result);
+        throw new CheckIpException(result);
     }
   }
 
   private async getDataFromDslamPortId(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetDataFromDSLAMPortIdResponse> {
     const parameters = {
       abadslamportid: OracleHelper.numberBindIn(
@@ -934,13 +934,13 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async modifyNetworkAccessLog(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
     await this.callAuditLog(data, 'Modificar Red de Acceso');
   }
 
   private async deleteOrder(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IDeleteOrderResponse> {
     const parameters = {
       abadslamportid: OracleHelper.numberBindIn(
@@ -972,7 +972,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async getDSLCentralCoIdByDSLAMPortId(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetDSLCentralCoIdByDSLAMPortIdResponse> {
     // const parameters = {
     //   i_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
@@ -1005,11 +1005,8 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
   }
 
   private async readIABAOrder(
-    data: ValidateTechnicalFeasibilityData,
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IReadIABAOrderResponse> {
-    console.log();
-    console.log('readIABAOrder', data?.getABADataResponse?.abaorderdate);
-
     const dateTimeOrderDate = data?.getABADataResponse?.abaorderdate
       ? DateTime.fromFormat(
           data?.getABADataResponse?.abaorderdate,
@@ -1019,11 +1016,6 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
     const orderDate = dateTimeOrderDate.isValid
       ? dateTimeOrderDate.toJSDate()
       : null;
-    // const orderDate = new Date('2019-07-24');
-
-    console.log();
-    console.log('orderDate', orderDate);
-
     const parameters = {
       sz_ncc: OracleHelper.stringBindIn(
         this.getValue(
@@ -1118,16 +1110,7 @@ export class ValidateTechnicalFeasibilityService extends OracleDatabaseService {
 
       l_errorcode: OracleHelper.tableOfNumberBindOut(),
     };
-
-    console.log();
-    console.log('parameters');
-    console.log(parameters);
-
-    console.log();
-    console.log('setTimestampFormat');
-
     await this.setTimestampFormat();
-
     const result = await super.executeStoredProcedure(
       BossConstants.UTL_PACKAGE,
       BossConstants.READ_IABA_ORDER,

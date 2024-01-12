@@ -22,16 +22,21 @@ import { AbaRegisterMailService } from './step-5/mail/aba-register-mail.service'
 import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-customer-class/plans-by-customer-class.service';
 import { AbaRegisterService } from './dependencies/aba-register/aba-register.service';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
+import { AbaRegisterValidateTechnicalFeasibilityService } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility.service';
+import { BossApiModule } from 'src/raw/boss-api/boss-api-raw.module';
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
 import { FunctionsRawModule } from 'src/raw/functions/functions-raw.module';
 import { MailModule } from 'src/system/infrastructure/mail/mail.module';
+import { PICModule } from 'src/raw/pic/pic.module';
 import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-procedures-raw.module';
 
 @Module({
   imports: [
+    BossApiModule,
     EncryptionModule,
     FunctionsRawModule,
     MailModule,
+    PICModule,
     StoredProceduresRawModule,
   ],
   controllers: [AbaRegisterController],
@@ -58,6 +63,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterPlansByCustomerClassService,
     AbaRegisterService,
     AbaRegisterValidateCustomerService,
+    AbaRegisterValidateTechnicalFeasibilityService,
   ],
   exports: [
     AbaRegisterGetAndRegisterQualifOfServiceService,

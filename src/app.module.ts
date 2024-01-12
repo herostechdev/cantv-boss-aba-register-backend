@@ -21,8 +21,6 @@ import { FunctionsRawModule } from './raw/functions/functions-raw.module';
 import { PICModule } from './raw/pic/pic.module';
 import { StoredProceduresRawModule } from './raw/stored-procedures/stored-procedures-raw.module';
 
-import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibility/validate-technical-feasibility.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -48,8 +46,6 @@ import { ValidateTechnicalFeasibilityModule } from './validate-technical-feasibi
     FunctionsRawModule,
     PICModule,
     StoredProceduresRawModule,
-
-    ValidateTechnicalFeasibilityModule,
   ],
   controllers: [AppController],
   providers: [

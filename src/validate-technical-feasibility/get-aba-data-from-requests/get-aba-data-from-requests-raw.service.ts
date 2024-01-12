@@ -11,7 +11,7 @@ import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle
 import { OracleHelper } from 'src/oracle/oracle.helper';
 
 @Injectable()
-export class GetABADataFromRequestsService extends OracleDatabaseService {
+export class GetABADataFromRequestsRawService extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
   ) {

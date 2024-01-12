@@ -16,6 +16,8 @@ import { AbaRegisterService } from './dependencies/aba-register/aba-register.ser
 import { AbaRegisterValidateCustomerData } from './step-2/validate-customer/aba-register-validate-customer-data';
 import { AbaRegisterValidateCustomerRequestDto } from './step-2/validate-customer/aba-register-validate-customer-request.dto';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
+import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility-request.dto';
+import { AbaRegisterValidateTechnicalFeasibilityService } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility.service';
 import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { GetStateFromSerialRequestDto } from 'src/raw/stored-procedures/insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial-request.dto';
@@ -23,6 +25,7 @@ import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-c
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IAbaRegisterGetLegalDocuments } from './step-4/get-legal-documents/aba-register-get-legal-documents-response.interface';
 import { IAbaRegisterResponse } from 'src/raw/stored-procedures/aba-register/aba-register-response.interface';
+import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility-response.interface';
 import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
 import { IGetStateFromSerialResponse } from 'src/raw/stored-procedures/insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial-response.interface';
@@ -47,6 +50,7 @@ export class AbaRegisterController {
     private readonly abaRegisterPlansByCustomerClassService: AbaRegisterPlansByCustomerClassService,
     private readonly abaRegisterService: AbaRegisterService,
     private readonly abaRegisterValidateCustomerService: AbaRegisterValidateCustomerService,
+    private readonly abaRegisterValidateTechnicalFeasibilityService: AbaRegisterValidateTechnicalFeasibilityService,
   ) {}
 
   @Post('abaRegister')
@@ -135,5 +139,14 @@ export class AbaRegisterController {
     @Body() dto: AbaRegisterValidateCustomerRequestDto,
   ): Promise<AbaRegisterValidateCustomerData> {
     return this.abaRegisterValidateCustomerService.validate(dto);
+  }
+
+  @Post('validateTechnicalFeasibility')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  ValidateTechnicalFeasibility(
+    @Body() dto: AbaRegisterValidateTechnicalFeasibilityRequestDto,
+  ): Promise<IAbaRegisterValidateTechnicalFeasibilityResponse> {
+    return this.abaRegisterValidateTechnicalFeasibilityService.execute(dto);
   }
 }

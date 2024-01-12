@@ -5,6 +5,7 @@ import { CreateAndProvisioningCustomerRawService } from './create-and-provisioni
 import { CreateAndProvisioningMasterAccountRawService } from './create-and-provisioning-master-account/create-and-provisioning-mater-account-raw.service';
 import { CustomerExistsRawService } from './customer-exists/customer-exists-raw.service';
 import { DSLAuditLogsRawService } from './dsl-audit-logs/dsl-audit-logs-raw.service';
+import { GetABADataFromRequestsRawService } from 'src/validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
 import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
 import { GetAndRegisterQualifOfServiceRawService } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-raw.service';
 import { GetCustomerClassNameFromIdValueRawService } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
@@ -35,6 +36,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     CreateAndProvisioningMasterAccountRawService,
     CustomerExistsRawService,
     DSLAuditLogsRawService,
+    GetABADataFromRequestsRawService,
     GetAllValuesFromCustomerValuesRawService,
     GetAndRegisterQualifOfServiceRawService,
     GetCustomerClassNameFromIdValueRawService,
@@ -61,6 +63,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     CreateAndProvisioningMasterAccountRawService,
     CustomerExistsRawService,
     DSLAuditLogsRawService,
+    GetABADataFromRequestsRawService,
     GetAllValuesFromCustomerValuesRawService,
     GetAndRegisterQualifOfServiceRawService,
     GetCustomerClassNameFromIdValueRawService,
