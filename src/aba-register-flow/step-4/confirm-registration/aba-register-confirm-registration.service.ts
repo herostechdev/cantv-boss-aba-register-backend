@@ -6,11 +6,12 @@ import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/dependen
 import { AbaRegisterGetCSIdAndPlanNameFromLoginService } from '../../dependencies/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login.service';
 import { AbaRegisterGetAbaPlanForKenanService } from '../../dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 import { AbaRegisterIsReservedLoginService } from '../../dependencies/is-reserved-login/is-reserved-login.service';
+import { AbaRegisterMailService } from 'src/aba-register-flow/dependencies/mail/aba-register-mail.service';
 import { AbaRegisterService } from 'src/aba-register-flow/dependencies/aba-register/aba-register.service';
-import { BossConstants } from 'src/boss/boss.constants';
-import { BossHelper } from 'src/boss/boss.helper';
 import { AbaRegisterConfirmRegistrationRequestDto } from './aba-register-confirm-registration-request.dto';
 import { AbaRegisterConfirmRegistrationResponse } from './aba-register-confirm-registration-response';
+import { BossConstants } from 'src/boss/boss.constants';
+import { BossHelper } from 'src/boss/boss.helper';
 import { CreateAndProvisioningCustomerStatusConstants } from '../../../raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
 import { CreateAndProvisioningMasterAccountStatusConstants } from '../../../raw/stored-procedures/create-and-provisioning-master-account/create-and-provisioning-master-account-status.constants';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
@@ -30,6 +31,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
     private readonly abaRegisterGetCSIdAndPlanNameFromLoginService: AbaRegisterGetCSIdAndPlanNameFromLoginService,
     private readonly abaRegisterGetAbaPlanForKenanService: AbaRegisterGetAbaPlanForKenanService,
     private readonly abaRegisterIsReservedLoginService: AbaRegisterIsReservedLoginService,
+    private readonly abaRegisterMailService: AbaRegisterMailService,
     private readonly abaRegisterService: AbaRegisterService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
@@ -255,6 +257,12 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         clazz: AbaRegisterConfirmRegistrationService.name,
         method: 'confirmRegistrationFlow',
       });
+
+      // this.abaRegisterMailService.okNotification({
+      //   areaCode: dto.areaCode,
+      //   phoneNumber: dto.phoneNumber,
+      // });
+
       return data;
     } catch (error) {
       Wlog.instance.error({
@@ -264,6 +272,12 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         method: 'confirmRegistrationFlow',
         error: error,
       });
+
+      // this.abaRegisterMailService.notOkNotification({
+      //   areaCode: dto.areaCode,
+      //   phoneNumber: dto.phoneNumber,
+      // });
+
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: dto.areaCode,
         phoneNumber: dto.phoneNumber,

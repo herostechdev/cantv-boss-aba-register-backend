@@ -20,10 +20,10 @@ export class AbaRegisterMailService {
         clazz: AbaRegisterMailService.name,
         method: 'okNotification',
       });
-      await this.mailService.send(this.getOptions());
+      await this.mailService.send(this.getOkOptions());
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.ABA_SEND_OK_NOTIFICATION,
+        message: BossConstants.ABA_SENT_OK_NOTIFICATION,
         input: JSON.stringify(dto),
         clazz: AbaRegisterMailService.name,
         method: 'okNotification',
@@ -31,10 +31,38 @@ export class AbaRegisterMailService {
     } catch (error) {}
   }
 
-  public async errorNotification(): Promise<void> {
+  public async notOkNotification(dto: AbaRegisterMailDto): Promise<void> {
     try {
-      await this.mailService.send(this.getOptions());
+      Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
+        message: BossConstants.ABA_SEND_NOT_OK_NOTIFICATION,
+        input: JSON.stringify(dto),
+        clazz: AbaRegisterMailService.name,
+        method: 'notOkNotification',
+      });
+      await this.mailService.send(this.getNotOkOptions());
+      Wlog.instance.info({
+        phoneNumber: BossHelper.getPhoneNumber(dto),
+        message: BossConstants.ABA_SENT_NOT_OK_NOTIFICATION,
+        input: JSON.stringify(dto),
+        clazz: AbaRegisterMailService.name,
+        method: 'notOkNotification',
+      });
     } catch (error) {}
+  }
+
+  private getOkOptions(): IMailSendOptions {
+    const options = this.getOptions();
+    options.subject = null;
+    options.body = null;
+    return options;
+  }
+
+  private getNotOkOptions(): IMailSendOptions {
+    const options = this.getOptions();
+    options.subject = null;
+    options.body = null;
+    return options;
   }
 
   private getOptions(): IMailSendOptions {
