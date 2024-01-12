@@ -1,7 +1,7 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 import { IPhoneNumber } from 'src/boss/phone-number.interface';
 
-export class IsIPAllowedRequestDto implements IPhoneNumber {
+export class CheckIpRequestDto implements IPhoneNumber {
   @IsString()
   areaCode: string;
 
@@ -10,4 +10,8 @@ export class IsIPAllowedRequestDto implements IPhoneNumber {
 
   @IsInt()
   dslamportId: number;
+
+  @IsString()
+  @IsOptional()
+  loginInstall?: string;
 }

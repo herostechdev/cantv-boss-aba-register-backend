@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 
+import { AbaRegisterCheckIpService } from 'src/aba-register-flow/dependencies/check-ip/check-ip.service';
 import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
+import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
-import { CheckIpException } from '../../../raw/stored-procedures/check-ip/check-ip.exception';
-import { CheckIpStatusConstants } from '../../../raw/stored-procedures/check-ip/check-ip-status.constants';
 import { DeleteOrderStatusConstants } from '../../../validate-technical-feasibility/delete-order/delete-order-status.constants';
 import { DeleteOrderExecutionErrorException } from '../../../validate-technical-feasibility/delete-order/delete-order-execution-error.exception';
 import { DeleteOrderThePortIsOccupiedByAnotherContractException } from '../../../validate-technical-feasibility/delete-order/delete-order-the-is-occupied-by-another-contract.exception';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
-import { Error30031Exception } from 'src/exceptions/error-3003-1.exception';
-import { Error30032Exception } from 'src/exceptions/error-3003-2.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
 import { Error30043Exception } from 'src/exceptions/error-3004-3.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
@@ -34,7 +32,7 @@ import { GetPortIdFromIpBadIpFormatException } from '../../../validate-technical
 import { GetPortIdFromIpConstants } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip.constants';
 import { GetPortIdStatusConstants } from '../../../validate-technical-feasibility/get-port-id/get-port-id-status.constants';
 import { GetPortIdException } from '../../../validate-technical-feasibility/get-port-id/get-port-id.exception';
-import { ICheckIpResponse } from '../../../raw/stored-procedures/check-ip/check-ip-response.interface';
+import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
 import { IDeleteOrderResponse } from '../../../validate-technical-feasibility/delete-order/delete-order-response.interface';
 import { IGetABADataResponse } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
@@ -63,8 +61,6 @@ import { ReadIABAOrderOrderIsOldException } from '../../../validate-technical-fe
 import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
 import { TheClientAlreadyHasABAServiceException } from '../../../validate-technical-feasibility/exceptions/the-client-already-has-aba-service.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
-import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { VerifyContractByPhoneException } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone-status.constants';
@@ -73,6 +69,7 @@ import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.se
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
+    private readonly abaRegisterCheckIpService: AbaRegisterCheckIpService,
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
@@ -262,7 +259,14 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
             clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
-          data.checkIpResponse = await this.checkIp(data);
+          data.checkIpResponse = await this.abaRegisterCheckIpService.execute({
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+            dslamportId:
+              data.getPortIdFromIpResponse.dslamportId ??
+              data.getPortIdResponse.portId,
+            loginInstall: dto.loginInstall,
+          });
         }
       } else {
         Wlog.instance.info({
@@ -837,54 +841,54 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
     }
   }
 
-  private async checkIp(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<ICheckIpResponse> {
-    const parameters = {
-      abadslamportid: OracleHelper.stringBindIn(
-        String(
-          data.getPortIdFromIpResponse.dslamportId ??
-            data.getPortIdResponse.portId,
-        ),
-      ),
-      abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
-      abaphonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
-      abauserlogin: OracleHelper.stringBindIn(
-        data.requestDto.loginInstall ?? BossConstants.REGISTER,
-      ),
-      abaportwithcontract: OracleHelper.numberBindIn(BossConstants.ZERO),
-      Status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.BOSS_PACKAGE,
-      BossConstants.CHECK_IP,
-      parameters,
-    );
-    const response: ICheckIpResponse = {
-      status: (result?.outBinds?.Status ??
-        CheckIpStatusConstants.ERROR) as CheckIpStatusConstants,
-    };
-    switch (response.status) {
-      case CheckIpStatusConstants.SUCCESSFULL:
-        return response;
-      case CheckIpStatusConstants.ERROR:
-        throw new CheckIpException(result);
-      case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PHONE_NUMBER:
-        return response;
-      case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PARAMETER:
-        throw new Error30032Exception();
-      case CheckIpStatusConstants.SUCCESSFULL_BY_BUSSINESS_LOGIC:
-        return response;
-      case CheckIpStatusConstants.THERE_IS_NOT_CONTRACT_ASSOCIATED_WITH_THE_PORT:
-        return response;
-      case CheckIpStatusConstants.THE_PORT_IS_RESERVED:
-        return response;
-      case CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
-        throw new Error30031Exception();
-      default:
-        throw new CheckIpException(result);
-    }
-  }
+  // private async checkIp(
+  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
+  // ): Promise<ICheckIpResponse> {
+  //   const parameters = {
+  //     abadslamportid: OracleHelper.stringBindIn(
+  //       String(
+  //         data.getPortIdFromIpResponse.dslamportId ??
+  //           data.getPortIdResponse.portId,
+  //       ),
+  //     ),
+  //     abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
+  //     abaphonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
+  //     abauserlogin: OracleHelper.stringBindIn(
+  //       data.requestDto.loginInstall ?? BossConstants.REGISTER,
+  //     ),
+  //     abaportwithcontract: OracleHelper.numberBindIn(BossConstants.ZERO),
+  //     Status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.BOSS_PACKAGE,
+  //     BossConstants.CHECK_IP,
+  //     parameters,
+  //   );
+  //   const response: ICheckIpResponse = {
+  //     status: (result?.outBinds?.Status ??
+  //       CheckIpStatusConstants.ERROR) as CheckIpStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case CheckIpStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case CheckIpStatusConstants.ERROR:
+  //       throw new CheckIpException(result);
+  //     case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PHONE_NUMBER:
+  //       return response;
+  //     case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PARAMETER:
+  //       throw new Error30032Exception();
+  //     case CheckIpStatusConstants.SUCCESSFULL_BY_BUSSINESS_LOGIC:
+  //       return response;
+  //     case CheckIpStatusConstants.THERE_IS_NOT_CONTRACT_ASSOCIATED_WITH_THE_PORT:
+  //       return response;
+  //     case CheckIpStatusConstants.THE_PORT_IS_RESERVED:
+  //       return response;
+  //     case CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
+  //       throw new Error30031Exception();
+  //     default:
+  //       throw new CheckIpException(result);
+  //   }
+  // }
 
   private async getDataFromDslamPortId(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,

@@ -3,6 +3,7 @@ import { AbaRegisterRawService } from './aba-register/aba-register-raw.service';
 import { AbaRegisterRequestDto } from './aba-register/aba-register-request.dto';
 import { CancelAbaInstallationRawService } from './cancel-aba-installation/cancel-aba-installation-raw.service';
 import { CancelAbaInstallationRequestDto } from './cancel-aba-installation/cancel-aba-installation-request.dto';
+import { CheckIpRawService } from './check-ip/check-ip-raw.service';
 import { CreateAndProvisioningCustomerRawService } from './create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
 import { CreateAndProvisioningCustomerRequestDto } from './create-and-provisioning-customer/create-and-provisioning-customer-request.dto';
 import { CreateAndProvisioningMasterAccountRawService } from './create-and-provisioning-master-account/create-and-provisioning-mater-account-raw.service';
@@ -73,6 +74,8 @@ import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
+import { CheckIpRequestDto } from './check-ip/check-ip-request.dto';
+import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
 
 @Controller({
   path: 'raw/sp',
@@ -82,6 +85,7 @@ export class StoredProceduresRawController {
   constructor(
     private readonly abaRegisterRawService: AbaRegisterRawService,
     private readonly cancelAbaInstallationRawService: CancelAbaInstallationRawService,
+    private readonly checkIpRawService: CheckIpRawService,
     private readonly createAndProvisioningCustomerRawService: CreateAndProvisioningCustomerRawService,
     private readonly createAndProvisioningMasterAccountRawService: CreateAndProvisioningMasterAccountRawService,
     private readonly customerExistsRawService: CustomerExistsRawService,
@@ -121,6 +125,13 @@ export class StoredProceduresRawController {
     @Body() dto: CancelAbaInstallationRequestDto,
   ): Promise<ICancelABAInstallationResponse> {
     return this.cancelAbaInstallationRawService.execute(dto);
+  }
+
+  @Post('checkIp')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  checkIp(@Body() dto: CheckIpRequestDto): Promise<ICheckIpResponse> {
+    return this.checkIpRawService.execute(dto);
   }
 
   @Post('createAndProvisioningCustomer')

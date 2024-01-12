@@ -123,9 +123,7 @@ export class OracleHelper {
   }
 
   public static getParameterValue(result: any, parameterName: string): any {
-    return !OracleHelper.checkResult(result, parameterName)
-      ? null
-      : result[OracleConstants.OUTBINDS][parameterName];
+    return result?.[OracleConstants.OUTBINDS]?.[parameterName];
   }
 
   private static checkResult(result: any, parameterName: string): boolean {
@@ -137,9 +135,6 @@ export class OracleHelper {
   }
 
   public static getItems(result: any, parameterName: string): any[] {
-    if (!OracleHelper.checkResult(result, parameterName)) {
-      return null;
-    }
     const value = OracleHelper.getParameterValue(result, parameterName);
     return ArrayHelper.isArrayWithItems(value) ? value : null;
   }
