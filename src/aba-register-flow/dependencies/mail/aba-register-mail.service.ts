@@ -51,6 +51,7 @@ export class AbaRegisterMailService {
     } catch (error) {}
   }
 
+  // TODO: getOkOptions
   private getOkOptions(): IMailSendOptions {
     const options = this.getOptions();
     options.subject = null;
@@ -58,6 +59,7 @@ export class AbaRegisterMailService {
     return options;
   }
 
+  // TODO: getNotOkOptions
   private getNotOkOptions(): IMailSendOptions {
     const options = this.getOptions();
     options.subject = null;
@@ -65,6 +67,7 @@ export class AbaRegisterMailService {
     return options;
   }
 
+  // TODO: mail common options
   private getOptions(): IMailSendOptions {
     return {
       from: null,

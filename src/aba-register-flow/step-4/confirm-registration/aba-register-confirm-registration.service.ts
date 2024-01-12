@@ -258,6 +258,8 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         method: 'confirmRegistrationFlow',
       });
 
+      // TODO: send mail notifications
+      // TODO: Add mail configurations (enable send mail notifications)
       // this.abaRegisterMailService.okNotification({
       //   areaCode: dto.areaCode,
       //   phoneNumber: dto.phoneNumber,
@@ -273,6 +275,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
         error: error,
       });
 
+      // TODO: send mail notifications
       // this.abaRegisterMailService.notOkNotification({
       //   areaCode: dto.areaCode,
       //   phoneNumber: dto.phoneNumber,
