@@ -58,7 +58,6 @@ export class DSLAuditLogsRawService extends OracleExecuteStoredProcedureRawServi
       status: (OracleHelper.getFirstItem(result, 'o_status') ??
         DSLAuditLogsStatusConstants.ERROR) as DSLAuditLogsStatusConstants,
     };
-
     switch (response.status) {
       case DSLAuditLogsStatusConstants.SUCCESSFULL:
         return response;

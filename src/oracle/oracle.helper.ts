@@ -7,7 +7,6 @@ import {
   DATE,
   DB_TYPE_VARCHAR,
   DB_TYPE_NUMBER,
-  DB_TYPE_DATE,
   DB_TYPE_RAW,
   DB_TYPE_CURSOR,
   DB_TYPE_OBJECT,
@@ -77,7 +76,6 @@ export class OracleHelper {
 
   public static dateBindOut(): BindParameters {
     return {
-      // type: DB_TYPE_DATE,
       type: DATE,
       dir: BIND_OUT,
     };
@@ -124,21 +122,30 @@ export class OracleHelper {
     };
   }
 
-  public static getItems(result: any, itemName: string): any[] {
-    if (
-      !result ||
-      !result.hasOwnProperty('outBinds') ||
-      !result.outBinds.hasOwnProperty(itemName)
-    ) {
-      return null;
-    }
-    return ArrayHelper.isArrayWithItems(result.outBinds[itemName])
-      ? result.outBinds[itemName]
-      : null;
+  public static getParameterValue(result: any, parameterName: string): any {
+    return !OracleHelper.checkResult(result, parameterName)
+      ? null
+      : result[OracleConstants.OUTBINDS][parameterName];
   }
 
-  public static getFirstItem(result: any, itemName: string): any {
-    const items = OracleHelper.getItems(result, itemName);
+  private static checkResult(result: any, parameterName: string): boolean {
+    return (
+      result &&
+      result.hasOwnProperty(OracleConstants.OUTBINDS) &&
+      result.outBinds.hasOwnProperty(parameterName)
+    );
+  }
+
+  public static getItems(result: any, parameterName: string): any[] {
+    if (!OracleHelper.checkResult(result, parameterName)) {
+      return null;
+    }
+    const value = OracleHelper.getParameterValue(result, parameterName);
+    return ArrayHelper.isArrayWithItems(value) ? value : null;
+  }
+
+  public static getFirstItem(result: any, parameterName: string): any {
+    const items = OracleHelper.getItems(result, parameterName);
     return ArrayHelper.isArrayWithItems(items) ? items[0] : null;
   }
 }
