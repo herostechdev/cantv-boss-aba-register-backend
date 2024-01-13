@@ -60,6 +60,7 @@ export class BossConstants {
   public static ISG_ACTION_ALLOWED = 'ISGActionAllowed';
   public static PLAN_BY_CUSTOMER_CLASS = 'PlansByClassClient';
   public static READ_IABA_ORDER = 'ReadIABAOrder';
+  public static REVERSE_ABA_REGISTER = 'ReverseAbaRegister';
   public static UPDATE_DSL_ABA_REGISTERS = 'UpdateDslAbaRegisters';
   public static VERIFY_CONTRACT_BY_PHONE = 'verifycontracbyphone';
 

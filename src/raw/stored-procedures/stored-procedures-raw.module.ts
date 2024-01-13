@@ -25,6 +25,7 @@ import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
 import { IsReservedLoginRawService } from './is-reserved-login/is-reserved-login-raw.service';
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
+import { ReverseAbaRegisterRawService } from './reverse-aba-register/reverse-aba-register-raw.service';
 import { StoredProceduresRawController } from './stored-procedures-raw.controller';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
@@ -58,6 +59,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     IsPrepaidVoiceLineRawService,
     IsReservedLoginRawService,
     PlansByCustomerClassRawService,
+    ReverseAbaRegisterRawService,
     UpdateDslAbaRegistersRawService,
   ],
   exports: [
@@ -87,6 +89,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     IsPrepaidVoiceLineRawService,
     IsReservedLoginRawService,
     PlansByCustomerClassRawService,
+    ReverseAbaRegisterRawService,
     UpdateDslAbaRegistersRawService,
   ],
 })

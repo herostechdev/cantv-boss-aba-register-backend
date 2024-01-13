@@ -66,6 +66,7 @@ import { IIsReservedLoginResponse } from './is-reserved-login/is-reserved-login-
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers/insert-dsl-aba-registers-request.dto';
 import { IPlansByCustomerClassListResponse } from './plans-by-customer-class/plans-by-customer-class-list-response.interface';
+import { IReverseAbaRegisterResponse } from './reverse-aba-register/reverse-aba-register-response.interface';
 import { IsReservedLoginRawService } from './is-reserved-login/is-reserved-login-raw.service';
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allowed-request.dto';
@@ -77,6 +78,8 @@ import { IsReservedLoginRequestDto } from './is-reserved-login/is-reserved-login
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-by-customer-class-request.dto';
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
+import { ReverseAbaRegisterRawService } from './reverse-aba-register/reverse-aba-register-raw.service';
+import { ReverseAbaRegisterRequestDto } from './reverse-aba-register/reverse-aba-register-request.dto';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
 
@@ -111,6 +114,7 @@ export class StoredProceduresRawController {
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
     private readonly isReservedLoginRawService: IsReservedLoginRawService,
     private readonly planByCustomerClassRawService: PlansByCustomerClassRawService,
+    private readonly reverseAbaRegisterRawService: ReverseAbaRegisterRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {}
   @Post('abaRegister')
@@ -334,6 +338,15 @@ export class StoredProceduresRawController {
     @Body() dto: PlansByCustomerClassRequestDto,
   ): Promise<IPlansByCustomerClassListResponse> {
     return this.planByCustomerClassRawService.execute(dto);
+  }
+
+  @Post('reverseAbaRegister')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  reverseAbaRegister(
+    @Body() dto: ReverseAbaRegisterRequestDto,
+  ): Promise<IReverseAbaRegisterResponse> {
+    return this.reverseAbaRegisterRawService.execute(dto);
   }
 
   @Post('updateDslAbaRegisters')
