@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+# compiled output
+/.VSCodeCounter
+
 # Logs
 logs
 *.log
