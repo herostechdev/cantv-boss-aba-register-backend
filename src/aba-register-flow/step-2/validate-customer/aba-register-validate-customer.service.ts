@@ -18,9 +18,13 @@ import { GetFirstLetterFromABARequestStatusConstants } from '../../../raw/stored
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { AbaRegisterValidateCustomerData } from './aba-register-validate-customer-data';
+import { AbaRegisterValidateCustomerResponse } from './aba-register-validate-customer-response';
 import { AbaRegisterValidateCustomerRequestDto } from './aba-register-validate-customer-request.dto';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
+import { IPhoneNumber } from 'src/boss/phone-number.interface';
+import { GetCustomerClassNameFromIdValueDto } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-request.dto';
+import { IGetCustomerClassNameFromIdValueResponse } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
 
 @Injectable()
 export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
@@ -37,9 +41,9 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
     super(oracleConfigurationService);
   }
 
-  async validate(
+  async execute(
     dto: AbaRegisterValidateCustomerRequestDto,
-  ): Promise<AbaRegisterValidateCustomerData> {
+  ): Promise<AbaRegisterValidateCustomerResponse> {
     try {
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -59,7 +63,7 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
           clazz: AbaRegisterValidateCustomerService.name,
           method: 'validateCustomer',
         });
-        data.getClientClassNameFromIdValueResponse =
+        data.getCustomerClassNameFromIdValueResponse =
           await this.getCustomerClassNameFromIdValueRawService.execute({
             areaCode: dto.areaCode,
             phoneNumber: dto.phoneNumber,
@@ -68,8 +72,23 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
             ),
             value: dto.customerIdentificationDocument,
           });
+        // data.getCustomerClassNameFromIdValueResponse = this.invoke<
+        //   GetCustomerClassNameFromIdValueDto,
+        //   IGetCustomerClassNameFromIdValueResponse
+        // >(
+        //   {
+        //     areaCode: dto.areaCode,
+        //     phoneNumber: dto.phoneNumber,
+        //     customerAttributeName: BossHelper.getIdentificationDocumentType(
+        //       dto.customerClassName,
+        //     ),
+        //     value: dto.customerIdentificationDocument,
+        //   },
+        //   this.getCustomerClassNameFromIdValueRawService,
+        //   'getClientClassNameFromIdValue',
+        // );
         if (
-          data.getClientClassNameFromIdValueResponse.status !==
+          data.getCustomerClassNameFromIdValueResponse.status !==
           GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL
         ) {
         }
@@ -99,7 +118,7 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
           clazz: AbaRegisterValidateCustomerService.name,
           method: 'validateCustomer',
         });
-        data.clientExistsResponse =
+        data.customerExistsResponse =
           await this.abaRegisterCustomerExistsService.execute(
             {
               areaCode: dto.areaCode,
@@ -112,10 +131,10 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
             this.dbConnection,
           );
         if (
-          data.clientExistsResponse.status ===
+          data.customerExistsResponse.status ===
           CustomerExistsStatusConstants.SUCCESSFULL
         ) {
-          dto.customerClassName = data.clientExistsResponse.customerClassName;
+          dto.customerClassName = data.customerExistsResponse.customerClassName;
         } else {
           // CANTV informa que no se debe llamar esta API. Solo dejar comentario
           // ValidarRifEnSeniat - URL. Invocar SENIAT para validar SOLO RIF. Si falla ignorar el error y cont.
@@ -128,7 +147,7 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
         clazz: AbaRegisterValidateCustomerService.name,
         method: 'validateCustomer',
       });
-      data.getAllValuesFromClientValuesResponse =
+      data.getAllValuesFromCustomerValuesResponse =
         await this.getAllValuesFromCustomerValuesRawService.execute({
           areaCode: dto.areaCode,
           phoneNumber: dto.phoneNumber,
@@ -141,7 +160,7 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
           ),
         });
       if (
-        data.getAllValuesFromClientValuesResponse.status ===
+        data.getAllValuesFromCustomerValuesResponse.status ===
         GetAllValuesFromCustomerValuesStatusConstants.SUCCESSFULL
       ) {
         Wlog.instance.info({
@@ -151,7 +170,7 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
           clazz: AbaRegisterValidateCustomerService.name,
           method: 'validateCustomer',
         });
-        data.getClientInstanceIdFromIdValueResponse =
+        data.getCustomerInstanceIdFromIdValueResponse =
           await this.getCustomerInstanceIdFromIdValueRawService.execute({
             areaCode: dto.areaCode,
             phoneNumber: dto.phoneNumber,
@@ -163,7 +182,7 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
             ),
           });
         if (
-          data.getClientInstanceIdFromIdValueResponse.status ===
+          data.getCustomerInstanceIdFromIdValueResponse.status ===
           GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL
         ) {
           Wlog.instance.info({
@@ -173,17 +192,18 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
             clazz: AbaRegisterValidateCustomerService.name,
             method: 'validateCustomer',
           });
-          data.getDebtFromClientResponse =
+          data.getDebtFromCustomerResponse =
             await this.getDebtFromCustomerRawService.execute({
               areaCode: dto.areaCode,
               phoneNumber: dto.phoneNumber,
               customerInstanceId:
-                data.getClientInstanceIdFromIdValueResponse.customerInstanceId,
+                data.getCustomerInstanceIdFromIdValueResponse
+                  .customerInstanceId,
             });
           if (
-            data.getDebtFromClientResponse.status ===
+            data.getDebtFromCustomerResponse.status ===
               GetDebtFromCustomerStatusConstants.SUCCESSFULL &&
-            data.getDebtFromClientResponse.amount > BossConstants.ZERO
+            data.getDebtFromCustomerResponse.amount > BossConstants.ZERO
           ) {
             Wlog.instance.info({
               phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -203,7 +223,7 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
         }
       } else {
         if (
-          data.getAllValuesFromClientValuesResponse.status !==
+          data.getAllValuesFromCustomerValuesResponse.status !==
           GetAllValuesFromCustomerValuesStatusConstants.THERE_IS_NO_DATA
         ) {
           Wlog.instance.info({
@@ -242,16 +262,36 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
     }
   }
 
-  private initizializeResponse(): AbaRegisterValidateCustomerData {
-    const data = new AbaRegisterValidateCustomerData();
+  private initizializeResponse(): AbaRegisterValidateCustomerResponse {
+    const data = new AbaRegisterValidateCustomerResponse();
     data.requestDto = null;
-    data.clientExistsResponse = null;
-    data.getAllValuesFromClientValuesResponse = null;
-    data.getClientClassNameFromIdValueResponse = null;
-    data.getClientInstanceIdFromIdValueResponse = null;
+    data.customerExistsResponse = null;
+    data.getAllValuesFromCustomerValuesResponse = null;
+    data.getCustomerClassNameFromIdValueResponse = null;
+    data.getCustomerInstanceIdFromIdValueResponse = null;
     data.getFirstLetterFromABARequestResponse = null;
-    data.getDebtFromClientResponse = null;
+    data.getDebtFromCustomerResponse = null;
     data.updateDslABARegistersResponse = null;
     return data;
+  }
+
+  private invoke<DTO extends IPhoneNumber, RESPONSE>(
+    dto: DTO,
+    service: IOracleExecute<DTO, RESPONSE>,
+    logMessage: string,
+    autoCommit?: boolean,
+  ): Promise<RESPONSE> {
+    this.infoLog(dto, logMessage);
+    return service.execute(dto, this.dbConnection, autoCommit);
+  }
+
+  private infoLog<DTO extends IPhoneNumber>(dto: DTO, message: string): void {
+    Wlog.instance.info({
+      phoneNumber: BossHelper.getPhoneNumber(dto),
+      message: message,
+      input: BossHelper.getPhoneNumber(dto),
+      clazz: AbaRegisterValidateCustomerService.name,
+      method: BossConstants.EXECUTE,
+    });
   }
 }
