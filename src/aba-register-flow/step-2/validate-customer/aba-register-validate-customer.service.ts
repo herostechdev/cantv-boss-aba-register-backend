@@ -11,7 +11,6 @@ import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
 import { GetAllValuesFromCustomerValuesRawService } from 'src/raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
 import { GetAllValuesFromCustomerValuesStatusConstants } from '../../../raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-status.constants';
 import { GetCustomerClassNameFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
-import { GetCustomerClassNameFromIdValueStatusConstants } from '../../../raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-status.constants';
 import { GetCustomerInstanceIdFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
 import { GetCustomerInstanceIdFromIdValueStatusConstants } from '../../../raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
 import { GetDebtFromCustomerRawService } from 'src/raw/stored-procedures/get-debt-from-customer/get-debt-from-customer-raw.service';
@@ -50,12 +49,11 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
       await super.connect();
       if (BossHelper.isNaturalPerson(dto.customerClassName)) {
         await this.getCustomerClassNameFromIdValue();
-        if (
-          this.response.getCustomerClassNameFromIdValueResponse.status !==
-          GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL
-        ) {
-        }
-
+        // if (
+        //   this.response.getCustomerClassNameFromIdValueResponse.status !==
+        //   GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL
+        // ) {
+        // }
         await this.getFirstLetterFromABARequest();
         if (
           this.response.getFirstLetterFromABARequestResponse.status ===
