@@ -7,7 +7,7 @@ import { IGetDebtFromCustomerResponse } from '../../../raw/stored-procedures/get
 import { IGetFirstLetterFromABARequestResponse } from '../../../raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IUpdateDslAbaRegistersResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 
-export class AbaRegisterValidateCustomerResponse {
+export interface IAbaRegisterValidateCustomerResponse {
   requestDto: AbaRegisterValidateCustomerRequestDto;
   customerExistsResponse: ICustomerExistsResponse;
   getAllValuesFromCustomerValuesResponse: IGetAllValuesFromCustomerValuesResponse;

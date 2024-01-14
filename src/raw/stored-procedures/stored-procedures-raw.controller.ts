@@ -346,7 +346,7 @@ export class StoredProceduresRawController {
   reverseAbaRegister(
     @Body() dto: ReverseAbaRegisterRequestDto,
   ): Promise<IReverseAbaRegisterResponse> {
-    return this.reverseAbaRegisterRawService.execute(dto);
+    return this.reverseAbaRegisterRawService.execute(dto, null, true);
   }
 
   @Post('updateDslAbaRegisters')

@@ -21,17 +21,16 @@ export class UpdateDslAbaRegistersRawService extends OracleDatabaseService {
   async execute(
     dto: UpdateDslAbaRegistersRequestDto,
     dbConnection?: Connection,
+    autoCommit = false,
   ): Promise<IUpdateDslAbaRegistersResponse> {
     try {
-      console.log();
-      console.log('UpdateDslAbaRegistersRawService');
-      console.log(dto);
-      console.log();
       await super.connect(dbConnection);
       const result = await super.executeStoredProcedure(
         BossConstants.ABA_PACKAGE,
         BossConstants.UPDATE_DSL_ABA_REGISTERS,
         this.getParameters(dto),
+        null,
+        autoCommit,
       );
       const response = this.getResponse(result);
       switch (response.status) {
@@ -76,9 +75,11 @@ export class UpdateDslAbaRegistersRawService extends OracleDatabaseService {
 
   async errorUpdate(
     dto: UpdateDslAbaRegistersRequestDto,
+    dbConnection?: Connection,
+    autoCommit = false,
   ): Promise<IUpdateDslAbaRegistersResponse> {
     try {
-      return await this.execute(dto);
+      return await this.execute(dto, dbConnection, autoCommit);
     } catch (error) {}
   }
 }

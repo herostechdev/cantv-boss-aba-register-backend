@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterCustomerExistsService } from 'src/aba-register-flow/dependencies/customer-exists/aba-register-customer-exists.service';
+import { AbaRegisterValidateCustomerRequestDto } from './aba-register-validate-customer-request.dto';
+import { IAbaRegisterValidateCustomerResponse } from './aba-register-validate-customer-response.interface';
 import { BossConstants } from 'src/boss/boss.constants';
+import { BossFlowService } from 'src/boss-flows/boss-flow.service';
 import { BossHelper } from 'src/boss/boss.helper';
 import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
 import { Error1002Exception } from 'src/exceptions/error-1002.exception';
@@ -16,18 +19,13 @@ import { GetDebtFromCustomerStatusConstants } from '../../../raw/stored-procedur
 import { GetFirstLetterFromABARequestRawService } from 'src/raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
 import { GetFirstLetterFromABARequestStatusConstants } from '../../../raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { AbaRegisterValidateCustomerResponse } from './aba-register-validate-customer-response';
-import { AbaRegisterValidateCustomerRequestDto } from './aba-register-validate-customer-request.dto';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
-import { IPhoneNumber } from 'src/boss/phone-number.interface';
-import { GetCustomerClassNameFromIdValueDto } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-request.dto';
-import { IGetCustomerClassNameFromIdValueResponse } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
 
 @Injectable()
-export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
+export class AbaRegisterValidateCustomerService extends BossFlowService<
+  AbaRegisterValidateCustomerRequestDto,
+  IAbaRegisterValidateCustomerResponse
+> {
   constructor(
     private readonly abaRegisterCustomerExistsService: AbaRegisterCustomerExistsService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
@@ -38,260 +36,192 @@ export class AbaRegisterValidateCustomerService extends OracleDatabaseService {
     protected readonly oracleConfigurationService: OracleConfigurationService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
-    super(oracleConfigurationService);
+    super(oracleConfigurationService, updateDslAbaRegistersRawService);
+    super.className = AbaRegisterValidateCustomerService.name;
+    super.methodName = BossConstants.VALIDATE_METHOD;
   }
 
-  async execute(
+  async validate(
     dto: AbaRegisterValidateCustomerRequestDto,
-  ): Promise<AbaRegisterValidateCustomerResponse> {
+  ): Promise<IAbaRegisterValidateCustomerResponse> {
+    this.initialize(dto);
     try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.START,
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: AbaRegisterValidateCustomerService.name,
-        method: 'validateCustomer',
-      });
-      const data = this.initizializeResponse();
-      data.requestDto = dto;
+      super.infoLog(BossConstants.START);
       await super.connect();
       if (BossHelper.isNaturalPerson(dto.customerClassName)) {
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'getClientClassNameFromIdValue',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: AbaRegisterValidateCustomerService.name,
-          method: 'validateCustomer',
-        });
-        data.getCustomerClassNameFromIdValueResponse =
-          await this.getCustomerClassNameFromIdValueRawService.execute({
-            areaCode: dto.areaCode,
-            phoneNumber: dto.phoneNumber,
-            customerAttributeName: BossHelper.getIdentificationDocumentType(
-              dto.customerClassName,
-            ),
-            value: dto.customerIdentificationDocument,
-          });
-        // data.getCustomerClassNameFromIdValueResponse = this.invoke<
-        //   GetCustomerClassNameFromIdValueDto,
-        //   IGetCustomerClassNameFromIdValueResponse
-        // >(
-        //   {
-        //     areaCode: dto.areaCode,
-        //     phoneNumber: dto.phoneNumber,
-        //     customerAttributeName: BossHelper.getIdentificationDocumentType(
-        //       dto.customerClassName,
-        //     ),
-        //     value: dto.customerIdentificationDocument,
-        //   },
-        //   this.getCustomerClassNameFromIdValueRawService,
-        //   'getClientClassNameFromIdValue',
-        // );
+        await this.getCustomerClassNameFromIdValue();
         if (
-          data.getCustomerClassNameFromIdValueResponse.status !==
+          this.response.getCustomerClassNameFromIdValueResponse.status !==
           GetCustomerClassNameFromIdValueStatusConstants.SUCCESSFULL
         ) {
         }
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'getFirstLetterFromABARequest',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: AbaRegisterValidateCustomerService.name,
-          method: 'validateCustomer',
-        });
-        data.getFirstLetterFromABARequestResponse =
-          await this.getFirstLetterFromABARequestRawService.execute({
-            areaCode: dto.areaCode,
-            phoneNumber: dto.phoneNumber,
-          });
+
+        await this.getFirstLetterFromABARequest();
         if (
-          data.getFirstLetterFromABARequestResponse.status ===
+          this.response.getFirstLetterFromABARequestResponse.status ===
           GetFirstLetterFromABARequestStatusConstants.SUCCESSFULL
         ) {
-          data.requestDto.customerIdentificationDocument = `${data.getFirstLetterFromABARequestResponse.firstLetter}${data.requestDto.customerIdentificationDocument}`;
+          this.response.requestDto.customerIdentificationDocument = `${this.response.getFirstLetterFromABARequestResponse.firstLetter}${this.response.requestDto.customerIdentificationDocument}`;
         }
       } else {
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'clientExists',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: AbaRegisterValidateCustomerService.name,
-          method: 'validateCustomer',
-        });
-        data.customerExistsResponse =
-          await this.abaRegisterCustomerExistsService.execute(
-            {
-              areaCode: dto.areaCode,
-              phoneNumber: dto.phoneNumber,
-              attributeName: BossHelper.getIdentificationDocumentType(
-                dto.customerClassName,
-              ),
-              attributeValue: dto.customerIdentificationDocument,
-            },
-            this.dbConnection,
-          );
+        await this.customerExists();
         if (
-          data.customerExistsResponse.status ===
+          this.response.customerExistsResponse.status ===
           CustomerExistsStatusConstants.SUCCESSFULL
         ) {
-          dto.customerClassName = data.customerExistsResponse.customerClassName;
+          dto.customerClassName =
+            this.response.customerExistsResponse.customerClassName;
         } else {
           // CANTV informa que no se debe llamar esta API. Solo dejar comentario
           // ValidarRifEnSeniat - URL. Invocar SENIAT para validar SOLO RIF. Si falla ignorar el error y cont.
         }
       }
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'getAllValuesFromClientValues',
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: AbaRegisterValidateCustomerService.name,
-        method: 'validateCustomer',
-      });
-      data.getAllValuesFromCustomerValuesResponse =
-        await this.getAllValuesFromCustomerValuesRawService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-          className: dto.customerClassName,
-          attributeName: BossHelper.getIdentificationDocumentType(
-            dto.customerClassName,
-          ),
-          value: BossHelper.getIdentificationDocument(
-            dto.customerIdentificationDocument,
-          ),
-        });
+      await this.getAllValuesFromCustomerValues();
       if (
-        data.getAllValuesFromCustomerValuesResponse.status ===
+        this.response.getAllValuesFromCustomerValuesResponse.status ===
         GetAllValuesFromCustomerValuesStatusConstants.SUCCESSFULL
       ) {
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'getClientInstanceIdFromIdValue',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: AbaRegisterValidateCustomerService.name,
-          method: 'validateCustomer',
-        });
-        data.getCustomerInstanceIdFromIdValueResponse =
-          await this.getCustomerInstanceIdFromIdValueRawService.execute({
-            areaCode: dto.areaCode,
-            phoneNumber: dto.phoneNumber,
-            customerAttributeName: BossHelper.getIdentificationDocumentType(
-              dto.customerClassName,
-            ),
-            value: BossHelper.getIdentificationDocument(
-              dto.customerIdentificationDocument,
-            ),
-          });
+        await this.getCustomerInstanceIdFromIdValue();
         if (
-          data.getCustomerInstanceIdFromIdValueResponse.status ===
+          this.response.getCustomerInstanceIdFromIdValueResponse.status ===
           GetCustomerInstanceIdFromIdValueStatusConstants.SUCCESSFULL
         ) {
-          Wlog.instance.info({
-            phoneNumber: BossHelper.getPhoneNumber(dto),
-            message: 'getDebtFromClient',
-            input: BossHelper.getPhoneNumber(dto),
-            clazz: AbaRegisterValidateCustomerService.name,
-            method: 'validateCustomer',
-          });
-          data.getDebtFromCustomerResponse =
-            await this.getDebtFromCustomerRawService.execute({
-              areaCode: dto.areaCode,
-              phoneNumber: dto.phoneNumber,
-              customerInstanceId:
-                data.getCustomerInstanceIdFromIdValueResponse
-                  .customerInstanceId,
-            });
+          await this.getDebtFromCustomer();
           if (
-            data.getDebtFromCustomerResponse.status ===
+            this.response.getDebtFromCustomerResponse.status ===
               GetDebtFromCustomerStatusConstants.SUCCESSFULL &&
-            data.getDebtFromCustomerResponse.amount > BossConstants.ZERO
+            this.response.getDebtFromCustomerResponse.amount >
+              BossConstants.ZERO
           ) {
-            Wlog.instance.info({
-              phoneNumber: BossHelper.getPhoneNumber(dto),
-              message: 'updateDslABARegisters',
-              input: BossHelper.getPhoneNumber(dto),
-              clazz: AbaRegisterValidateCustomerService.name,
-              method: 'validateCustomer',
-            });
-            data.updateDslABARegistersResponse =
-              await this.updateDslAbaRegistersRawService.execute({
-                areaCode: data.requestDto.areaCode,
-                phoneNumber: data.requestDto.phoneNumber,
-                registerStatus: BossConstants.NOT_PROCESSED,
-              });
             throw new Error30101Exception();
           }
         }
       } else {
         if (
-          data.getAllValuesFromCustomerValuesResponse.status !==
+          this.response.getAllValuesFromCustomerValuesResponse.status !==
           GetAllValuesFromCustomerValuesStatusConstants.THERE_IS_NO_DATA
         ) {
-          Wlog.instance.info({
-            phoneNumber: BossHelper.getPhoneNumber(dto),
-            message: 'updateDslABARegisters',
-            input: BossHelper.getPhoneNumber(dto),
-            clazz: AbaRegisterValidateCustomerService.name,
-            method: 'validateCustomer',
-          });
-          data.updateDslABARegistersResponse =
-            await this.updateDslAbaRegistersRawService.execute({
-              areaCode: data.requestDto.areaCode,
-              phoneNumber: data.requestDto.phoneNumber,
-              registerStatus: BossConstants.NOT_PROCESSED,
-            });
           throw new Error1002Exception();
         }
       }
-      return data;
+      super.infoLog(BossConstants.END);
+      return this.response;
     } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: AbaRegisterValidateCustomerService.name,
-        method: 'validateCustomer',
-        error: error,
-      });
-      await this.updateDslAbaRegistersRawService.errorUpdate({
-        areaCode: dto.areaCode,
-        phoneNumber: dto.phoneNumber,
-        registerStatus: BossConstants.NOT_PROCESSED,
-      });
+      this.updateDslABARegistersWithNotProcessedValue(error);
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
       await this.closeConnection();
     }
   }
 
-  private initizializeResponse(): AbaRegisterValidateCustomerResponse {
-    const data = new AbaRegisterValidateCustomerResponse();
-    data.requestDto = null;
-    data.customerExistsResponse = null;
-    data.getAllValuesFromCustomerValuesResponse = null;
-    data.getCustomerClassNameFromIdValueResponse = null;
-    data.getCustomerInstanceIdFromIdValueResponse = null;
-    data.getFirstLetterFromABARequestResponse = null;
-    data.getDebtFromCustomerResponse = null;
-    data.updateDslABARegistersResponse = null;
-    return data;
+  private initialize(dto: AbaRegisterValidateCustomerRequestDto): void {
+    this.dto = dto;
+    this.response = {
+      requestDto: dto,
+      customerExistsResponse: null,
+      getAllValuesFromCustomerValuesResponse: null,
+      getCustomerClassNameFromIdValueResponse: null,
+      getCustomerInstanceIdFromIdValueResponse: null,
+      getFirstLetterFromABARequestResponse: null,
+      getDebtFromCustomerResponse: null,
+      updateDslABARegistersResponse: null,
+    };
   }
 
-  private invoke<DTO extends IPhoneNumber, RESPONSE>(
-    dto: DTO,
-    service: IOracleExecute<DTO, RESPONSE>,
-    logMessage: string,
-    autoCommit?: boolean,
-  ): Promise<RESPONSE> {
-    this.infoLog(dto, logMessage);
-    return service.execute(dto, this.dbConnection, autoCommit);
+  private async getCustomerClassNameFromIdValue(): Promise<void> {
+    super.infoLog('getClientClassNameFromIdValue');
+    this.response.getCustomerClassNameFromIdValueResponse =
+      await this.getCustomerClassNameFromIdValueRawService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        customerAttributeName: BossHelper.getIdentificationDocumentType(
+          this.dto.customerClassName,
+        ),
+        value: this.dto.customerIdentificationDocument,
+      });
   }
 
-  private infoLog<DTO extends IPhoneNumber>(dto: DTO, message: string): void {
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: message,
-      input: BossHelper.getPhoneNumber(dto),
-      clazz: AbaRegisterValidateCustomerService.name,
-      method: BossConstants.EXECUTE,
-    });
+  private async getFirstLetterFromABARequest(): Promise<void> {
+    super.infoLog('getFirstLetterFromABARequest');
+    this.response.getFirstLetterFromABARequestResponse =
+      await this.getFirstLetterFromABARequestRawService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+      });
+  }
+
+  private async customerExists(): Promise<void> {
+    super.infoLog('customerExists');
+    this.response.customerExistsResponse =
+      await this.abaRegisterCustomerExistsService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          attributeName: BossHelper.getIdentificationDocumentType(
+            this.dto.customerClassName,
+          ),
+          attributeValue: this.dto.customerIdentificationDocument,
+        },
+        this.dbConnection,
+      );
+  }
+
+  private async getAllValuesFromCustomerValues(): Promise<void> {
+    super.infoLog('getAllValuesFromCustomerValues');
+    this.response.getAllValuesFromCustomerValuesResponse =
+      await this.getAllValuesFromCustomerValuesRawService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        className: this.dto.customerClassName,
+        attributeName: BossHelper.getIdentificationDocumentType(
+          this.dto.customerClassName,
+        ),
+        value: BossHelper.getIdentificationDocument(
+          this.dto.customerIdentificationDocument,
+        ),
+      });
+  }
+
+  private async getCustomerInstanceIdFromIdValue(): Promise<void> {
+    super.infoLog('getCustomerInstanceIdFromIdValue');
+    this.response.getCustomerInstanceIdFromIdValueResponse =
+      await this.getCustomerInstanceIdFromIdValueRawService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        customerAttributeName: BossHelper.getIdentificationDocumentType(
+          this.dto.customerClassName,
+        ),
+        value: BossHelper.getIdentificationDocument(
+          this.dto.customerIdentificationDocument,
+        ),
+      });
+  }
+
+  private async getDebtFromCustomer(): Promise<void> {
+    super.infoLog('getDebtFromCustomer');
+    this.response.getDebtFromCustomerResponse =
+      await this.getDebtFromCustomerRawService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        customerInstanceId:
+          this.response.getCustomerInstanceIdFromIdValueResponse
+            .customerInstanceId,
+      });
+  }
+
+  private async updateDslABARegistersWithNotProcessedValue(
+    error: any,
+  ): Promise<void> {
+    super.errorLog(error);
+    this.response.updateDslABARegistersResponse =
+      await this.updateDslAbaRegistersRawService.errorUpdate(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          registerStatus: BossConstants.NOT_PROCESSED,
+        },
+        this.dbConnection,
+        true,
+      );
   }
 }

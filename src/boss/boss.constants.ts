@@ -109,5 +109,6 @@ export class BossConstants {
   public static START = 'Inicio';
   public static USERS = 'USUARIOS';
   public static UNKNOWN = 'UNKNOWN';
+  public static VALIDATE_METHOD = 'validate';
   public static VENEZUELA = 'VENEZUELA';
 }

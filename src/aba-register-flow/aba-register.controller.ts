@@ -13,7 +13,7 @@ import { AbaRegisterLoginService } from './step-1/login/aba-register-login.servi
 import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-customer-class/plans-by-customer-class.service';
 import { AbaRegisterRequestDto } from 'src/raw/stored-procedures/aba-register/aba-register-request.dto';
 import { AbaRegisterService } from './dependencies/aba-register/aba-register.service';
-import { AbaRegisterValidateCustomerResponse } from './step-2/validate-customer/aba-register-validate-customer-response';
+import { IAbaRegisterValidateCustomerResponse } from './step-2/validate-customer/aba-register-validate-customer-response.interface';
 import { AbaRegisterValidateCustomerRequestDto } from './step-2/validate-customer/aba-register-validate-customer-request.dto';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility-request.dto';
@@ -137,8 +137,8 @@ export class AbaRegisterController {
   @UseFilters(new HttpExceptionFilter())
   validateCustomer(
     @Body() dto: AbaRegisterValidateCustomerRequestDto,
-  ): Promise<AbaRegisterValidateCustomerResponse> {
-    return this.abaRegisterValidateCustomerService.execute(dto);
+  ): Promise<IAbaRegisterValidateCustomerResponse> {
+    return this.abaRegisterValidateCustomerService.validate(dto);
   }
 
   @Post('validateTechnicalFeasibility')
