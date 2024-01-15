@@ -229,7 +229,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
               phoneNumber: dto.phoneNumber,
               customerIdentificationDocument:
                 dto.customerIdentificationDocument,
-              installerLogin: dto.installerLogin,
+              installerLogin: dto.installerLogin ?? BossConstants.REGISTER,
             },
             this.dbConnection,
             false,
