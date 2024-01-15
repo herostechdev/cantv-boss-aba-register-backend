@@ -299,13 +299,16 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
           method: 'validateTechnicalFeasibility',
         });
         data.deleteOrderResponse =
-          await this.abaRegisterDeleteOrderService.execute({
-            areaCode: dto.areaCode,
-            phoneNumber: dto.phoneNumber,
-            dslamportId:
-              data.getPortIdFromIpResponse.dslamportId ??
-              data.getPortIdResponse.portId,
-          });
+          await this.abaRegisterDeleteOrderService.execute(
+            {
+              areaCode: dto.areaCode,
+              phoneNumber: dto.phoneNumber,
+              dslamportId:
+                data.getPortIdFromIpResponse.dslamportId ??
+                data.getPortIdResponse.portId,
+            },
+            this.dbConnection,
+          );
 
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),

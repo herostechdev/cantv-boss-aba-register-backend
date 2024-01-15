@@ -12,7 +12,7 @@ export class BossConstants {
 
   // STORED PROCEDURES
   public static ABA_REGISTER = 'AbaRegister';
-  public static CANCEL_ABA_INSTALLATION = 'CancelABAInstallation';
+  public static PAY_ABA_INSTALLATION = 'CancelABAInstallation';
   public static CHECK_IP = 'CheckIp';
   public static CUSTOMER_EXISTS = 'ClientExist';
   public static CREATE_AND_PROVISIONING_CUSTOMER = 'CreateAndProvisionClient';
@@ -87,6 +87,7 @@ export class BossConstants {
   public static ADSL = 'ADSL';
   public static ASAP_ORDER_COMRED_STATUS = 399;
   public static CANTV_BILLING = 'FACTURA_CANTV';
+  public static CONFIRM_METHOD = 'confirm';
   public static END = 'Fin';
   public static EXECUTE = 'execute';
   public static FISCAL_IDENTIFICATION_DOCUMENT_TYPE = 'NO_RIF';

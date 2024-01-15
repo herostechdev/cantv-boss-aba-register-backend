@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AbaRegisterRawService } from './aba-register/aba-register-raw.service';
-import { CancelAbaInstallationRawService } from './cancel-aba-installation/cancel-aba-installation-raw.service';
+import { PayAbaInstallationRawService } from './pay-aba-installation/pay-aba-installation-raw.service';
 import { CheckIpRawService } from './check-ip/check-ip-raw.service';
 import { CreateAndProvisioningCustomerRawService } from './create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
 import { CreateAndProvisioningMasterAccountRawService } from './create-and-provisioning-master-account/create-and-provisioning-mater-account-raw.service';
@@ -34,7 +34,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
   controllers: [StoredProceduresRawController],
   providers: [
     AbaRegisterRawService,
-    CancelAbaInstallationRawService,
+    PayAbaInstallationRawService,
     CheckIpRawService,
     CreateAndProvisioningCustomerRawService,
     CreateAndProvisioningMasterAccountRawService,
@@ -64,7 +64,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
   ],
   exports: [
     AbaRegisterRawService,
-    CancelAbaInstallationRawService,
+    PayAbaInstallationRawService,
     CheckIpRawService,
     CreateAndProvisioningCustomerRawService,
     CreateAndProvisioningMasterAccountRawService,

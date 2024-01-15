@@ -34,15 +34,6 @@ export abstract class BossFlowService<
   protected dto: DTO;
   protected response: RESPONSE;
 
-  //   private invoke<DTO extends IPhoneNumber, RESPONSE>(
-  //     dto: DTO,
-  //     logMessage: string,
-  //     autoCommit?: boolean,
-  //   ): Promise<RESPONSE> {
-  //     this.infoLog(dto, logMessage);
-  //     return service.execute(dto, this.dbConnection, autoCommit);
-  //   }
-
   protected infoLog(message: string): void {
     this.log(message, WinstonLogTypeConstants.INFO);
   }

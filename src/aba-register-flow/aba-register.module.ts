@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AbaRegisterCancelAbaInstallationService } from './dependencies/cancel-aba-installation/cancel-aba-installation.service';
+import { AbaRegisterPayAbaInstallationService } from './dependencies/pay-aba-installation/pay-aba-installation.service';
 import { AbaRegisterCheckIpService } from './dependencies/check-ip/check-ip.service';
 import { AbaRegisterConfirmRegistrationService } from './step-4/confirm-registration/aba-register-confirm-registration.service';
 import { AbaRegisterController } from './aba-register.controller';
@@ -43,7 +43,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
   ],
   controllers: [AbaRegisterController],
   providers: [
-    AbaRegisterCancelAbaInstallationService,
+    AbaRegisterPayAbaInstallationService,
     AbaRegisterCheckIpService,
     AbaRegisterConfirmRegistrationService,
     AbaRegisterCreateAndProvisioningCustomerService,

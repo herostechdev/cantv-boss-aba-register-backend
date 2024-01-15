@@ -6,7 +6,7 @@ export class CancelABAInstallationException extends CustomBadRequestException {
     super({
       code: '',
       guid: '8eeb931b-7549-4e38-b4a1-ce42b996d902',
-      objectOrError: `Ha ocurrido un error al ejecutar el SP ${BossConstants.CANCEL_ABA_INSTALLATION}`,
+      objectOrError: `Ha ocurrido un error al ejecutar el SP ${BossConstants.PAY_ABA_INSTALLATION}`,
     });
   }
 }

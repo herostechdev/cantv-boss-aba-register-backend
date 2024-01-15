@@ -105,7 +105,8 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
       super.infoLog(BossConstants.END);
       return this.response;
     } catch (error) {
-      this.updateDslABARegistersWithNotProcessedValue(error);
+      super.errorLog(error);
+      await this.updateDslABARegistersWithNotProcessedValue();
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
       await this.closeConnection();
@@ -129,23 +130,29 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
   private async getCustomerClassNameFromIdValue(): Promise<void> {
     super.infoLog('getClientClassNameFromIdValue');
     this.response.getCustomerClassNameFromIdValueResponse =
-      await this.getCustomerClassNameFromIdValueRawService.execute({
-        areaCode: this.dto.areaCode,
-        phoneNumber: this.dto.phoneNumber,
-        customerAttributeName: BossHelper.getIdentificationDocumentType(
-          this.dto.customerClassName,
-        ),
-        value: this.dto.customerIdentificationDocument,
-      });
+      await this.getCustomerClassNameFromIdValueRawService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          customerAttributeName: BossHelper.getIdentificationDocumentType(
+            this.dto.customerClassName,
+          ),
+          value: this.dto.customerIdentificationDocument,
+        },
+        this.dbConnection,
+      );
   }
 
   private async getFirstLetterFromABARequest(): Promise<void> {
     super.infoLog('getFirstLetterFromABARequest');
     this.response.getFirstLetterFromABARequestResponse =
-      await this.getFirstLetterFromABARequestRawService.execute({
-        areaCode: this.dto.areaCode,
-        phoneNumber: this.dto.phoneNumber,
-      });
+      await this.getFirstLetterFromABARequestRawService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+        },
+        this.dbConnection,
+      );
   }
 
   private async customerExists(): Promise<void> {
@@ -167,50 +174,56 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
   private async getAllValuesFromCustomerValues(): Promise<void> {
     super.infoLog('getAllValuesFromCustomerValues');
     this.response.getAllValuesFromCustomerValuesResponse =
-      await this.getAllValuesFromCustomerValuesRawService.execute({
-        areaCode: this.dto.areaCode,
-        phoneNumber: this.dto.phoneNumber,
-        className: this.dto.customerClassName,
-        attributeName: BossHelper.getIdentificationDocumentType(
-          this.dto.customerClassName,
-        ),
-        value: BossHelper.getIdentificationDocument(
-          this.dto.customerIdentificationDocument,
-        ),
-      });
+      await this.getAllValuesFromCustomerValuesRawService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          className: this.dto.customerClassName,
+          attributeName: BossHelper.getIdentificationDocumentType(
+            this.dto.customerClassName,
+          ),
+          value: BossHelper.getIdentificationDocument(
+            this.dto.customerIdentificationDocument,
+          ),
+        },
+        this.dbConnection,
+      );
   }
 
   private async getCustomerInstanceIdFromIdValue(): Promise<void> {
     super.infoLog('getCustomerInstanceIdFromIdValue');
     this.response.getCustomerInstanceIdFromIdValueResponse =
-      await this.getCustomerInstanceIdFromIdValueRawService.execute({
-        areaCode: this.dto.areaCode,
-        phoneNumber: this.dto.phoneNumber,
-        customerAttributeName: BossHelper.getIdentificationDocumentType(
-          this.dto.customerClassName,
-        ),
-        value: BossHelper.getIdentificationDocument(
-          this.dto.customerIdentificationDocument,
-        ),
-      });
+      await this.getCustomerInstanceIdFromIdValueRawService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          customerAttributeName: BossHelper.getIdentificationDocumentType(
+            this.dto.customerClassName,
+          ),
+          value: BossHelper.getIdentificationDocument(
+            this.dto.customerIdentificationDocument,
+          ),
+        },
+        this.dbConnection,
+      );
   }
 
   private async getDebtFromCustomer(): Promise<void> {
     super.infoLog('getDebtFromCustomer');
     this.response.getDebtFromCustomerResponse =
-      await this.getDebtFromCustomerRawService.execute({
-        areaCode: this.dto.areaCode,
-        phoneNumber: this.dto.phoneNumber,
-        customerInstanceId:
-          this.response.getCustomerInstanceIdFromIdValueResponse
-            .customerInstanceId,
-      });
+      await this.getDebtFromCustomerRawService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          customerInstanceId:
+            this.response.getCustomerInstanceIdFromIdValueResponse
+              .customerInstanceId,
+        },
+        this.dbConnection,
+      );
   }
 
-  private async updateDslABARegistersWithNotProcessedValue(
-    error: any,
-  ): Promise<void> {
-    super.errorLog(error);
+  private async updateDslABARegistersWithNotProcessedValue(): Promise<void> {
     this.response.updateDslABARegistersResponse =
       await this.updateDslAbaRegistersRawService.errorUpdate(
         {

@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class CancelABAInstallationOccupiedPortException extends CustomBadRequestException {
+export class PayABAInstallationOccupiedPortException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',

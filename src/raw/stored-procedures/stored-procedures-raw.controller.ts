@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { AbaRegisterRawService } from './aba-register/aba-register-raw.service';
 import { AbaRegisterRequestDto } from './aba-register/aba-register-request.dto';
-import { CancelAbaInstallationRawService } from './cancel-aba-installation/cancel-aba-installation-raw.service';
-import { CancelAbaInstallationRequestDto } from './cancel-aba-installation/cancel-aba-installation-request.dto';
+import { PayAbaInstallationRawService } from './pay-aba-installation/pay-aba-installation-raw.service';
+import { PayAbaInstallationRequestDto } from './pay-aba-installation/pay-aba-installation-request.dto';
 import { CheckIpRawService } from './check-ip/check-ip-raw.service';
 import { CheckIpRequestDto } from './check-ip/check-ip-request.dto';
 import { CreateAndProvisioningCustomerRawService } from './create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
@@ -40,7 +40,7 @@ import { GetStateFromSerialRawService } from './insert-dsl-aba-registers/get-sta
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IAbaRegisterResponse } from './aba-register/aba-register-response.interface';
-import { ICancelABAInstallationResponse } from './cancel-aba-installation/cancel-aba-installation-response.interface';
+import { IPayABAInstallationResponse } from './pay-aba-installation/pay-aba-installation-response.interface';
 import { ICheckIpResponse } from './check-ip/check-ip-response.interface';
 import { ICreateAndProvisioningCustomerResponse } from './create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 import { ICreateAndProvisioningMasterAccountResponse } from './create-and-provisioning-master-account/create-and-provisioning-master-account-response.interface';
@@ -90,7 +90,7 @@ import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/upda
 export class StoredProceduresRawController {
   constructor(
     private readonly abaRegisterRawService: AbaRegisterRawService,
-    private readonly cancelAbaInstallationRawService: CancelAbaInstallationRawService,
+    private readonly payAbaInstallationRawService: PayAbaInstallationRawService,
     private readonly checkIpRawService: CheckIpRawService,
     private readonly createAndProvisioningCustomerRawService: CreateAndProvisioningCustomerRawService,
     private readonly createAndProvisioningMasterAccountRawService: CreateAndProvisioningMasterAccountRawService,
@@ -126,13 +126,13 @@ export class StoredProceduresRawController {
     return this.abaRegisterRawService.execute(dto);
   }
 
-  @Post('cancelAbaInstallation')
+  @Post('payAbaInstallation')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
   @UseFilters(new HttpExceptionFilter())
-  cancelAbaInstallation(
-    @Body() dto: CancelAbaInstallationRequestDto,
-  ): Promise<ICancelABAInstallationResponse> {
-    return this.cancelAbaInstallationRawService.execute(dto);
+  payAbaInstallation(
+    @Body() dto: PayAbaInstallationRequestDto,
+  ): Promise<IPayABAInstallationResponse> {
+    return this.payAbaInstallationRawService.execute(dto);
   }
 
   @Post('checkIp')

@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class CancelABAInstallationThereIsNoDataException extends CustomBadRequestException {
+export class PayABAInstallationThereIsNoDataException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',

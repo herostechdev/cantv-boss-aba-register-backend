@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
-import { CancelAbaInstallationRequestDto } from './cancel-aba-installation-request.dto';
-import { CancelABAInstallationStatusConstants } from './cancel-aba-installation-status.constants';
-import { ICancelABAInstallationResponse } from './cancel-aba-installation-response.interface';
+import { PayAbaInstallationRequestDto } from './pay-aba-installation-request.dto';
+import { PayABAInstallationStatusConstants } from './pay-aba-installation-status.constants';
+import { IPayABAInstallationResponse } from './pay-aba-installation-response.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleExecuteStoredProcedureRawService } from 'src/oracle/oracle-execute-stored-procedure-raw.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { UpdateDslAbaRegistersRawService } from '../update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
-export class CancelAbaInstallationRawService extends OracleExecuteStoredProcedureRawService<
-  CancelAbaInstallationRequestDto,
-  ICancelABAInstallationResponse
+export class PayAbaInstallationRawService extends OracleExecuteStoredProcedureRawService<
+  PayAbaInstallationRequestDto,
+  IPayABAInstallationResponse
 > {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
@@ -20,13 +20,13 @@ export class CancelAbaInstallationRawService extends OracleExecuteStoredProcedur
   ) {
     super(
       BossConstants.ACT_PACKAGE,
-      BossConstants.CANCEL_ABA_INSTALLATION,
+      BossConstants.PAY_ABA_INSTALLATION,
       oracleConfigurationService,
       updateDslAbaRegistersService,
     );
   }
 
-  protected getParameters(dto: CancelAbaInstallationRequestDto): any {
+  protected getParameters(dto: PayAbaInstallationRequestDto): any {
     return {
       contractlogin: OracleHelper.stringBindIn(
         BossHelper.getAutomaticCustomerUserName(
@@ -41,10 +41,10 @@ export class CancelAbaInstallationRawService extends OracleExecuteStoredProcedur
     };
   }
 
-  protected getResponse(result: any): ICancelABAInstallationResponse {
+  protected getResponse(result: any): IPayABAInstallationResponse {
     return {
       status: (OracleHelper.getFirstItem(result, 'status') ??
-        CancelABAInstallationStatusConstants.ERROR) as CancelABAInstallationStatusConstants,
+        PayABAInstallationStatusConstants.ERROR) as PayABAInstallationStatusConstants,
     };
   }
 }
