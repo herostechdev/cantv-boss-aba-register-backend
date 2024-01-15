@@ -113,7 +113,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
                 dto.customerIdentificationDocument,
               customerState: dto.customerState,
               technicalPlanName: dto.technicalPlanName,
-              zipCode: dto.zipCode,
+              zipCode: dto.zipCode ?? BossConstants.NOT_AVAILABLE,
             },
             this.dbConnection,
           );
@@ -145,7 +145,7 @@ export class AbaRegisterConfirmRegistrationService extends OracleDatabaseService
                 dto.customerIdentificationDocument,
               customerState: dto.customerState,
               technicalPlanName: dto.technicalPlanName,
-              zipCode: dto.zipCode,
+              zipCode: dto.zipCode ?? BossConstants.NOT_AVAILABLE,
             },
             this.dbConnection,
           );
