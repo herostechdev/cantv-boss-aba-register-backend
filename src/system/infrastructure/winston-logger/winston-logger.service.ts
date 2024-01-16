@@ -19,7 +19,8 @@ export class Wlog {
   }
 
   private constructor() {
-    this.logger = this.getLogger();
+    // this.logger = this.getTextLogger();
+    this.logger = this.getJsonLogger();
   }
 
   public info(data: IAbaRegisterWinstonLogInputData): void {
@@ -54,7 +55,7 @@ export class Wlog {
     };
   }
 
-  private getLogger(): winston.Logger {
+  private getTextLogger(): winston.Logger {
     return createLogger({
       // format: winston.format.json(),
       format: combine(
@@ -64,6 +65,25 @@ export class Wlog {
           fillExcept: ['message', 'level', 'timestamp', 'label'],
         }),
         printf((info) => this.stringFormat(info)),
+      ),
+      transports: [
+        this.getCombinedFileTransport(),
+        this.getErrorFileTransport(),
+        // this.getDailyRotateFileTransport(),
+      ],
+    });
+  }
+
+  private getJsonLogger(): winston.Logger {
+    return createLogger({
+      // format: winston.format.json(),
+      format: combine(
+        label({ label: BossHelper.applicationName }),
+        timestamp(),
+        format.metadata({
+          fillExcept: ['message', 'level', 'timestamp', 'label'],
+        }),
+        printf((info) => JSON.stringify(this.jsonFormat(info))),
       ),
       transports: [
         this.getCombinedFileTransport(),
@@ -87,6 +107,24 @@ export class Wlog {
       .append(this.getStack(info.metadata?.error))
       .append(this.getInnerException(info.metadata?.error))
       .toString('  ');
+  }
+
+  private jsonFormat(info: winston.Logform.TransformableInfo): IWinstonLog {
+    return {
+      label: info.label,
+      timestamp: info.timestamp,
+      level: info.level,
+      clazz: info.metadata?.clazz,
+      method: info.metadata?.method,
+      phoneNumber: info.metadata?.phoneNumber,
+      message: info.message,
+      input: info.metadata?.input,
+      response: info.metadata?.response,
+      exception: info.metadata?.error?.name,
+      exceptionCode: info.metadata?.error?.code,
+      stack: info.metadata?.error?.stack,
+      innerException: info.metadata?.error?.innerException,
+    };
   }
 
   private getClazzMethod(metadata: any): string {
@@ -129,23 +167,6 @@ export class Wlog {
     return `| INNER_EXCEPTION: ${JSON.stringify(
       exception.innerException ?? '',
     )}`.trim();
-  }
-
-  private objectFormat(info: winston.Logform.TransformableInfo): IWinstonLog {
-    return {
-      label: info.label,
-      timestamp: info.timestamp,
-      level: info.level,
-      clazz: info.metadata?.clazz,
-      method: info.metadata?.method,
-      message: info.message,
-      input: info.metadata?.input,
-      response: info.metadata?.response,
-      exception: info.metadata?.error?.name,
-      exceptionCode: info.metadata?.error?.code,
-      stack: info.metadata?.error?.stack,
-      innerException: info.metadata?.error?.innerException,
-    };
   }
 
   private getCombinedFileTransport(): winston.transport {

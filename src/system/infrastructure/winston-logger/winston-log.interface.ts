@@ -4,6 +4,7 @@ export interface IWinstonLog {
   level: string;
   clazz: string;
   method: string;
+  phoneNumber: string;
   message: string;
   input: string;
   response: string;
