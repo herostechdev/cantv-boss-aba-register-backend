@@ -15,6 +15,8 @@ import { DeleteOrderRawService } from './delete-order/delete-order-raw.service';
 import { DeleteOrderRequestDto } from './delete-order/delete-order-request.dto';
 import { DSLAuditLogsRequestDto } from './dsl-audit-logs/dsl-audit-logs-request.dto';
 import { DSLAuditLogsRawService } from './dsl-audit-logs/dsl-audit-logs-raw.service';
+import { GetAbaDataRawService } from './get-aba-data/get-aba-data-raw.service';
+import { GetAbaDataRequestDto } from './get-aba-data/get-aba-data-request.dto';
 import { GetAllValuesFromCustomerValuesRawService } from './get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
 import { GetAllValuesFromCustomerValuesRequestDto } from './get-all-values-from-customer-values/get-all-values-from-customer-values-request.dto';
 import { GetAndRegisterQualifOfServiceDto } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-request.dto';
@@ -47,6 +49,7 @@ import { ICreateAndProvisioningMasterAccountResponse } from './create-and-provis
 import { ICustomerExistsResponse } from './customer-exists/customer-exists-response.interface';
 import { IDeleteOrderResponse } from './delete-order/delete-order-response.interface';
 import { IDSLAuditLogsResponse } from './dsl-audit-logs/dsl-audit-logs-response.interface';
+import { IGetAbaDataResponse } from './get-aba-data/get-aba-data-response.interface';
 import { IGetAllValuesFromCustomerValuesResponse } from './get-all-values-from-customer-values/get-all-values-from-customer-values-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetCustomerClassNameFromIdValueResponse } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
@@ -97,6 +100,7 @@ export class StoredProceduresRawController {
     private readonly customerExistsRawService: CustomerExistsRawService,
     private readonly deleteOrderRawService: DeleteOrderRawService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
+    private readonly getAbaDataRawService: GetAbaDataRawService,
     private readonly getAllValuesFromCustomerValuesRawService: GetAllValuesFromCustomerValuesRawService,
     private readonly getAndRegisterQualifOfServiceRawService: GetAndRegisterQualifOfServiceRawService,
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
@@ -185,6 +189,13 @@ export class StoredProceduresRawController {
     @Body() dto: DSLAuditLogsRequestDto,
   ): Promise<IDSLAuditLogsResponse> {
     return this.dslAuditLogsService.execute(dto);
+  }
+
+  @Post('getAbaData')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getAbaData(@Body() dto: GetAbaDataRequestDto): Promise<IGetAbaDataResponse> {
+    return this.getAbaDataRawService.execute(dto);
   }
 
   @Post('getAllValuesFromCustomerValues')

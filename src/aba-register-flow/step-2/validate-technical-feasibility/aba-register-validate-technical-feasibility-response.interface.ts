@@ -2,7 +2,7 @@ import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-registe
 import { ICheckIpResponse } from '../../../raw/stored-procedures/check-ip/check-ip-response.interface';
 import { IDeleteOrderResponse } from '../../../raw/stored-procedures/delete-order/delete-order-response.interface';
 import { IGetABADataFromRequestsResponse } from '../../../validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests-response.interface';
-import { IGetABADataResponse } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data-response.interface';
+import { IGetAbaDataResponse } from '../../../raw/stored-procedures/get-aba-data/get-aba-data-response.interface';
 import { IGetAndRegisterQualifOfServiceResponse } from '../../../raw/stored-procedures/get-and-register-qualif-of-service/get-and-register-qualif-of-service-response.interface';
 import { IGetASAPOrderDetailResponse } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
@@ -35,7 +35,7 @@ export interface IAbaRegisterValidateTechnicalFeasibilityResponse {
   isOccupiedPortResponse: IIsOccupiedPortResponse;
   getASAPOrderDetailResponse: IGetASAPOrderDetailResponse;
   linkNetworkResponse: ILinkNetworkResponse;
-  getABADataResponse: IGetABADataResponse;
+  getABADataResponse: IGetAbaDataResponse;
   checkIpResponse: ICheckIpResponse;
   getDataFromDslamPortIdResponse: IGetDataFromDSLAMPortIdResponse;
   deleteOrderResponse: IDeleteOrderResponse;

@@ -7,6 +7,7 @@ import { AbaRegisterCreateAndProvisioningCustomerService } from './dependencies/
 import { AbaRegisterCreateAndProvisioningMasterAccountService } from './dependencies/create-and-provisioning-master-account/create-and-provisioning-master-account.service';
 import { AbaRegisterCustomerExistsService } from './dependencies/customer-exists/aba-register-customer-exists.service';
 import { AbaRegisterDeleteOrderService } from './dependencies/delete-order/delete-order.service';
+import { AbaRegisterGetAbaDataService } from './dependencies/get-aba-data/get-aba-data.service';
 import { AbaRegisterGetAbaPlanForKenanService } from './dependencies/get-aba-plan-for-kenan/aba-register-get-aba-plan-for-kenan.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from './dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterGetCSIdAndPlanNameFromLoginService } from './dependencies/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login.service';
@@ -50,6 +51,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterCreateAndProvisioningMasterAccountService,
     AbaRegisterCustomerExistsService,
     AbaRegisterDeleteOrderService,
+    AbaRegisterGetAbaDataService,
     AbaRegisterGetAbaPlanForKenanService,
     AbaRegisterGetAndRegisterQualifOfServiceService,
     AbaRegisterGetCSIdAndPlanNameFromLoginService,

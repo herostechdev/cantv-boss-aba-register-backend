@@ -14,10 +14,9 @@ import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
 import { Error30043Exception } from 'src/exceptions/error-3004-3.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
-import { ErrorInsertingIABAFromRegisterException } from '../../../validate-technical-feasibility/exceptions/error-inserting-iaba-from-register.exception';
+import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
 import { GetPortIdFromIpExecutionException } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-execution.exception';
-import { GetABADataConstants } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data.constants';
-import { GetABADataExecutionErrorException } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data-execution-error.exception';
+import { GetAbaDataConstants } from '../../../raw/stored-procedures/get-aba-data/get-aba-data.constants';
 import { GetABADataFromRequestsRawService } from '../../../validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
@@ -31,7 +30,6 @@ import { GetPortIdFromIpConstants } from '../../../validate-technical-feasibilit
 import { GetPortIdStatusConstants } from '../../../validate-technical-feasibility/get-port-id/get-port-id-status.constants';
 import { GetPortIdException } from '../../../validate-technical-feasibility/get-port-id/get-port-id.exception';
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
-import { IGetABADataResponse } from '../../../validate-technical-feasibility/get-aba-data/get-aba-data-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
@@ -56,18 +54,20 @@ import { ReadIABAOrderAssignedPortException } from '../../../validate-technical-
 import { ReadIABAOrderOrderExistsException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-order-exists.exception';
 import { ReadIABAOrderOrderIsOldException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-order-is-old.exception';
 import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
-import { TheClientAlreadyHasABAServiceException } from '../../../validate-technical-feasibility/exceptions/the-client-already-has-aba-service.exception';
+import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { VerifyContractByPhoneException } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone-status.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { AbaRegisterGetAbaDataService } from 'src/aba-register-flow/dependencies/get-aba-data/get-aba-data.service';
 
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
     private readonly abaRegisterCheckIpService: AbaRegisterCheckIpService,
     private readonly abaRegisterDeleteOrderService: AbaRegisterDeleteOrderService,
+    private readonly abaRegisterGetAbaDataService: AbaRegisterGetAbaDataService,
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
@@ -244,7 +244,14 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
         clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
-      data.getABADataResponse = await this.getABAData(data);
+      data.getABADataResponse = await this.abaRegisterGetAbaDataService.execute(
+        {
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+          ipAddress: dto.ipAddress,
+          orderId: dto.orderId,
+        },
+      );
 
       if (data.getABADataResponse.status === 0) {
         if (ValidationHelper.isDefined(data.getABADataResponse.abacontractid)) {
@@ -339,9 +346,15 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
             clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
             method: 'validateTechnicalFeasibility',
           });
-          data.getABADataResponse = await this.getABAData(data);
+          data.getABADataResponse =
+            await this.abaRegisterGetAbaDataService.execute({
+              areaCode: dto.areaCode,
+              phoneNumber: dto.phoneNumber,
+              ipAddress: dto.ipAddress,
+              orderId: dto.orderId,
+            });
           if (
-            data.getABADataResponse.status !== GetABADataConstants.SUCCESSFULL
+            data.getABADataResponse.status !== GetAbaDataConstants.SUCCESSFULL
           ) {
             throw new ErrorInsertingIABAFromRegisterException();
           }
@@ -787,67 +800,67 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
     }
   }
 
-  private async getABAData(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IGetABADataResponse> {
-    const parameters = {
-      abaorderid: OracleHelper.stringBindIn(
-        String(data.requestDto.orderId),
-        12,
-      ),
-      abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-      abaphonenumber: OracleHelper.stringBindIn(
-        data.requestDto.phoneNumber,
-        16,
-      ),
-      abaipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 99),
+  // private async getABAData(
+  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
+  // ): Promise<IGetAbaDataResponse> {
+  //   const parameters = {
+  //     abaorderid: OracleHelper.stringBindIn(
+  //       String(data.requestDto.orderId),
+  //       12,
+  //     ),
+  //     abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
+  //     abaphonenumber: OracleHelper.stringBindIn(
+  //       data.requestDto.phoneNumber,
+  //       16,
+  //     ),
+  //     abaipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 99),
 
-      abadslamportid: OracleHelper.tableOfNumberBindOut(),
-      abancc: OracleHelper.tableOfStringBindOut(),
-      abaclienttype: OracleHelper.tableOfStringBindOut(),
-      abaorderdate: OracleHelper.tableOfStringBindOut(),
-      abaad: OracleHelper.tableOfStringBindOut(),
-      abaparad: OracleHelper.tableOfStringBindOut(),
-      abaslot: OracleHelper.tableOfNumberBindOut(),
-      abaport: OracleHelper.tableOfNumberBindOut(),
-      abarack: OracleHelper.tableOfNumberBindOut(),
-      abaposition: OracleHelper.tableOfNumberBindOut(),
-      abavci: OracleHelper.tableOfNumberBindOut(),
-      abacontractid: OracleHelper.tableOfNumberBindOut(),
-      Status: OracleHelper.tableOfNumberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ACT_PACKAGE,
-      BossConstants.GET_ABA_DATA,
-      parameters,
-    );
-    const response: IGetABADataResponse = {
-      abadslamportid: OracleHelper.getFirstItem(result, 'abadslamportid'),
-      abancc: OracleHelper.getFirstItem(result, 'abancc'),
-      abaclienttype: OracleHelper.getFirstItem(result, 'abaclienttype'),
-      abaorderdate: OracleHelper.getFirstItem(result, 'abaorderdate'),
-      abaad: OracleHelper.getFirstItem(result, 'abaad'),
-      abaparad: OracleHelper.getFirstItem(result, 'abaparad'),
-      abaslot: OracleHelper.getFirstItem(result, 'abaslot'),
-      abaport: OracleHelper.getFirstItem(result, 'abaport'),
-      abarack: OracleHelper.getFirstItem(result, 'abarack'),
-      abaposition: OracleHelper.getFirstItem(result, 'abaposition'),
-      abavci: OracleHelper.getFirstItem(result, 'abavci'),
-      abacontractid: OracleHelper.getFirstItem(result, 'abacontractid'),
-      status: (OracleHelper.getFirstItem(result, 'Status') ??
-        GetABADataConstants.EXECUTION_ERROR) as GetABADataConstants,
-    };
-    switch (response.status) {
-      case GetABADataConstants.SUCCESSFULL:
-        return response;
-      case GetABADataConstants.EXECUTION_ERROR:
-        throw new GetABADataExecutionErrorException();
-      case GetABADataConstants.THERE_IS_NO_DATA:
-        return response;
-      default:
-        throw new GetABADataExecutionErrorException();
-    }
-  }
+  //     abadslamportid: OracleHelper.tableOfNumberBindOut(),
+  //     abancc: OracleHelper.tableOfStringBindOut(),
+  //     abaclienttype: OracleHelper.tableOfStringBindOut(),
+  //     abaorderdate: OracleHelper.tableOfStringBindOut(),
+  //     abaad: OracleHelper.tableOfStringBindOut(),
+  //     abaparad: OracleHelper.tableOfStringBindOut(),
+  //     abaslot: OracleHelper.tableOfNumberBindOut(),
+  //     abaport: OracleHelper.tableOfNumberBindOut(),
+  //     abarack: OracleHelper.tableOfNumberBindOut(),
+  //     abaposition: OracleHelper.tableOfNumberBindOut(),
+  //     abavci: OracleHelper.tableOfNumberBindOut(),
+  //     abacontractid: OracleHelper.tableOfNumberBindOut(),
+  //     Status: OracleHelper.tableOfNumberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ACT_PACKAGE,
+  //     BossConstants.GET_ABA_DATA,
+  //     parameters,
+  //   );
+  //   const response: IGetAbaDataResponse = {
+  //     abadslamportid: OracleHelper.getFirstItem(result, 'abadslamportid'),
+  //     abancc: OracleHelper.getFirstItem(result, 'abancc'),
+  //     abaclienttype: OracleHelper.getFirstItem(result, 'abaclienttype'),
+  //     abaorderdate: OracleHelper.getFirstItem(result, 'abaorderdate'),
+  //     abaad: OracleHelper.getFirstItem(result, 'abaad'),
+  //     abaparad: OracleHelper.getFirstItem(result, 'abaparad'),
+  //     abaslot: OracleHelper.getFirstItem(result, 'abaslot'),
+  //     abaport: OracleHelper.getFirstItem(result, 'abaport'),
+  //     abarack: OracleHelper.getFirstItem(result, 'abarack'),
+  //     abaposition: OracleHelper.getFirstItem(result, 'abaposition'),
+  //     abavci: OracleHelper.getFirstItem(result, 'abavci'),
+  //     abacontractid: OracleHelper.getFirstItem(result, 'abacontractid'),
+  //     status: (OracleHelper.getFirstItem(result, 'Status') ??
+  //       GetAbaDataConstants.ERROR) as GetAbaDataConstants,
+  //   };
+  //   switch (response.status) {
+  //     case GetAbaDataConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetAbaDataConstants.ERROR:
+  //       throw new GetABADataException();
+  //     case GetAbaDataConstants.THERE_IS_NO_DATA:
+  //       return response;
+  //     default:
+  //       throw new GetABADataException();
+  //   }
+  // }
 
   // private async checkIp(
   //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
