@@ -1,4 +1,4 @@
-import { createLogger, transports, format } from 'winston';
+import { transports } from 'winston';
 
 export class CustomJsonTransport extends transports.Stream {
   constructor(options) {

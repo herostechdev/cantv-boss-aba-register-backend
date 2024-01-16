@@ -78,7 +78,7 @@ export abstract class BossFlowService<
     return {
       phoneNumber: BossHelper.getPhoneNumber(this.dto),
       message: message,
-      input: BossHelper.getPhoneNumber(this.dto),
+      input: this.dto,
       clazz: this._className ?? BossConstants.UNKNOWN,
       method: this._methodName ?? BossConstants.UNKNOWN,
     };
