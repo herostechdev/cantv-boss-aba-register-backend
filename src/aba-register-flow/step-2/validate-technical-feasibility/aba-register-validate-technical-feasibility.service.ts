@@ -4,6 +4,8 @@ import { DateTime } from 'luxon';
 import { AbaRegisterCheckIpService } from 'src/aba-register-flow/dependencies/check-ip/check-ip.service';
 import { AbaRegisterDeleteOrderService } from 'src/aba-register-flow/dependencies/delete-order/delete-order.service';
 import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
+import { AbaRegisterGetAbaDataFromRequestsService } from 'src/aba-register-flow/dependencies/get-aba-data-from-requests/get-aba-data-from-requests.service';
+import { AbaRegisterGetAbaDataService } from 'src/aba-register-flow/dependencies/get-aba-data/get-aba-data.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { BossConstants } from 'src/boss/boss.constants';
@@ -17,7 +19,7 @@ import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
 import { GetPortIdFromIpExecutionException } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-execution.exception';
 import { GetAbaDataConstants } from '../../../raw/stored-procedures/get-aba-data/get-aba-data.constants';
-import { GetABADataFromRequestsRawService } from '../../../validate-technical-feasibility/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
+import { GetAbaDataFromRequestsRawService } from '../../../raw/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdExecutionErrorException } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
 import { GetDataFromDSLAMPortIdStatusConstants } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
@@ -60,18 +62,18 @@ import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.h
 import { VerifyContractByPhoneException } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone-status.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { AbaRegisterGetAbaDataService } from 'src/aba-register-flow/dependencies/get-aba-data/get-aba-data.service';
 
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDatabaseService {
   constructor(
     private readonly abaRegisterCheckIpService: AbaRegisterCheckIpService,
     private readonly abaRegisterDeleteOrderService: AbaRegisterDeleteOrderService,
+    private readonly abaRegisterGetABADataFromRequestsService: AbaRegisterGetAbaDataFromRequestsService,
     private readonly abaRegisterGetAbaDataService: AbaRegisterGetAbaDataService,
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
-    private readonly getABADataFromRequestsService: GetABADataFromRequestsRawService,
+    private readonly getABADataFromRequestsService: GetAbaDataFromRequestsRawService,
     private readonly getDHCPDataService: GetDHCPDataRawService,
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
@@ -160,8 +162,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
         method: 'validateTechnicalFeasibility',
       });
       data.getABADataFromRequestsResponse =
-        await this.getABADataFromRequestsService.getABADataFromRequests(
-          dto,
+        await this.abaRegisterGetABADataFromRequestsService.execute(
+          {
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+          },
           this.dbConnection,
         );
       Wlog.instance.info({
@@ -364,21 +369,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
           }
         }
       }
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'updateDslAbaRegistersService',
-      //   input: BossHelper.getPhoneNumber(dto),
-      //   clazz: ValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // await this.updateDslAbaRegistersService.execute(
-      //   {
-      //     areaCode: dto.areaCode,
-      //     phoneNumber: dto.phoneNumber,
-      //     registerStatus: BossConstants.IN_PROGRESS,
-      //   },
-      //   this.dbConnection,
-      // );
       return data;
     } catch (error) {
       Wlog.instance.error({

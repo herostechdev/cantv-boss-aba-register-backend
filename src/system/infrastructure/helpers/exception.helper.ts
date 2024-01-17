@@ -8,4 +8,10 @@ export class ExceptionHelper {
     }
     throw exception;
   }
+
+  public static storedProcedureExecutionExceptionMessage(
+    storedProcedureName: string,
+  ): string {
+    return `Error al ejecutar el procedimiento (Stored Procedure): ${storedProcedureName}`;
+  }
 }
