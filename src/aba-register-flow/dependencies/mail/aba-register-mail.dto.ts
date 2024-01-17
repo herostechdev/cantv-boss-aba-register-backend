@@ -1,10 +1,10 @@
 import { IsString } from 'class-validator';
-import { IPhoneNumber } from 'src/boss/phone-number.interface';
+import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
 
 export class AbaRegisterMailDto implements IPhoneNumber {
   @IsString()
-  areaCode: string | number;
+  areaCode: string;
 
   @IsString()
-  phoneNumber: string | number;
+  phoneNumber: string;
 }

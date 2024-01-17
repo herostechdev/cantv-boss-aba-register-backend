@@ -2,7 +2,7 @@ import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
 import { IAbaRegisterWinstonErrorLogInputData } from 'src/system/infrastructure/winston-logger/aba-register-winston-error-log-input-data.interface';
 import { IAbaRegisterWinstonLogInputData } from 'src/system/infrastructure/winston-logger/aba-register-winston-log-input-data.interface';
-import { IPhoneNumber } from 'src/boss/phone-number.interface';
+import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';

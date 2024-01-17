@@ -45,7 +45,7 @@ export class CreateAndProvisioningCustomerRawService extends OracleExecuteStored
       PLAN: OracleHelper.stringBindIn(dto.technicalPlanName), // PlansByClassClient.O_PLANDESIRED
       PAYCLASS: OracleHelper.stringBindIn(BossConstants.CANTV_BILLING),
       PAYATTRVALUES: OracleHelper.stringBindIn(
-        BossHelper.getKeyPhoneNumber({
+        BossHelper.getKeyedPhoneNumber({
           areaCode: dto.areaCode,
           phoneNumber: dto.phoneNumber,
         }),

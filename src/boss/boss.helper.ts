@@ -1,5 +1,5 @@
 import { BossConstants } from './boss.constants';
-import { IPhoneNumber } from 'src/boss/phone-number.interface';
+import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
 import { StringHelper } from 'src/system/infrastructure/helpers/string.helper';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
@@ -13,7 +13,7 @@ export class BossHelper {
     return `${data.areaCode}${delimiter ?? '-'}${data.phoneNumber}`;
   }
 
-  public static getKeyPhoneNumber(data: IPhoneNumber): string {
+  public static getKeyedPhoneNumber(data: IPhoneNumber): string {
     if (!data || !data.areaCode || !data.phoneNumber) return null;
     return `${BossConstants.PHONE_AREA_CODE}:${data.areaCode},${BossConstants.PHONE}:${data.phoneNumber};`;
   }
