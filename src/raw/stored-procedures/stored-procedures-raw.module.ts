@@ -14,6 +14,7 @@ import { GetAndRegisterQualifOfServiceRawService } from './get-and-register-qual
 import { GetCustomerClassNameFromIdValueRawService } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
 import { GetCustomerInstanceIdFromIdValueRawService } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
 import { GetCSIdAndPlanNameFromLoginRawService } from './get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-raw.service';
+import { GetDataFromDSLAMPortIdRequestRawService } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-raw.service';
 import { GetDebtFromCustomerRawService } from './get-debt-from-customer/get-debt-from-customer-raw.service';
 import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetFirstLetterFromABARequestRawService } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
@@ -48,6 +49,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     GetAndRegisterQualifOfServiceRawService,
     GetCustomerClassNameFromIdValueRawService,
     GetCustomerInstanceIdFromIdValueRawService,
+    GetDataFromDSLAMPortIdRequestRawService,
     GetCSIdAndPlanNameFromLoginRawService,
     GetDebtFromCustomerRawService,
     GetDSLAreaCodesRawService,
@@ -80,6 +82,7 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
     GetCustomerClassNameFromIdValueRawService,
     GetCustomerInstanceIdFromIdValueRawService,
     GetCSIdAndPlanNameFromLoginRawService,
+    GetDataFromDSLAMPortIdRequestRawService,
     GetDebtFromCustomerRawService,
     GetDSLAreaCodesRawService,
     GetFirstLetterFromABARequestRawService,

@@ -7,13 +7,13 @@ import { AbaRegisterIsPrepaidVoiceLineService } from 'src/aba-register-flow/depe
 import { AbaRegisterGetAbaDataFromRequestsService } from 'src/aba-register-flow/dependencies/get-aba-data-from-requests/get-aba-data-from-requests.service';
 import { AbaRegisterGetAbaDataService } from 'src/aba-register-flow/dependencies/get-aba-data/get-aba-data.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
+import { AbaRegisterGetDataFromDSLAMPortIdRequestService } from 'src/aba-register-flow/dependencies/get-data-from-dslam-port-id/get-data-from-dslam-port-id.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
-import { Error30043Exception } from 'src/exceptions/error-3004-3.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
@@ -21,8 +21,7 @@ import { GetPortIdFromIpExecutionException } from '../../../validate-technical-f
 import { GetAbaDataConstants } from '../../../raw/stored-procedures/get-aba-data/get-aba-data.constants';
 import { GetAbaDataFromRequestsRawService } from '../../../raw/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
-import { GetDataFromDSLAMPortIdExecutionErrorException } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-execution-error.exception';
-import { GetDataFromDSLAMPortIdStatusConstants } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
+import { GetDataFromDSLAMPortIdStatusConstants } from '../../../raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-raw.service';
 import { GetDownstreamFromPlanStatusConstants } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-status.constants';
 import { GetDownstreamFromPlanThereIsNoDataException } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
@@ -32,7 +31,6 @@ import { GetPortIdFromIpConstants } from '../../../validate-technical-feasibilit
 import { GetPortIdStatusConstants } from '../../../validate-technical-feasibility/get-port-id/get-port-id-status.constants';
 import { GetPortIdException } from '../../../validate-technical-feasibility/get-port-id/get-port-id.exception';
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
-import { IGetDataFromDSLAMPortIdResponse } from '../../../validate-technical-feasibility/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetDownstreamFromPlanResponse } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-response.interface';
@@ -72,6 +70,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
     private readonly abaRegisterGetAbaDataService: AbaRegisterGetAbaDataService,
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
+    private readonly abaRegisterGetDataFromDSLAMPortIdRequestService: AbaRegisterGetDataFromDSLAMPortIdRequestService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getABADataFromRequestsService: GetAbaDataFromRequestsRawService,
     private readonly getDHCPDataService: GetDHCPDataRawService,
@@ -286,9 +285,14 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
           clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
-        data.getDataFromDslamPortIdResponse = await this.getDataFromDslamPortId(
-          data,
-        );
+        data.getDataFromDslamPortIdResponse =
+          await this.abaRegisterGetDataFromDSLAMPortIdRequestService.execute({
+            areaCode: dto.areaCode,
+            phoneNumber: dto.phoneNumber,
+            dslamPortId:
+              data.getPortIdFromIpResponse.dslamportId ??
+              data.getPortIdResponse.portId,
+          });
         if (
           data.getDataFromDslamPortIdResponse.status ===
           GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL
@@ -901,52 +905,52 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
   //   }
   // }
 
-  private async getDataFromDslamPortId(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IGetDataFromDSLAMPortIdResponse> {
-    const parameters = {
-      abadslamportid: OracleHelper.numberBindIn(
-        data.getPortIdFromIpResponse.dslamportId,
-      ),
+  // private async getDataFromDslamPortId(
+  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
+  // ): Promise<IGetDataFromDSLAMPortIdResponse> {
+  //   const parameters = {
+  //     abadslamportid: OracleHelper.numberBindIn(
+  //       data.getPortIdFromIpResponse.dslamportId,
+  //     ),
 
-      abarack: OracleHelper.tableOfStringBindOut(),
-      abadslamposition: OracleHelper.tableOfStringBindOut(),
-      abaslot: OracleHelper.tableOfNumberBindOut(),
-      abaport: OracleHelper.tableOfNumberBindOut(),
-      abaad: OracleHelper.tableOfStringBindOut(),
-      abapairad: OracleHelper.tableOfStringBindOut(),
-      abaprovider: OracleHelper.tableOfStringBindOut(),
-      abasistema: OracleHelper.tableOfStringBindOut(),
-      status: OracleHelper.tableOfNumberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.BOSS_PACKAGE,
-      BossConstants.GET_DATA_FROM_DSLAM_PORT_ID,
-      parameters,
-    );
-    const response: IGetDataFromDSLAMPortIdResponse = {
-      abarack: OracleHelper.getFirstItem(result, 'abarack'),
-      abadslamposition: OracleHelper.getFirstItem(result, 'abadslamposition'),
-      abaslot: OracleHelper.getFirstItem(result, 'abaslot'),
-      abaport: OracleHelper.getFirstItem(result, 'abaport'),
-      abaad: OracleHelper.getFirstItem(result, 'abaad'),
-      abapairad: OracleHelper.getFirstItem(result, 'abapairad'),
-      abaprovider: OracleHelper.getFirstItem(result, 'abaprovider'),
-      abasistema: OracleHelper.getFirstItem(result, 'abasistema'),
-      status: (OracleHelper.getFirstItem(result, 'status') ??
-        GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR) as GetDataFromDSLAMPortIdStatusConstants,
-    };
-    switch (response.status) {
-      case GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL:
-        return response;
-      case GetDataFromDSLAMPortIdStatusConstants.EXECUTION_ERROR:
-        throw new GetDataFromDSLAMPortIdExecutionErrorException();
-      case GetDataFromDSLAMPortIdStatusConstants.THERE_IS_NO_DATA:
-        throw new Error30043Exception();
-      default:
-        throw new GetDataFromDSLAMPortIdExecutionErrorException();
-    }
-  }
+  //     abarack: OracleHelper.tableOfStringBindOut(),
+  //     abadslamposition: OracleHelper.tableOfStringBindOut(),
+  //     abaslot: OracleHelper.tableOfNumberBindOut(),
+  //     abaport: OracleHelper.tableOfNumberBindOut(),
+  //     abaad: OracleHelper.tableOfStringBindOut(),
+  //     abapairad: OracleHelper.tableOfStringBindOut(),
+  //     abaprovider: OracleHelper.tableOfStringBindOut(),
+  //     abasistema: OracleHelper.tableOfStringBindOut(),
+  //     status: OracleHelper.tableOfNumberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.BOSS_PACKAGE,
+  //     BossConstants.GET_DATA_FROM_DSLAM_PORT_ID,
+  //     parameters,
+  //   );
+  //   const response: IGetDataFromDSLAMPortIdResponse = {
+  //     abarack: OracleHelper.getFirstItem(result, 'abarack'),
+  //     abadslamposition: OracleHelper.getFirstItem(result, 'abadslamposition'),
+  //     abaslot: OracleHelper.getFirstItem(result, 'abaslot'),
+  //     abaport: OracleHelper.getFirstItem(result, 'abaport'),
+  //     abaad: OracleHelper.getFirstItem(result, 'abaad'),
+  //     abapairad: OracleHelper.getFirstItem(result, 'abapairad'),
+  //     abaprovider: OracleHelper.getFirstItem(result, 'abaprovider'),
+  //     abasistema: OracleHelper.getFirstItem(result, 'abasistema'),
+  //     status: (OracleHelper.getFirstItem(result, 'status') ??
+  //       GetDataFromDSLAMPortIdStatusConstants.ERROR) as GetDataFromDSLAMPortIdStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetDataFromDSLAMPortIdStatusConstants.ERROR:
+  //       throw new GetDataFromDSLAMPortIdException();
+  //     case GetDataFromDSLAMPortIdStatusConstants.THERE_IS_NO_DATA:
+  //       throw new Error30043Exception();
+  //     default:
+  //       throw new GetDataFromDSLAMPortIdException();
+  //   }
+  // }
 
   private async modifyNetworkAccessLog(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,

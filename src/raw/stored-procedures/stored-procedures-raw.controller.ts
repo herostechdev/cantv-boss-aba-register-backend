@@ -27,6 +27,8 @@ import { GetCustomerInstanceIdFromIdValueRawService } from './get-customer-insta
 import { GetCustomerInstanceIdFromIdValueRequestDto } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-request.dto';
 import { GetCSIdAndPlanNameFromLoginRawService } from './get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-raw.service';
 import { GetCSIdAndPlanNameFromLoginRequestDto } from './get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-request.dto';
+import { GetDataFromDSLAMPortIdRequestDto } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-request.dto';
+import { GetDataFromDSLAMPortIdRequestRawService } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-raw.service';
 import { GetDebtFromCustomerRawService } from './get-debt-from-customer/get-debt-from-customer-raw.service';
 import { GetDebtFromCustomerRequestDto } from './get-debt-from-customer/get-debt-from-customer-request.dto';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes/get-dsl-area-codes-request.dto';
@@ -55,6 +57,7 @@ import { IGetAndRegisterQualifOfServiceResponse } from './get-and-register-quali
 import { IGetCustomerClassNameFromIdValueResponse } from './get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-response.interface';
 import { IGetCustomerInstanceIdFromIdValueResponse } from './get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-response.interface';
 import { IGetCSIdAndPlanNameFromLoginResponse } from './get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-response.interface';
+import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDebtFromCustomerResponse } from './get-debt-from-customer/get-debt-from-customer-response.interface';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
@@ -106,6 +109,7 @@ export class StoredProceduresRawController {
     private readonly getCustomerClassNameFromIdValueRawService: GetCustomerClassNameFromIdValueRawService,
     private readonly getCustomerInstanceIdFromIdValueRawService: GetCustomerInstanceIdFromIdValueRawService,
     private readonly getCSIdAndPlanNameFromLoginRawService: GetCSIdAndPlanNameFromLoginRawService,
+    private readonly getDataFromDSLAMPortIdRequestRawService: GetDataFromDSLAMPortIdRequestRawService,
     private readonly getDebtFromCustomerRawService: GetDebtFromCustomerRawService,
     private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
@@ -241,6 +245,15 @@ export class StoredProceduresRawController {
     @Body() dto: GetCSIdAndPlanNameFromLoginRequestDto,
   ): Promise<IGetCSIdAndPlanNameFromLoginResponse> {
     return this.getCSIdAndPlanNameFromLoginRawService.execute(dto);
+  }
+
+  @Post('getDataFromDSLAMPortIdRequest')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getDataFromDSLAMPortIdRequest(
+    @Body() dto: GetDataFromDSLAMPortIdRequestDto,
+  ): Promise<IGetDataFromDSLAMPortIdResponse> {
+    return this.getDataFromDSLAMPortIdRequestRawService.execute(dto);
   }
 
   @Post('getDSLAreaCodes')
