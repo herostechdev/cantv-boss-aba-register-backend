@@ -1,13 +1,7 @@
-import { IsIP, IsInt, IsString } from 'class-validator';
-import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
+import { IsIP, IsInt } from 'class-validator';
+import { PhoneNumberDto } from 'src/boss/dtos/phone-number.dto';
 
-export class GetAbaDataRequestDto implements IPhoneNumber {
-  @IsString()
-  areaCode: string;
-
-  @IsString()
-  phoneNumber: string;
-
+export class GetAbaDataRequestDto extends PhoneNumberDto {
   @IsIP(4, { message: 'La IP es inválida' })
   ipAddress: string;
 

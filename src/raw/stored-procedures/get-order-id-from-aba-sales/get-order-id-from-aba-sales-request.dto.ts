@@ -1,9 +1,3 @@
-import { IsString } from 'class-validator';
+import { PhoneNumberDto } from 'src/boss/dtos/phone-number.dto';
 
-export class GetOrderIdFromABASalesRequestDto {
-  @IsString()
-  areaCode: string;
-
-  @IsString()
-  phoneNumber: string;
-}
+export class GetOrderIdFromABASalesRequestDto extends PhoneNumberDto {}

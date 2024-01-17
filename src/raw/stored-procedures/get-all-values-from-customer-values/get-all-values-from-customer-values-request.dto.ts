@@ -1,13 +1,7 @@
 import { IsString } from 'class-validator';
-import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
+import { PhoneNumberDto } from 'src/boss/dtos/phone-number.dto';
 
-export class GetAllValuesFromCustomerValuesRequestDto implements IPhoneNumber {
-  @IsString()
-  areaCode: string;
-
-  @IsString()
-  phoneNumber: string;
-
+export class GetAllValuesFromCustomerValuesRequestDto extends PhoneNumberDto {
   @IsString()
   className: string;
 

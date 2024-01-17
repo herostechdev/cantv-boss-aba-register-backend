@@ -20,7 +20,7 @@ import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './step-2/vali
 import { AbaRegisterValidateTechnicalFeasibilityService } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility.service';
 import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
-import { GetStateFromSerialRequestDto } from 'src/raw/stored-procedures/insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial-request.dto';
+import { GetStateFromSerialRequestDto } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-request.dto';
 import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IAbaRegisterGetLegalDocuments } from './step-4/get-legal-documents/aba-register-get-legal-documents-response.interface';
@@ -28,7 +28,7 @@ import { IAbaRegisterResponse } from 'src/raw/stored-procedures/aba-register/aba
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility-response.interface';
 import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
-import { IGetStateFromSerialResponse } from 'src/raw/stored-procedures/insert-dsl-aba-registers/get-state-from-serial/get-state-from-serial-response.interface';
+import { IGetStateFromSerialResponse } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-response.interface';
 import { IPlansByCustomerClassListResponse } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class-list-response.interface';
 import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
 import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';

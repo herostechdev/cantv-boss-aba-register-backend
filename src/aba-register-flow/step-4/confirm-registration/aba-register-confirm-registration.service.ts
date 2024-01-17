@@ -277,7 +277,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   private initialize(dto: AbaRegisterConfirmRegistrationRequestDto): void {
     this.dto = dto;
     this.response = {
-      requestDto: null,
+      requestDto: dto,
       getAbaPlanForKenanResponse: null,
       customerExistsResponse: null,
       createAndProvisioningCustomerResponse: null,

@@ -1,15 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
-import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
+import { PhoneNumberDto } from 'src/boss/dtos/phone-number.dto';
 
-export class CreateAndProvisioningMasterAccountRequestDto
-  implements IPhoneNumber
-{
-  @IsString()
-  areaCode: string;
-
-  @IsString()
-  phoneNumber: string;
-
+export class CreateAndProvisioningMasterAccountRequestDto extends PhoneNumberDto {
   @IsString()
   customerClassName: string;
 

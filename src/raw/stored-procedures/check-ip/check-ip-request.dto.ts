@@ -1,13 +1,7 @@
 import { IsInt, IsOptional, IsString } from 'class-validator';
-import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
+import { PhoneNumberDto } from 'src/boss/dtos/phone-number.dto';
 
-export class CheckIpRequestDto implements IPhoneNumber {
-  @IsString()
-  areaCode: string;
-
-  @IsString()
-  phoneNumber: string;
-
+export class CheckIpRequestDto extends PhoneNumberDto {
   @IsInt()
   dslamportId: number;
 

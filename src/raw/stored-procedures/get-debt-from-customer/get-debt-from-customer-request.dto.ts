@@ -1,13 +1,7 @@
-import { IsInt, IsString } from 'class-validator';
-import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
+import { IsInt } from 'class-validator';
+import { PhoneNumberDto } from 'src/boss/dtos/phone-number.dto';
 
-export class GetDebtFromCustomerRequestDto implements IPhoneNumber {
-  @IsString()
-  areaCode: string;
-
-  @IsString()
-  phoneNumber: string;
-
+export class GetDebtFromCustomerRequestDto extends PhoneNumberDto {
   @IsInt()
   customerInstanceId: number;
 }

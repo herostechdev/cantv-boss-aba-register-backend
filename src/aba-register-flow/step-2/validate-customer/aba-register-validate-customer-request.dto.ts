@@ -1,13 +1,7 @@
 import { IsIP, IsInt, IsOptional, IsString } from 'class-validator';
-import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
+import { PhoneNumberDto } from 'src/boss/dtos/phone-number.dto';
 
-export class AbaRegisterValidateCustomerRequestDto implements IPhoneNumber {
-  @IsString()
-  areaCode: string;
-
-  @IsString()
-  phoneNumber: string;
-
+export class AbaRegisterValidateCustomerRequestDto extends PhoneNumberDto {
   @IsIP(4, { message: 'La IP es inválida' })
   ipAddress: string;
 

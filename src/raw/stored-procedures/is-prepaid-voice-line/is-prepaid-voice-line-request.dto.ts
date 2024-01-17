@@ -1,10 +1,3 @@
-import { IsOptional } from 'class-validator';
-import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
+import { PhoneNumberDto } from 'src/boss/dtos/phone-number.dto';
 
-export class IsPrepaidVoiceLineRequestDto implements IPhoneNumber {
-  @IsOptional()
-  areaCode: string;
-
-  @IsOptional()
-  phoneNumber: string;
-}
+export class IsPrepaidVoiceLineRequestDto extends PhoneNumberDto {}
