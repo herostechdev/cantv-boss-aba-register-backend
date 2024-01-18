@@ -7,7 +7,7 @@ import { IGetAndRegisterQualifOfServiceResponse } from '../../../raw/stored-proc
 import { IGetASAPOrderDetailResponse } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from '../../../raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
-import { IGetDownstreamFromPlanResponse } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-response.interface';
+import { IGetDownstreamFromPlanResponse } from '../../../raw/stored-procedures/get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetPortIdFromIpResponse } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetPortIdResponse } from '../../../validate-technical-feasibility/get-port-id/get-port-id-response.interface';

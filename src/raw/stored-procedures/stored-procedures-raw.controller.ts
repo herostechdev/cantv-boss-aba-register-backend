@@ -33,6 +33,8 @@ import { GetDataFromDSLAMPortIdRequestDto } from './get-data-from-dslam-port-id/
 import { GetDataFromDSLAMPortIdRequestRawService } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-raw.service';
 import { GetDebtFromCustomerRawService } from './get-debt-from-customer/get-debt-from-customer-raw.service';
 import { GetDebtFromCustomerRequestDto } from './get-debt-from-customer/get-debt-from-customer-request.dto';
+import { GetDownstreamFromPlanRawService } from './get-downstream-from-plan/get-downstream-from-plan-raw.service';
+import { GetDownstreamFromPlanRequestDto } from './get-downstream-from-plan/get-downstream-from-plan-request.dto';
 import { GetDSLAreaCodesRequestDto } from './get-dsl-area-codes/get-dsl-area-codes-request.dto';
 import { GetDSLAreaCodesRawService } from './get-dsl-area-codes/get-dsl-area-codes-raw.service';
 import { GetFirstLetterFromABARequestDto } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-request.dto';
@@ -62,6 +64,7 @@ import { IGetCustomerInstanceIdFromIdValueResponse } from './get-customer-instan
 import { IGetCSIdAndPlanNameFromLoginResponse } from './get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-response.interface';
 import { IGetDataFromDSLAMPortIdResponse } from './get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDebtFromCustomerResponse } from './get-debt-from-customer/get-debt-from-customer-response.interface';
+import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-codes-response.interface';
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
@@ -115,6 +118,7 @@ export class StoredProceduresRawController {
     private readonly getCSIdAndPlanNameFromLoginRawService: GetCSIdAndPlanNameFromLoginRawService,
     private readonly getDataFromDSLAMPortIdRequestRawService: GetDataFromDSLAMPortIdRequestRawService,
     private readonly getDebtFromCustomerRawService: GetDebtFromCustomerRawService,
+    private readonly getDownstreamFromPlanRawService: GetDownstreamFromPlanRawService,
     private readonly getDSLAreaCodesRawService: GetDSLAreaCodesRawService,
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
@@ -285,6 +289,15 @@ export class StoredProceduresRawController {
     @Body() dto: GetDebtFromCustomerRequestDto,
   ): Promise<IGetDebtFromCustomerResponse> {
     return this.getDebtFromCustomerRawService.execute(dto);
+  }
+
+  @Post('getDownstreamFromPlan')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getDownstreamFromPlan(
+    @Body() dto: GetDownstreamFromPlanRequestDto,
+  ): Promise<IGetDownstreamFromPlanResponse> {
+    return this.getDownstreamFromPlanRawService.execute(dto);
   }
 
   @Post('getFirstLetterFromABARequest')

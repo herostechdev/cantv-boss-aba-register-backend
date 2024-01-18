@@ -13,6 +13,7 @@ import { AbaRegisterGetAbaPlanForKenanService } from './dependencies/get-aba-pla
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from './dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterGetCSIdAndPlanNameFromLoginService } from './dependencies/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login.service';
 import { AbaRegisterGetDataFromDSLAMPortIdRequestService } from './dependencies/get-data-from-dslam-port-id/get-data-from-dslam-port-id.service';
+import { AbaRegisterGetDownstreamFromPlanService } from './dependencies/get-downstream-from-plan/get-downstream-from-plan.service';
 import { AbaRegisterGetDslAreaCodesService } from './dependencies/get-dsl-area-codes/aba-register-get-dsl-area-codes.service';
 import { AbaRegisterGetGroupAccessFromLoginService } from './step-1/login/aba-register-get-group-access-from-login.service';
 import { AbaRegisterGetLegalDocumentsService } from './step-4/get-legal-documents/aba-register-get-legal-documents.service';
@@ -53,6 +54,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterCreateAndProvisioningMasterAccountService,
     AbaRegisterCustomerExistsService,
     AbaRegisterDeleteOrderService,
+    AbaRegisterGetDownstreamFromPlanService,
     AbaRegisterGetAbaDataService,
     AbaRegisterGetAbaDataFromRequestsService,
     AbaRegisterGetAbaPlanForKenanService,

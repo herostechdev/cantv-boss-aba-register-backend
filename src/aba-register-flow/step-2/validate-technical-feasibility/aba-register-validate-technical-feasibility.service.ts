@@ -23,9 +23,6 @@ import { GetAbaDataFromRequestsRawService } from '../../../raw/stored-procedures
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdStatusConstants } from '../../../raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-raw.service';
-import { GetDownstreamFromPlanStatusConstants } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-status.constants';
-import { GetDownstreamFromPlanThereIsNoDataException } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-there-is-no-data.exception';
-import { GetInfoFromABARequestsException } from '../../../validate-technical-feasibility/get-info-from-aba-requests/get-info-from-aba-requests.exception';
 import { GetPortIdFromIpBadIpFormatException } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
 import { GetPortIdFromIpConstants } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip.constants';
 import { GetPortIdStatusConstants } from '../../../validate-technical-feasibility/get-port-id/get-port-id-status.constants';
@@ -33,7 +30,6 @@ import { GetPortIdException } from '../../../validate-technical-feasibility/get-
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
-import { IGetDownstreamFromPlanResponse } from '../../../validate-technical-feasibility/get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetPortIdFromIpResponse } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetPortIdResponse } from '../../../validate-technical-feasibility/get-port-id/get-port-id-response.interface';
 import { IIsValidIpAddressResponse } from '../../../validate-technical-feasibility/is-valid-ip-address/is-valid-ip-address-response.interface';
@@ -60,6 +56,7 @@ import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.h
 import { VerifyContractByPhoneException } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone-status.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { AbaRegisterGetDownstreamFromPlanService } from 'src/aba-register-flow/dependencies/get-downstream-from-plan/get-downstream-from-plan.service';
 
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDatabaseService {
@@ -71,6 +68,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
     private readonly abaRegisterIsPrepaidVoiceLineService: AbaRegisterIsPrepaidVoiceLineService,
     private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
     private readonly abaRegisterGetDataFromDSLAMPortIdRequestService: AbaRegisterGetDataFromDSLAMPortIdRequestService,
+    private readonly abaRegisterGetDownstreamFromPlanService: AbaRegisterGetDownstreamFromPlanService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getABADataFromRequestsService: GetAbaDataFromRequestsRawService,
     private readonly getDHCPDataService: GetDHCPDataRawService,
@@ -175,9 +173,12 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
         clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
-      data.getDownstreamFromPlanResponse = await this.getDownstreamFromPlan(
-        data,
-      );
+      data.getDownstreamFromPlanResponse =
+        await this.abaRegisterGetDownstreamFromPlanService.execute({
+          areaCode: dto.areaCode,
+          phoneNumber: dto.phoneNumber,
+          desiredPlan: data.getABADataFromRequestsResponse.desiredPlan,
+        });
       if (data.verifyContractByPhoneResponse.status !== 0) {
         throw new VerifyContractByPhoneException();
       }
@@ -471,39 +472,39 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
     }
   }
 
-  private async getDownstreamFromPlan(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IGetDownstreamFromPlanResponse> {
-    const parameters = {
-      i_planname: OracleHelper.stringBindIn(
-        data.getABADataFromRequestsResponse.desiredPlan,
-        32,
-      ),
-      o_downstream: OracleHelper.stringBindOut(32),
-      o_status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      null,
-      BossConstants.GET_DOWNSTREAM_FROM_PLAN,
-      parameters,
-    );
-    const status = (result?.outBinds?.o_status ??
-      GetDownstreamFromPlanStatusConstants.INTERNAL_ERROR) as GetDownstreamFromPlanStatusConstants;
-    const response: IGetDownstreamFromPlanResponse = {
-      downstream: result?.outBinds?.o_downstream ?? 1,
-      status: status,
-    };
-    switch (status) {
-      case GetDownstreamFromPlanStatusConstants.SUCCESSFULL:
-        return response;
-      case GetDownstreamFromPlanStatusConstants.INTERNAL_ERROR:
-        throw new GetInfoFromABARequestsException();
-      case GetDownstreamFromPlanStatusConstants.THERE_IS_NO_DATA:
-        throw new GetDownstreamFromPlanThereIsNoDataException();
-      default:
-        throw new GetInfoFromABARequestsException();
-    }
-  }
+  // private async getDownstreamFromPlan(
+  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
+  // ): Promise<IGetDownstreamFromPlanResponse> {
+  //   const parameters = {
+  //     i_planname: OracleHelper.stringBindIn(
+  //       data.getABADataFromRequestsResponse.desiredPlan,
+  //       32,
+  //     ),
+  //     o_downstream: OracleHelper.stringBindOut(32),
+  //     o_status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     null,
+  //     BossConstants.GET_DOWNSTREAM_FROM_PLAN,
+  //     parameters,
+  //   );
+  //   const status = (result?.outBinds?.o_status ??
+  //     GetDownstreamFromPlanStatusConstants.ERROR) as GetDownstreamFromPlanStatusConstants;
+  //   const response: IGetDownstreamFromPlanResponse = {
+  //     downstream: result?.outBinds?.o_downstream ?? 1,
+  //     status: status,
+  //   };
+  //   switch (status) {
+  //     case GetDownstreamFromPlanStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetDownstreamFromPlanStatusConstants.ERROR:
+  //       throw new GetInfoFromABARequestsException();
+  //     case GetDownstreamFromPlanStatusConstants.THERE_IS_NO_DATA:
+  //       throw new GetDownstreamFromPlanThereIsNoDataException();
+  //     default:
+  //       throw new GetInfoFromABARequestsException();
+  //   }
+  // }
 
   private async isValidIpAddress(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
