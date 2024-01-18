@@ -547,7 +547,10 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetPortIdFromIpResponse> {
     const parameters = {
-      i_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 15),
+      i_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress),
+      sz_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
+      sz_phonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
+
       o_dslamportid: OracleHelper.numberBindOut(),
       o_status: OracleHelper.numberBindOut(),
     };
@@ -1055,7 +1058,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
         this.getValue(
           data.requestDto.orderIsAtBoss,
           data.getABADataResponse.abaclienttype,
-          data.requestDto.lineType,
+          data.getABADataResponse.abaclienttype ?? data.requestDto.lineType,
         ),
       ),
 
