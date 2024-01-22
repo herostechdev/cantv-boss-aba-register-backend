@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { DeleteOrderExecutionErrorException } from 'src/raw/stored-procedures/delete-order/delete-order-execution-error.exception';
+import { DeleteOrderException } from 'src/raw/stored-procedures/delete-order/delete-order.exception';
 import { DeleteOrderRawService } from 'src/raw/stored-procedures/delete-order/delete-order-raw.service';
 import { DeleteOrderRequestDto } from 'src/raw/stored-procedures/delete-order/delete-order-request.dto';
 import { DeleteOrderStatusConstants } from 'src/raw/stored-procedures/delete-order/delete-order-status.constants';
@@ -27,13 +27,13 @@ export class AbaRegisterDeleteOrderService extends AbaRegisterExecuteService<
       case DeleteOrderStatusConstants.SUCCESSFULL:
         return response;
       case DeleteOrderStatusConstants.ERROR:
-        throw new DeleteOrderExecutionErrorException();
+        throw new DeleteOrderException();
       case DeleteOrderStatusConstants.THERE_IS_NO_DATA:
         return response;
       case DeleteOrderStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
         throw new DeleteOrderThePortIsOccupiedByAnotherContractException();
       default:
-        throw new DeleteOrderExecutionErrorException();
+        throw new DeleteOrderException();
     }
   }
 }

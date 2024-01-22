@@ -94,6 +94,10 @@ import { ReverseAbaRegisterRawService } from './reverse-aba-register/reverse-aba
 import { ReverseAbaRegisterRequestDto } from './reverse-aba-register/reverse-aba-register-request.dto';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
+import { UpdatePasswordFromLoginRequestDto } from './update-password-from-login/update-password-from-login-request.dto';
+import { IUpdatePasswordFromLoginResponse } from './update-password-from-login/update-password-from-login-response.interface';
+import { UpdatePasswordFromLoginService } from 'src/aba-register-flow/dependencies/update-password-from-login/update-password-from-login.service';
+import { UpdatePasswordFromLoginRawService } from './update-password-from-login/update-password-from-login-raw.service';
 
 @Controller({
   path: 'raw/sp',
@@ -132,6 +136,7 @@ export class StoredProceduresRawController {
     private readonly planByCustomerClassRawService: PlansByCustomerClassRawService,
     private readonly reverseAbaRegisterRawService: ReverseAbaRegisterRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
+    private readonly updatePasswordFromLoginRawService: UpdatePasswordFromLoginRawService,
   ) {}
   @Post('abaRegister')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
@@ -406,5 +411,14 @@ export class StoredProceduresRawController {
     @Body() dto: UpdateDslAbaRegistersRequestDto,
   ): Promise<IUpdateDslAbaRegistersResponse> {
     return this.updateDslAbaRegistersRawService.execute(dto);
+  }
+
+  @Post('updatePasswordFromLogin')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  updatePasswordFromLogin(
+    @Body() dto: UpdatePasswordFromLoginRequestDto,
+  ): Promise<IUpdatePasswordFromLoginResponse> {
+    return this.updatePasswordFromLoginRawService.execute(dto);
   }
 }

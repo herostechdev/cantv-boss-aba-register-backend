@@ -62,6 +62,7 @@ export class BossConstants {
   public static READ_IABA_ORDER = 'ReadIABAOrder';
   public static REVERSE_ABA_REGISTER = 'ReverseAbaRegister';
   public static UPDATE_DSL_ABA_REGISTERS = 'UpdateDslAbaRegisters';
+  public static UPDATE_PASSWORD_FROM_LOGIN = 'UpdatePasswordFromLogin';
   public static VERIFY_CONTRACT_BY_PHONE = 'verifycontracbyphone';
 
   // NUMBERS

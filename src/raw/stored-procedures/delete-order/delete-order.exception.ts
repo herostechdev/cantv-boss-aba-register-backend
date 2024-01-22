@@ -1,6 +1,6 @@
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
-export class DeleteOrderExecutionErrorException extends CustomBadRequestException {
+export class DeleteOrderException extends CustomBadRequestException {
   constructor() {
     super({
       code: '',
