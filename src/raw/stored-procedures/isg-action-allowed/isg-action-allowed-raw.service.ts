@@ -24,25 +24,6 @@ export class ISGActionAllowedRawService extends OracleExecuteStoredProcedureRawS
     );
   }
 
-  // async execute(
-  //   dto: ISGActionAllowedRequestDto,
-  //   dbConnection?: Connection,
-  // ): Promise<IISGActionAllowedResponse> {
-  //   try {
-  //     await super.connect(dbConnection);
-  //     const result = await super.executeStoredProcedure(
-  //       BossConstants.SIGS_PACKAGE,
-  //       BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
-  //       this.getParameters(dto),
-  //     );
-  //     return this.getResponse(result);
-  //   } catch (error) {
-  //     super.exceptionHandler(error, dto);
-  //   } finally {
-  //     await super.closeConnection(dbConnection !== null);
-  //   }
-  // }
-
   protected getParameters(dto: ISGActionAllowedRequestDto): any {
     return {
       groupname: OracleHelper.stringBindIn(dto.groupName),

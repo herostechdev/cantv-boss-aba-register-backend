@@ -10,10 +10,10 @@ import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
+import { BossHelper } from './boss/boss.helper';
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from './oracle/oracle.constants';
 import { Wlog } from './system/infrastructure/winston-logger/winston-logger.service';
-import { BossHelper } from './boss/boss.helper';
 
 const initializePipes = (app: INestApplication) => {
   Wlog.instance.info({
@@ -59,7 +59,7 @@ const initializeOracleDatabaseClient = async (app: INestApplication) => {
   });
   Wlog.instance.info({
     phoneNumber: null,
-    message: 'Cliente Otacle inicializado',
+    message: 'Cliente Oracle inicializado',
     input: null,
     clazz: BossHelper.applicationName,
     method: 'initializeOracleDatabaseClient',

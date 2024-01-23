@@ -11,6 +11,7 @@ import { CipherService } from './cipher.service';
 import { EncryptionMessageDto } from './encryption-message.dto';
 import { HashService } from './hash.service';
 import { HttpExceptionFilter } from '../../exceptions/exception-filters/http-exception.filter';
+import { ValidationHelper } from '../../helpers/validation.helper';
 
 @Controller('v1/security')
 export class EncryptionController {
@@ -20,7 +21,7 @@ export class EncryptionController {
   ) {}
 
   @IsPublic()
-  @Post('/cipher')
+  @Post('cipher')
   @HttpCode(200)
   @UseFilters(new HttpExceptionFilter())
   async cipher(
@@ -30,7 +31,7 @@ export class EncryptionController {
   }
 
   @IsPublic()
-  @Post('/decipher')
+  @Post('decipher')
   @HttpCode(200)
   @UseFilters(new HttpExceptionFilter())
   async decipher(
@@ -40,12 +41,29 @@ export class EncryptionController {
   }
 
   @IsPublic()
-  @Post('/hash')
+  @Post('md5')
   @HttpCode(200)
   @UseFilters(new HttpExceptionFilter())
-  async hash(
-    @Body(ValidationPipe) dto: EncryptionMessageDto,
-  ): Promise<EncryptionMessageDto> {
-    return { message: await this.hashService.hashing(dto.message) };
+  md5(@Body(ValidationPipe) dto: EncryptionMessageDto): EncryptionMessageDto {
+    console.log();
+    console.log(
+      'hashService is defined',
+      ValidationHelper.isDefined(this.hashService),
+    );
+    console.log();
+    console.log();
+    console.log();
+    console.log();
+    console.log('message', dto.message);
+    console.log('Hashing');
+    const hash = this.hashService.md5(dto.message);
+    console.log('Hash', hash);
+    console.log('Validate');
+    const isMatch = this.hashService.verifyMd5(dto.message, hash);
+    console.log('isMatch', isMatch);
+    console.log();
+    console.log();
+    console.log();
+    return { message: hash };
   }
 }

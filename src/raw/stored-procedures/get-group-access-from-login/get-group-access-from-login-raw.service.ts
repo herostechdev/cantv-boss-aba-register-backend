@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'oracledb';
 import { BossConstants } from 'src/boss/boss.constants';
 import { GetGroupAccessFromLoginRequestDto } from './get-group-access-from-login-request.dto';
 import { GetGroupAccessFromLoginStatusConstants } from './get-group-access-from-login-status.constants';
@@ -19,31 +18,15 @@ export class GetGroupAccessFromLoginRawService extends OracleExecuteStoredProced
     protected readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super(
-      BossConstants.SIGS_PACKAGE,
+      // BossConstants.SIGS_PACKAGE,
+      BossConstants.ACT_PACKAGE,
       BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
       oracleConfigurationService,
       updateDslAbaRegistersService,
     );
   }
 
-  // async execute(
-  //   dto: GetGroupAccessFromLoginRequestDto,
-  //   dbConnection?: Connection,
-  // ): Promise<IGetGroupAccessFromLoginResponse> {
-  //   try {
-  //     await super.connect(dbConnection);
-  //     const result = await super.executeStoredProcedure(
-  //       BossConstants.SIGS_PACKAGE,
-  //       BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
-  //       this.getParameters(dto),
-  //     );
-  //     return this.getResponse(result);
-  //   } catch (error) {
-  //     super.exceptionHandler(error, dto);
-  //   } finally {
-  //     await super.closeConnection(dbConnection !== null);
-  //   }
-  // }
+  // Cantv2024
 
   getParameters(dto: GetGroupAccessFromLoginRequestDto): any {
     return {
@@ -57,8 +40,8 @@ export class GetGroupAccessFromLoginRawService extends OracleExecuteStoredProced
 
   getResponse(result: any): IGetGroupAccessFromLoginResponse {
     return {
-      password: result?.outBinds?.userpassword,
-      accessGroup: result?.outBinds?.accessgroup,
+      password: OracleHelper.getFirstItem(result, 'userpassword'),
+      accessGroup: OracleHelper.getFirstItem(result, 'accessgroup'),
       status: (OracleHelper.getFirstItem(result, 'status') ??
         GetGroupAccessFromLoginStatusConstants.ERROR) as GetGroupAccessFromLoginStatusConstants,
     };
