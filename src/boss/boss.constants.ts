@@ -90,7 +90,7 @@ export class BossConstants {
   public static CANTV_BILLING = 'FACTURA_CANTV';
   public static CONFIRM_METHOD = 'confirm';
   public static END = 'Fin';
-  public static EXECUTE = 'execute';
+  public static EXECUTE_METHOD = 'execute';
   public static FISCAL_IDENTIFICATION_DOCUMENT_TYPE = 'NO_RIF';
   public static INSTALL_ABA = 'INSTALAR_ABA';
   public static INTERNET_ACCESS = 'Acceso Internet';

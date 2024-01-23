@@ -31,14 +31,14 @@ export abstract class AbaRegisterExecuteService<
         message: BossConstants.START,
         input: JSON.stringify(dto),
         clazz: this.className,
-        method: BossConstants.EXECUTE,
+        method: BossConstants.EXECUTE_METHOD,
       });
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: this.processMessage,
         input: JSON.stringify(dto),
         clazz: this.className,
-        method: BossConstants.EXECUTE,
+        method: BossConstants.EXECUTE_METHOD,
       });
       const response = await this.rawService.execute(
         dto,
@@ -51,7 +51,7 @@ export abstract class AbaRegisterExecuteService<
         message: BossConstants.END,
         input: JSON.stringify(dto),
         clazz: this.className,
-        method: BossConstants.EXECUTE,
+        method: BossConstants.EXECUTE_METHOD,
       });
       return response;
     } catch (error) {
@@ -59,7 +59,7 @@ export abstract class AbaRegisterExecuteService<
         phoneNumber: BossHelper.getPhoneNumber(dto),
         input: JSON.stringify(dto),
         clazz: this.className,
-        method: BossConstants.EXECUTE,
+        method: BossConstants.EXECUTE_METHOD,
         error: error,
       });
       super.exceptionHandler(error, JSON.stringify(dto));

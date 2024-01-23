@@ -1,5 +1,7 @@
-import { IStatusResponse } from 'src/boss/status-response.interface';
-import { AbaRegisterLoginStatusConstants } from './aba-register-login.constans';
+import { IGetGroupAccessFromLoginResponse } from 'src/raw/stored-procedures/get-group-access-from-login/get-group-access-from-login-response.interface';
+import { IISGActionAllowedResponse } from 'src/raw/stored-procedures/isg-action-allowed/isg-action-allowed-response.interface';
 
-export type IAbaRegisterLoginResponse =
-  IStatusResponse<AbaRegisterLoginStatusConstants>;
+export interface IAbaRegisterLoginResponse {
+  getGroupAccessFromLoginResponse: IGetGroupAccessFromLoginResponse;
+  isgActionAllowedResponse: IISGActionAllowedResponse;
+}

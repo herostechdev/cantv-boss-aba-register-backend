@@ -119,8 +119,8 @@ export class AbaRegisterController {
   @Post('login')
   @HttpCode(HttpCodeConstants.HTTP_204_NO_CONTENT)
   @UseFilters(new HttpExceptionFilter())
-  login(@Body() dto: AbaRegisterLoginRequestDto): Promise<void> {
-    return this.abaRegisterLoginService.execute(dto);
+  async login(@Body() dto: AbaRegisterLoginRequestDto): Promise<void> {
+    await this.abaRegisterLoginService.execute(dto);
   }
 
   @Post('plansByCustomerClass')

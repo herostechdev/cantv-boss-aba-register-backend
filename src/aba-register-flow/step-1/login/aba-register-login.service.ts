@@ -1,134 +1,134 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'oracledb';
 import { AbaRegisterGetGroupAccessFromLoginService } from './aba-register-get-group-access-from-login.service';
 import { AbaRegisterISGActionAllowedService } from './aba-register-isg-action-allowed.service';
-import { AbaRegisterLoginData } from './aba-register-login-data';
 import { AbaRegisterLoginRequestDto } from './aba-register-login-request.dto';
 import { BossConstants } from 'src/boss/boss.constants';
-import { BossHelper } from 'src/boss/boss.helper';
+import { BossFlowService } from 'src/boss-flows/boss-flow.service';
 import { HashService } from 'src/system/infrastructure/security/encryption/hash.service';
 import { IAbaRegisterLoginResponse } from './aba-register-login-response.interface';
 import { InvalidPasswordException } from 'src/exceptions/invalid-password.exception';
-import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
-export class AbaRegisterLoginService extends OracleFinalExecuteService<
+export class AbaRegisterLoginService extends BossFlowService<
   AbaRegisterLoginRequestDto,
-  void
+  IAbaRegisterLoginResponse
 > {
   constructor(
     private readonly abaRegisterGetGroupAccessFromLoginService: AbaRegisterGetGroupAccessFromLoginService,
-    private readonly hashService: HashService,
     private readonly abaRegisterISGActionAllowedService: AbaRegisterISGActionAllowedService,
+    private readonly hashService: HashService,
+    protected readonly oracleConfigurationService: OracleConfigurationService,
+    private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
-    super();
+    super(oracleConfigurationService, updateDslAbaRegistersRawService);
+    super.className = AbaRegisterLoginService.name;
+    super.methodName = BossConstants.EXECUTE_METHOD;
   }
 
   async execute(
     dto: AbaRegisterLoginRequestDto,
-    dbConnection?: Connection,
-  ): Promise<void> {
+  ): Promise<IAbaRegisterLoginResponse> {
+    this.initialize(dto);
     try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.START,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterLoginService.name,
-        method: BossConstants.EXECUTE,
-      });
-      const data = new AbaRegisterLoginData();
-      data.requestDto = dto;
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Obtener permisología del usuario',
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterLoginService.name,
-        method: BossConstants.EXECUTE,
-      });
-      data.getGroupAccessFromLoginResponse =
-        await this.abaRegisterGetGroupAccessFromLoginService.execute(
-          dto,
-          dbConnection,
-        );
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Validar contraseña',
-        input: dto.userlogin,
-        clazz: AbaRegisterLoginService.name,
-        method: BossConstants.EXECUTE,
-      });
-      this.validatePassword(
-        dto.password,
-        data.getGroupAccessFromLoginResponse?.password,
-      );
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Validar permisos',
-        input: dto.userlogin,
-        clazz: AbaRegisterLoginService.name,
-        method: BossConstants.EXECUTE,
-      });
-      data.isgActionAllowedResponse =
-        await this.abaRegisterISGActionAllowedService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-          groupName: data.getGroupAccessFromLoginResponse.accessGroup,
-          action: BossConstants.INSTALL_ABA,
-        });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.END,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterLoginService.name,
-        method: BossConstants.EXECUTE,
-      });
+      super.infoLog(BossConstants.START);
+      await super.connect();
+
+      // Wlog.instance.info({
+      //   phoneNumber: BossHelper.getPhoneNumber(dto),
+      //   message: 'Obtener permisología del usuario',
+      //   input: JSON.stringify(dto),
+      //   clazz: AbaRegisterLoginService.name,
+      //   method: BossConstants.EXECUTE_METHOD,
+      // });
+      // this.response.getGroupAccessFromLoginResponse =
+      //   await this.abaRegisterGetGroupAccessFromLoginService.execute(
+      //     dto,
+      //     this.dbConnection,
+      //   );
+      await this.getGroupAccessFromLogin();
+      // Wlog.instance.info({
+      //   phoneNumber: BossHelper.getPhoneNumber(dto),
+      //   message: 'Validar contraseña',
+      //   input: dto.userlogin,
+      //   clazz: AbaRegisterLoginService.name,
+      //   method: BossConstants.EXECUTE_METHOD,
+      // });
+      // this.validatePassword(
+      //   dto.password,
+      //   data.getGroupAccessFromLoginResponse?.password,
+      // );
+      this.validatePassword();
+      // Wlog.instance.info({
+      //   phoneNumber: BossHelper.getPhoneNumber(dto),
+      //   message: 'Validar permisos',
+      //   input: dto.userlogin,
+      //   clazz: AbaRegisterLoginService.name,
+      //   method: BossConstants.EXECUTE_METHOD,
+      // });
+      // data.isgActionAllowedResponse =
+      //   await this.abaRegisterISGActionAllowedService.execute({
+      //     areaCode: dto.areaCode,
+      //     phoneNumber: dto.phoneNumber,
+      //     groupName: data.getGroupAccessFromLoginResponse.accessGroup,
+      //     action: BossConstants.INSTALL_ABA,
+      //   });
+      await this.isgActionAllowed();
+      super.infoLog(BossConstants.END);
+      return this.response;
     } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterLoginService.name,
-        method: BossConstants.EXECUTE,
-        error: error,
-      });
+      super.errorLog(error);
       super.exceptionHandler(error, JSON.stringify(dto));
+    } finally {
+      await this.closeConnection();
     }
   }
 
-  private validatePassword(password: string, storedPassword: string): void {
-    console.log();
-    console.log('validatePassword');
-    console.log();
-    console.log('    password', password);
-    console.log('    storedPassword', storedPassword);
+  private initialize(dto: AbaRegisterLoginRequestDto): void {
+    this.dto = dto;
+    this.response = {
+      getGroupAccessFromLoginResponse: null,
+      isgActionAllowedResponse: null,
+    };
+  }
 
-    // console.log();
-    // const hashedPassword = this.hashService.hashing(password);
-    // console.log('    hashedPassword', hashedPassword);
+  private async getGroupAccessFromLogin(): Promise<void> {
+    super.infoLog('Obtener permisología del usuario');
+    this.response.getGroupAccessFromLoginResponse =
+      await this.abaRegisterGetGroupAccessFromLoginService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          userlogin: this.dto.userlogin,
+        },
+        this.dbConnection,
+      );
+  }
 
-    console.log();
-    const md5Password = this.hashService.md5(password);
-    console.log('    md5Password', md5Password);
-
-    // console.log();
-    // const md5Base64Password = this.hashService.md5Base64(password);
-    // console.log('    md5Base64Password', md5Base64Password);
-
-    // console.log();
-    // const md5HexPassword = this.hashService.md5Hex(password);
-    // console.log('    md5HexPassword', md5HexPassword);
-
-    console.log();
-    console.log(
-      '    isMatch',
-      this.hashService.verifyMd5(password, storedPassword),
-    );
-    if (!this.hashService.verifyMd5(password, storedPassword)) {
+  private validatePassword(): void {
+    super.infoLog('Validar credenciales');
+    if (
+      !this.hashService.verifyMd5(
+        this.dto.password,
+        this.response.getGroupAccessFromLoginResponse.password,
+      )
+    ) {
       throw new InvalidPasswordException();
     }
   }
 
-  protected processResponse(response: void): IAbaRegisterLoginResponse {
-    return;
+  private async isgActionAllowed(): Promise<void> {
+    super.infoLog('Validar permisos');
+    this.response.isgActionAllowedResponse =
+      await this.abaRegisterISGActionAllowedService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          action: BossConstants.INSTALL_ABA,
+          groupName: this.response.getGroupAccessFromLoginResponse.accessGroup,
+        },
+        this.dbConnection,
+      );
   }
 }
