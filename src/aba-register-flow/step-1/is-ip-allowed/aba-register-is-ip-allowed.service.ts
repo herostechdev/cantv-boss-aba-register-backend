@@ -23,18 +23,17 @@ export class AbaRegisterIsIPAllowedService extends AbaRegisterExecuteService<
   protected processResponse(
     response: IIsIPAllowedResponse,
   ): IIsIPAllowedResponse {
-    throw new ExpiredIpException();
-    // switch (response.status) {
-    //   case IsIpAllowedStatusConstants.SUCCESSFULL:
-    //     return response;
-    //   case IsIpAllowedStatusConstants.ERROR:
-    //     throw new IsIpAllowedException();
-    //   case IsIpAllowedStatusConstants.INVALID_IP_FOR_REMOTE_REGISTRATION:
-    //     return response;
-    //   case IsIpAllowedStatusConstants.EXPIRED_IP:
-    //     throw new ExpiredIpException();
-    //   default:
-    //     throw new IsIpAllowedException();
-    // }
+    switch (response.status) {
+      case IsIpAllowedStatusConstants.SUCCESSFULL:
+        return response;
+      case IsIpAllowedStatusConstants.ERROR:
+        throw new IsIpAllowedException();
+      case IsIpAllowedStatusConstants.INVALID_IP_FOR_REMOTE_REGISTRATION:
+        return response;
+      case IsIpAllowedStatusConstants.EXPIRED_IP:
+        throw new ExpiredIpException();
+      default:
+        throw new IsIpAllowedException();
+    }
   }
 }
