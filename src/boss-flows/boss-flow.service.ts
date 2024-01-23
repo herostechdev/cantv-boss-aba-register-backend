@@ -15,7 +15,7 @@ export abstract class BossFlowService<
 > extends OracleDatabaseService {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
+    protected readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService);
   }

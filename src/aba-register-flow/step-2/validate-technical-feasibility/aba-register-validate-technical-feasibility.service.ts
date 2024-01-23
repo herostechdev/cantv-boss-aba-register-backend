@@ -8,8 +8,10 @@ import { AbaRegisterGetAbaDataFromRequestsService } from 'src/aba-register-flow/
 import { AbaRegisterGetAbaDataService } from 'src/aba-register-flow/dependencies/get-aba-data/get-aba-data.service';
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterGetDataFromDSLAMPortIdRequestService } from 'src/aba-register-flow/dependencies/get-data-from-dslam-port-id/get-data-from-dslam-port-id.service';
+import { AbaRegisterGetDownstreamFromPlanService } from 'src/aba-register-flow/dependencies/get-downstream-from-plan/get-downstream-from-plan.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { BossConstants } from 'src/boss/boss.constants';
+import { BossFlowService } from 'src/boss-flows/boss-flow.service';
 import { BossHelper } from 'src/boss/boss.helper';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
@@ -41,7 +43,6 @@ import { IsOccupiedPortInternalErrorException } from '../../../validate-technica
 import { IsOccupiedPortTherIsNoDataException } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-there-is-no-data.exception';
 import { IsValidIpAddressConstants } from '../../../validate-technical-feasibility/is-valid-ip-address/is-valid-ip-address.constants';
 import { IVerifiyContractByPhoneResponse } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone-response.interface';
-import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ReadIABAOrderErrorCodeConstants } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-error_code.constants';
@@ -56,10 +57,12 @@ import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.h
 import { VerifyContractByPhoneException } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone.exception';
 import { VerifiyContractByPhoneStatusConstants } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone-status.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { AbaRegisterGetDownstreamFromPlanService } from 'src/aba-register-flow/dependencies/get-downstream-from-plan/get-downstream-from-plan.service';
 
 @Injectable()
-export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDatabaseService {
+export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowService<
+  AbaRegisterValidateTechnicalFeasibilityRequestDto,
+  IAbaRegisterValidateTechnicalFeasibilityResponse
+> {
   constructor(
     private readonly abaRegisterCheckIpService: AbaRegisterCheckIpService,
     private readonly abaRegisterDeleteOrderService: AbaRegisterDeleteOrderService,
@@ -75,9 +78,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
+    protected readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
-    super(oracleConfigurationService);
+    super(oracleConfigurationService, updateDslAbaRegistersService);
+    super.className = AbaRegisterValidateTechnicalFeasibilityService.name;
+    super.methodName = BossConstants.EXECUTE_METHOD;
   }
 
   async execute(
@@ -91,7 +96,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
         clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
         method: 'validateTechnicalFeasibility',
       });
-      const data = this.initializeResponse();
+      const data = this.initialize(dto);
       data.requestDto = dto;
       await super.connect();
       Wlog.instance.info({
@@ -394,9 +399,12 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends OracleDataba
     }
   }
 
-  private initializeResponse(): IAbaRegisterValidateTechnicalFeasibilityResponse {
+  private initialize(
+    dto: AbaRegisterValidateTechnicalFeasibilityRequestDto,
+  ): IAbaRegisterValidateTechnicalFeasibilityResponse {
+    this.dto = dto;
     return {
-      requestDto: null,
+      requestDto: dto,
       insertDslAbaRegistersResponse: null,
       isPrepaidVoiceLine: null,
       getAndRegisterQualifOfServiceResponse: null,
