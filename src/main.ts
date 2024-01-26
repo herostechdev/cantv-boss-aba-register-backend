@@ -56,6 +56,10 @@ const initializeOracleDatabaseClient = async (app: INestApplication) => {
     connectionString: connectionString,
     poolMax: oracleConfigurationService.poolMaxConnections,
     poolMin: oracleConfigurationService.poolMinConnections,
+    poolIncrement: oracleConfigurationService.poolIncrement,
+    connectTimeout: oracleConfigurationService.connectTimeout,
+    poolTimeout: oracleConfigurationService.poolTimeout,
+    queueMax: oracleConfigurationService.queueMax,
   });
   Wlog.instance.info({
     phoneNumber: null,

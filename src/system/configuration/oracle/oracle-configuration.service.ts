@@ -29,11 +29,27 @@ export class OracleConfigurationService {
     return this.configService.get<string>('db.password');
   }
 
+  get connectTimeout(): number {
+    return Number(this.configService.get<number>('db.connectTimeout'));
+  }
+
+  get queueMax(): number {
+    return Number(this.configService.get<number>('db.queueMax'));
+  }
+
   get poolMaxConnections(): number {
     return Number(this.configService.get<number>('db.poolMaxConnections'));
   }
 
   get poolMinConnections(): number {
     return Number(this.configService.get<number>('db.poolMinConnections'));
+  }
+
+  get poolIncrement(): number {
+    return Number(this.configService.get<number>('db.poolIncrement'));
+  }
+
+  get poolTimeout(): number {
+    return Number(this.configService.get<number>('db.poolTimeout'));
   }
 }

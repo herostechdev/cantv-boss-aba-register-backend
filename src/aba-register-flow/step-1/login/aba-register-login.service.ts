@@ -34,46 +34,8 @@ export class AbaRegisterLoginService extends BossFlowService<
     try {
       super.infoLog(BossConstants.START);
       await super.connect();
-
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'Obtener permisología del usuario',
-      //   input: JSON.stringify(dto),
-      //   clazz: AbaRegisterLoginService.name,
-      //   method: BossConstants.EXECUTE_METHOD,
-      // });
-      // this.response.getGroupAccessFromLoginResponse =
-      //   await this.abaRegisterGetGroupAccessFromLoginService.execute(
-      //     dto,
-      //     this.dbConnection,
-      //   );
       await this.getGroupAccessFromLogin();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'Validar contraseña',
-      //   input: dto.userlogin,
-      //   clazz: AbaRegisterLoginService.name,
-      //   method: BossConstants.EXECUTE_METHOD,
-      // });
-      // this.validatePassword(
-      //   dto.password,
-      //   data.getGroupAccessFromLoginResponse?.password,
-      // );
       this.validatePassword();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'Validar permisos',
-      //   input: dto.userlogin,
-      //   clazz: AbaRegisterLoginService.name,
-      //   method: BossConstants.EXECUTE_METHOD,
-      // });
-      // data.isgActionAllowedResponse =
-      //   await this.abaRegisterISGActionAllowedService.execute({
-      //     areaCode: dto.areaCode,
-      //     phoneNumber: dto.phoneNumber,
-      //     groupName: data.getGroupAccessFromLoginResponse.accessGroup,
-      //     action: BossConstants.INSTALL_ABA,
-      //   });
       await this.isgActionAllowed();
       super.infoLog(BossConstants.END);
       return this.response;

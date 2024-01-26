@@ -9,4 +9,8 @@ export default registerAs('db', () => ({
   password: process.env.DB_PASSWORD,
   poolMaxConnections: process.env.DB_POOL_MAX_CONNECTIONS,
   poolMinConnections: process.env.DB_POOL_MIN_CONNECTIONS,
+  poolIncrement: process.env.DB_POOL_INCREMENT,
+  connectTimeout: process.env.DB_CONNECT_TIMEOUT,
+  poolTimeout: process.env.DB_POOL_TIMEOUT,
+  queueMax: process.env.DB_QUEUE_MAX,
 }));

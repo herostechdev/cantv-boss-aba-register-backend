@@ -39,16 +39,22 @@ export abstract class OracleDatabaseService extends CommonService {
         ValidationHelper.isDefined(this.dbConnection),
       );
       console.log('closeConnection', closeConnection);
+
       if (!this.dbConnection || !closeConnection) {
         console.log('DO NOT CLOSE CONNECTION');
         return;
       }
+
       console.log('DO CLOSE CONNECTION');
-      await this.dbConnection?.close();
+
+      // await this.dbConnection?.close();
+      await this.dbConnection?.release();
+
       console.log('CONNECTION CLOSED');
     } catch (error) {
       console.log('ERROR');
       console.log(JSON.stringify(error));
+
       Wlog.instance.error({
         phoneNumber: additionalData?.phoneNumber,
         input: `closeConnection: ${closeConnection}`,
@@ -56,6 +62,7 @@ export abstract class OracleDatabaseService extends CommonService {
         method: 'closeConnection',
         error: error,
       });
+
       console.log('END   closeConnection');
       console.log();
     }
