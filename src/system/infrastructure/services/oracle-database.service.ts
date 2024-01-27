@@ -25,7 +25,16 @@ export abstract class OracleDatabaseService extends CommonService {
       this.dbConnection = dbConnection;
       return;
     }
-    this.dbConnection = await getConnection(OracleConstants.POOL_ALIAS);
+    if (this.oracleConfigurationService.usePoolConnections) {
+      this.dbConnection = await getConnection(OracleConstants.POOL_ALIAS);
+    } else {
+      const connectionString = `${this.oracleConfigurationService.uri}:${this.oracleConfigurationService.port}/${this.oracleConfigurationService.sid}`;
+      this.dbConnection = await getConnection({
+        user: this.oracleConfigurationService.username,
+        password: this.oracleConfigurationService.password,
+        connectionString: connectionString,
+      });
+    }
   }
 
   protected async closeConnection(

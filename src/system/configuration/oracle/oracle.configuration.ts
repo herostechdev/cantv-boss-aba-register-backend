@@ -13,4 +13,5 @@ export default registerAs('db', () => ({
   connectTimeout: process.env.DB_CONNECT_TIMEOUT,
   poolTimeout: process.env.DB_POOL_TIMEOUT,
   queueMax: process.env.DB_QUEUE_MAX,
+  usePoolConnections: process.env.DB_USE_POOL_CONNECTIONS,
 }));

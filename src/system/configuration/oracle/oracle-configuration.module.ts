@@ -23,6 +23,7 @@ import { OracleConfigurationService } from './oracle-configuration.service';
         DB_CONNECT_TIMEOUT: Joi.number().default(60),
         DB_POOL_TIMEOUT: Joi.number().default(60),
         DB_QUEUE_MAX: Joi.number().default(500),
+        DB_USE_POOL_CONNECTIONS: Joi.boolean().default(true),
       }),
     }),
   ],

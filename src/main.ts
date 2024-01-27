@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { Logger } from '@nestjs/common';
 import { json, urlencoded } from 'body-parser';
 import {
   INestApplication,
@@ -33,7 +34,11 @@ const initializePipes = (app: INestApplication) => {
   return app;
 };
 
-const initializeOracleDatabaseClient = async (app: INestApplication) => {
+const initializeOracleDatabaseClient = async (
+  app: INestApplication,
+  logger: Logger,
+) => {
+  logger.log('Initializing oracle client ...');
   Wlog.instance.info({
     phoneNumber: null,
     message: 'Inicializando el cliente Oracle',
@@ -47,20 +52,25 @@ const initializeOracleDatabaseClient = async (app: INestApplication) => {
   );
   const clientOpts = { libDir: oracleConfigurationService.oracleHome };
   initOracleClient(clientOpts);
+  logger.log('Oracle client initialized');
   // Initialize connection pool
-  const connectionString = `${oracleConfigurationService.uri}:${oracleConfigurationService.port}/${oracleConfigurationService.sid}`;
-  await createPool({
-    poolAlias: OracleConstants.POOL_ALIAS,
-    user: oracleConfigurationService.username,
-    password: oracleConfigurationService.password,
-    connectionString: connectionString,
-    poolMax: oracleConfigurationService.poolMaxConnections,
-    poolMin: oracleConfigurationService.poolMinConnections,
-    poolIncrement: oracleConfigurationService.poolIncrement,
-    connectTimeout: oracleConfigurationService.connectTimeout,
-    poolTimeout: oracleConfigurationService.poolTimeout,
-    queueMax: oracleConfigurationService.queueMax,
-  });
+  if (oracleConfigurationService.usePoolConnections) {
+    logger.log('Initalizing oracle database connections pool ...');
+    const connectionString = `${oracleConfigurationService.uri}:${oracleConfigurationService.port}/${oracleConfigurationService.sid}`;
+    await createPool({
+      poolAlias: OracleConstants.POOL_ALIAS,
+      user: oracleConfigurationService.username,
+      password: oracleConfigurationService.password,
+      connectionString: connectionString,
+      poolMax: oracleConfigurationService.poolMaxConnections,
+      poolMin: oracleConfigurationService.poolMinConnections,
+      poolIncrement: oracleConfigurationService.poolIncrement,
+      connectTimeout: oracleConfigurationService.connectTimeout,
+      poolTimeout: oracleConfigurationService.poolTimeout,
+      queueMax: oracleConfigurationService.queueMax,
+    });
+    logger.log('Oracle database connections pool initialized');
+  }
   Wlog.instance.info({
     phoneNumber: null,
     message: 'Cliente Oracle inicializado',
@@ -70,7 +80,7 @@ const initializeOracleDatabaseClient = async (app: INestApplication) => {
   });
 };
 
-const startServer = async (app: INestApplication) => {
+const startServer = async (app: INestApplication, logger: Logger) => {
   Wlog.instance.info({
     phoneNumber: null,
     message: 'Iniciando el servidor',
@@ -80,6 +90,9 @@ const startServer = async (app: INestApplication) => {
   });
   const applicationConfigurationService: ApplicationConfigurationService =
     app.get(ApplicationConfigurationService);
+  logger.log(
+    `Routes global prefix: ${applicationConfigurationService.routesPrefix}`,
+  );
   app.setGlobalPrefix(applicationConfigurationService.routesPrefix);
   app.enableCors();
   app.enableVersioning({
@@ -88,14 +101,18 @@ const startServer = async (app: INestApplication) => {
   app.use(helmet());
   app.use(json({ limit: '1mb' }));
   app.use(urlencoded({ limit: '1mb', extended: true, parameterLimit: 30 }));
+  logger.log(`Server port: ${applicationConfigurationService.port}`);
   await app.listen(applicationConfigurationService.port);
 };
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
-  await initializeOracleDatabaseClient(app);
+  const logger = new Logger('Main');
+  await initializeOracleDatabaseClient(app, logger);
+  logger.log('Initializing pipes');
   initializePipes(app);
-  await startServer(app);
+  logger.log('Starting server');
+  await startServer(app, logger);
 };
 
 bootstrap();
