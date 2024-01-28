@@ -1,6 +1,6 @@
-export enum GetPortIdFromIpConstants {
+export enum GetPortIdFromIpStatusConstants {
   SUCCESSFULL,
-  EXECUTION_ERROR,
+  ERROR,
   DSLAM_DATA_NOT_FOUND_FOR_BOSS_PORT,
   IP_FORMAT_ERROR = 8,
 }

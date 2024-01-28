@@ -9,7 +9,7 @@ import { IGetDataFromDSLAMPortIdResponse } from '../../../raw/stored-procedures/
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetDownstreamFromPlanResponse } from '../../../raw/stored-procedures/get-downstream-from-plan/get-downstream-from-plan-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
-import { IGetPortIdFromIpResponse } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-response.interface';
+import { IGetPortIdFromIpResponse } from '../../../raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetPortIdResponse } from '../../../validate-technical-feasibility/get-port-id/get-port-id-response.interface';
 import { IInsertDslAbaRegistersResponse } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
 import { IIsPrepaidVoiceLineResponse } from '../../../raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-response.interface';

@@ -103,6 +103,9 @@ import { IUpdatePasswordFromLoginResponse } from './update-password-from-login/u
 import { UpdatePasswordFromLoginRawService } from './update-password-from-login/update-password-from-login-raw.service';
 import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/verify-contract-by-phone-raw.service';
 import { VerifyContractByPhoneRequestDto } from './verify-contract-by-phone/verify-contract-by-phone-request.dto';
+import { GetPortIdFromIpRawService } from './get-port-id-from-ip/get-port-id-from-ip-raw.service';
+import { GetPortIdFromIpRequestDto } from './get-port-id-from-ip/get-port-id-from-ip-request.dto';
+import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
 
 @Controller({
   path: 'raw/sp',
@@ -132,6 +135,7 @@ export class StoredProceduresRawController {
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
     private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
+    private readonly getPortIdFromIpRawService: GetPortIdFromIpRawService,
     private readonly getStateFromSerialService: GetStateFromSerialRawService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
     private readonly isIPAllowedRawService: IsIPAllowedRawService,
@@ -337,6 +341,15 @@ export class StoredProceduresRawController {
     @Body() dto: GetOrderIdFromABASalesRequestDto,
   ): Promise<IGetOrderIdFromABASalesResponse> {
     return this.getOrderIdFromABASalesRawService.execute(dto);
+  }
+
+  @Post('getPortIdFromIp')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getPortIdFromIp(
+    @Body() dto: GetPortIdFromIpRequestDto,
+  ): Promise<IGetPortIdFromIpResponse> {
+    return this.getPortIdFromIpRawService.execute(dto);
   }
 
   @Post('getStateFromSerial')
