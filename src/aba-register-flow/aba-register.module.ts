@@ -29,6 +29,7 @@ import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-custom
 import { AbaRegisterService } from './dependencies/aba-register/aba-register.service';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { AbaRegisterValidateTechnicalFeasibilityService } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility.service';
+import { AbaRegisterVerifyContractByPhoneService } from './dependencies/verify-contract-by-phone/verify-contract-by-phone.service';
 import { BossApiModule } from 'src/raw/boss-api/boss-api-raw.module';
 import { DatabaseFunctionsRawModule } from 'src/raw/database/functions/database-functions-raw.module';
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
@@ -76,6 +77,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterService,
     AbaRegisterValidateCustomerService,
     AbaRegisterValidateTechnicalFeasibilityService,
+    AbaRegisterVerifyContractByPhoneService,
   ],
   exports: [
     AbaRegisterGetAndRegisterQualifOfServiceService,

@@ -88,6 +88,7 @@ import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid
 import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line/is-prepaid-voice-line-request.dto';
 import { IsReservedLoginRequestDto } from './is-reserved-login/is-reserved-login-request.dto';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
+import { IVerifyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-by-customer-class-request.dto';
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
 import { ReverseAbaRegisterRawService } from './reverse-aba-register/reverse-aba-register-raw.service';
@@ -96,8 +97,9 @@ import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/upda
 import { UpdateDslAbaRegistersRequestDto } from './update-dsl-aba-registers/update-dsl-aba-registers-request.dto';
 import { UpdatePasswordFromLoginRequestDto } from './update-password-from-login/update-password-from-login-request.dto';
 import { IUpdatePasswordFromLoginResponse } from './update-password-from-login/update-password-from-login-response.interface';
-import { UpdatePasswordFromLoginService } from 'src/aba-register-flow/dependencies/update-password-from-login/update-password-from-login.service';
 import { UpdatePasswordFromLoginRawService } from './update-password-from-login/update-password-from-login-raw.service';
+import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/verify-contract-by-phone-raw.service';
+import { VerifyContractByPhoneRequestDto } from './verify-contract-by-phone/verify-contract-by-phone-request.dto';
 
 @Controller({
   path: 'raw/sp',
@@ -137,6 +139,7 @@ export class StoredProceduresRawController {
     private readonly reverseAbaRegisterRawService: ReverseAbaRegisterRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
     private readonly updatePasswordFromLoginRawService: UpdatePasswordFromLoginRawService,
+    private readonly verifyContractByPhoneRawService: VerifyContractByPhoneRawService,
   ) {}
   @Post('abaRegister')
   @HttpCode(HttpCodeConstants.HTTP_200_OK)
@@ -420,5 +423,14 @@ export class StoredProceduresRawController {
     @Body() dto: UpdatePasswordFromLoginRequestDto,
   ): Promise<IUpdatePasswordFromLoginResponse> {
     return this.updatePasswordFromLoginRawService.execute(dto);
+  }
+
+  @Post('verifyContractByPhone')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  verifyContractByPhone(
+    @Body() dto: VerifyContractByPhoneRequestDto,
+  ): Promise<IVerifyContractByPhoneResponse> {
+    return this.verifyContractByPhoneRawService.execute(dto);
   }
 }

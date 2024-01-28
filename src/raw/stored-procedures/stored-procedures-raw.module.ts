@@ -32,6 +32,7 @@ import { ReverseAbaRegisterRawService } from './reverse-aba-register/reverse-aba
 import { StoredProceduresRawController } from './stored-procedures-raw.controller';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { UpdatePasswordFromLoginRawService } from './update-password-from-login/update-password-from-login-raw.service';
+import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/verify-contract-by-phone-raw.service';
 
 @Module({
   imports: [],
@@ -69,6 +70,7 @@ import { UpdatePasswordFromLoginRawService } from './update-password-from-login/
     ReverseAbaRegisterRawService,
     UpdateDslAbaRegistersRawService,
     UpdatePasswordFromLoginRawService,
+    VerifyContractByPhoneRawService,
   ],
   exports: [
     AbaRegisterRawService,
@@ -103,6 +105,7 @@ import { UpdatePasswordFromLoginRawService } from './update-password-from-login/
     ReverseAbaRegisterRawService,
     UpdateDslAbaRegistersRawService,
     UpdatePasswordFromLoginRawService,
+    VerifyContractByPhoneRawService,
   ],
 })
 export class StoredProceduresRawModule {}

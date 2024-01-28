@@ -17,14 +17,14 @@ import { IIsOccupiedPortResponse } from '../../../validate-technical-feasibility
 import { IIsValidIpAddressResponse } from '../../../validate-technical-feasibility/is-valid-ip-address/is-valid-ip-address-response.interface';
 import { ILinkNetworkResponse } from 'src/raw/pic/get-asap-order-detail/Iink-network-response.interface';
 import { IReadIABAOrderResponse } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-response.interface';
-import { IVerifiyContractByPhoneResponse } from '../../../validate-technical-feasibility/verify-contract-by-phone/verify-contract-by-phone-response.interface';
+import { IVerifyContractByPhoneResponse } from 'src/raw/stored-procedures/verify-contract-by-phone/verify-contract-by-phone-response.interface';
 
 export interface IAbaRegisterValidateTechnicalFeasibilityResponse {
   requestDto: AbaRegisterValidateTechnicalFeasibilityRequestDto;
   insertDslAbaRegistersResponse: IInsertDslAbaRegistersResponse;
   isPrepaidVoiceLine: IIsPrepaidVoiceLineResponse;
   getAndRegisterQualifOfServiceResponse: IGetAndRegisterQualifOfServiceResponse;
-  verifyContractByPhoneResponse: IVerifiyContractByPhoneResponse;
+  verifyContractByPhoneResponse: IVerifyContractByPhoneResponse;
   getDownstreamFromPlanResponse: IGetDownstreamFromPlanResponse;
   getABADataFromRequestsResponse: IGetAbaDataFromRequestsResponse;
   isValidIpAddressResponse: IIsValidIpAddressResponse;
