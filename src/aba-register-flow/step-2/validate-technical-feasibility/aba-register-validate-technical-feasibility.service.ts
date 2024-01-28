@@ -9,14 +9,13 @@ import { AbaRegisterGetAbaDataService } from 'src/aba-register-flow/dependencies
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterGetDataFromDSLAMPortIdRequestService } from 'src/aba-register-flow/dependencies/get-data-from-dslam-port-id/get-data-from-dslam-port-id.service';
 import { AbaRegisterGetDownstreamFromPlanService } from 'src/aba-register-flow/dependencies/get-downstream-from-plan/get-downstream-from-plan.service';
+import { AbaRegisterIsValidIpAddressService } from 'src/aba-register-flow/dependencies/is-valid-ip-address/is-valid-ip-address.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
+import { AbaRegisterVerifyContractByPhoneService } from 'src/aba-register-flow/dependencies/verify-contract-by-phone/verify-contract-by-phone.service';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossFlowService } from 'src/boss-flows/boss-flow.service';
 import { BossHelper } from 'src/boss/boss.helper';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
-import { Error1003Exception } from 'src/exceptions/error-1003.exception';
-import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
-import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
 import { GetPortIdFromIpExecutionException } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-execution.exception';
@@ -34,14 +33,13 @@ import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-pro
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetPortIdFromIpResponse } from '../../../validate-technical-feasibility/get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetPortIdResponse } from '../../../validate-technical-feasibility/get-port-id/get-port-id-response.interface';
-import { IIsValidIpAddressResponse } from '../../../validate-technical-feasibility/is-valid-ip-address/is-valid-ip-address-response.interface';
 import { IIsOccupiedPortResponse } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-response.interface';
 import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { IReadIABAOrderResponse } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-response.interface';
 import { IsOccupiedPortConstants } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port.constants';
 import { IsOccupiedPortInternalErrorException } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-internal-error.exception';
 import { IsOccupiedPortTherIsNoDataException } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-there-is-no-data.exception';
-import { IsValidIpAddressConstants } from '../../../validate-technical-feasibility/is-valid-ip-address/is-valid-ip-address.constants';
+import { IsValidIpAddressStatusConstants } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
 import { ReadIABAOrderErrorCodeConstants } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-error_code.constants';
@@ -53,9 +51,7 @@ import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from '../../../vali
 import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
-import { VerifyContractByPhoneException } from '../../../raw/stored-procedures/verify-contract-by-phone/verify-contract-by-phone.exception';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { AbaRegisterVerifyContractByPhoneService } from 'src/aba-register-flow/dependencies/verify-contract-by-phone/verify-contract-by-phone.service';
 
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowService<
@@ -71,6 +67,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
     private readonly abaRegisterGetDataFromDSLAMPortIdRequestService: AbaRegisterGetDataFromDSLAMPortIdRequestService,
     private readonly abaRegisterGetDownstreamFromPlanService: AbaRegisterGetDownstreamFromPlanService,
+    private readonly abaRegisterIsValidIpAddressService: AbaRegisterIsValidIpAddressService,
     private readonly abaRegisterVerifyContractByPhoneService: AbaRegisterVerifyContractByPhoneService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getABADataFromRequestsService: GetAbaDataFromRequestsRawService,
@@ -191,20 +188,17 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       //     desiredPlan: this.response.getABADataFromRequestsResponse.desiredPlan,
       //   });
       await this.getDownstreamFromPlan();
-
-      if (this.response.verifyContractByPhoneResponse.status !== 0) {
-        throw new VerifyContractByPhoneException();
-      }
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'isValidIpAddress',
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-        method: 'validateTechnicalFeasibility',
-      });
-      this.response.isValidIpAddressResponse = await this.isValidIpAddress(
-        this.response,
-      );
+      // Wlog.instance.info({
+      //   phoneNumber: BossHelper.getPhoneNumber(dto),
+      //   message: 'isValidIpAddress',
+      //   input: BossHelper.getPhoneNumber(dto),
+      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+      //   method: 'validateTechnicalFeasibility',
+      // });
+      // this.response.isValidIpAddressResponse = await this.isValidIpAddress(
+      //   this.response,
+      // );
+      await this.isValidIpAddress();
       Wlog.instance.info({
         phoneNumber: BossHelper.getPhoneNumber(dto),
         message: 'getPortIdFromIp',
@@ -513,21 +507,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       );
   }
 
-  /*
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'getDownstreamFromPlan',
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-        method: 'validateTechnicalFeasibility',
-      });
-      this.response.getDownstreamFromPlanResponse =
-        await this.abaRegisterGetDownstreamFromPlanService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-          desiredPlan: this.response.getABADataFromRequestsResponse.desiredPlan,
-        });
-  */
   private async getDownstreamFromPlan(): Promise<void> {
     super.infoLog('getDownstreamFromPlan');
     this.response.getDownstreamFromPlanResponse =
@@ -536,6 +515,59 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           areaCode: this.dto.areaCode,
           phoneNumber: this.dto.phoneNumber,
           desiredPlan: this.response.getABADataFromRequestsResponse.desiredPlan,
+        },
+        this.dbConnection,
+      );
+  }
+
+  /*
+  private async isValidIpAddress(
+    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
+  ): Promise<IIsValidIpAddressResponse> {
+    const parameters = {
+      abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
+      abaphonenumber: OracleHelper.stringBindIn(
+        data.requestDto.phoneNumber,
+        16,
+      ),
+      abaipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 15),
+      Status: OracleHelper.numberBindOut(),
+    };
+    const result = await super.executeStoredProcedure(
+      BossConstants.BOSS_PACKAGE,
+      BossConstants.IS_VALID_IP_ADDRESS,
+      parameters,
+    );
+    const status = (result?.outBinds?.Status ??
+      IsValidIpAddressConstants.ERROR_1003) as IsValidIpAddressConstants;
+    const response: IIsValidIpAddressResponse = {
+      status: status,
+    };
+    switch (status) {
+      case IsValidIpAddressConstants.SUCCESSFULL:
+        return response;
+      case IsValidIpAddressConstants.ERROR_1003:
+        throw new Error1003Exception();
+      case IsValidIpAddressConstants.ERROR_3004_1:
+        throw new Error30041Exception();
+      case IsValidIpAddressConstants.ERROR_3005_5:
+        throw new Error30055Exception();
+      case IsValidIpAddressConstants.POOL_RBE_LEASE:
+        return response;
+      default:
+        throw new Error1003Exception();
+    }
+  }
+
+*/
+  private async isValidIpAddress(): Promise<void> {
+    super.infoLog('isValidIpAddress');
+    this.response.isValidIpAddressResponse =
+      await this.abaRegisterIsValidIpAddressService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          ipAddress: this.dto.ipAddress,
         },
         this.dbConnection,
       );
@@ -629,44 +661,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   //   }
   // }
 
-  private async isValidIpAddress(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IIsValidIpAddressResponse> {
-    const parameters = {
-      abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-      abaphonenumber: OracleHelper.stringBindIn(
-        data.requestDto.phoneNumber,
-        16,
-      ),
-      abaipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 15),
-      Status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.BOSS_PACKAGE,
-      BossConstants.IS_VALID_IP_ADDRESS,
-      parameters,
-    );
-    const status = (result?.outBinds?.Status ??
-      IsValidIpAddressConstants.ERROR_1003) as IsValidIpAddressConstants;
-    const response: IIsValidIpAddressResponse = {
-      status: status,
-    };
-    switch (status) {
-      case IsValidIpAddressConstants.SUCCESSFULL:
-        return response;
-      case IsValidIpAddressConstants.ERROR_1003:
-        throw new Error1003Exception();
-      case IsValidIpAddressConstants.ERROR_3004_1:
-        throw new Error30041Exception();
-      case IsValidIpAddressConstants.ERROR_3005_5:
-        throw new Error30055Exception();
-      case IsValidIpAddressConstants.POOL_RBE_LEASE:
-        return response;
-      default:
-        throw new Error1003Exception();
-    }
-  }
-
   private async getPortIdFromIp(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetPortIdFromIpResponse> {
@@ -755,7 +749,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       });
       if (
         data.isValidIpAddressResponse.status ===
-        IsValidIpAddressConstants.POOL_RBE_LEASE
+        IsValidIpAddressStatusConstants.POOL_RBE_LEASE
       ) {
         await this.rbeDoesNotExistLog(data);
       }

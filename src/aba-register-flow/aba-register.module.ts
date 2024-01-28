@@ -23,6 +23,7 @@ import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-regist
 import { AbaRegisterISGActionAllowedService } from './step-1/login/aba-register-isg-action-allowed.service';
 import { AbaRegisterIsPrepaidVoiceLineService } from './dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
 import { AbaRegisterIsReservedLoginService } from './dependencies/is-reserved-login/is-reserved-login.service';
+import { AbaRegisterIsValidIpAddressService } from './dependencies/is-valid-ip-address/is-valid-ip-address.service';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
 import { AbaRegisterMailService } from './dependencies/mail/aba-register-mail.service';
 import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-customer-class/plans-by-customer-class.service';
@@ -71,6 +72,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterIsIPAllowedService,
     AbaRegisterIsPrepaidVoiceLineService,
     AbaRegisterIsReservedLoginService,
+    AbaRegisterIsValidIpAddressService,
     AbaRegisterLoginService,
     AbaRegisterMailService,
     AbaRegisterPlansByCustomerClassService,

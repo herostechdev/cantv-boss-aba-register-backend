@@ -29,6 +29,8 @@ export class VerifyContractByPhoneRawService extends OracleExecuteStoredProcedur
     return {
       i_areacode: OracleHelper.stringBindIn(dto.areaCode),
       i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber),
+
+      o_status: OracleHelper.numberBindOut(),
     };
   }
 
@@ -37,13 +39,5 @@ export class VerifyContractByPhoneRawService extends OracleExecuteStoredProcedur
       status: (result?.outBinds?.o_status ??
         VerifyContractByPhoneStatusConstants.ERROR) as VerifyContractByPhoneStatusConstants,
     };
-    // switch (status) {
-    //   case VerifiyContractByPhoneStatusConstants.SUCCESSFULL:
-    //     return response;
-    //   case VerifiyContractByPhoneStatusConstants.ERROR:
-    //     throw new VerifyContractByPhoneException();
-    //   default:
-    //     throw new VerifyContractByPhoneException();
-    // }
   }
 }

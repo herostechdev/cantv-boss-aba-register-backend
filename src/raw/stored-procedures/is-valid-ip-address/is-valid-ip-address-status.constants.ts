@@ -1,4 +1,4 @@
-export enum IsValidIpAddressConstants {
+export enum IsValidIpAddressStatusConstants {
   SUCCESSFULL,
   ERROR_1003,
   ERROR_3004_1,

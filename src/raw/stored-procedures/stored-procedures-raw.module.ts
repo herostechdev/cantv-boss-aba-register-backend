@@ -27,6 +27,7 @@ import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allo
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
 import { IsReservedLoginRawService } from './is-reserved-login/is-reserved-login-raw.service';
+import { IsValidIpAddressRawService } from './is-valid-ip-address/is-valid-ip-address-raw.service';
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
 import { ReverseAbaRegisterRawService } from './reverse-aba-register/reverse-aba-register-raw.service';
 import { StoredProceduresRawController } from './stored-procedures-raw.controller';
@@ -66,6 +67,7 @@ import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/veri
     ISGActionAllowedRawService,
     IsPrepaidVoiceLineRawService,
     IsReservedLoginRawService,
+    IsValidIpAddressRawService,
     PlansByCustomerClassRawService,
     ReverseAbaRegisterRawService,
     UpdateDslAbaRegistersRawService,
@@ -101,6 +103,7 @@ import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/veri
     ISGActionAllowedRawService,
     IsPrepaidVoiceLineRawService,
     IsReservedLoginRawService,
+    IsValidIpAddressRawService,
     PlansByCustomerClassRawService,
     ReverseAbaRegisterRawService,
     UpdateDslAbaRegistersRawService,

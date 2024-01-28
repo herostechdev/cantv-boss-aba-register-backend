@@ -75,6 +75,7 @@ import { IIsIPAllowedResponse } from './is-ip-allowed/is-ip-allowed-response.int
 import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IIsReservedLoginResponse } from './is-reserved-login/is-reserved-login-response.interface';
+import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers/insert-dsl-aba-registers-request.dto';
 import { IPlansByCustomerClassListResponse } from './plans-by-customer-class/plans-by-customer-class-list-response.interface';
@@ -87,6 +88,8 @@ import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
 import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line/is-prepaid-voice-line-request.dto';
 import { IsReservedLoginRequestDto } from './is-reserved-login/is-reserved-login-request.dto';
+import { IsValidIpAddressRawService } from './is-valid-ip-address/is-valid-ip-address-raw.service';
+import { IsValidIpAddressRequestDto } from './is-valid-ip-address/is-valid-ip-address-request.dto';
 import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/update-dsl-aba-registers-response.interface';
 import { IVerifyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-by-customer-class-request.dto';
@@ -135,6 +138,7 @@ export class StoredProceduresRawController {
     private readonly isPrepaidVoiceLineRawService: IsPrepaidVoiceLineRawService,
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
     private readonly isReservedLoginRawService: IsReservedLoginRawService,
+    private readonly isValidIpAddressRawService: IsValidIpAddressRawService,
     private readonly planByCustomerClassRawService: PlansByCustomerClassRawService,
     private readonly reverseAbaRegisterRawService: ReverseAbaRegisterRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
@@ -387,6 +391,15 @@ export class StoredProceduresRawController {
     @Body() dto: IsReservedLoginRequestDto,
   ): Promise<IIsReservedLoginResponse> {
     return this.isReservedLoginRawService.execute(dto);
+  }
+
+  @Post('isValidIpAddress')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  isValidIpAddress(
+    @Body() dto: IsValidIpAddressRequestDto,
+  ): Promise<IIsValidIpAddressResponse> {
+    return this.isValidIpAddressRawService.execute(dto);
   }
 
   @Post('planByCustomerClass')
