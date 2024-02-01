@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 import { GetAbaPlanForKenanRawService } from './get-aba-plan-for-kenan/get-aba-plan-for-kenan-raw.service';
 import { GetAbaPlanForKenanRequestDto } from './get-aba-plan-for-kenan/get-aba-plan-for-kenan-request.dto';
-import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
+import { HttpCodeConstants } from 'src/system/infrastructure/http/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IGetAbaPlanForKenanResponse } from './get-aba-plan-for-kenan/get-aba-plan-for-kenan-response.interface';
 

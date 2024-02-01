@@ -45,7 +45,7 @@ import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales/
 import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
 import { GetStateFromSerialRequestDto } from './get-state-from-serial/get-state-from-serial-request.dto';
 import { GetStateFromSerialRawService } from './get-state-from-serial/get-state-from-serial-raw.service';
-import { HttpCodeConstants } from 'src/system/infrastructure/helpers/http-code-constants';
+import { HttpCodeConstants } from 'src/system/infrastructure/http/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
 import { IAbaRegisterResponse } from './aba-register/aba-register-response.interface';
 import { IPayABAInstallationResponse } from './pay-aba-installation/pay-aba-installation-response.interface';
