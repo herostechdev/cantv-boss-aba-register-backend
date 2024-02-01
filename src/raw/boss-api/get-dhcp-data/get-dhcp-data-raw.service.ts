@@ -14,6 +14,7 @@ import { IntegrationsConfigurationService } from 'src/system/configuration/pic/i
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { HttpHelper } from 'src/system/infrastructure/http/http-helper';
 
 @Injectable()
 export class GetDHCPDataRawService extends ExceptionsService {
@@ -44,14 +45,15 @@ export class GetDHCPDataRawService extends ExceptionsService {
         clazz: GetDHCPDataRawService.name,
         method: 'get',
       });
-      const instance: AxiosInstance = axios.create({
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: false,
-        }),
-      });
-      const response = await instance.get<any>(url, {
+      // const instance: AxiosInstance = axios.create({
+      //   httpsAgent: new https.Agent({
+      //     rejectUnauthorized: false,
+      //     timeout: 10000,
+      //   }),
+      // });
+      const response = await HttpHelper.getAxiosInstance().get<any>(url, {
         headers: {
-          'Content-Type': HttpConstants.TEXT_HTML,
+          [HttpConstants.CONTENT_TYPE]: HttpConstants.TEXT_HTML,
         },
       });
       Wlog.instance.info({

@@ -38,7 +38,7 @@ export class OracleConfigurationService {
   }
 
   get usePoolConnections(): boolean {
-    return this.configService.get<boolean>('db.usePoolConnections');
+    return this.configService.get<string>('db.usePoolConnections') === 'true';
   }
 
   get poolMaxConnections(): number {

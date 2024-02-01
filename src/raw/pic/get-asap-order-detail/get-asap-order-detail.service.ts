@@ -16,6 +16,7 @@ import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constant
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
+import { HttpHelper } from 'src/system/infrastructure/http/http-helper';
 
 @Injectable()
 export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderDetailResponse> {
@@ -103,16 +104,23 @@ export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderD
     console.log('GetASAPOrderDetailService.invoke');
     console.log('url', this.picConfigurationService.getASAPOrderDetailUrl);
 
-    const instance: AxiosInstance = axios.create({
-      httpsAgent: new https.Agent({
-        rejectUnauthorized: false,
-      }),
-    });
-    const response = await instance.post<IGetASAPOrderDetailResponse>(
-      this.picConfigurationService.getASAPOrderDetailUrl,
-      this.getBodyPayload(bodyPayload),
-      super.getAxiosRequestConfig('VT673consultarDetalleDeOrdenesASAP'),
-    );
+    // const instance: AxiosInstance = axios.create({
+    //   httpsAgent: new https.Agent({
+    //     rejectUnauthorized: false,
+    //   }),
+    // });
+    // const response = await instance.post<IGetASAPOrderDetailResponse>(
+    //   this.picConfigurationService.getASAPOrderDetailUrl,
+    //   this.getBodyPayload(bodyPayload),
+    //   super.getAxiosRequestConfig('VT673consultarDetalleDeOrdenesASAP'),
+    // );
+
+    const response =
+      await HttpHelper.getAxiosInstance().post<IGetASAPOrderDetailResponse>(
+        this.picConfigurationService.getASAPOrderDetailUrl,
+        this.getBodyPayload(bodyPayload),
+        super.getAxiosRequestConfig('VT673consultarDetalleDeOrdenesASAP'),
+      );
 
     console.log();
     console.log('response');

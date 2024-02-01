@@ -38,10 +38,10 @@ const initializeOracleDatabaseClient = async (
   app: INestApplication,
   logger: Logger,
 ) => {
-  logger.log('Initializing oracle client ...');
+  logger.log('Initializing oracle database client ...');
   Wlog.instance.info({
     phoneNumber: null,
-    message: 'Inicializando el cliente Oracle',
+    message: 'Inicializando el cliente de base de datos Oracle',
     input: null,
     clazz: BossHelper.applicationName,
     method: 'initializeOracleDatabaseClient',
@@ -52,32 +52,49 @@ const initializeOracleDatabaseClient = async (
   );
   const clientOpts = { libDir: oracleConfigurationService.oracleHome };
   initOracleClient(clientOpts);
-  logger.log('Oracle client initialized');
+  logger.log('Oracle database client initialized');
   // Initialize connection pool
-  if (oracleConfigurationService.usePoolConnections) {
-    logger.log('Initalizing oracle database connections pool ...');
-    const connectionString = `${oracleConfigurationService.uri}:${oracleConfigurationService.port}/${oracleConfigurationService.sid}`;
-    await createPool({
-      poolAlias: OracleConstants.POOL_ALIAS,
-      user: oracleConfigurationService.username,
-      password: oracleConfigurationService.password,
-      connectionString: connectionString,
-      poolMax: oracleConfigurationService.poolMaxConnections,
-      poolMin: oracleConfigurationService.poolMinConnections,
-      poolIncrement: oracleConfigurationService.poolIncrement,
-      connectTimeout: oracleConfigurationService.connectTimeout,
-      poolTimeout: oracleConfigurationService.poolTimeout,
-      queueMax: oracleConfigurationService.queueMax,
-    });
-    logger.log('Oracle database connections pool initialized');
-  }
+  initializeOracleDatabasePoolConnections(
+    app,
+    logger,
+    oracleConfigurationService,
+  );
   Wlog.instance.info({
     phoneNumber: null,
-    message: 'Cliente Oracle inicializado',
+    message:
+      'El cliente base de datos de Oracle ha sido inicializado correctamente',
     input: null,
     clazz: BossHelper.applicationName,
     method: 'initializeOracleDatabaseClient',
   });
+};
+
+const initializeOracleDatabasePoolConnections = async (
+  app: INestApplication,
+  logger: Logger,
+  oracleConfigurationService: OracleConfigurationService,
+) => {
+  logger.log(
+    `usePoolConnections: ${oracleConfigurationService.usePoolConnections}`,
+  );
+  if (!oracleConfigurationService.usePoolConnections) {
+    return;
+  }
+  logger.log('Initalizing oracle database connections pool ...');
+  const connectionString = `${oracleConfigurationService.uri}:${oracleConfigurationService.port}/${oracleConfigurationService.sid}`;
+  await createPool({
+    poolAlias: OracleConstants.POOL_ALIAS,
+    user: oracleConfigurationService.username,
+    password: oracleConfigurationService.password,
+    connectionString: connectionString,
+    poolMax: oracleConfigurationService.poolMaxConnections,
+    poolMin: oracleConfigurationService.poolMinConnections,
+    poolIncrement: oracleConfigurationService.poolIncrement,
+    connectTimeout: oracleConfigurationService.connectTimeout,
+    poolTimeout: oracleConfigurationService.poolTimeout,
+    queueMax: oracleConfigurationService.queueMax,
+  });
+  logger.log('Oracle database connections pool initialized');
 };
 
 const startServer = async (app: INestApplication, logger: Logger) => {
