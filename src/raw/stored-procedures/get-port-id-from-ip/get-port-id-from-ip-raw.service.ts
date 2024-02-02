@@ -29,8 +29,8 @@ export class GetPortIdFromIpRawService extends OracleExecuteStoredProcedureRawSe
   protected getParameters(dto: GetPortIdFromIpRequestDto): any {
     return {
       i_ipaddress: OracleHelper.stringBindIn(dto.ipAddress),
-      sz_areacode: OracleHelper.stringBindIn(dto.areaCode),
-      sz_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber),
+      // sz_areacode: OracleHelper.stringBindIn(dto.areaCode),
+      // sz_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber),
 
       o_dslamportid: OracleHelper.numberBindOut(),
       o_status: OracleHelper.numberBindOut(),
