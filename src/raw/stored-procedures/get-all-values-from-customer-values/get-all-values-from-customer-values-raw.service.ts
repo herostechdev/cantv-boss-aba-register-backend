@@ -40,8 +40,8 @@ export class GetAllValuesFromCustomerValuesRawService extends OracleExecuteStore
 
   protected getResponse(result: any): IGetAllValuesFromCustomerValuesResponse {
     const response = {
-      name: OracleHelper.getFirstItem(result, 'aname'),
-      value: OracleHelper.getFirstItem(result, 'cltvalue'),
+      name: OracleHelper.getItems(result, 'aname'),
+      value: OracleHelper.getItems(result, 'cltvalue'),
       status: (OracleHelper.getFirstItem(result, 'status') ??
         GetAllValuesFromCustomerValuesStatusConstants.INTERNAL_ERROR) as GetAllValuesFromCustomerValuesStatusConstants,
     };

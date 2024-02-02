@@ -6,7 +6,7 @@ export class HttpHelper {
     return axios.create({
       httpsAgent: new https.Agent({
         rejectUnauthorized: false,
-        timeout: 10000,
+        timeout: Number(process.env.APP_HTTP_TIMEOUT),
       }),
     });
   }

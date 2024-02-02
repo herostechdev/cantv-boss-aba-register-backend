@@ -9,4 +9,5 @@ export default registerAs('application', () => ({
   routesFilter: process.env.APP_REQUEST_FILTER,
   routesLimit: process.env.APP_REQUEST_LIMIT,
   logFolder: process.env.LOG_FOLDER,
+  httpTimeout: process.env.APP_HTTP_TIMEOUT,
 }));

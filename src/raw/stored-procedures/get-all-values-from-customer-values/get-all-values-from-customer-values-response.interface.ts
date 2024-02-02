@@ -3,6 +3,6 @@ import { GetAllValuesFromCustomerValuesStatusConstants } from './get-all-values-
 
 export interface IGetAllValuesFromCustomerValuesResponse
   extends IStatusResponse<GetAllValuesFromCustomerValuesStatusConstants> {
-  name: string;
-  value: string;
+  name: string[];
+  value: string[];
 }

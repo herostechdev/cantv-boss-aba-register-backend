@@ -36,4 +36,8 @@ export class ApplicationConfigurationService {
   get logFolder(): string {
     return this.configService.get<string>('application.logFolder');
   }
+
+  get httpTimeout(): number {
+    return Number(this.configService.get<number>('application.httpTimeout'));
+  }
 }

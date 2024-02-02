@@ -20,6 +20,7 @@ import { ApplicationConfigurationService } from './application-configuration.ser
         APP_REQUEST_OFFSET: Joi.number().default(0),
         APP_REQUEST_LIMIT: Joi.number().default(500),
         LOG_FOLDER: Joi.string(),
+        APP_HTTP_TIMEOUT: Joi.number().default(60000),
       }),
     }),
   ],

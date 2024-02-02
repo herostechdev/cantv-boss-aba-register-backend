@@ -11,6 +11,7 @@ export abstract class SoapRequestService<
   protected getAxiosRequestConfig(soapAction: string): AxiosRequestConfig {
     return {
       headers: this.getheaders(soapAction),
+      timeout: Number(process.env.APP_HTTP_TIMEOUT),
     };
   }
 

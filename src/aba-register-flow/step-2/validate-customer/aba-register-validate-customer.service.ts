@@ -165,7 +165,9 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
           attributeName: BossHelper.getIdentificationDocumentType(
             this.dto.customerClassName,
           ),
-          attributeValue: this.dto.customerIdentificationDocument,
+          attributeValue: BossHelper.getIdentificationDocument(
+            this.dto.customerIdentificationDocument,
+          ),
         },
         this.dbConnection,
       );
