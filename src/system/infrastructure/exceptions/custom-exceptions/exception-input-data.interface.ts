@@ -5,6 +5,7 @@ export interface IExceptionInputData {
   objectOrError?: string | object | any;
   code?: string;
   guid?: string;
+  command: string;
   descriptionOrOptions?: string | HttpExceptionOptions;
   innerException?: IException;
 }

@@ -7,6 +7,7 @@ export class GetDataFromDSLAMPortIdException extends CustomBadRequestException {
     super({
       code: '',
       guid: '1b213953-b7f7-4fed-8b55-8770f5a3cfe9',
+      command: BossConstants.GET_DATA_FROM_DSLAM_PORT_ID,
       objectOrError: ExceptionHelper.storedProcedureExecutionExceptionMessage(
         BossConstants.GET_DATA_FROM_DSLAM_PORT_ID,
       ),

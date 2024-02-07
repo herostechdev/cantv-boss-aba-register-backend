@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 import { CustomForbiddenException } from '../exceptions/custom-exceptions/custom-forbidden-exception';
 import { EntityDuplicatedException } from 'src/system/infrastructure/exceptions/entity-duplicated.exception';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { InfrastructureConstants } from '../infrastructure.constants';
 
 export abstract class ExceptionsService {
   protected exceptionHandler(error: any, document?: any): void {
@@ -69,6 +70,7 @@ export abstract class ExceptionsService {
       descriptionOrOptions: error,
       code: '000001',
       guid: v4(),
+      command: InfrastructureConstants.UNKNOWN,
     });
     this.logException(exception);
     throw exception;

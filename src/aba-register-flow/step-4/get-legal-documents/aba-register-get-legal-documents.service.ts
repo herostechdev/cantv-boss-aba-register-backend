@@ -70,6 +70,7 @@ export class AbaRegisterGetLegalDocumentsService extends ExceptionsService {
       throw new CustomNotFoundException({
         objectOrError: 'No existe el documento: CONTRATO',
         guid: '93f817de-d72e-491b-8ecc-0d8d9d2b1e01',
+        command: BossConstants.LEGAL_CONTRACT_DOCUMENT,
       });
     }
   }
@@ -85,6 +86,7 @@ export class AbaRegisterGetLegalDocumentsService extends ExceptionsService {
       throw new CustomNotFoundException({
         objectOrError: 'No existe el documento: TÉRMINOS Y CONDICIONES',
         guid: '88ce02fc-5928-4712-b799-962ee95e0d6c',
+        command: BossConstants.LEGAL_TERMS_AND_CONDITIONS_DOCUMENT,
       });
     }
   }

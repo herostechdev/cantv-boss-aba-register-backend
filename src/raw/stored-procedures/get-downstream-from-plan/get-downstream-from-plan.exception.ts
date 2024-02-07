@@ -7,6 +7,7 @@ export class GetDownstreamFromPlanException extends CustomBadRequestException {
     super({
       code: '',
       guid: '620dc849-9ba3-4132-992a-7ba39fd91935',
+      command: BossConstants.GET_DOWNSTREAM_FROM_PLAN,
       objectOrError: ExceptionHelper.storedProcedureExecutionExceptionMessage(
         BossConstants.GET_DOWNSTREAM_FROM_PLAN,
       ),

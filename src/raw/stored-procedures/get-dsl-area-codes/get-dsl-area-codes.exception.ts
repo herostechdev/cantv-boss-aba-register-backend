@@ -1,4 +1,6 @@
+import { BossConstants } from 'src/boss/boss.constants';
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
+import { ExceptionHelper } from 'src/system/infrastructure/helpers/exception.helper';
 import {
   IException,
   toIException,
@@ -9,7 +11,10 @@ export class GetDSLAreaCodesException extends CustomBadRequestException {
     super({
       code: '',
       guid: '384365fb-5642-48da-b890-dac7d3051577',
-      objectOrError: 'Error al ejecutar el SP GETDSLAREACODES',
+      command: BossConstants.GET_DSL_AREA_CODES,
+      objectOrError: ExceptionHelper.storedProcedureExecutionExceptionMessage(
+        BossConstants.GET_DSL_AREA_CODES,
+      ),
       innerException: toIException(innerException),
     });
   }

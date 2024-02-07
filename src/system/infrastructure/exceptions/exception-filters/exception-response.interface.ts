@@ -5,6 +5,7 @@ export interface IExceptionResponse {
   code: string;
   name: string;
   guid: string;
+  command: string;
   timestamp: string;
   httpStatusCode: number;
   path: string;

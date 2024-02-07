@@ -121,7 +121,9 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
           this.response.createAndProvisioningMasterAccountResponse.status !==
           CreateAndProvisioningMasterAccountStatusConstants.SUCCESSFULL
         ) {
-          throw new Error10041Exception();
+          throw new Error10041Exception(
+            BossConstants.CREATE_AND_PROVISIONING_CUSTOMER,
+          );
         }
       } else {
         // Wlog.instance.info({
@@ -154,7 +156,9 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
           this.response.createAndProvisioningCustomerResponse.status !==
           CreateAndProvisioningCustomerStatusConstants.SUCCESSFULL
         ) {
-          throw new Error10041Exception();
+          throw new Error10041Exception(
+            BossConstants.CREATE_AND_PROVISIONING_CUSTOMER,
+          );
         }
       }
       // Wlog.instance.info({

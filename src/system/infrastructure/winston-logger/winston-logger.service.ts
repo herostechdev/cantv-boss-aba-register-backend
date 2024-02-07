@@ -99,6 +99,7 @@ export class Wlog {
       .append(`${info.timestamp}`)
       .append(`${info.level.toUpperCase()}`)
       .append(this.getClazzMethod(info.metadata))
+      .append(this.getCommand(info.metadata))
       .append(this.getPhoneNumber(info.metadata?.phoneNumber))
       .append(this.getMessage(info.message, info.metadata?.error))
       .append(this.getInput(info.metadata?.input))
@@ -116,6 +117,7 @@ export class Wlog {
       level: info.level,
       clazz: info.metadata?.clazz,
       method: info.metadata?.method,
+      command: info.metadata?.command,
       phoneNumber: info.metadata?.phoneNumber,
       message: info.message,
       input: info.metadata?.input,
@@ -131,6 +133,11 @@ export class Wlog {
     if (!metadata || !metadata.clazz) return null;
     const method = metadata.method ? `.${metadata.method}` : '';
     return `[${metadata.clazz}${method}]`;
+  }
+
+  private getCommand(metadata: any): string {
+    if (!metadata || !metadata.command) return null;
+    return `[${metadata.command}]`;
   }
 
   private getPhoneNumber(phoneNumber?: string): string {

@@ -12,6 +12,6 @@ export class ExceptionHelper {
   public static storedProcedureExecutionExceptionMessage(
     storedProcedureName: string,
   ): string {
-    return `Error al ejecutar el procedimiento (Stored Procedure): ${storedProcedureName}`;
+    return `Error al ejecutar el procedimiento almacenado (Stored Procedure): ${storedProcedureName}`;
   }
 }

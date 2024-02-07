@@ -1,3 +1,4 @@
+import { BossConstants } from 'src/boss/boss.constants';
 import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/custom-exceptions/custom-bad-request-exception';
 
 export class ABARegisterOccupiedPortException extends CustomBadRequestException {
@@ -5,6 +6,7 @@ export class ABARegisterOccupiedPortException extends CustomBadRequestException 
     super({
       code: '',
       guid: 'aed28165-b9b3-4988-90d7-961e8447525d',
+      command: BossConstants.UNKNOWN,
       objectOrError: 'Puerto Ocupado',
     });
   }

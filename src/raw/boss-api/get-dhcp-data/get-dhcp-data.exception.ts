@@ -5,6 +5,7 @@ export class GetDHCPDataException extends CustomInternalServerException {
   constructor(error?: IException) {
     super({
       objectOrError: 'Error al consultar la información del DHCP',
+      command: process.env.BOSS_GET_DHCP_DATA_URL,
       guid: '0acdeec2-4017-4705-b4d7-b1335a2c5b2c',
       innerException: error,
     });

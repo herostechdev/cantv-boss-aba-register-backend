@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
+import { BossConstants } from 'src/boss/boss.constants';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
@@ -28,15 +29,15 @@ export class AbaRegisterIsValidIpAddressService extends AbaRegisterExecuteServic
       case IsValidIpAddressStatusConstants.SUCCESSFULL:
         return response;
       case IsValidIpAddressStatusConstants.ERROR_1003:
-        throw new Error1003Exception();
+        throw new Error1003Exception(BossConstants.IS_VALID_IP_ADDRESS);
       case IsValidIpAddressStatusConstants.ERROR_3004_1:
-        throw new Error30041Exception();
+        throw new Error30041Exception(BossConstants.IS_VALID_IP_ADDRESS);
       case IsValidIpAddressStatusConstants.ERROR_3005_5:
-        throw new Error30055Exception();
+        throw new Error30055Exception(BossConstants.IS_VALID_IP_ADDRESS);
       case IsValidIpAddressStatusConstants.POOL_RBE_LEASE:
         return response;
       default:
-        throw new Error1003Exception();
+        throw new Error1003Exception(BossConstants.IS_VALID_IP_ADDRESS);
     }
   }
 }

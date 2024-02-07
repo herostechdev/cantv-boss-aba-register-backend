@@ -13,6 +13,7 @@ import {
   isException,
 } from '../custom-exceptions/exception.interface';
 import { IExceptionResponse } from './exception-response.interface';
+import { InfrastructureConstants } from '../../infrastructure.constants';
 
 @Catch(Error)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -46,6 +47,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       code: this.getCode(exception),
       name: exception?.constructor?.name,
       guid: this.getGuid(exception),
+      command: this.getCommand(exception),
       timestamp: new Date().toISOString(),
       httpStatusCode: statusCode,
       path: url,
@@ -90,6 +92,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
       return exception.guid ?? v4();
     }
     return v4();
+  }
+
+  private getCommand(exception: Error | IException): string {
+    if (isException(exception)) {
+      return exception.command ?? InfrastructureConstants.UNKNOWN;
+    }
+    return InfrastructureConstants.UNKNOWN;
   }
 
   private get isProduction(): boolean {

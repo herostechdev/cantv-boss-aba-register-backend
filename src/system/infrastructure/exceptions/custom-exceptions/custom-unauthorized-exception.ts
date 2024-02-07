@@ -13,12 +13,15 @@ export class CustomUnauthorizedException
     );
     this.code = exceptionData.code;
     this.guid = exceptionData.guid;
+    this.command = exceptionData.command;
     this.innerException = exceptionData.innerException;
   }
 
   code: string;
 
   guid: string;
+
+  command: string;
 
   innerException?: IException;
 }

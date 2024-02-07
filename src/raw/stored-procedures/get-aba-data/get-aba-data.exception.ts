@@ -6,6 +6,7 @@ export class GetABADataException extends CustomBadRequestException {
     super({
       code: '',
       guid: '524c9cc4-3911-4ff9-8b28-c1afc281c0a8',
+      command: BossConstants.GET_ABA_DATA,
       objectOrError: `Ha ocurrido un error al ejecutar el SP ${BossConstants.GET_ABA_DATA}`,
     });
   }

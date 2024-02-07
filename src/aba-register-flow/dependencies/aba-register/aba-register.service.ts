@@ -6,6 +6,7 @@ import { AbaRegisterRequestDto } from 'src/raw/stored-procedures/aba-register/ab
 import { AbaRegisterStatusConstants } from 'src/raw/stored-procedures/aba-register/aba-register-status.constants';
 import { Error10023Exception } from 'src/exceptions/error-1002-3.exception';
 import { IAbaRegisterResponse } from 'src/raw/stored-procedures/aba-register/aba-register-response.interface';
+import { BossConstants } from 'src/boss/boss.constants';
 
 @Injectable()
 export class AbaRegisterService extends AbaRegisterExecuteService<
@@ -25,7 +26,7 @@ export class AbaRegisterService extends AbaRegisterExecuteService<
       case AbaRegisterStatusConstants.ERROR:
         throw new ABARegisterException();
       case AbaRegisterStatusConstants.THERE_IS_NO_DATA:
-        throw new Error10023Exception();
+        throw new Error10023Exception(BossConstants.ABA_REGISTER);
       default:
         throw new ABARegisterException();
     }

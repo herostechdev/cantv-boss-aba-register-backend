@@ -6,6 +6,7 @@ import { GetOrderIdFromABASalesRawService } from 'src/raw/stored-procedures/get-
 import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesStatusConstants } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-status.constants';
 import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
+import { BossConstants } from 'src/boss/boss.constants';
 
 @Injectable()
 export class AbaRegisterGetOrderIdFromAbaSalesService extends AbaRegisterExecuteService<
@@ -31,7 +32,7 @@ export class AbaRegisterGetOrderIdFromAbaSalesService extends AbaRegisterExecute
       case GetOrderIdFromABASalesStatusConstants.PHONE_WITHOUT_PRE_ORDER:
         return response;
       case GetOrderIdFromABASalesStatusConstants.PRE_ORDER_NOT_ACCEPTED_OR_COMPLETED:
-        throw new Error2002Exception();
+        throw new Error2002Exception(BossConstants.GET_ORDER_ID_FROM_ABA_SALES);
       default:
         throw new GetOrderIdFromABASalesException();
     }

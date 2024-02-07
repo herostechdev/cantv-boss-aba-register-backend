@@ -788,7 +788,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       }
       await this.setASAPOrderDetail(data);
     } else {
-      throw new Error30092Exception();
+      throw new Error30092Exception(BossConstants.GET_PORT_ID);
     }
   }
 

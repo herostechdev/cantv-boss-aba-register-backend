@@ -7,6 +7,7 @@ export class UpdatePasswordFromLoginException extends CustomBadRequestException 
     super({
       code: '',
       guid: 'cee579fd-6574-49fc-96d0-aeb833cd11b2',
+      command: BossConstants.UPDATE_PASSWORD_FROM_LOGIN,
       objectOrError: ExceptionHelper.storedProcedureExecutionExceptionMessage(
         BossConstants.UPDATE_PASSWORD_FROM_LOGIN,
       ),

@@ -7,6 +7,7 @@ export class IsValidIpAddressException extends CustomBadRequestException {
     super({
       code: '',
       guid: '5d8fb466-6bf0-4c5c-8419-e6ddf628dfb1',
+      command: BossConstants.IS_VALID_IP_ADDRESS,
       objectOrError: ExceptionHelper.storedProcedureExecutionExceptionMessage(
         BossConstants.IS_VALID_IP_ADDRESS,
       ),

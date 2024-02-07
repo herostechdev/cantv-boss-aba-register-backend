@@ -4,6 +4,7 @@ import { CustomBadRequestException } from 'src/system/infrastructure/exceptions/
 import { HttpConstants } from 'src/system/infrastructure/http/http-constants';
 import { ISOAPCommonResponse } from './soap-common-response.interface';
 import { PICConstants } from 'src/boss/pic.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 
 export abstract class SoapRequestService<
   RESPONSE extends ISOAPCommonResponse,
@@ -39,6 +40,7 @@ export abstract class SoapRequestService<
         code: response.ERROR_CODE,
         descriptionOrOptions: response.ERROR_MESSAGE ?? errorMessage,
         guid: 'bb8e0f0a-accd-45aa-9d31-a566373bcbdf',
+        command: BossConstants.UNKNOWN,
       });
   }
 

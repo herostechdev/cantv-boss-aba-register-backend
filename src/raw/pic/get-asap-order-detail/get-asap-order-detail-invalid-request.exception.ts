@@ -5,7 +5,8 @@ export class GetASAPOrderDetailInvalidQueryRequestException extends CustomBadReq
     super({
       code: 'UNKNOWN',
       guid: '3adb79a4-decc-4bfa-b098-ef8709e5ad52',
-      descriptionOrOptions: 'La ordén es inválida',
+      command: process.env.PIC_GET_ASAP_ORDER_DETAIL_URL,
+      descriptionOrOptions: 'La orden es inválida',
     });
   }
 }

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 export interface IException extends Error {
   code: string;
   guid: string;
+  command: string;
   innerException?: IException;
 }
 
@@ -18,6 +19,7 @@ export function toIException(exception: any): IException {
     name: 'InnerException',
     code: '',
     guid: uuidv4(),
+    command: '',
     message: JSON.stringify(exception),
   };
 }

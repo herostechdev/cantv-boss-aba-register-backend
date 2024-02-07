@@ -6,6 +6,7 @@ import { GetDataFromDSLAMPortIdRequestRawService } from 'src/raw/stored-procedur
 import { GetDataFromDSLAMPortIdRequestDto } from 'src/raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-request.dto';
 import { IGetDataFromDSLAMPortIdResponse } from 'src/raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { GetDataFromDSLAMPortIdStatusConstants } from 'src/raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
+import { BossConstants } from 'src/boss/boss.constants';
 
 @Injectable()
 export class AbaRegisterGetDataFromDSLAMPortIdRequestService extends AbaRegisterExecuteService<
@@ -31,7 +32,9 @@ export class AbaRegisterGetDataFromDSLAMPortIdRequestService extends AbaRegister
       case GetDataFromDSLAMPortIdStatusConstants.ERROR:
         throw new GetDataFromDSLAMPortIdException();
       case GetDataFromDSLAMPortIdStatusConstants.THERE_IS_NO_DATA:
-        throw new Error30043Exception();
+        throw new Error30043Exception(
+          BossConstants.GET_DATA_FROM_DSLAM_PORT_ID,
+        );
       default:
         throw new GetDataFromDSLAMPortIdException();
     }

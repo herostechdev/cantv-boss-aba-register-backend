@@ -96,6 +96,9 @@ export class BossConstants {
   public static INTERNET_ACCESS = 'Acceso Internet';
   public static EXECUTING = 'EN_EJECUCION';
   public static IN_PROGRESS = 'EN_PROCESO';
+  public static LEGAL_CONTRACT_DOCUMENT = 'Contrato';
+  public static LEGAL_TERMS_AND_CONDITIONS_DOCUMENT = 'Contrato';
+  public static LOGIN = 'LOGIN';
   public static NATIONAL_IDENTIFICATION_DOCUMENT_TYPE = 'CEDULA_IDENTIDAD';
   public static NATURAL_PERSON = 'NATURALES';
   public static NORMAL = 'NORMAL';

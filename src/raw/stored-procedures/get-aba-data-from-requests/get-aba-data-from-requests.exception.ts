@@ -8,6 +8,7 @@ export class GetABADataFromRequestsException extends CustomBadRequestException {
     super({
       code: '',
       guid: '541a8aa4-ffd2-45b7-8fd4-eb43b7a693f3',
+      command: BossConstants.GET_ABA_DATA_FROM_REQUESTS,
       objectOrError: ExceptionHelper.storedProcedureExecutionExceptionMessage(
         BossConstants.GET_ABA_DATA,
       ),

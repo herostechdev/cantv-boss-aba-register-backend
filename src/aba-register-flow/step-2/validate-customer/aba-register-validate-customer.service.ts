@@ -91,7 +91,7 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
             this.response.getDebtFromCustomerResponse.amount >
               BossConstants.ZERO
           ) {
-            throw new Error30101Exception();
+            throw new Error30101Exception(BossConstants.GET_DEBT_FROM_CUSTOMER);
           }
         }
       } else {
@@ -99,7 +99,9 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
           this.response.getAllValuesFromCustomerValuesResponse.status !==
           GetAllValuesFromCustomerValuesStatusConstants.THERE_IS_NO_DATA
         ) {
-          throw new Error1002Exception();
+          throw new Error1002Exception(
+            BossConstants.GET_ALL_VALUES_FROM_CUSTOMER_VALUES,
+          );
         }
       }
       super.infoLog(BossConstants.END);
