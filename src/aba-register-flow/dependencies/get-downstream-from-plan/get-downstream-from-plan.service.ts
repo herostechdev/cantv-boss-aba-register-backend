@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { GetInfoFromABARequestsException } from 'src/validate-technical-feasibility/get-info-from-aba-requests/get-info-from-aba-requests.exception';
+import { GetDownstreamFromPlanException } from 'src/raw/stored-procedures/get-downstream-from-plan/get-downstream-from-plan.exception';
 import { GetDownstreamFromPlanRawService } from 'src/raw/stored-procedures/get-downstream-from-plan/get-downstream-from-plan-raw.service';
 import { GetDownstreamFromPlanRequestDto } from 'src/raw/stored-procedures/get-downstream-from-plan/get-downstream-from-plan-request.dto';
 import { GetDownstreamFromPlanStatusConstants } from 'src/raw/stored-procedures/get-downstream-from-plan/get-downstream-from-plan-status.constants';
@@ -27,11 +27,11 @@ export class AbaRegisterGetDownstreamFromPlanService extends AbaRegisterExecuteS
       case GetDownstreamFromPlanStatusConstants.SUCCESSFULL:
         return response;
       case GetDownstreamFromPlanStatusConstants.ERROR:
-        throw new GetInfoFromABARequestsException();
+        throw new GetDownstreamFromPlanException();
       case GetDownstreamFromPlanStatusConstants.THERE_IS_NO_DATA:
         throw new GetDownstreamFromPlanThereIsNoDataException();
       default:
-        throw new GetInfoFromABARequestsException();
+        throw new GetDownstreamFromPlanException();
     }
   }
 }

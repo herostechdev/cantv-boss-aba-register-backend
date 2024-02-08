@@ -9,6 +9,8 @@ import { AbaRegisterGetAbaDataService } from 'src/aba-register-flow/dependencies
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterGetDataFromDSLAMPortIdRequestService } from 'src/aba-register-flow/dependencies/get-data-from-dslam-port-id/get-data-from-dslam-port-id.service';
 import { AbaRegisterGetDownstreamFromPlanService } from 'src/aba-register-flow/dependencies/get-downstream-from-plan/get-downstream-from-plan.service';
+import { AbaRegisterGetPortIdService } from 'src/aba-register-flow/dependencies/get-port-id/get-port-id.service';
+import { AbaRegisterGetPortIdFromIpService } from 'src/aba-register-flow/dependencies/get-port-id-from-ip/get-port-id-from-ip.service';
 import { AbaRegisterIsValidIpAddressService } from 'src/aba-register-flow/dependencies/is-valid-ip-address/is-valid-ip-address.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { AbaRegisterVerifyContractByPhoneService } from 'src/aba-register-flow/dependencies/verify-contract-by-phone/verify-contract-by-phone.service';
@@ -18,21 +20,13 @@ import { BossHelper } from 'src/boss/boss.helper';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
-import { GetPortIdFromIpExecutionException } from '../../../raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-execution.exception';
 import { GetAbaDataConstants } from '../../../raw/stored-procedures/get-aba-data/get-aba-data.constants';
-import { GetAbaDataFromRequestsRawService } from '../../../raw/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdStatusConstants } from '../../../raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-raw.service';
-import { GetPortIdFromIpBadIpFormatException } from '../../../raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
-import { GetPortIdFromIpStatusConstants } from '../../../raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-status.constants';
-import { GetPortIdStatusConstants } from '../../../validate-technical-feasibility/get-port-id/get-port-id-status.constants';
-import { GetPortIdException } from '../../../validate-technical-feasibility/get-port-id/get-port-id.exception';
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
-import { IGetPortIdFromIpResponse } from '../../../raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-response.interface';
-import { IGetPortIdResponse } from '../../../validate-technical-feasibility/get-port-id/get-port-id-response.interface';
 import { IIsOccupiedPortResponse } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-response.interface';
 import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { IReadIABAOrderResponse } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-response.interface';
@@ -52,7 +46,6 @@ import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { AbaRegisterGetPortIdFromIpService } from 'src/aba-register-flow/dependencies/get-port-id-from-ip/get-port-id-from-ip.service';
 
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowService<
@@ -68,6 +61,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     private readonly abaRegisterGetAndRegisterQualifOfServiceService: AbaRegisterGetAndRegisterQualifOfServiceService,
     private readonly abaRegisterGetDataFromDSLAMPortIdRequestService: AbaRegisterGetDataFromDSLAMPortIdRequestService,
     private readonly abaRegisterGetDownstreamFromPlanService: AbaRegisterGetDownstreamFromPlanService,
+    private readonly abaRegisterGetPortIdService: AbaRegisterGetPortIdService,
     private readonly abaRegisterGetPortIdFromIpService: AbaRegisterGetPortIdFromIpService,
     private readonly abaRegisterIsValidIpAddressService: AbaRegisterIsValidIpAddressService,
     private readonly abaRegisterVerifyContractByPhoneService: AbaRegisterVerifyContractByPhoneService,
@@ -642,6 +636,18 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       );
   }
 
+  private async getPortId(): Promise<void> {
+    super.infoLog('getPortId');
+    this.response.getPortIdResponse =
+      await this.abaRegisterGetPortIdService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        nsp: this.response.queryDHCPResponse.nsp,
+        vci: this.response.queryDHCPResponse.vci,
+        vpi: this.response.queryDHCPResponse.vpi,
+      });
+  }
+
   // ****************************************************************
 
   private async callAuditLog(
@@ -751,14 +757,21 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     });
     data.getValidVPIResponse = await this.getValidVPI(data);
 
-    Wlog.instance.info({
-      phoneNumber: null,
-      message: 'getPortId',
-      input: null,
-      clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      method: 'getPortIdFlow',
-    });
-    data.getPortIdResponse = await this.getPortId(data);
+    // Wlog.instance.info({
+    //   phoneNumber: null,
+    //   message: 'getPortId',
+    //   input: null,
+    //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+    //   method: 'getPortIdFlow',
+    // });
+    // data.getPortIdResponse = await this.abaRegisterGetPortIdService.execute({
+    //   areaCode: this.dto.areaCode,
+    //   phoneNumber: this.dto.phoneNumber,
+    //   nsp: this.response.queryDHCPResponse.nsp,
+    //   vci: this.response.queryDHCPResponse.vci,
+    //   vpi: this.response.queryDHCPResponse.vpi,
+    // });
+    await this.getPortId();
 
     Wlog.instance.info({
       phoneNumber: null,
@@ -882,39 +895,39 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     return result;
   }
 
-  private async getPortId(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IGetPortIdResponse> {
-    const parameters = {
-      s_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
-      n_vpi: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vpi)),
-      n_vci: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vci)),
+  // private async getPortId(
+  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
+  // ): Promise<IGetPortIdResponse> {
+  //   const parameters = {
+  //     s_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
+  //     n_vpi: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vpi)),
+  //     n_vci: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vci)),
 
-      t_portid: OracleHelper.tableOfNumberBindOut(),
-      status: OracleHelper.tableOfNumberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.BOSS_PACKAGE,
-      BossConstants.GET_PORT_ID,
-      parameters,
-    );
-    const status = (OracleHelper.getFirstItem(result, 'status') ??
-      GetPortIdStatusConstants.EXECUTION_ERROR) as GetPortIdStatusConstants;
-    const response: IGetPortIdResponse = {
-      portId: OracleHelper.getFirstItem(result, 't_portid'),
-      status: status,
-    };
-    switch (status) {
-      case GetPortIdStatusConstants.SUCCESSFULL:
-        return response;
-      case GetPortIdStatusConstants.EXECUTION_ERROR:
-        throw new GetPortIdException(result);
-      case GetPortIdStatusConstants.THERE_IS_NO_DATA:
-        throw new Error30092Exception(result);
-      default:
-        throw new GetPortIdException(result);
-    }
-  }
+  //     t_portid: OracleHelper.tableOfNumberBindOut(),
+  //     status: OracleHelper.tableOfNumberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.BOSS_PACKAGE,
+  //     BossConstants.GET_PORT_ID,
+  //     parameters,
+  //   );
+  //   const status = (OracleHelper.getFirstItem(result, 'status') ??
+  //     GetPortIdStatusConstants.EXECUTION_ERROR) as GetPortIdStatusConstants;
+  //   const response: IGetPortIdResponse = {
+  //     portId: OracleHelper.getFirstItem(result, 't_portid'),
+  //     status: status,
+  //   };
+  //   switch (status) {
+  //     case GetPortIdStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case GetPortIdStatusConstants.EXECUTION_ERROR:
+  //       throw new GetPortIdException(result);
+  //     case GetPortIdStatusConstants.THERE_IS_NO_DATA:
+  //       throw new Error30092Exception(result);
+  //     default:
+  //       throw new GetPortIdException(result);
+  //   }
+  // }
 
   private async IsOccupiedPort(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,

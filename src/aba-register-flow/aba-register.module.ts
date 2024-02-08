@@ -18,6 +18,7 @@ import { AbaRegisterGetDslAreaCodesService } from './dependencies/get-dsl-area-c
 import { AbaRegisterGetGroupAccessFromLoginService } from './step-1/login/aba-register-get-group-access-from-login.service';
 import { AbaRegisterGetLegalDocumentsService } from './step-4/get-legal-documents/aba-register-get-legal-documents.service';
 import { AbaRegisterGetOrderIdFromAbaSalesService } from './step-2/get-order-id-from-aba-sales/aba-register-get-order-id-from-aba-sales.service';
+import { AbaRegisterGetPortIdService } from './dependencies/get-port-id/get-port-id.service';
 import { AbaRegisterGetPortIdFromIpService } from './dependencies/get-port-id-from-ip/get-port-id-from-ip.service';
 import { AbaRegisterGetStateFromSerialService } from './step-4/get-state-from-serial/aba-register-get-state-from-serial.service';
 import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-register-is-ip-allowed.service';
@@ -68,6 +69,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterGetGroupAccessFromLoginService,
     AbaRegisterGetLegalDocumentsService,
     AbaRegisterGetOrderIdFromAbaSalesService,
+    AbaRegisterGetPortIdService,
     AbaRegisterGetPortIdFromIpService,
     AbaRegisterGetStateFromSerialService,
     AbaRegisterISGActionAllowedService,

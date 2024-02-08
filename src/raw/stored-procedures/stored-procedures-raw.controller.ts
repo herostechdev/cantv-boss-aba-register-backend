@@ -43,6 +43,10 @@ import { GetGroupAccessFromLoginRawService } from './get-group-access-from-login
 import { GetGroupAccessFromLoginRequestDto } from './get-group-access-from-login/get-group-access-from-login-request.dto';
 import { GetOrderIdFromABASalesRequestDto } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
 import { GetOrderIdFromABASalesRawService } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
+import { GetPortIdRawService } from './get-port-id/get-port-id-raw.service';
+import { GetPortIdRequestDto } from './get-port-id/get-port-id-request.dto';
+import { GetPortIdFromIpRawService } from './get-port-id-from-ip/get-port-id-from-ip-raw.service';
+import { GetPortIdFromIpRequestDto } from './get-port-id-from-ip/get-port-id-from-ip-request.dto';
 import { GetStateFromSerialRequestDto } from './get-state-from-serial/get-state-from-serial-request.dto';
 import { GetStateFromSerialRawService } from './get-state-from-serial/get-state-from-serial-raw.service';
 import { HttpCodeConstants } from 'src/system/infrastructure/http/http-code-constants';
@@ -69,6 +73,8 @@ import { IGetDSLAreaCodesResponse } from './get-dsl-area-codes/get-dsl-area-code
 import { IGetFirstLetterFromABARequestResponse } from './get-first-letter-from-aba-request/get-first-letter-from-aba-request-response.interface';
 import { IGetGroupAccessFromLoginResponse } from './get-group-access-from-login/get-group-access-from-login-response.interface';
 import { IGetOrderIdFromABASalesResponse } from './get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
+import { IGetPortIdResponse } from './get-port-id/get-port-id-response.interface';
+import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetStateFromSerialResponse } from './get-state-from-serial/get-state-from-serial-response.interface';
 import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
 import { IIsIPAllowedResponse } from './is-ip-allowed/is-ip-allowed-response.interface';
@@ -103,9 +109,6 @@ import { IUpdatePasswordFromLoginResponse } from './update-password-from-login/u
 import { UpdatePasswordFromLoginRawService } from './update-password-from-login/update-password-from-login-raw.service';
 import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/verify-contract-by-phone-raw.service';
 import { VerifyContractByPhoneRequestDto } from './verify-contract-by-phone/verify-contract-by-phone-request.dto';
-import { GetPortIdFromIpRawService } from './get-port-id-from-ip/get-port-id-from-ip-raw.service';
-import { GetPortIdFromIpRequestDto } from './get-port-id-from-ip/get-port-id-from-ip-request.dto';
-import { IGetPortIdFromIpResponse } from './get-port-id-from-ip/get-port-id-from-ip-response.interface';
 
 @Controller({
   path: 'raw/sp',
@@ -135,6 +138,7 @@ export class StoredProceduresRawController {
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     private readonly getGroupAccessFromLoginRawService: GetGroupAccessFromLoginRawService,
     private readonly getOrderIdFromABASalesRawService: GetOrderIdFromABASalesRawService,
+    private readonly getPortIdRawService: GetPortIdRawService,
     private readonly getPortIdFromIpRawService: GetPortIdFromIpRawService,
     private readonly getStateFromSerialService: GetStateFromSerialRawService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
@@ -341,6 +345,13 @@ export class StoredProceduresRawController {
     @Body() dto: GetOrderIdFromABASalesRequestDto,
   ): Promise<IGetOrderIdFromABASalesResponse> {
     return this.getOrderIdFromABASalesRawService.execute(dto);
+  }
+
+  @Post('getPortId')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  getPortId(@Body() dto: GetPortIdRequestDto): Promise<IGetPortIdResponse> {
+    return this.getPortIdRawService.execute(dto);
   }
 
   @Post('getPortIdFromIp')
