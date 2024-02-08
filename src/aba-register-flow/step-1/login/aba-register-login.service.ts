@@ -20,7 +20,7 @@ export class AbaRegisterLoginService extends BossFlowService<
     private readonly abaRegisterISGActionAllowedService: AbaRegisterISGActionAllowedService,
     private readonly hashService: HashService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
+    protected readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService, updateDslAbaRegistersRawService);
     super.className = AbaRegisterLoginService.name;

@@ -20,19 +20,15 @@ import { BossHelper } from 'src/boss/boss.helper';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
-import { GetAbaDataConstants } from '../../../raw/stored-procedures/get-aba-data/get-aba-data.constants';
+// import { GetAbaDataStatusConstants } from '../../../raw/stored-procedures/get-aba-data/get-aba-data-status.constants';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdStatusConstants } from '../../../raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-raw.service';
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
-import { IIsOccupiedPortResponse } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port-response.interface';
 import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { IReadIABAOrderResponse } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-response.interface';
-import { IsOccupiedPortStatusConstants } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port-status.constants';
-import { IsOccupiedPortException } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port.exception';
-import { IsOccupiedPortTherIsNoDataException } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port-there-is-no-data.exception';
 import { IsValidIpAddressStatusConstants } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
@@ -47,6 +43,8 @@ import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/updat
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 import { AbaRegisterIsOccupiedPortService } from 'src/aba-register-flow/dependencies/Is-occupied-port/Is-occupied-port.service';
+import { GetAbaDataStatusConstants } from 'src/raw/stored-procedures/get-aba-data/get-aba-data-status.constants';
+import { CheckIpStatusConstants } from 'src/raw/stored-procedures/check-ip/check-ip-status.constants';
 
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowService<
@@ -72,9 +70,9 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    protected readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
+    protected readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
-    super(oracleConfigurationService, updateDslAbaRegistersService);
+    super(oracleConfigurationService, updateDslAbaRegistersRawService);
     super.className = AbaRegisterValidateTechnicalFeasibilityService.name;
     super.methodName = BossConstants.EXECUTE_METHOD;
   }
@@ -84,194 +82,55 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   ): Promise<IAbaRegisterValidateTechnicalFeasibilityResponse> {
     this.initialize(dto);
     try {
-      //   Wlog.instance.info({
-      //     phoneNumber: BossHelper.getPhoneNumber(dto),
-      //     message: BossConstants.START,
-      //     input: BossHelper.getPhoneNumber(dto),
-      //     clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //     method: 'validateTechnicalFeasibility',
-      //   });
       this.infoLog(BossConstants.START);
-      // const data = this.initialize(dto);
-      // data.requestDto = dto;
       await super.connect();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'insertDslAbaRegisters',
-      //   input: JSON.stringify(dto),
-      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // this.response.insertDslAbaRegistersResponse =
-      //   await this.insertDslAbaRegistersRawService.execute(
-      //     {
-      //       areaCode: this.response.requestDto.areaCode,
-      //       phoneNumber: this.response.requestDto.phoneNumber,
-      //       registerDate: this.response.requestDto.registerDate,
-      //       registerStatus: BossConstants.IN_PROGRESS,
-      //     },
-      //     this.dbConnection,
-      //   );
       await this.insertDslAbaRegisters();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'isPrepaidVoiceLine',
-      //   input: BossHelper.getPhoneNumber(dto),
-      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // this.response.isPrepaidVoiceLine =
-      //   await this.abaRegisterIsPrepaidVoiceLineService.execute(
-      //     {
-      //       areaCode: dto.areaCode,
-      //       phoneNumber: dto.phoneNumber,
-      //     },
-      //     this.dbConnection,
-      //   );
       await this.isPrepaidVoiceLine();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'getAndRegisterQualifOfService',
-      //   input: BossHelper.getPhoneNumber(dto),
-      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // this.response.getAndRegisterQualifOfServiceResponse =
-      //   await this.abaRegisterGetAndRegisterQualifOfServiceService.execute(
-      //     {
-      //       areaCode: dto.areaCode,
-      //       phoneNumber: dto.phoneNumber,
-      //     },
-      //     this.dbConnection,
-      //   );
       await this.getAndRegisterQualifOfService();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'verifyContractByPhone',
-      //   input: BossHelper.getPhoneNumber(dto),
-      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // this.response.verifyContractByPhoneResponse =
-      //   await this.verifyContractByPhone(this.response);
       await this.verifyContractByPhone();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'getABADataFromRequests',
-      //   input: BossHelper.getPhoneNumber(dto),
-      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // this.response.getABADataFromRequestsResponse =
-      //   await this.abaRegisterGetABADataFromRequestsService.execute(
-      //     {
-      //       areaCode: dto.areaCode,
-      //       phoneNumber: dto.phoneNumber,
-      //     },
-      //     this.dbConnection,
-      //   );
       await this.getABADataFromRequests();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'getDownstreamFromPlan',
-      //   input: BossHelper.getPhoneNumber(dto),
-      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // this.response.getDownstreamFromPlanResponse =
-      //   await this.abaRegisterGetDownstreamFromPlanService.execute({
-      //     areaCode: dto.areaCode,
-      //     phoneNumber: dto.phoneNumber,
-      //     desiredPlan: this.response.getABADataFromRequestsResponse.desiredPlan,
-      //   });
       await this.getDownstreamFromPlan();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'isValidIpAddress',
-      //   input: BossHelper.getPhoneNumber(dto),
-      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // this.response.isValidIpAddressResponse = await this.isValidIpAddress(
-      //   this.response,
-      // );
       await this.isValidIpAddress();
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'getPortIdFromIp',
-      //   input: BossHelper.getPhoneNumber(dto),
-      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // this.response.getPortIdFromIpResponse = await this.getPortIdFromIp(
-      //   this.response,
-      // );
       await this.getPortIdFromIp();
-
       if (
         ValidationHelper.isDefined(
           this.response.getPortIdFromIpResponse.dslamportId,
         )
       ) {
-        // Wlog.instance.info({
-        //   phoneNumber: BossHelper.getPhoneNumber(dto),
-        //   message: 'IsOccupiedPort',
-        //   input: BossHelper.getPhoneNumber(dto),
-        //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-        //   method: 'validateTechnicalFeasibility',
-        // });
-        // this.response.isOccupiedPortResponse = await this.(
-        //   this.response,
-        // );
         await this.isOccupiedPort();
-
         if (this.response.isOccupiedPortResponse.result > 0) {
-          Wlog.instance.info({
-            phoneNumber: BossHelper.getPhoneNumber(dto),
-            message: 'getPortIdFlow    (1)',
-            input: BossHelper.getPhoneNumber(dto),
-            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-            method: 'validateTechnicalFeasibility',
-          });
+          super.infoLog('getPortIdFlow    (1)');
           await this.getPortIdFlow(this.response);
         } else {
-          Wlog.instance.info({
-            phoneNumber: BossHelper.getPhoneNumber(dto),
-            message: 'getASAPOrderDetail',
-            input: BossHelper.getPhoneNumber(dto),
-            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-            method: 'validateTechnicalFeasibility',
-          });
+          super.infoLog('getASAPOrderDetail');
           await this.rbeDoesNotExistLog(this.response);
           await this.setASAPOrderDetail(this.response);
         }
       } else {
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'getPortIdFlow   (2)',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-          method: 'validateTechnicalFeasibility',
-        });
+        super.infoLog('getPortIdFlow   (2)');
         await this.getPortIdFlow(this.response);
       }
 
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'getABAData',
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-        method: 'validateTechnicalFeasibility',
-      });
-      this.response.getABADataResponse =
-        await this.abaRegisterGetAbaDataService.execute({
-          areaCode: dto.areaCode,
-          phoneNumber: dto.phoneNumber,
-          ipAddress: dto.ipAddress,
-          orderId: dto.orderId,
-        });
+      // Wlog.instance.info({
+      //   phoneNumber: BossHelper.getPhoneNumber(dto),
+      //   message: 'getABAData',
+      //   input: BossHelper.getPhoneNumber(dto),
+      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+      //   method: 'validateTechnicalFeasibility',
+      // });
+      // this.response.getABADataResponse =
+      //   await this.abaRegisterGetAbaDataService.execute({
+      //     areaCode: dto.areaCode,
+      //     phoneNumber: dto.phoneNumber,
+      //     ipAddress: dto.ipAddress,
+      //     orderId: dto.orderId,
+      //   });
+      await this.getABAData();
 
-      if (this.response.getABADataResponse.status === 0) {
+      if (
+        this.response.getABADataResponse.status ===
+        GetAbaDataStatusConstants.SUCCESSFULL
+      ) {
         if (
           ValidationHelper.isDefined(
             this.response.getABADataResponse.abacontractid,
@@ -279,72 +138,76 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
         ) {
           throw new TheClientAlreadyHasABAServiceException();
         } else {
-          Wlog.instance.info({
-            phoneNumber: BossHelper.getPhoneNumber(dto),
-            message: 'checkIp',
-            input: BossHelper.getPhoneNumber(dto),
-            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-            method: 'validateTechnicalFeasibility',
-          });
-          this.response.checkIpResponse =
-            await this.abaRegisterCheckIpService.execute({
-              areaCode: dto.areaCode,
-              phoneNumber: dto.phoneNumber,
-              dslamportId:
-                this.response.getPortIdFromIpResponse.dslamportId ??
-                this.response.getPortIdResponse.portId,
-              loginInstall: dto.loginInstall,
-            });
+          // Wlog.instance.info({
+          //   phoneNumber: BossHelper.getPhoneNumber(dto),
+          //   message: 'checkIp',
+          //   input: BossHelper.getPhoneNumber(dto),
+          //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+          //   method: 'validateTechnicalFeasibility',
+          // });
+          // this.response.checkIpResponse =
+          //   await this.abaRegisterCheckIpService.execute({
+          //     areaCode: dto.areaCode,
+          //     phoneNumber: dto.phoneNumber,
+          //     dslamportId:
+          //       this.response.getPortIdFromIpResponse.dslamportId ??
+          //       this.response.getPortIdResponse.portId,
+          //     loginInstall: dto.loginInstall,
+          //   });
+          await this.checkIp();
         }
       } else {
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'getDataFromDslamPortId',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-          method: 'validateTechnicalFeasibility',
-        });
-        this.response.getDataFromDslamPortIdResponse =
-          await this.abaRegisterGetDataFromDSLAMPortIdRequestService.execute({
-            areaCode: dto.areaCode,
-            phoneNumber: dto.phoneNumber,
-            dslamPortId:
-              this.response.getPortIdFromIpResponse.dslamportId ??
-              this.response.getPortIdResponse.portId,
-          });
+        // Wlog.instance.info({
+        //   phoneNumber: BossHelper.getPhoneNumber(dto),
+        //   message: 'getDataFromDslamPortId',
+        //   input: BossHelper.getPhoneNumber(dto),
+        //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+        //   method: 'validateTechnicalFeasibility',
+        // });
+        // this.response.getDataFromDslamPortIdResponse =
+        //   await this.abaRegisterGetDataFromDSLAMPortIdRequestService.execute({
+        //     areaCode: dto.areaCode,
+        //     phoneNumber: dto.phoneNumber,
+        //     dslamPortId:
+        //       this.response.getPortIdFromIpResponse.dslamportId ??
+        //       this.response.getPortIdResponse.portId,
+        //   });
+        await this.getDataFromDslamPortId();
+
         if (
           this.response.getDataFromDslamPortIdResponse.status ===
           GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL
         ) {
-          Wlog.instance.info({
-            phoneNumber: BossHelper.getPhoneNumber(dto),
-            message: 'modifyNetworkAccessLog',
-            input: BossHelper.getPhoneNumber(dto),
-            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-            method: 'validateTechnicalFeasibility',
-          });
+          // Wlog.instance.info({
+          //   phoneNumber: BossHelper.getPhoneNumber(dto),
+          //   message: 'modifyNetworkAccessLog',
+          //   input: BossHelper.getPhoneNumber(dto),
+          //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+          //   method: 'validateTechnicalFeasibility',
+          // });
+          super.infoLog('modifyNetworkAccessLog');
           await this.modifyNetworkAccessLog(this.response);
         }
+        // Wlog.instance.info({
+        //   phoneNumber: BossHelper.getPhoneNumber(dto),
+        //   message: 'deleteOrder',
+        //   input: BossHelper.getPhoneNumber(dto),
+        //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+        //   method: 'validateTechnicalFeasibility',
+        // });
+        // this.response.deleteOrderResponse =
+        //   await this.abaRegisterDeleteOrderService.execute(
+        //     {
+        //       areaCode: dto.areaCode,
+        //       phoneNumber: dto.phoneNumber,
+        //       dslamportId:
+        //         this.response.getPortIdFromIpResponse.dslamportId ??
+        //         this.response.getPortIdResponse.portId,
+        //     },
+        //     this.dbConnection,
+        //   );
 
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'deleteOrder',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-          method: 'validateTechnicalFeasibility',
-        });
-        this.response.deleteOrderResponse =
-          await this.abaRegisterDeleteOrderService.execute(
-            {
-              areaCode: dto.areaCode,
-              phoneNumber: dto.phoneNumber,
-              dslamportId:
-                this.response.getPortIdFromIpResponse.dslamportId ??
-                this.response.getPortIdResponse.portId,
-            },
-            this.dbConnection,
-          );
-
+        await this.deleteOrder();
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getDSLCentralCoIdByDSLAMPortId',
@@ -369,23 +232,24 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           this.response.readIABAOrderResponse.errorCode ===
           ReadIABAOrderErrorCodeConstants.SUCCESSFULL
         ) {
-          Wlog.instance.info({
-            phoneNumber: BossHelper.getPhoneNumber(dto),
-            message: 'getABAData',
-            input: BossHelper.getPhoneNumber(dto),
-            clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-            method: 'validateTechnicalFeasibility',
-          });
-          this.response.getABADataResponse =
-            await this.abaRegisterGetAbaDataService.execute({
-              areaCode: dto.areaCode,
-              phoneNumber: dto.phoneNumber,
-              ipAddress: dto.ipAddress,
-              orderId: dto.orderId,
-            });
+          // Wlog.instance.info({
+          //   phoneNumber: BossHelper.getPhoneNumber(dto),
+          //   message: 'getABAData',
+          //   input: BossHelper.getPhoneNumber(dto),
+          //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+          //   method: 'validateTechnicalFeasibility',
+          // });
+          // this.response.getABADataResponse =
+          //   await this.abaRegisterGetAbaDataService.execute({
+          //     areaCode: dto.areaCode,
+          //     phoneNumber: dto.phoneNumber,
+          //     ipAddress: dto.ipAddress,
+          //     orderId: dto.orderId,
+          //   });
+          await this.getABAData();
           if (
-            this.response.getABADataResponse.status !==
-            GetAbaDataConstants.SUCCESSFULL
+            this.response.getABADataResponse.status ===
+            GetAbaDataStatusConstants.THERE_IS_NO_DATA
           ) {
             throw new ErrorInsertingIABAFromRegisterException();
           }
@@ -397,18 +261,20 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       }
       return this.response;
     } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-        method: 'validateTechnicalFeasibility',
-        error: error,
-      });
-      await this.updateDslAbaRegistersService.errorUpdate({
-        areaCode: String(dto.areaCode),
-        phoneNumber: String(dto.phoneNumber),
-        registerStatus: BossConstants.NOT_PROCESSED,
-      });
+      // Wlog.instance.error({
+      //   phoneNumber: BossHelper.getPhoneNumber(dto),
+      //   input: BossHelper.getPhoneNumber(dto),
+      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+      //   method: 'validateTechnicalFeasibility',
+      //   error: error,
+      // });
+      super.errorLog(error);
+      await this.updateDslABARegistersWithNotProcessedValue();
+      // await this.updateDslAbaRegistersRawService.errorUpdate({
+      //   areaCode: String(dto.areaCode),
+      //   phoneNumber: String(dto.phoneNumber),
+      //   registerStatus: BossConstants.NOT_PROCESSED,
+      // });
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
       await this.closeConnection();
@@ -477,6 +343,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
         {
           areaCode: this.dto.areaCode,
           phoneNumber: this.dto.phoneNumber,
+          customerId: null,
         },
         this.dbConnection,
       );
@@ -519,49 +386,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       );
   }
 
-  /*
-  private async isValidIpAddress(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IIsValidIpAddressResponse> {
-    const parameters = {
-      abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-      abaphonenumber: OracleHelper.stringBindIn(
-        data.requestDto.phoneNumber,
-        16,
-      ),
-      abaipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 15),
-      Status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.BOSS_PACKAGE,
-      BossConstants.IS_VALID_IP_ADDRESS,
-      parameters,
-    );
-    const status = (result?.outBinds?.Status ??
-      IsValidIpAddressConstants.ERROR_1003) as IsValidIpAddressConstants;
-    const response: IIsValidIpAddressResponse = {
-      status: status,
-    };
-    switch (status) {
-      case IsValidIpAddressConstants.SUCCESSFULL:
-        return response;
-      case IsValidIpAddressConstants.ERROR_1003:
-        throw new Error1003Exception();
-      case IsValidIpAddressConstants.ERROR_3004_1:
-        throw new Error30041Exception();
-      case IsValidIpAddressConstants.ERROR_3005_5:
-        throw new Error30055Exception();
-      case IsValidIpAddressConstants.POOL_RBE_LEASE:
-        return response;
-      default:
-        throw new Error1003Exception();
-    }
-  }
-
-*/
-
-  // abaRegisterIsOccupiedPortService
-
   private async isOccupiedPort(): Promise<void> {
     super.infoLog('isOccupiedPort');
     this.response.isOccupiedPortResponse =
@@ -588,60 +412,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       );
   }
 
-  /*
-  private async getPortIdFromIp(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IGetPortIdFromIpResponse> {
-    const parameters = {
-      i_ipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress),
-      sz_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
-      sz_phonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
-
-      o_dslamportid: OracleHelper.numberBindOut(),
-      o_status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.BOSS_PACKAGE,
-      BossConstants.GET_PORT_ID_FROM_IP,
-      parameters,
-    );
-    const status = (result?.outBinds?.o_status ??
-      GetPortIdFromIpStatusConstants.ERROR) as GetPortIdFromIpStatusConstants;
-    const response: IGetPortIdFromIpResponse = {
-      dslamportId: result?.outBinds?.o_dslamportid,
-      status: status,
-    };
-    switch (status) {
-      case GetPortIdFromIpStatusConstants.SUCCESSFULL:
-        return response;
-      case GetPortIdFromIpStatusConstants.ERROR:
-        throw new GetPortIdFromIpExecutionException();
-      case GetPortIdFromIpStatusConstants.DSLAM_DATA_NOT_FOUND_FOR_BOSS_PORT:
-        return response;
-      case GetPortIdFromIpStatusConstants.IP_FORMAT_ERROR:
-        throw new GetPortIdFromIpBadIpFormatException();
-      default:
-        throw new GetPortIdFromIpExecutionException();
-    }
-  }
-
-
-        Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'getPortIdFromIp',
-        input: BossHelper.getPhoneNumber(dto),
-        clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-        method: 'validateTechnicalFeasibility',
-      });
-      this.response.getPortIdFromIpResponse = await this.getPortIdFromIp(
-        this.response,
-      );
-      // abaRegisterGetPortIdFromIpService
-
-  */
-
-  // abaRegisterGetPortIdFromIpService
-
   private async getPortIdFromIp(): Promise<void> {
     super.infoLog('getPortIdFromIp');
     this.response.getPortIdFromIpResponse =
@@ -667,6 +437,148 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       });
   }
 
+  // Wlog.instance.info({
+  //   phoneNumber: BossHelper.getPhoneNumber(dto),
+  //   message: 'getABAData',
+  //   input: BossHelper.getPhoneNumber(dto),
+  //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+  //   method: 'validateTechnicalFeasibility',
+  // });
+  // super.infoLog('getABAData');
+  // this.response.getABADataResponse =
+  //   await this.abaRegisterGetAbaDataService.execute({
+  //     areaCode: dto.areaCode,
+  //     phoneNumber: dto.phoneNumber,
+  //     ipAddress: dto.ipAddress,
+  //     orderId: dto.orderId,
+  //   });
+
+  private async getABAData(): Promise<void> {
+    super.infoLog('getABAData');
+    this.response.getABADataResponse =
+      await this.abaRegisterGetAbaDataService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        ipAddress: this.dto.ipAddress,
+        orderId: this.dto.orderId,
+      });
+  }
+
+  // Wlog.instance.info({
+  //   phoneNumber: BossHelper.getPhoneNumber(dto),
+  //   message: 'checkIp',
+  //   input: BossHelper.getPhoneNumber(dto),
+  //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+  //   method: 'validateTechnicalFeasibility',
+  // });
+  // this.response.checkIpResponse =
+  //   await this.abaRegisterCheckIpService.execute({
+  //     areaCode: dto.areaCode,
+  //     phoneNumber: dto.phoneNumber,
+  //     dslamportId:
+  //       this.response.getPortIdFromIpResponse.dslamportId ??
+  //       this.response.getPortIdResponse.portId,
+  //     loginInstall: dto.loginInstall,
+  //   });
+
+  private async checkIp(): Promise<void> {
+    super.infoLog('checkIp');
+    this.response.checkIpResponse =
+      await this.abaRegisterCheckIpService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        dslamportId:
+          this.response.getPortIdFromIpResponse.dslamportId ??
+          this.response.getPortIdResponse.portId,
+        loginInstall: this.dto.loginInstall,
+      });
+  }
+
+  // Wlog.instance.info({
+  //   phoneNumber: BossHelper.getPhoneNumber(dto),
+  //   message: 'getDataFromDslamPortId',
+  //   input: BossHelper.getPhoneNumber(dto),
+  //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+  //   method: 'validateTechnicalFeasibility',
+  // });
+  // this.response.getDataFromDslamPortIdResponse =
+  //   await this.abaRegisterGetDataFromDSLAMPortIdRequestService.execute({
+  //     areaCode: dto.areaCode,
+  //     phoneNumber: dto.phoneNumber,
+  //     dslamPortId:
+  //       this.response.getPortIdFromIpResponse.dslamportId ??
+  //       this.response.getPortIdResponse.portId,
+  //   });
+
+  private async getDataFromDslamPortId(): Promise<void> {
+    super.infoLog('getDataFromDslamPortId');
+    this.response.getDataFromDslamPortIdResponse =
+      await this.abaRegisterGetDataFromDSLAMPortIdRequestService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        dslamPortId:
+          this.response.getPortIdFromIpResponse.dslamportId ??
+          this.response.getPortIdResponse.portId,
+      });
+  }
+
+  // Wlog.instance.info({
+  //   phoneNumber: BossHelper.getPhoneNumber(dto),
+  //   message: 'deleteOrder',
+  //   input: BossHelper.getPhoneNumber(dto),
+  //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+  //   method: 'validateTechnicalFeasibility',
+  // });
+  // this.response.deleteOrderResponse =
+  //   await this.abaRegisterDeleteOrderService.execute(
+  //     {
+  //       areaCode: dto.areaCode,
+  //       phoneNumber: dto.phoneNumber,
+  //       dslamportId:
+  //         this.response.getPortIdFromIpResponse.dslamportId ??
+  //         this.response.getPortIdResponse.portId,
+  //     },
+  //     this.dbConnection,
+  //   );
+  private async deleteOrder(): Promise<void> {
+    super.infoLog('deleteOrder');
+    this.response.deleteOrderResponse =
+      await this.abaRegisterDeleteOrderService.execute({
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        dslamPortId:
+          this.response.getPortIdFromIpResponse.dslamportId ??
+          this.response.getPortIdResponse.portId,
+      });
+  }
+
+  // Wlog.instance.info({
+  //   phoneNumber: BossHelper.getPhoneNumber(dto),
+  //   message: 'getDSLCentralCoIdByDSLAMPortId',
+  //   input: BossHelper.getPhoneNumber(dto),
+  //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+  //   method: 'validateTechnicalFeasibility',
+  // });
+  // this.response.getDSLCentralCoIdByDSLAMPortIdResponse =
+  //   await this.getDSLCentralCoIdByDSLAMPortId(this.response);
+  // private async getDSLCentralCoIdByDSLAMPortId(): Promise<void> {
+  //   super.infoLog('getDSLCentralCoIdByDSLAMPortId');
+  //   this.response.getDSLCentralCoIdByDSLAMPortIdResponse =
+  //     await this.getDSLCentralCoIdByDSLAMPortId(this.response);
+  // }
+
+  private async updateDslABARegistersWithNotProcessedValue(): Promise<void> {
+    await this.updateDslAbaRegistersRawService.errorUpdate(
+      {
+        areaCode: this.dto.areaCode,
+        phoneNumber: this.dto.phoneNumber,
+        registerStatus: BossConstants.NOT_PROCESSED,
+      },
+      this.dbConnection,
+      true,
+    );
+  }
+
   // ****************************************************************
 
   private async callAuditLog(
@@ -690,71 +602,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     );
   }
 
-  // private async verifyContractByPhone(
-  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  // ): Promise<IVerifiyContractByPhoneResponse> {
-  //   const parameters = {
-  //     i_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 256),
-  //     i_phonenumber: OracleHelper.stringBindIn(
-  //       data.requestDto.phoneNumber,
-  //       256,
-  //     ),
-  //     o_status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.BOSS_PACKAGE,
-  //     BossConstants.VERIFY_CONTRACT_BY_PHONE,
-  //     parameters,
-  //   );
-  //   const status = (result?.outBinds?.o_status ??
-  //     VerifiyContractByPhoneStatusConstants.ERROR) as VerifiyContractByPhoneStatusConstants;
-  //   const response: IVerifiyContractByPhoneResponse = {
-  //     status: status,
-  //   };
-  //   switch (status) {
-  //     case VerifiyContractByPhoneStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case VerifiyContractByPhoneStatusConstants.ERROR:
-  //       throw new VerifyContractByPhoneException();
-  //     default:
-  //       throw new VerifyContractByPhoneException();
-  //   }
-  // }
-
-  // private async getDownstreamFromPlan(
-  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  // ): Promise<IGetDownstreamFromPlanResponse> {
-  //   const parameters = {
-  //     i_planname: OracleHelper.stringBindIn(
-  //       data.getABADataFromRequestsResponse.desiredPlan,
-  //       32,
-  //     ),
-  //     o_downstream: OracleHelper.stringBindOut(32),
-  //     o_status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     null,
-  //     BossConstants.GET_DOWNSTREAM_FROM_PLAN,
-  //     parameters,
-  //   );
-  //   const status = (result?.outBinds?.o_status ??
-  //     GetDownstreamFromPlanStatusConstants.ERROR) as GetDownstreamFromPlanStatusConstants;
-  //   const response: IGetDownstreamFromPlanResponse = {
-  //     downstream: result?.outBinds?.o_downstream ?? 1,
-  //     status: status,
-  //   };
-  //   switch (status) {
-  //     case GetDownstreamFromPlanStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetDownstreamFromPlanStatusConstants.ERROR:
-  //       throw new GetInfoFromABARequestsException();
-  //     case GetDownstreamFromPlanStatusConstants.THERE_IS_NO_DATA:
-  //       throw new GetDownstreamFromPlanThereIsNoDataException();
-  //     default:
-  //       throw new GetInfoFromABARequestsException();
-  //   }
-  // }
-
   private async getPortIdFlow(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
@@ -776,20 +623,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     });
     data.getValidVPIResponse = await this.getValidVPI(data);
 
-    // Wlog.instance.info({
-    //   phoneNumber: null,
-    //   message: 'getPortId',
-    //   input: null,
-    //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-    //   method: 'getPortIdFlow',
-    // });
-    // data.getPortIdResponse = await this.abaRegisterGetPortIdService.execute({
-    //   areaCode: this.dto.areaCode,
-    //   phoneNumber: this.dto.phoneNumber,
-    //   nsp: this.response.queryDHCPResponse.nsp,
-    //   vci: this.response.queryDHCPResponse.vci,
-    //   vpi: this.response.queryDHCPResponse.vpi,
-    // });
     await this.getPortId();
 
     Wlog.instance.info({
@@ -914,280 +747,15 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     return result;
   }
 
-  // private async getPortId(
-  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  // ): Promise<IGetPortIdResponse> {
-  //   const parameters = {
-  //     s_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
-  //     n_vpi: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vpi)),
-  //     n_vci: OracleHelper.numberBindIn(Number(data.queryDHCPResponse.vci)),
-
-  //     t_portid: OracleHelper.tableOfNumberBindOut(),
-  //     status: OracleHelper.tableOfNumberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.BOSS_PACKAGE,
-  //     BossConstants.GET_PORT_ID,
-  //     parameters,
-  //   );
-  //   const status = (OracleHelper.getFirstItem(result, 'status') ??
-  //     GetPortIdStatusConstants.EXECUTION_ERROR) as GetPortIdStatusConstants;
-  //   const response: IGetPortIdResponse = {
-  //     portId: OracleHelper.getFirstItem(result, 't_portid'),
-  //     status: status,
-  //   };
-  //   switch (status) {
-  //     case GetPortIdStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetPortIdStatusConstants.EXECUTION_ERROR:
-  //       throw new GetPortIdException(result);
-  //     case GetPortIdStatusConstants.THERE_IS_NO_DATA:
-  //       throw new Error30092Exception(result);
-  //     default:
-  //       throw new GetPortIdException(result);
-  //   }
-  // }
-
-  // private async IsOccupiedPort(
-  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  // ): Promise<IIsOccupiedPortResponse> {
-  //   const parameters = {
-  //     l_portid: OracleHelper.numberBindIn(
-  //       data.getPortIdFromIpResponse.dslamportId,
-  //     ),
-  //     l_result: OracleHelper.numberBindOut(),
-  //     o_status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.ACT_PACKAGE,
-  //     BossConstants.IS_OCCUPIED_PORT,
-  //     parameters,
-  //   );
-  //   const response: IIsOccupiedPortResponse = {
-  //     result: result?.outBinds?.l_result ?? BossConstants.OCCUPIED_PORT,
-  //     status: (result?.outBinds?.o_status ??
-  //       IsOccupiedPortStatusConstants.ERROR) as IsOccupiedPortStatusConstants,
-  //   };
-  //   switch (response.status) {
-  //     case IsOccupiedPortStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case IsOccupiedPortStatusConstants.ERROR:
-  //       throw new IsOccupiedPortException();
-  //     case IsOccupiedPortStatusConstants.THERE_IS_NO_DATA:
-  //       throw new IsOccupiedPortTherIsNoDataException();
-  //     default:
-  //       throw new IsOccupiedPortException();
-  //   }
-  // }
-
-  // private async getABAData(
-  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  // ): Promise<IGetAbaDataResponse> {
-  //   const parameters = {
-  //     abaorderid: OracleHelper.stringBindIn(
-  //       String(data.requestDto.orderId),
-  //       12,
-  //     ),
-  //     abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-  //     abaphonenumber: OracleHelper.stringBindIn(
-  //       data.requestDto.phoneNumber,
-  //       16,
-  //     ),
-  //     abaipaddress: OracleHelper.stringBindIn(data.requestDto.ipAddress, 99),
-
-  //     abadslamportid: OracleHelper.tableOfNumberBindOut(),
-  //     abancc: OracleHelper.tableOfStringBindOut(),
-  //     abaclienttype: OracleHelper.tableOfStringBindOut(),
-  //     abaorderdate: OracleHelper.tableOfStringBindOut(),
-  //     abaad: OracleHelper.tableOfStringBindOut(),
-  //     abaparad: OracleHelper.tableOfStringBindOut(),
-  //     abaslot: OracleHelper.tableOfNumberBindOut(),
-  //     abaport: OracleHelper.tableOfNumberBindOut(),
-  //     abarack: OracleHelper.tableOfNumberBindOut(),
-  //     abaposition: OracleHelper.tableOfNumberBindOut(),
-  //     abavci: OracleHelper.tableOfNumberBindOut(),
-  //     abacontractid: OracleHelper.tableOfNumberBindOut(),
-  //     Status: OracleHelper.tableOfNumberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.ACT_PACKAGE,
-  //     BossConstants.GET_ABA_DATA,
-  //     parameters,
-  //   );
-  //   const response: IGetAbaDataResponse = {
-  //     abadslamportid: OracleHelper.getFirstItem(result, 'abadslamportid'),
-  //     abancc: OracleHelper.getFirstItem(result, 'abancc'),
-  //     abaclienttype: OracleHelper.getFirstItem(result, 'abaclienttype'),
-  //     abaorderdate: OracleHelper.getFirstItem(result, 'abaorderdate'),
-  //     abaad: OracleHelper.getFirstItem(result, 'abaad'),
-  //     abaparad: OracleHelper.getFirstItem(result, 'abaparad'),
-  //     abaslot: OracleHelper.getFirstItem(result, 'abaslot'),
-  //     abaport: OracleHelper.getFirstItem(result, 'abaport'),
-  //     abarack: OracleHelper.getFirstItem(result, 'abarack'),
-  //     abaposition: OracleHelper.getFirstItem(result, 'abaposition'),
-  //     abavci: OracleHelper.getFirstItem(result, 'abavci'),
-  //     abacontractid: OracleHelper.getFirstItem(result, 'abacontractid'),
-  //     status: (OracleHelper.getFirstItem(result, 'Status') ??
-  //       GetAbaDataConstants.ERROR) as GetAbaDataConstants,
-  //   };
-  //   switch (response.status) {
-  //     case GetAbaDataConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetAbaDataConstants.ERROR:
-  //       throw new GetABADataException();
-  //     case GetAbaDataConstants.THERE_IS_NO_DATA:
-  //       return response;
-  //     default:
-  //       throw new GetABADataException();
-  //   }
-  // }
-
-  // private async checkIp(
-  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  // ): Promise<ICheckIpResponse> {
-  //   const parameters = {
-  //     abadslamportid: OracleHelper.stringBindIn(
-  //       String(
-  //         data.getPortIdFromIpResponse.dslamportId ??
-  //           data.getPortIdResponse.portId,
-  //       ),
-  //     ),
-  //     abaareacode: OracleHelper.stringBindIn(data.requestDto.areaCode),
-  //     abaphonenumber: OracleHelper.stringBindIn(data.requestDto.phoneNumber),
-  //     abauserlogin: OracleHelper.stringBindIn(
-  //       data.requestDto.loginInstall ?? BossConstants.REGISTER,
-  //     ),
-  //     abaportwithcontract: OracleHelper.numberBindIn(BossConstants.ZERO),
-  //     Status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.BOSS_PACKAGE,
-  //     BossConstants.CHECK_IP,
-  //     parameters,
-  //   );
-  //   const response: ICheckIpResponse = {
-  //     status: (result?.outBinds?.Status ??
-  //       CheckIpStatusConstants.ERROR) as CheckIpStatusConstants,
-  //   };
-  //   switch (response.status) {
-  //     case CheckIpStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case CheckIpStatusConstants.ERROR:
-  //       throw new CheckIpException(result);
-  //     case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PHONE_NUMBER:
-  //       return response;
-  //     case CheckIpStatusConstants.PORT_NOT_FOUND_BY_PARAMETER:
-  //       throw new Error30032Exception();
-  //     case CheckIpStatusConstants.SUCCESSFULL_BY_BUSSINESS_LOGIC:
-  //       return response;
-  //     case CheckIpStatusConstants.THERE_IS_NOT_CONTRACT_ASSOCIATED_WITH_THE_PORT:
-  //       return response;
-  //     case CheckIpStatusConstants.THE_PORT_IS_RESERVED:
-  //       return response;
-  //     case CheckIpStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
-  //       throw new Error30031Exception();
-  //     default:
-  //       throw new CheckIpException(result);
-  //   }
-  // }
-
-  // private async getDataFromDslamPortId(
-  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  // ): Promise<IGetDataFromDSLAMPortIdResponse> {
-  //   const parameters = {
-  //     abadslamportid: OracleHelper.numberBindIn(
-  //       data.getPortIdFromIpResponse.dslamportId,
-  //     ),
-
-  //     abarack: OracleHelper.tableOfStringBindOut(),
-  //     abadslamposition: OracleHelper.tableOfStringBindOut(),
-  //     abaslot: OracleHelper.tableOfNumberBindOut(),
-  //     abaport: OracleHelper.tableOfNumberBindOut(),
-  //     abaad: OracleHelper.tableOfStringBindOut(),
-  //     abapairad: OracleHelper.tableOfStringBindOut(),
-  //     abaprovider: OracleHelper.tableOfStringBindOut(),
-  //     abasistema: OracleHelper.tableOfStringBindOut(),
-  //     status: OracleHelper.tableOfNumberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.BOSS_PACKAGE,
-  //     BossConstants.GET_DATA_FROM_DSLAM_PORT_ID,
-  //     parameters,
-  //   );
-  //   const response: IGetDataFromDSLAMPortIdResponse = {
-  //     abarack: OracleHelper.getFirstItem(result, 'abarack'),
-  //     abadslamposition: OracleHelper.getFirstItem(result, 'abadslamposition'),
-  //     abaslot: OracleHelper.getFirstItem(result, 'abaslot'),
-  //     abaport: OracleHelper.getFirstItem(result, 'abaport'),
-  //     abaad: OracleHelper.getFirstItem(result, 'abaad'),
-  //     abapairad: OracleHelper.getFirstItem(result, 'abapairad'),
-  //     abaprovider: OracleHelper.getFirstItem(result, 'abaprovider'),
-  //     abasistema: OracleHelper.getFirstItem(result, 'abasistema'),
-  //     status: (OracleHelper.getFirstItem(result, 'status') ??
-  //       GetDataFromDSLAMPortIdStatusConstants.ERROR) as GetDataFromDSLAMPortIdStatusConstants,
-  //   };
-  //   switch (response.status) {
-  //     case GetDataFromDSLAMPortIdStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case GetDataFromDSLAMPortIdStatusConstants.ERROR:
-  //       throw new GetDataFromDSLAMPortIdException();
-  //     case GetDataFromDSLAMPortIdStatusConstants.THERE_IS_NO_DATA:
-  //       throw new Error30043Exception();
-  //     default:
-  //       throw new GetDataFromDSLAMPortIdException();
-  //   }
-  // }
-
   private async modifyNetworkAccessLog(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
     await this.callAuditLog(data, 'Modificar Red de Acceso');
   }
 
-  // private async deleteOrder(
-  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  // ): Promise<IDeleteOrderResponse> {
-  //   const parameters = {
-  //     abadslamportid: OracleHelper.numberBindIn(
-  //       data.getPortIdFromIpResponse.dslamportId,
-  //     ),
-  //     Status: OracleHelper.numberBindOut(),
-  //   };
-  //   const result = await super.executeStoredProcedure(
-  //     BossConstants.BOSS_PACKAGE,
-  //     BossConstants.DELETE_ORDER,
-  //     parameters,
-  //   );
-  //   const response: IDeleteOrderResponse = {
-  //     status: (result?.outBinds?.Status ??
-  //       DeleteOrderStatusConstants.ERROR) as DeleteOrderStatusConstants,
-  //   };
-  //   switch (response.status) {
-  //     case DeleteOrderStatusConstants.SUCCESSFULL:
-  //       return response;
-  //     case DeleteOrderStatusConstants.ERROR:
-  //       throw new DeleteOrderExecutionErrorException();
-  //     case DeleteOrderStatusConstants.THERE_IS_NO_DATA:
-  //       return response;
-  //     case DeleteOrderStatusConstants.THE_PORT_IS_OCCUPIED_BY_ANOTHER_CONTRACT:
-  //       throw new DeleteOrderThePortIsOccupiedByAnotherContractException();
-  //     default:
-  //       throw new DeleteOrderExecutionErrorException();
-  //   }
-  // }
-
   private async getDSLCentralCoIdByDSLAMPortId(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetDSLCentralCoIdByDSLAMPortIdResponse> {
-    // const parameters = {
-    //   i_nspip: OracleHelper.stringBindIn(data.queryDHCPResponse.nsp),
-    //   i_invalidvpi: OracleHelper.numberBindIn(
-    //     Number(data.queryDHCPResponse.vpi),
-    //   ),
-
-    //   result: OracleHelper.numberBindOut(),
-    // };
-
     const parameters = {
       l_dslamportid: OracleHelper.numberBindIn(
         data.getPortIdFromIpResponse.dslamportId ??
@@ -1199,7 +767,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
 
     const result = await super.executeFunction(
       BossConstants.GET_DSL_CENTRAL_CO_ID_BY_DSLAM_PORT_ID,
-      // BossConstants.SAC_PACKAGE,
       null,
       parameters,
     );

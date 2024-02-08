@@ -27,7 +27,7 @@ export class DeleteOrderRawService extends OracleExecuteStoredProcedureRawServic
 
   protected getParameters(dto: DeleteOrderRequestDto): any {
     return {
-      abadslamportid: OracleHelper.numberBindIn(dto.dslamportId),
+      abadslamportid: OracleHelper.numberBindIn(dto.dslamPortId),
 
       Status: OracleHelper.numberBindOut(),
     };

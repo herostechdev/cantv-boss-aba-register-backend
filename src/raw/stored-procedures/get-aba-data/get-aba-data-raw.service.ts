@@ -7,7 +7,7 @@ import { OracleHelper } from 'src/oracle/oracle.helper';
 import { UpdateDslAbaRegistersRawService } from '../update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { GetAbaDataRequestDto } from './get-aba-data-request.dto';
 import { IGetAbaDataResponse } from './get-aba-data-response.interface';
-import { GetAbaDataConstants } from './get-aba-data.constants';
+import { GetAbaDataStatusConstants } from './get-aba-data-status.constants';
 
 @Injectable()
 export class GetAbaDataRawService extends OracleExecuteStoredProcedureRawService<
@@ -64,7 +64,7 @@ export class GetAbaDataRawService extends OracleExecuteStoredProcedureRawService
       abavci: OracleHelper.getFirstItem(result, 'abavci'),
       abacontractid: OracleHelper.getFirstItem(result, 'abacontractid'),
       status: (OracleHelper.getFirstItem(result, 'Status') ??
-        GetAbaDataConstants.ERROR) as GetAbaDataConstants,
+        GetAbaDataStatusConstants.ERROR) as GetAbaDataStatusConstants,
     };
   }
 }

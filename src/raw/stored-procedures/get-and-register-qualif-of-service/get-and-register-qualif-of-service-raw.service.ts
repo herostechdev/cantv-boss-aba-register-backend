@@ -27,7 +27,7 @@ export class GetAndRegisterQualifOfServiceRawService extends OracleExecuteStored
 
   protected getParameters(dto: GetAndRegisterQualifOfServiceDto): any {
     return {
-      i_clientserviceid: OracleHelper.numberBindIn(null),
+      i_clientserviceid: OracleHelper.numberBindIn(dto.customerId),
       i_areacode: OracleHelper.stringBindIn(dto.areaCode, 256),
       i_phonenumber: OracleHelper.stringBindIn(dto.phoneNumber, 256),
 

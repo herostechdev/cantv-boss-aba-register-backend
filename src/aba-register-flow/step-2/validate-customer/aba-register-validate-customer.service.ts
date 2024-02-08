@@ -33,7 +33,7 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
     private readonly getDebtFromCustomerRawService: GetDebtFromCustomerRawService,
     private readonly getFirstLetterFromABARequestRawService: GetFirstLetterFromABARequestRawService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
-    private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
+    protected readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService, updateDslAbaRegistersRawService);
     super.className = AbaRegisterValidateCustomerService.name;
