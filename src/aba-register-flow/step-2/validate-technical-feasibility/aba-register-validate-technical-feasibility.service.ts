@@ -27,12 +27,12 @@ import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-d
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
-import { IIsOccupiedPortResponse } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-response.interface';
+import { IIsOccupiedPortResponse } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port-response.interface';
 import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { IReadIABAOrderResponse } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-response.interface';
-import { IsOccupiedPortConstants } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port.constants';
-import { IsOccupiedPortInternalErrorException } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-internal-error.exception';
-import { IsOccupiedPortTherIsNoDataException } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-there-is-no-data.exception';
+import { IsOccupiedPortStatusConstants } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port-status.constants';
+import { IsOccupiedPortException } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port.exception';
+import { IsOccupiedPortTherIsNoDataException } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port-there-is-no-data.exception';
 import { IsValidIpAddressStatusConstants } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
@@ -46,6 +46,7 @@ import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { AbaRegisterIsOccupiedPortService } from 'src/aba-register-flow/dependencies/Is-occupied-port/Is-occupied-port.service';
 
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowService<
@@ -63,6 +64,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     private readonly abaRegisterGetDownstreamFromPlanService: AbaRegisterGetDownstreamFromPlanService,
     private readonly abaRegisterGetPortIdService: AbaRegisterGetPortIdService,
     private readonly abaRegisterGetPortIdFromIpService: AbaRegisterGetPortIdFromIpService,
+    private readonly abaRegisterIsOccupiedPortService: AbaRegisterIsOccupiedPortService,
     private readonly abaRegisterIsValidIpAddressService: AbaRegisterIsValidIpAddressService,
     private readonly abaRegisterVerifyContractByPhoneService: AbaRegisterVerifyContractByPhoneService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
@@ -211,16 +213,17 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           this.response.getPortIdFromIpResponse.dslamportId,
         )
       ) {
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'IsOccupiedPort',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-          method: 'validateTechnicalFeasibility',
-        });
-        this.response.isOccupiedPortResponse = await this.IsOccupiedPort(
-          this.response,
-        );
+        // Wlog.instance.info({
+        //   phoneNumber: BossHelper.getPhoneNumber(dto),
+        //   message: 'IsOccupiedPort',
+        //   input: BossHelper.getPhoneNumber(dto),
+        //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
+        //   method: 'validateTechnicalFeasibility',
+        // });
+        // this.response.isOccupiedPortResponse = await this.(
+        //   this.response,
+        // );
+        await this.isOccupiedPort();
 
         if (this.response.isOccupiedPortResponse.result > 0) {
           Wlog.instance.info({
@@ -556,6 +559,22 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   }
 
 */
+
+  // abaRegisterIsOccupiedPortService
+
+  private async isOccupiedPort(): Promise<void> {
+    super.infoLog('isOccupiedPort');
+    this.response.isOccupiedPortResponse =
+      await this.abaRegisterIsOccupiedPortService.execute(
+        {
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          portId: this.response.getPortIdFromIpResponse.dslamportId,
+        },
+        this.dbConnection,
+      );
+  }
+
   private async isValidIpAddress(): Promise<void> {
     super.infoLog('isValidIpAddress');
     this.response.isValidIpAddressResponse =
@@ -929,37 +948,37 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   //   }
   // }
 
-  private async IsOccupiedPort(
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IIsOccupiedPortResponse> {
-    const parameters = {
-      l_portid: OracleHelper.numberBindIn(
-        data.getPortIdFromIpResponse.dslamportId,
-      ),
-      l_result: OracleHelper.numberBindOut(),
-      o_status: OracleHelper.numberBindOut(),
-    };
-    const result = await super.executeStoredProcedure(
-      BossConstants.ACT_PACKAGE,
-      BossConstants.IS_OCCUPIED_PORT,
-      parameters,
-    );
-    const response: IIsOccupiedPortResponse = {
-      result: result?.outBinds?.l_result ?? BossConstants.OCCUPIED_PORT,
-      status: (result?.outBinds?.o_status ??
-        IsOccupiedPortConstants.INTERNAL_ERROR) as IsOccupiedPortConstants,
-    };
-    switch (response.status) {
-      case IsOccupiedPortConstants.SUCCESSFULL:
-        return response;
-      case IsOccupiedPortConstants.INTERNAL_ERROR:
-        throw new IsOccupiedPortInternalErrorException();
-      case IsOccupiedPortConstants.THERE_IS_NO_DATA:
-        throw new IsOccupiedPortTherIsNoDataException();
-      default:
-        throw new IsOccupiedPortInternalErrorException();
-    }
-  }
+  // private async IsOccupiedPort(
+  //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
+  // ): Promise<IIsOccupiedPortResponse> {
+  //   const parameters = {
+  //     l_portid: OracleHelper.numberBindIn(
+  //       data.getPortIdFromIpResponse.dslamportId,
+  //     ),
+  //     l_result: OracleHelper.numberBindOut(),
+  //     o_status: OracleHelper.numberBindOut(),
+  //   };
+  //   const result = await super.executeStoredProcedure(
+  //     BossConstants.ACT_PACKAGE,
+  //     BossConstants.IS_OCCUPIED_PORT,
+  //     parameters,
+  //   );
+  //   const response: IIsOccupiedPortResponse = {
+  //     result: result?.outBinds?.l_result ?? BossConstants.OCCUPIED_PORT,
+  //     status: (result?.outBinds?.o_status ??
+  //       IsOccupiedPortStatusConstants.ERROR) as IsOccupiedPortStatusConstants,
+  //   };
+  //   switch (response.status) {
+  //     case IsOccupiedPortStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case IsOccupiedPortStatusConstants.ERROR:
+  //       throw new IsOccupiedPortException();
+  //     case IsOccupiedPortStatusConstants.THERE_IS_NO_DATA:
+  //       throw new IsOccupiedPortTherIsNoDataException();
+  //     default:
+  //       throw new IsOccupiedPortException();
+  //   }
+  // }
 
   // private async getABAData(
   //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,

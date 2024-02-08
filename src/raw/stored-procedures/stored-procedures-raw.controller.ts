@@ -79,6 +79,7 @@ import { IGetStateFromSerialResponse } from './get-state-from-serial/get-state-f
 import { IInsertDslAbaRegistersResponse } from './insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
 import { IIsIPAllowedResponse } from './is-ip-allowed/is-ip-allowed-response.interface';
 import { IISGActionAllowedResponse } from './isg-action-allowed/isg-action-allowed-response.interface';
+import { IIsOccupiedPortResponse } from './Is-occupied-port/is-occupied-port-response.interface';
 import { IIsPrepaidVoiceLineResponse } from './is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IIsReservedLoginResponse } from './is-reserved-login/is-reserved-login-response.interface';
 import { IIsValidIpAddressResponse } from './is-valid-ip-address/is-valid-ip-address-response.interface';
@@ -91,6 +92,8 @@ import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allo
 import { ISGActionAllowedRequestDto } from './isg-action-allowed/isg-action-allowed-request.dto';
 import { IsIPAllowedRequestDto } from './is-ip-allowed/is-ip-allowed-request.dto';
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
+import { IsOccupiedPortRawService } from './Is-occupied-port/Is-occupied-port-raw.service';
+import { IsOccupiedPortRequestDto } from './Is-occupied-port/Is-occupied-port-request.dto';
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
 import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line/is-prepaid-voice-line-request.dto';
 import { IsReservedLoginRequestDto } from './is-reserved-login/is-reserved-login-request.dto';
@@ -143,6 +146,7 @@ export class StoredProceduresRawController {
     private readonly getStateFromSerialService: GetStateFromSerialRawService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
     private readonly isIPAllowedRawService: IsIPAllowedRawService,
+    private readonly isOccupiedPortRawService: IsOccupiedPortRawService,
     private readonly isPrepaidVoiceLineRawService: IsPrepaidVoiceLineRawService,
     private readonly isgActionAllowedRawService: ISGActionAllowedRawService,
     private readonly isReservedLoginRawService: IsReservedLoginRawService,
@@ -397,6 +401,15 @@ export class StoredProceduresRawController {
     @Body() dto: ISGActionAllowedRequestDto,
   ): Promise<IISGActionAllowedResponse> {
     return this.isgActionAllowedRawService.execute(dto);
+  }
+
+  @Post('isOccupiedPort')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  isOccupiedPort(
+    @Body() dto: IsOccupiedPortRequestDto,
+  ): Promise<IIsOccupiedPortResponse> {
+    return this.isOccupiedPortRawService.execute(dto);
   }
 
   @Post('isPrepaidVoiceLine')

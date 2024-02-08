@@ -23,6 +23,7 @@ import { AbaRegisterGetPortIdFromIpService } from './dependencies/get-port-id-fr
 import { AbaRegisterGetStateFromSerialService } from './step-4/get-state-from-serial/aba-register-get-state-from-serial.service';
 import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-register-is-ip-allowed.service';
 import { AbaRegisterISGActionAllowedService } from './step-1/login/aba-register-isg-action-allowed.service';
+import { AbaRegisterIsOccupiedPortService } from './dependencies/Is-occupied-port/Is-occupied-port.service';
 import { AbaRegisterIsPrepaidVoiceLineService } from './dependencies/is-prepaid-voice-line/aba-register-is-prepaid-voice-line.service';
 import { AbaRegisterIsReservedLoginService } from './dependencies/is-reserved-login/is-reserved-login.service';
 import { AbaRegisterIsValidIpAddressService } from './dependencies/is-valid-ip-address/is-valid-ip-address.service';
@@ -74,6 +75,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterGetStateFromSerialService,
     AbaRegisterISGActionAllowedService,
     AbaRegisterIsIPAllowedService,
+    AbaRegisterIsOccupiedPortService,
     AbaRegisterIsPrepaidVoiceLineService,
     AbaRegisterIsReservedLoginService,
     AbaRegisterIsValidIpAddressService,

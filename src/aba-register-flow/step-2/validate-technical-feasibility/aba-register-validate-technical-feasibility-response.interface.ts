@@ -13,7 +13,7 @@ import { IGetPortIdFromIpResponse } from '../../../raw/stored-procedures/get-por
 import { IGetPortIdResponse } from '../../../raw/stored-procedures/get-port-id/get-port-id-response.interface';
 import { IInsertDslAbaRegistersResponse } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
 import { IIsPrepaidVoiceLineResponse } from '../../../raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
-import { IIsOccupiedPortResponse } from '../../../validate-technical-feasibility/Is-occupied-port/is-occupied-port-response.interface';
+import { IIsOccupiedPortResponse } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port-response.interface';
 import { IIsValidIpAddressResponse } from '../../../raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-response.interface';
 import { ILinkNetworkResponse } from 'src/raw/pic/get-asap-order-detail/Iink-network-response.interface';
 import { IReadIABAOrderResponse } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-response.interface';

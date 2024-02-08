@@ -27,6 +27,7 @@ import { GetStateFromSerialRawService } from './get-state-from-serial/get-state-
 import { InsertDslAbaRegistersRawService } from './insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { ISGActionAllowedRawService } from './isg-action-allowed/isg-action-allowed-raw.service';
 import { IsIPAllowedRawService } from './is-ip-allowed/is-ip-allowed-raw.service';
+import { IsOccupiedPortRawService } from './Is-occupied-port/Is-occupied-port-raw.service';
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
 import { IsReservedLoginRawService } from './is-reserved-login/is-reserved-login-raw.service';
 import { IsValidIpAddressRawService } from './is-valid-ip-address/is-valid-ip-address-raw.service';
@@ -69,6 +70,7 @@ import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/veri
     InsertDslAbaRegistersRawService,
     IsIPAllowedRawService,
     ISGActionAllowedRawService,
+    IsOccupiedPortRawService,
     IsPrepaidVoiceLineRawService,
     IsReservedLoginRawService,
     IsValidIpAddressRawService,
@@ -107,6 +109,7 @@ import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/veri
     InsertDslAbaRegistersRawService,
     IsIPAllowedRawService,
     ISGActionAllowedRawService,
+    IsOccupiedPortRawService,
     IsPrepaidVoiceLineRawService,
     IsReservedLoginRawService,
     IsValidIpAddressRawService,
