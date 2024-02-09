@@ -9,6 +9,12 @@ export class ExceptionHelper {
     throw exception;
   }
 
+  public static functionExecutionExceptionMessage(
+    functionName: string,
+  ): string {
+    return `Error al ejecutar la función: ${functionName}`;
+  }
+
   public static storedProcedureExecutionExceptionMessage(
     storedProcedureName: string,
   ): string {

@@ -15,6 +15,7 @@ import { AbaRegisterGetCSIdAndPlanNameFromLoginService } from './dependencies/ge
 import { AbaRegisterGetDataFromDSLAMPortIdRequestService } from './dependencies/get-data-from-dslam-port-id/get-data-from-dslam-port-id.service';
 import { AbaRegisterGetDownstreamFromPlanService } from './dependencies/get-downstream-from-plan/get-downstream-from-plan.service';
 import { AbaRegisterGetDslAreaCodesService } from './dependencies/get-dsl-area-codes/aba-register-get-dsl-area-codes.service';
+import { AbaRegisterGetDSLCentralCoIdByDSLAMPortIdService } from './dependencies/get-dsl-central-coid-by-dslam-port-id/get-dsl-central-coid-by-dslam-port-id.service';
 import { AbaRegisterGetGroupAccessFromLoginService } from './step-1/login/aba-register-get-group-access-from-login.service';
 import { AbaRegisterGetLegalDocumentsService } from './step-4/get-legal-documents/aba-register-get-legal-documents.service';
 import { AbaRegisterGetOrderIdFromAbaSalesService } from './step-2/get-order-id-from-aba-sales/aba-register-get-order-id-from-aba-sales.service';
@@ -67,6 +68,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterGetCSIdAndPlanNameFromLoginService,
     AbaRegisterGetDataFromDSLAMPortIdRequestService,
     AbaRegisterGetDslAreaCodesService,
+    AbaRegisterGetDSLCentralCoIdByDSLAMPortIdService,
     AbaRegisterGetGroupAccessFromLoginService,
     AbaRegisterGetLegalDocumentsService,
     AbaRegisterGetOrderIdFromAbaSalesService,
@@ -87,9 +89,6 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterValidateTechnicalFeasibilityService,
     AbaRegisterVerifyContractByPhoneService,
   ],
-  exports: [
-    AbaRegisterGetAndRegisterQualifOfServiceService,
-    AbaRegisterIsPrepaidVoiceLineService,
-  ],
+  exports: [],
 })
 export class AbaRegisterModule {}

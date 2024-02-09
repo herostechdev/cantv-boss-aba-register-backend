@@ -8,7 +8,7 @@ import { IGetASAPOrderDetailResponse } from 'src/raw/pic/get-asap-order-detail/g
 import { IGetDataFromDSLAMPortIdResponse } from '../../../raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
 import { IGetDownstreamFromPlanResponse } from '../../../raw/stored-procedures/get-downstream-from-plan/get-downstream-from-plan-response.interface';
-import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from '../../../raw/stored-procedures/update-dsl-aba-registers/get-dsl-central-co-id-by-dslam-port-id-response.interface';
+import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from 'src/raw/database/functions/get-dsl-central-coid-by-dslam-port-id/get-dsl-central-coid-by-dslam-port-id-response.interface';
 import { IGetPortIdFromIpResponse } from '../../../raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetPortIdResponse } from '../../../raw/stored-procedures/get-port-id/get-port-id-response.interface';
 import { IInsertDslAbaRegistersResponse } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';

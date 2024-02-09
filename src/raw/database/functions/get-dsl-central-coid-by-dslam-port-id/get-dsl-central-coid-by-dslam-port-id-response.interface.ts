@@ -1,3 +1,3 @@
 export interface IGetDSLCentralCoIdByDSLAMPortIdResponse {
-  coId: string;
+  centralPortId: string;
 }
