@@ -25,14 +25,14 @@ import { StoredProceduresRawModule } from './raw/stored-procedures/stored-proced
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
 
-    ThrottlerModule.forRootAsync({
-      imports: [ThrottlerConfigurationModule],
-      useFactory: async (configService: ThrottlerConfigurationService) => ({
-        ttl: configService.ttl, // seconds,
-        limit: configService.limit, // maximum number of requests
-      }),
-      inject: [ThrottlerConfigurationService],
-    }),
+    // ThrottlerModule.forRootAsync({
+    //   imports: [ThrottlerConfigurationModule],
+    //   useFactory: async (configService: ThrottlerConfigurationService) => ({
+    //     ttl: configService.ttl, // seconds,
+    //     limit: configService.limit, // maximum number of requests
+    //   }),
+    //   inject: [ThrottlerConfigurationService],
+    // }),
 
     ApplicationConfigurationModule,
     DocumentsConfigurationModule,
@@ -50,10 +50,10 @@ import { StoredProceduresRawModule } from './raw/stored-procedures/stored-proced
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
     // {
     //   provide: APP_GUARD,
     //   useClass: JwtAuthGuard,

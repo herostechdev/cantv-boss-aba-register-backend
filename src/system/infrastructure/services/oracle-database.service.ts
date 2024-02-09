@@ -10,6 +10,7 @@ import { OracleConfigurationService } from 'src/system/configuration/oracle/orac
 import { OracleConstants } from 'src/oracle/oracle.constants';
 import { Wlog } from '../winston-logger/winston-logger.service';
 import { ValidationHelper } from '../helpers/validation.helper';
+import { HttpException } from '@nestjs/common';
 
 export abstract class OracleDatabaseService extends CommonService {
   constructor(
@@ -19,6 +20,57 @@ export abstract class OracleDatabaseService extends CommonService {
   }
 
   protected dbConnection: Connection;
+
+  protected async connect2(dbConnection?: Connection): Promise<Connection> {
+    try {
+      console.log();
+      console.log('OracleDatabaseService.closeConnection2');
+      if (ValidationHelper.isDefined(dbConnection)) {
+        console.log('existing connection');
+        return dbConnection;
+      }
+      console.log('creating connection...');
+      const connectionString = `${this.oracleConfigurationService.uri}:${this.oracleConfigurationService.port}/${this.oracleConfigurationService.sid}`;
+      return getConnection({
+        user: this.oracleConfigurationService.username,
+        password: this.oracleConfigurationService.password,
+        connectionString: connectionString,
+      });
+    } catch (error) {
+      console.log();
+      console.log('OracleDatabaseService.connect2 >> ERROR');
+      console.log('error message', error?.message);
+      console.log();
+      throw new HttpException(
+        'Error al obtener la conexión de base de datos',
+        500,
+      );
+    }
+  }
+
+  protected async closeConnection2(
+    dbConnection?: Connection,
+    closeConnection = true,
+  ): Promise<void> {
+    try {
+      console.log();
+      console.log('OracleDatabaseService.closeConnection2');
+      if (ValidationHelper.isDefined(dbConnection) && closeConnection) {
+        console.log('closing connection...');
+        await dbConnection.close();
+        console.log('connection closed');
+      }
+    } catch (error) {
+      console.log();
+      console.log('OracleDatabaseService.closeConnection2 >> ERROR');
+      console.log('error message', error?.message);
+      console.log();
+      throw new HttpException(
+        'Error al cerrar la conexión de base de datos',
+        500,
+      );
+    }
+  }
 
   protected async connect(dbConnection?: Connection): Promise<void> {
     if (ValidationHelper.isDefined(dbConnection)) {
@@ -56,8 +108,8 @@ export abstract class OracleDatabaseService extends CommonService {
 
       console.log('DO CLOSE CONNECTION');
 
-      // await this.dbConnection?.close();
-      await this.dbConnection?.release();
+      await this.dbConnection?.close();
+      // await this.dbConnection?.release();
 
       console.log('CONNECTION CLOSED');
     } catch (error) {
@@ -83,6 +135,7 @@ export abstract class OracleDatabaseService extends CommonService {
     parameters?: any,
     additionalData?: any,
     autoCommit = false,
+    dbConnection?: Connection,
   ): Promise<any> {
     console.log();
     console.log('============================================================');
@@ -128,7 +181,9 @@ export abstract class OracleDatabaseService extends CommonService {
     console.log();
     console.log('options', options);
 
-    const response = await this.dbConnection.execute(sql, parameters, options);
+    // const response = await this.dbConnection.execute(sql, parameters, options);
+    const conn = dbConnection ?? this.dbConnection;
+    const response = await conn.execute(sql, parameters, options);
 
     console.log();
     console.log('response');
