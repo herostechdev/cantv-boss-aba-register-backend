@@ -11,6 +11,7 @@ import { GetDatabaseConnectionException } from '../exceptions/get-database-conne
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { ValidationHelper } from '../helpers/validation.helper';
 import { Wlog } from '../winston-logger/winston-logger.service';
+import { InfrastructureConstants } from '../infrastructure.constants';
 
 export abstract class OracleDatabaseService extends CommonService {
   constructor(
@@ -70,11 +71,13 @@ export abstract class OracleDatabaseService extends CommonService {
     additionalData?: any,
     autoCommit = false,
   ): Promise<any> {
+    this.logger.log(InfrastructureConstants.SEPARATOR);
     this.logger.log(
       `Running the stored procedure ${this.getPackage(
         packageName,
       )}${storedProcedure}`,
     );
+    this.logger.log(InfrastructureConstants.SIMPLE_SEPARATOR);
     this.logger.log('Parameters');
     this.logger.log(parameters);
     Wlog.instance.info({
@@ -138,9 +141,11 @@ export abstract class OracleDatabaseService extends CommonService {
     parameters?: any,
     additionalData?: any,
   ): Promise<any> {
+    this.logger.log(InfrastructureConstants.SEPARATOR);
     this.logger.log(
       `Running the function ${this.getPackage(packageName)}${functionName}`,
     );
+    this.logger.log(InfrastructureConstants.SIMPLE_SEPARATOR);
 
     this.logger.log('Parameters');
     this.logger.log(parameters);
