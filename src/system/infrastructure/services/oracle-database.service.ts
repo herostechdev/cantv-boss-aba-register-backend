@@ -6,6 +6,7 @@ import {
   ExecuteOptions,
 } from 'oracledb';
 import { CommonService } from './common.service';
+import { CloseDatabaseConnectionException } from '../exceptions/close-database-connection.exception';
 import { GetDatabaseConnectionException } from '../exceptions/get-database-connection.exception';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { ValidationHelper } from '../helpers/validation.helper';
@@ -27,7 +28,7 @@ export abstract class OracleDatabaseService extends CommonService {
       }
       this.logger.log('Database connection request');
       const connectionString = `${this.oracleConfigurationService.uri}:${this.oracleConfigurationService.port}/${this.oracleConfigurationService.sid}`;
-      return getConnection({
+      return await getConnection({
         user: this.oracleConfigurationService.username,
         password: this.oracleConfigurationService.password,
         connectionString: connectionString,
@@ -37,7 +38,7 @@ export abstract class OracleDatabaseService extends CommonService {
         'An error occurred while obtaining a database connection',
         error?.stack,
       );
-      throw new GetDatabaseConnectionException();
+      throw new GetDatabaseConnectionException(error);
     }
   }
 
@@ -57,7 +58,7 @@ export abstract class OracleDatabaseService extends CommonService {
         'An error occurred while closing a database connection',
         error?.stack,
       );
-      throw new GetDatabaseConnectionException(error);
+      throw new CloseDatabaseConnectionException(error);
     }
   }
 
