@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Connection } from 'oracledb';
 import { AbaRegisterGetGroupAccessFromLoginService } from './aba-register-get-group-access-from-login.service';
 import { AbaRegisterISGActionAllowedService } from './aba-register-isg-action-allowed.service';
 import { AbaRegisterLoginRequestDto } from './aba-register-login-request.dto';
@@ -30,20 +31,20 @@ export class AbaRegisterLoginService extends BossFlowService<
   async execute(
     dto: AbaRegisterLoginRequestDto,
   ): Promise<IAbaRegisterLoginResponse> {
+    super.infoLog(BossConstants.START);
     this.initialize(dto);
+    const dbConnection = await super.connect();
     try {
-      super.infoLog(BossConstants.START);
-      await super.connect();
-      await this.getGroupAccessFromLogin();
+      await this.getGroupAccessFromLogin(dbConnection);
       this.validatePassword();
-      await this.isgActionAllowed();
+      await this.isgActionAllowed(dbConnection);
       super.infoLog(BossConstants.END);
       return this.response;
     } catch (error) {
       super.errorLog(error);
       super.exceptionHandler(error, JSON.stringify(dto));
     } finally {
-      await this.closeConnection();
+      await this.closeConnection(dbConnection, true);
     }
   }
 
@@ -55,7 +56,9 @@ export class AbaRegisterLoginService extends BossFlowService<
     };
   }
 
-  private async getGroupAccessFromLogin(): Promise<void> {
+  private async getGroupAccessFromLogin(
+    dbConnection: Connection,
+  ): Promise<void> {
     super.infoLog('Obtener permisología del usuario');
     this.response.getGroupAccessFromLoginResponse =
       await this.abaRegisterGetGroupAccessFromLoginService.execute(
@@ -64,7 +67,7 @@ export class AbaRegisterLoginService extends BossFlowService<
           phoneNumber: this.dto.phoneNumber,
           userlogin: this.dto.userlogin,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
@@ -80,7 +83,7 @@ export class AbaRegisterLoginService extends BossFlowService<
     }
   }
 
-  private async isgActionAllowed(): Promise<void> {
+  private async isgActionAllowed(dbConnection: Connection): Promise<void> {
     super.infoLog('Validar permisos');
     this.response.isgActionAllowedResponse =
       await this.abaRegisterISGActionAllowedService.execute(
@@ -90,7 +93,7 @@ export class AbaRegisterLoginService extends BossFlowService<
           action: BossConstants.INSTALL_ABA,
           groupName: this.response.getGroupAccessFromLoginResponse.accessGroup,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 }

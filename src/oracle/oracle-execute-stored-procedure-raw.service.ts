@@ -23,24 +23,26 @@ export abstract class OracleExecuteStoredProcedureRawService<DTO, RESPONSE>
     dbConnection?: Connection,
     autoCommit = false,
   ): Promise<RESPONSE> {
-    const conn = await super.connect2(dbConnection);
+    const connection = await super.connect(dbConnection);
     try {
       // await super.connect(dbConnection);
 
       const result = await super.executeStoredProcedure(
+        connection,
         this.packageName,
         this.storedProcedureName,
         this.getParameters(dto),
         null,
         autoCommit,
-        conn,
       );
       return this.getResponse(result);
     } catch (error) {
       super.exceptionHandler(error, dto);
     } finally {
-      super.closeConnection2(conn, !ValidationHelper.isDefined(dbConnection));
-      // await super.closeConnection(!ValidationHelper.isDefined(dbConnection));
+      super.closeConnection(
+        connection,
+        !ValidationHelper.isDefined(dbConnection),
+      );
     }
   }
 

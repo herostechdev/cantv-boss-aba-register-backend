@@ -6,11 +6,10 @@ import {
   ExecuteOptions,
 } from 'oracledb';
 import { CommonService } from './common.service';
+import { GetDatabaseConnectionException } from '../exceptions/get-database-connection.exception';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleConstants } from 'src/oracle/oracle.constants';
-import { Wlog } from '../winston-logger/winston-logger.service';
 import { ValidationHelper } from '../helpers/validation.helper';
-import { HttpException } from '@nestjs/common';
+import { Wlog } from '../winston-logger/winston-logger.service';
 
 export abstract class OracleDatabaseService extends CommonService {
   constructor(
@@ -19,17 +18,14 @@ export abstract class OracleDatabaseService extends CommonService {
     super();
   }
 
-  protected dbConnection: Connection;
-
-  protected async connect2(dbConnection?: Connection): Promise<Connection> {
+  protected async connect(dbConnection?: Connection): Promise<Connection> {
     try {
-      console.log();
-      console.log('OracleDatabaseService.closeConnection2');
+      this.logger.log('Connect to database');
       if (ValidationHelper.isDefined(dbConnection)) {
-        console.log('existing connection');
+        this.logger.log('Existing database connection');
         return dbConnection;
       }
-      console.log('creating connection...');
+      this.logger.log('Database connection request');
       const connectionString = `${this.oracleConfigurationService.uri}:${this.oracleConfigurationService.port}/${this.oracleConfigurationService.sid}`;
       return getConnection({
         user: this.oracleConfigurationService.username,
@@ -37,116 +33,49 @@ export abstract class OracleDatabaseService extends CommonService {
         connectionString: connectionString,
       });
     } catch (error) {
-      console.log();
-      console.log('OracleDatabaseService.connect2 >> ERROR');
-      console.log('error message', error?.message);
-      console.log();
-      throw new HttpException(
-        'Error al obtener la conexión de base de datos',
-        500,
+      this.logger.error(
+        'An error occurred while obtaining a database connection',
+        error?.stack,
       );
-    }
-  }
-
-  protected async closeConnection2(
-    dbConnection?: Connection,
-    closeConnection = true,
-  ): Promise<void> {
-    try {
-      console.log();
-      console.log('OracleDatabaseService.closeConnection2');
-      if (ValidationHelper.isDefined(dbConnection) && closeConnection) {
-        console.log('closing connection...');
-        await dbConnection.close();
-        console.log('connection closed');
-      }
-    } catch (error) {
-      console.log();
-      console.log('OracleDatabaseService.closeConnection2 >> ERROR');
-      console.log('error message', error?.message);
-      console.log();
-      throw new HttpException(
-        'Error al cerrar la conexión de base de datos',
-        500,
-      );
-    }
-  }
-
-  protected async connect(dbConnection?: Connection): Promise<void> {
-    if (ValidationHelper.isDefined(dbConnection)) {
-      this.dbConnection = dbConnection;
-      return;
-    }
-    if (this.oracleConfigurationService.usePoolConnections) {
-      this.dbConnection = await getConnection(OracleConstants.POOL_ALIAS);
-    } else {
-      const connectionString = `${this.oracleConfigurationService.uri}:${this.oracleConfigurationService.port}/${this.oracleConfigurationService.sid}`;
-      this.dbConnection = await getConnection({
-        user: this.oracleConfigurationService.username,
-        password: this.oracleConfigurationService.password,
-        connectionString: connectionString,
-      });
+      throw new GetDatabaseConnectionException();
     }
   }
 
   protected async closeConnection(
+    dbConnection?: Connection,
     closeConnection = true,
-    additionalData?: any,
   ): Promise<void> {
     try {
-      console.log('START   closeConnection');
-      console.log(
-        'isDefined(this.dbConnection)',
-        ValidationHelper.isDefined(this.dbConnection),
-      );
-      console.log('closeConnection', closeConnection);
-
-      if (!this.dbConnection || !closeConnection) {
-        console.log('DO NOT CLOSE CONNECTION');
-        return;
+      this.logger.log('Close database connection');
+      if (ValidationHelper.isDefined(dbConnection) && closeConnection) {
+        this.logger.log('Closing database connection');
+        await dbConnection.close();
+        this.logger.log('Database connection closed');
       }
-
-      console.log('DO CLOSE CONNECTION');
-
-      await this.dbConnection?.close();
-      // await this.dbConnection?.release();
-
-      console.log('CONNECTION CLOSED');
     } catch (error) {
-      console.log('ERROR');
-      console.log(JSON.stringify(error));
-
-      Wlog.instance.error({
-        phoneNumber: additionalData?.phoneNumber,
-        input: `closeConnection: ${closeConnection}`,
-        clazz: OracleDatabaseService.name,
-        method: 'closeConnection',
-        error: error,
-      });
-
-      console.log('END   closeConnection');
-      console.log();
+      this.logger.error(
+        'An error occurred while closing a database connection',
+        error?.stack,
+      );
+      throw new GetDatabaseConnectionException(error);
     }
   }
 
   protected async executeStoredProcedure(
+    dbConnection: Connection,
     packageName: string,
     storedProcedure: string,
     parameters?: any,
     additionalData?: any,
     autoCommit = false,
-    dbConnection?: Connection,
   ): Promise<any> {
-    console.log();
-    console.log('============================================================');
-    console.log('executeStoredProcedure');
-    console.log(
-      `Ejecutando el SP: ${this.getPackage(packageName)}${storedProcedure}`,
+    this.logger.log(
+      `Running the stored procedure ${this.getPackage(
+        packageName,
+      )}${storedProcedure}`,
     );
-    console.log();
-    console.log('parameters');
-    console.log(parameters);
-
+    this.logger.log('Parameters');
+    this.logger.log(parameters);
     Wlog.instance.info({
       phoneNumber: additionalData?.phoneNumber,
       message: `Ejecutando el SP: ${this.getPackage(
@@ -161,11 +90,6 @@ export abstract class OracleDatabaseService extends CommonService {
       storedProcedure,
       parameters,
     );
-
-    console.log();
-    console.log('sql');
-    console.log(JSON.stringify(sql));
-
     Wlog.instance.info({
       phoneNumber: additionalData?.phoneNumber,
       message: `Sentencia Sql: ${sql}`,
@@ -173,21 +97,16 @@ export abstract class OracleDatabaseService extends CommonService {
       clazz: OracleDatabaseService.name,
       method: 'executeStoredProcedure',
     });
-
     const options: ExecuteOptions = {
       autoCommit: autoCommit,
     };
+    this.logger.log('Options');
+    this.logger.log(options);
 
-    console.log();
-    console.log('options', options);
+    const response = await dbConnection.execute(sql, parameters, options);
 
-    // const response = await this.dbConnection.execute(sql, parameters, options);
-    const conn = dbConnection ?? this.dbConnection;
-    const response = await conn.execute(sql, parameters, options);
-
-    console.log();
-    console.log('response');
-    console.log(JSON.stringify(response));
+    this.logger.log('Response');
+    this.logger.log(JSON.stringify(response));
 
     Wlog.instance.info({
       phoneNumber: additionalData?.phoneNumber,
@@ -212,20 +131,18 @@ export abstract class OracleDatabaseService extends CommonService {
   }
 
   protected async executeFunction(
+    dbConnection: Connection,
     functionName: string,
     packageName?: string,
     parameters?: any,
     additionalData?: any,
   ): Promise<any> {
-    console.log();
-    console.log('============================================================');
-    console.log('executeFunction');
-    console.log(
-      `Ejecutando la función: ${this.getPackage(packageName)}${functionName}`,
+    this.logger.log(
+      `Running the function ${this.getPackage(packageName)}${functionName}`,
     );
-    console.log();
-    console.log('parameters');
-    console.log(parameters);
+
+    this.logger.log('Parameters');
+    this.logger.log(parameters);
 
     Wlog.instance.info({
       phoneNumber: additionalData?.phoneNumber,
@@ -242,10 +159,6 @@ export abstract class OracleDatabaseService extends CommonService {
       parameters,
     );
 
-    console.log();
-    console.log('sql');
-    console.log(JSON.stringify(sql));
-
     Wlog.instance.info({
       phoneNumber: additionalData?.phoneNumber,
       message: `Sentencia Sql: ${sql}`,
@@ -256,11 +169,13 @@ export abstract class OracleDatabaseService extends CommonService {
     const options = {
       autoCommit: true,
     };
-    const response = await this.dbConnection.execute(sql, parameters, options);
+    this.logger.log('Options');
+    this.logger.log(options);
 
-    console.log();
-    console.log('response');
-    console.log(JSON.stringify(response));
+    const response = await dbConnection.execute(sql, parameters, options);
+
+    this.logger.log('Response');
+    this.logger.log(JSON.stringify(response));
 
     Wlog.instance.info({
       phoneNumber: additionalData?.phoneNumber,
@@ -303,12 +218,12 @@ export abstract class OracleDatabaseService extends CommonService {
     return `:${filteredParameters.join(', :')}`;
   }
 
-  async setTimestampFormat(): Promise<void> {
+  async setTimestampFormat(dbConnection: Connection): Promise<void> {
     let sql =
       "alter session set nls_timestamp_format = 'YYYY-MM-DD HH24:MI:SS.FF'";
-    await this.dbConnection.execute(sql);
+    await dbConnection.execute(sql);
     sql =
       "alter session set nls_timestamp_tz_format = 'YYYY-MM-DD HH24:MI:SS.FF'";
-    await this.dbConnection.execute(sql);
+    await dbConnection.execute(sql);
   }
 }

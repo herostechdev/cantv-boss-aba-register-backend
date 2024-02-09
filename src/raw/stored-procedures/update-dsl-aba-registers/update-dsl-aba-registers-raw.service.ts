@@ -23,9 +23,10 @@ export class UpdateDslAbaRegistersRawService extends OracleDatabaseService {
     dbConnection?: Connection,
     autoCommit = false,
   ): Promise<IUpdateDslAbaRegistersResponse> {
+    const connection = await super.connect(dbConnection);
     try {
-      await super.connect(dbConnection);
       const result = await super.executeStoredProcedure(
+        connection,
         BossConstants.ABA_PACKAGE,
         BossConstants.UPDATE_DSL_ABA_REGISTERS,
         this.getParameters(dto),
@@ -44,7 +45,10 @@ export class UpdateDslAbaRegistersRawService extends OracleDatabaseService {
     } catch (error) {
       super.exceptionHandler(error, `${JSON.stringify(dto)}`);
     } finally {
-      await this.closeConnection(!ValidationHelper.isDefined(dbConnection));
+      await this.closeConnection(
+        connection,
+        !ValidationHelper.isDefined(dbConnection),
+      );
     }
   }
 

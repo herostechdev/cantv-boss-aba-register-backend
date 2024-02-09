@@ -9,6 +9,7 @@ import { AbaRegisterGetAbaDataService } from 'src/aba-register-flow/dependencies
 import { AbaRegisterGetAndRegisterQualifOfServiceService } from 'src/aba-register-flow/dependencies/get-and-register-qualif-of-service/aba-register-get-and-register-qualif-of-service.service';
 import { AbaRegisterGetDataFromDSLAMPortIdRequestService } from 'src/aba-register-flow/dependencies/get-data-from-dslam-port-id/get-data-from-dslam-port-id.service';
 import { AbaRegisterGetDownstreamFromPlanService } from 'src/aba-register-flow/dependencies/get-downstream-from-plan/get-downstream-from-plan.service';
+import { AbaRegisterIsOccupiedPortService } from 'src/aba-register-flow/dependencies/Is-occupied-port/Is-occupied-port.service';
 import { AbaRegisterGetPortIdService } from 'src/aba-register-flow/dependencies/get-port-id/get-port-id.service';
 import { AbaRegisterGetPortIdFromIpService } from 'src/aba-register-flow/dependencies/get-port-id-from-ip/get-port-id-from-ip.service';
 import { AbaRegisterIsValidIpAddressService } from 'src/aba-register-flow/dependencies/is-valid-ip-address/is-valid-ip-address.service';
@@ -20,7 +21,7 @@ import { BossHelper } from 'src/boss/boss.helper';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
-// import { GetAbaDataStatusConstants } from '../../../raw/stored-procedures/get-aba-data/get-aba-data-status.constants';
+import { GetAbaDataStatusConstants } from 'src/raw/stored-procedures/get-aba-data/get-aba-data-status.constants';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
 import { GetDataFromDSLAMPortIdStatusConstants } from '../../../raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-raw.service';
@@ -42,9 +43,7 @@ import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { AbaRegisterIsOccupiedPortService } from 'src/aba-register-flow/dependencies/Is-occupied-port/Is-occupied-port.service';
-import { GetAbaDataStatusConstants } from 'src/raw/stored-procedures/get-aba-data/get-aba-data-status.constants';
-import { CheckIpStatusConstants } from 'src/raw/stored-procedures/check-ip/check-ip-status.constants';
+import { Connection } from 'oracledb';
 
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowService<
@@ -80,53 +79,37 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   async execute(
     dto: AbaRegisterValidateTechnicalFeasibilityRequestDto,
   ): Promise<IAbaRegisterValidateTechnicalFeasibilityResponse> {
+    this.infoLog(BossConstants.START);
     this.initialize(dto);
+    const dbConnection = await super.connect();
     try {
-      this.infoLog(BossConstants.START);
-      await super.connect();
-      await this.insertDslAbaRegisters();
-      await this.isPrepaidVoiceLine();
-      await this.getAndRegisterQualifOfService();
-      await this.verifyContractByPhone();
-      await this.getABADataFromRequests();
-      await this.getDownstreamFromPlan();
-      await this.isValidIpAddress();
-      await this.getPortIdFromIp();
+      await this.insertDslAbaRegisters(dbConnection);
+      await this.isPrepaidVoiceLine(dbConnection);
+      await this.getAndRegisterQualifOfService(dbConnection);
+      await this.verifyContractByPhone(dbConnection);
+      await this.getABADataFromRequests(dbConnection);
+      await this.getDownstreamFromPlan(dbConnection);
+      await this.isValidIpAddress(dbConnection);
+      await this.getPortIdFromIp(dbConnection);
       if (
         ValidationHelper.isDefined(
           this.response.getPortIdFromIpResponse.dslamportId,
         )
       ) {
-        await this.isOccupiedPort();
+        await this.isOccupiedPort(dbConnection);
         if (this.response.isOccupiedPortResponse.result > 0) {
           super.infoLog('getPortIdFlow    (1)');
-          await this.getPortIdFlow(this.response);
+          await this.getPortIdFlow(dbConnection, this.response);
         } else {
           super.infoLog('getASAPOrderDetail');
-          await this.rbeDoesNotExistLog(this.response);
-          await this.setASAPOrderDetail(this.response);
+          await this.rbeDoesNotExistLog(dbConnection, this.response);
+          await this.setASAPOrderDetail(dbConnection, this.response);
         }
       } else {
         super.infoLog('getPortIdFlow   (2)');
-        await this.getPortIdFlow(this.response);
+        await this.getPortIdFlow(dbConnection, this.response);
       }
-
-      // Wlog.instance.info({
-      //   phoneNumber: BossHelper.getPhoneNumber(dto),
-      //   message: 'getABAData',
-      //   input: BossHelper.getPhoneNumber(dto),
-      //   clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      //   method: 'validateTechnicalFeasibility',
-      // });
-      // this.response.getABADataResponse =
-      //   await this.abaRegisterGetAbaDataService.execute({
-      //     areaCode: dto.areaCode,
-      //     phoneNumber: dto.phoneNumber,
-      //     ipAddress: dto.ipAddress,
-      //     orderId: dto.orderId,
-      //   });
-      await this.getABAData();
-
+      await this.getABAData(dbConnection);
       if (
         this.response.getABADataResponse.status ===
         GetAbaDataStatusConstants.SUCCESSFULL
@@ -154,7 +137,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           //       this.response.getPortIdResponse.portId,
           //     loginInstall: dto.loginInstall,
           //   });
-          await this.checkIp();
+          await this.checkIp(dbConnection);
         }
       } else {
         // Wlog.instance.info({
@@ -172,7 +155,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
         //       this.response.getPortIdFromIpResponse.dslamportId ??
         //       this.response.getPortIdResponse.portId,
         //   });
-        await this.getDataFromDslamPortId();
+        await this.getDataFromDslamPortId(dbConnection);
 
         if (
           this.response.getDataFromDslamPortIdResponse.status ===
@@ -186,7 +169,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           //   method: 'validateTechnicalFeasibility',
           // });
           super.infoLog('modifyNetworkAccessLog');
-          await this.modifyNetworkAccessLog(this.response);
+          await this.modifyNetworkAccessLog(dbConnection, this.response);
         }
         // Wlog.instance.info({
         //   phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -204,10 +187,10 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
         //         this.response.getPortIdFromIpResponse.dslamportId ??
         //         this.response.getPortIdResponse.portId,
         //     },
-        //     this.dbConnection,
+        //     dbConnection,
         //   );
 
-        await this.deleteOrder();
+        await this.deleteOrder(dbConnection);
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'getDSLCentralCoIdByDSLAMPortId',
@@ -216,7 +199,10 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           method: 'validateTechnicalFeasibility',
         });
         this.response.getDSLCentralCoIdByDSLAMPortIdResponse =
-          await this.getDSLCentralCoIdByDSLAMPortId(this.response);
+          await this.getDSLCentralCoIdByDSLAMPortId(
+            dbConnection,
+            this.response,
+          );
         Wlog.instance.info({
           phoneNumber: BossHelper.getPhoneNumber(dto),
           message: 'readIABAOrder',
@@ -225,6 +211,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           method: 'validateTechnicalFeasibility',
         });
         this.response.readIABAOrderResponse = await this.readIABAOrder(
+          dbConnection,
           this.response,
         );
 
@@ -246,7 +233,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           //     ipAddress: dto.ipAddress,
           //     orderId: dto.orderId,
           //   });
-          await this.getABAData();
+          await this.getABAData(dbConnection);
           if (
             this.response.getABADataResponse.status ===
             GetAbaDataStatusConstants.THERE_IS_NO_DATA
@@ -269,7 +256,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       //   error: error,
       // });
       super.errorLog(error);
-      await this.updateDslABARegistersWithNotProcessedValue();
+      await this.updateDslABARegistersWithNotProcessedValue(dbConnection);
       // await this.updateDslAbaRegistersRawService.errorUpdate({
       //   areaCode: String(dto.areaCode),
       //   phoneNumber: String(dto.phoneNumber),
@@ -310,7 +297,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     };
   }
 
-  private async insertDslAbaRegisters(): Promise<void> {
+  private async insertDslAbaRegisters(dbConnection: Connection): Promise<void> {
     super.infoLog('insertDslAbaRegisters');
     this.response.insertDslAbaRegistersResponse =
       await this.insertDslAbaRegistersRawService.execute(
@@ -320,11 +307,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           registerDate: this.dto.registerDate,
           registerStatus: BossConstants.IN_PROGRESS,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async isPrepaidVoiceLine(): Promise<void> {
+  private async isPrepaidVoiceLine(dbConnection: Connection): Promise<void> {
     super.infoLog('isPrepaidVoiceLine');
     this.response.isPrepaidVoiceLine =
       await this.abaRegisterIsPrepaidVoiceLineService.execute(
@@ -332,11 +319,13 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           areaCode: this.dto.areaCode,
           phoneNumber: this.dto.phoneNumber,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async getAndRegisterQualifOfService(): Promise<void> {
+  private async getAndRegisterQualifOfService(
+    dbConnection: Connection,
+  ): Promise<void> {
     super.infoLog('getAndRegisterQualifOfService');
     this.response.getAndRegisterQualifOfServiceResponse =
       await this.abaRegisterGetAndRegisterQualifOfServiceService.execute(
@@ -345,11 +334,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           phoneNumber: this.dto.phoneNumber,
           customerId: null,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async verifyContractByPhone(): Promise<void> {
+  private async verifyContractByPhone(dbConnection: Connection): Promise<void> {
     super.infoLog('verifyContractByPhone');
     this.response.verifyContractByPhoneResponse =
       await this.abaRegisterVerifyContractByPhoneService.execute(
@@ -357,11 +346,13 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           areaCode: this.dto.areaCode,
           phoneNumber: this.dto.phoneNumber,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async getABADataFromRequests(): Promise<void> {
+  private async getABADataFromRequests(
+    dbConnection: Connection,
+  ): Promise<void> {
     super.infoLog('getABADataFromRequests');
     this.response.getABADataFromRequestsResponse =
       await this.abaRegisterGetABADataFromRequestsService.execute(
@@ -369,11 +360,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           areaCode: this.dto.areaCode,
           phoneNumber: this.dto.phoneNumber,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async getDownstreamFromPlan(): Promise<void> {
+  private async getDownstreamFromPlan(dbConnection: Connection): Promise<void> {
     super.infoLog('getDownstreamFromPlan');
     this.response.getDownstreamFromPlanResponse =
       await this.abaRegisterGetDownstreamFromPlanService.execute(
@@ -382,11 +373,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           phoneNumber: this.dto.phoneNumber,
           desiredPlan: this.response.getABADataFromRequestsResponse.desiredPlan,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async isOccupiedPort(): Promise<void> {
+  private async isOccupiedPort(dbConnection: Connection): Promise<void> {
     super.infoLog('isOccupiedPort');
     this.response.isOccupiedPortResponse =
       await this.abaRegisterIsOccupiedPortService.execute(
@@ -395,11 +386,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           phoneNumber: this.dto.phoneNumber,
           portId: this.response.getPortIdFromIpResponse.dslamportId,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async isValidIpAddress(): Promise<void> {
+  private async isValidIpAddress(dbConnection: Connection): Promise<void> {
     super.infoLog('isValidIpAddress');
     this.response.isValidIpAddressResponse =
       await this.abaRegisterIsValidIpAddressService.execute(
@@ -408,11 +399,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           phoneNumber: this.dto.phoneNumber,
           ipAddress: this.dto.ipAddress,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async getPortIdFromIp(): Promise<void> {
+  private async getPortIdFromIp(dbConnection: Connection): Promise<void> {
     super.infoLog('getPortIdFromIp');
     this.response.getPortIdFromIpResponse =
       await this.abaRegisterGetPortIdFromIpService.execute(
@@ -421,11 +412,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           phoneNumber: this.dto.phoneNumber,
           ipAddress: this.dto.ipAddress,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async getPortId(): Promise<void> {
+  private async getPortId(dbConnection: Connection): Promise<void> {
     super.infoLog('getPortId');
     this.response.getPortIdResponse =
       await this.abaRegisterGetPortIdService.execute({
@@ -453,7 +444,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   //     orderId: dto.orderId,
   //   });
 
-  private async getABAData(): Promise<void> {
+  private async getABAData(dbConnection: Connection): Promise<void> {
     super.infoLog('getABAData');
     this.response.getABADataResponse =
       await this.abaRegisterGetAbaDataService.execute({
@@ -481,7 +472,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   //     loginInstall: dto.loginInstall,
   //   });
 
-  private async checkIp(): Promise<void> {
+  private async checkIp(dbConnection: Connection): Promise<void> {
     super.infoLog('checkIp');
     this.response.checkIpResponse =
       await this.abaRegisterCheckIpService.execute({
@@ -510,7 +501,9 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   //       this.response.getPortIdResponse.portId,
   //   });
 
-  private async getDataFromDslamPortId(): Promise<void> {
+  private async getDataFromDslamPortId(
+    dbConnection: Connection,
+  ): Promise<void> {
     super.infoLog('getDataFromDslamPortId');
     this.response.getDataFromDslamPortIdResponse =
       await this.abaRegisterGetDataFromDSLAMPortIdRequestService.execute({
@@ -538,9 +531,9 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   //         this.response.getPortIdFromIpResponse.dslamportId ??
   //         this.response.getPortIdResponse.portId,
   //     },
-  //     this.dbConnection,
+  //     dbConnection,
   //   );
-  private async deleteOrder(): Promise<void> {
+  private async deleteOrder(dbConnection: Connection): Promise<void> {
     super.infoLog('deleteOrder');
     this.response.deleteOrderResponse =
       await this.abaRegisterDeleteOrderService.execute({
@@ -567,14 +560,16 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   //     await this.getDSLCentralCoIdByDSLAMPortId(this.response);
   // }
 
-  private async updateDslABARegistersWithNotProcessedValue(): Promise<void> {
+  private async updateDslABARegistersWithNotProcessedValue(
+    dbConnection: Connection,
+  ): Promise<void> {
     await this.updateDslAbaRegistersRawService.errorUpdate(
       {
         areaCode: this.dto.areaCode,
         phoneNumber: this.dto.phoneNumber,
         registerStatus: BossConstants.NOT_PROCESSED,
       },
-      this.dbConnection,
+      dbConnection,
       true,
     );
   }
@@ -582,6 +577,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   // ****************************************************************
 
   private async callAuditLog(
+    dbConnection: Connection,
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
     description: string,
   ): Promise<void> {
@@ -598,11 +594,12 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
         comments: null,
         planName: data.getABADataFromRequestsResponse.desiredPlan,
       },
-      this.dbConnection,
+      dbConnection,
     );
   }
 
   private async getPortIdFlow(
+    dbConnection: Connection,
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
     Wlog.instance.info({
@@ -621,9 +618,9 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
       method: 'getPortIdFlow',
     });
-    data.getValidVPIResponse = await this.getValidVPI(data);
+    data.getValidVPIResponse = await this.getValidVPI(dbConnection, data);
 
-    await this.getPortId();
+    await this.getPortId(dbConnection);
 
     Wlog.instance.info({
       phoneNumber: null,
@@ -649,21 +646,23 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
         data.isValidIpAddressResponse.status ===
         IsValidIpAddressStatusConstants.POOL_RBE_LEASE
       ) {
-        await this.rbeDoesNotExistLog(data);
+        await this.rbeDoesNotExistLog(dbConnection, data);
       }
-      await this.setASAPOrderDetail(data);
+      await this.setASAPOrderDetail(dbConnection, data);
     } else {
       throw new Error30092Exception(BossConstants.GET_PORT_ID);
     }
   }
 
   private async rbeDoesNotExistLog(
+    dbConnection: Connection,
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
-    await this.callAuditLog(data, 'RBE no existe');
+    await this.callAuditLog(dbConnection, data, 'RBE no existe');
   }
 
   private async setASAPOrderDetail(
+    dbConnection: Connection,
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
     data.getASAPOrderDetailResponse =
@@ -730,6 +729,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   }
 
   private async getValidVPI(
+    dbConnection: Connection,
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<string> {
     const parameters = {
@@ -740,6 +740,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       result: OracleHelper.numberBindOut(),
     };
     const result = await super.executeFunction(
+      dbConnection,
       BossConstants.GET_VALID_VPI,
       BossConstants.UTL_PACKAGE,
       parameters,
@@ -748,12 +749,14 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   }
 
   private async modifyNetworkAccessLog(
+    dbConnection: Connection,
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
-    await this.callAuditLog(data, 'Modificar Red de Acceso');
+    await this.callAuditLog(dbConnection, data, 'Modificar Red de Acceso');
   }
 
   private async getDSLCentralCoIdByDSLAMPortId(
+    dbConnection: Connection,
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IGetDSLCentralCoIdByDSLAMPortIdResponse> {
     const parameters = {
@@ -766,6 +769,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     };
 
     const result = await super.executeFunction(
+      dbConnection,
       BossConstants.GET_DSL_CENTRAL_CO_ID_BY_DSLAM_PORT_ID,
       null,
       parameters,
@@ -777,6 +781,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   }
 
   private async readIABAOrder(
+    dbConnection,
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<IReadIABAOrderResponse> {
     const dateTimeOrderDate = data?.getABADataResponse?.abaorderdate
@@ -882,8 +887,9 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
 
       l_errorcode: OracleHelper.tableOfNumberBindOut(),
     };
-    await this.setTimestampFormat();
+    await this.setTimestampFormat(dbConnection);
     const result = await super.executeStoredProcedure(
+      dbConnection,
       BossConstants.UTL_PACKAGE,
       BossConstants.READ_IABA_ORDER,
       parameters,
