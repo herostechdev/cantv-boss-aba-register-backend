@@ -1,4 +1,4 @@
-export enum ReadIABAOrderErrorCodeConstants {
+export enum ReadIABAOrderStatusConstants {
   SUCCESSFULL,
   ASSIGNED_PORT,
   THE_ORDER_EXISTS,

@@ -31,6 +31,7 @@ import { AbaRegisterIsValidIpAddressService } from './dependencies/is-valid-ip-a
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
 import { AbaRegisterMailService } from './dependencies/mail/aba-register-mail.service';
 import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-customer-class/plans-by-customer-class.service';
+import { AbaRegisterReadIABAOrderService } from './dependencies/read-iaba-order/read-iaba-order.service';
 import { AbaRegisterService } from './dependencies/aba-register/aba-register.service';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { AbaRegisterValidateTechnicalFeasibilityService } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility.service';
@@ -84,6 +85,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterLoginService,
     AbaRegisterMailService,
     AbaRegisterPlansByCustomerClassService,
+    AbaRegisterReadIABAOrderService,
     AbaRegisterService,
     AbaRegisterValidateCustomerService,
     AbaRegisterValidateTechnicalFeasibilityService,

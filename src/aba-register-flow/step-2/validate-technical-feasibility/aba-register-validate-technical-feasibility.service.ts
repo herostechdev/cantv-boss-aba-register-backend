@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
-import { DateTime } from 'luxon';
 
 import { AbaRegisterCheckIpService } from 'src/aba-register-flow/dependencies/check-ip/check-ip.service';
 import { AbaRegisterDeleteOrderService } from 'src/aba-register-flow/dependencies/delete-order/delete-order.service';
@@ -15,6 +14,7 @@ import { AbaRegisterGetPortIdService } from 'src/aba-register-flow/dependencies/
 import { AbaRegisterGetPortIdFromIpService } from 'src/aba-register-flow/dependencies/get-port-id-from-ip/get-port-id-from-ip.service';
 import { AbaRegisterIsOccupiedPortService } from 'src/aba-register-flow/dependencies/Is-occupied-port/Is-occupied-port.service';
 import { AbaRegisterIsValidIpAddressService } from 'src/aba-register-flow/dependencies/is-valid-ip-address/is-valid-ip-address.service';
+import { AbaRegisterReadIABAOrderService } from 'src/aba-register-flow/dependencies/read-iaba-order/read-iaba-order.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { AbaRegisterVerifyContractByPhoneService } from 'src/aba-register-flow/dependencies/verify-contract-by-phone/verify-contract-by-phone.service';
 import { BossConstants } from 'src/boss/boss.constants';
@@ -30,16 +30,10 @@ import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-d
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
 import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
-import { IReadIABAOrderResponse } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-response.interface';
 import { IsValidIpAddressStatusConstants } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { ReadIABAOrderErrorCodeConstants } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-error_code.constants';
-import { ReadIABAOrderGeneralDatabaseErrorException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-general-database-error.exception';
-import { ReadIABAOrderAssignedPortException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-assigned-port.exception';
-import { ReadIABAOrderOrderExistsException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-order-exists.exception';
-import { ReadIABAOrderOrderIsOldException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-order-is-old.exception';
-import { ReadIABAOrderTheOrderAlreadyExistsInBossException } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-the-order-already-exists-in-boss.exception';
+import { ReadIABAOrderStatusConstants } from '../../../raw/stored-procedures/read-iaba-order/read-iaba-order-status.constants';
 import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
@@ -64,6 +58,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     private readonly abaRegisterGetPortIdFromIpService: AbaRegisterGetPortIdFromIpService,
     private readonly abaRegisterIsOccupiedPortService: AbaRegisterIsOccupiedPortService,
     private readonly abaRegisterIsValidIpAddressService: AbaRegisterIsValidIpAddressService,
+    private readonly abaRegisterReadIABAOrderService: AbaRegisterReadIABAOrderService,
     private readonly abaRegisterVerifyContractByPhoneService: AbaRegisterVerifyContractByPhoneService,
     private readonly dslAuditLogsService: DSLAuditLogsRawService,
     private readonly getDHCPDataService: GetDHCPDataRawService,
@@ -142,14 +137,11 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
           method: 'validateTechnicalFeasibility',
         });
-        this.response.readIABAOrderResponse = await this.readIABAOrder(
-          dbConnection,
-          this.response,
-        );
+        await this.readIABAOrder(dbConnection);
 
         if (
-          this.response.readIABAOrderResponse.errorCode ===
-          ReadIABAOrderErrorCodeConstants.SUCCESSFULL
+          this.response.readIABAOrderResponse.status ===
+          ReadIABAOrderStatusConstants.SUCCESSFULL
         ) {
           await this.getABAData(dbConnection);
           if (
@@ -416,6 +408,77 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       );
   }
 
+  private async readIABAOrder(dbConnection: Connection): Promise<void> {
+    super.infoLog('readIABAOrder');
+    this.response.readIABAOrderResponse =
+      await this.abaRegisterReadIABAOrderService.execute(
+        {
+          orderIsAtBoss: this.dto.orderIsAtBoss,
+          areaCode: this.dto.areaCode,
+          phoneNumber: this.dto.phoneNumber,
+          ncc: this.getValue(
+            this.dto.orderIsAtBoss,
+            this.response.getABADataResponse.abancc,
+            BossConstants.ZEROS_10,
+          ),
+          orderId: String(this.dto.orderId),
+          customerType: this.getValue(
+            this.dto.orderIsAtBoss,
+            this.response.getABADataResponse.abaclienttype,
+            this.response.getABADataResponse.abaclienttype ?? this.dto.lineType,
+          ),
+          orderDate: this.response.getABADataResponse?.abaorderdate,
+          rack: this.getValue(
+            this.dto.orderIsAtBoss,
+            String(this.response.getABADataResponse.abarack),
+            String(this.response.getDataFromDslamPortIdResponse.abarack),
+          ),
+          position: this.getValue(
+            this.dto.orderIsAtBoss,
+            String(this.response.getABADataResponse.abaposition),
+            this.response.getDataFromDslamPortIdResponse.abadslamposition,
+          ),
+          dslamSlot: this.getValue(
+            this.dto.orderIsAtBoss,
+            this.response.getABADataResponse.abaslot,
+            this.response.getDataFromDslamPortIdResponse.abaslot,
+          ),
+          port: this.getValue(
+            this.dto.orderIsAtBoss,
+            this.response.getABADataResponse.abaport,
+            this.response.getDataFromDslamPortIdResponse.abaport,
+          ),
+          ad: this.getValue(
+            this.dto.orderIsAtBoss,
+            this.response.getABADataResponse.abaad,
+            this.response.getDataFromDslamPortIdResponse.abaad,
+          ),
+          adPair: this.getValue(
+            this.dto.orderIsAtBoss,
+            this.response.getABADataResponse.abaparad,
+            this.response.getDataFromDslamPortIdResponse.abapairad,
+          ),
+          office: null,
+          createdBy: null,
+          provider: this.response.getDataFromDslamPortIdResponse.abaprovider,
+          room: BossConstants.ADSL,
+          recursive: BossConstants.ZERO,
+          system: null,
+          centralPortId:
+            this.response.getDSLCentralCoIdByDSLAMPortIdResponse.centralPortId,
+          executionDate: null,
+          isAutoInstallation: this.dto.isAutoInstallation
+            ? BossConstants.ONE
+            : BossConstants.ZERO,
+        },
+        dbConnection,
+      );
+  }
+
+  private getValue<T>(orderIsAtBoss: boolean, value: T, elseValue: T): T {
+    return orderIsAtBoss ? value : elseValue;
+  }
+
   private async updateDslABARegistersWithNotProcessedValue(
     dbConnection: Connection,
   ): Promise<void> {
@@ -611,168 +674,143 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     await this.callAuditLog(dbConnection, data, 'Modificar Red de Acceso');
   }
 
-  // private async getDSLCentralCoIdByDSLAMPortId(
-  //   dbConnection: Connection,
+  // private async readIABAOrder(
+  //   dbConnection,
   //   data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  // ): Promise<IGetDSLCentralCoIdByDSLAMPortIdResponse> {
+  // ): Promise<IReadIABAOrderResponse> {
+  //   const dateTimeOrderDate = data?.getABADataResponse?.abaorderdate
+  //     ? DateTime.fromFormat(
+  //         data?.getABADataResponse?.abaorderdate,
+  //         BossConstants.DEFAULT_DATE_FORMAT,
+  //       )
+  //     : DateTime.now();
+  //   const orderDate = dateTimeOrderDate.isValid
+  //     ? dateTimeOrderDate.toJSDate()
+  //     : null;
   //   const parameters = {
-  //     l_dslamportid: OracleHelper.numberBindIn(
-  //       data.getPortIdFromIpResponse.dslamportId ??
-  //         data.getPortIdResponse.portId,
+  //     sz_ncc: OracleHelper.stringBindIn(
+  //       this.getValue(
+  //         data.requestDto.orderIsAtBoss,
+  //         data.getABADataResponse.abancc,
+  //         BossConstants.ZEROS_10,
+  //       ),
+  //       10,
+  //     ),
+  //     sz_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
+  //     sz_phonenumber: OracleHelper.stringBindIn(
+  //       data.requestDto.phoneNumber,
+  //       16,
+  //     ),
+  //     orderid: OracleHelper.stringBindIn(String(data.requestDto.orderId), 12),
+
+  //     sz_clienttype: OracleHelper.stringBindIn(
+  //       this.getValue(
+  //         data.requestDto.orderIsAtBoss,
+  //         data.getABADataResponse.abaclienttype,
+  //         data.getABADataResponse.abaclienttype ?? data.requestDto.lineType,
+  //       ),
   //     ),
 
-  //     result: OracleHelper.stringBindOut(),
-  //   };
+  //     sz_orderdate: OracleHelper.dateBindIn(orderDate),
 
-  //   const result = await super.executeFunction(
+  //     sz_rack: OracleHelper.stringBindIn(
+  //       this.getValue(
+  //         data.requestDto.orderIsAtBoss,
+  //         String(data.getABADataResponse.abarack),
+  //         String(data.getDataFromDslamPortIdResponse.abarack),
+  //       ),
+  //       2,
+  //     ),
+  //     sz_position: OracleHelper.stringBindIn(
+  //       this.getValue(
+  //         data.requestDto.orderIsAtBoss,
+  //         String(data.getABADataResponse.abaposition),
+  //         data.getDataFromDslamPortIdResponse.abadslamposition,
+  //       ),
+  //       2,
+  //     ),
+  //     n_dslamslot: OracleHelper.numberBindIn(
+  //       this.getValue(
+  //         data.requestDto.orderIsAtBoss,
+  //         data.getABADataResponse.abaslot,
+  //         data.getDataFromDslamPortIdResponse.abaslot,
+  //       ),
+  //     ),
+  //     n_port: OracleHelper.numberBindIn(
+  //       this.getValue(
+  //         data.requestDto.orderIsAtBoss,
+  //         data.getABADataResponse.abaport,
+  //         data.getDataFromDslamPortIdResponse.abaport,
+  //       ),
+  //     ),
+  //     sz_ad: OracleHelper.stringBindIn(
+  //       this.getValue(
+  //         data.requestDto.orderIsAtBoss,
+  //         data.getABADataResponse.abaad,
+  //         data.getDataFromDslamPortIdResponse.abaad,
+  //       ),
+  //       5,
+  //     ),
+  //     sz_adpair: OracleHelper.stringBindIn(
+  //       this.getValue(
+  //         data.requestDto.orderIsAtBoss,
+  //         data.getABADataResponse.abaparad,
+  //         data.getDataFromDslamPortIdResponse.abapairad,
+  //       ),
+  //       4,
+  //     ),
+  //     sz_office: OracleHelper.stringBindIn(null, 10),
+  //     sz_createdby: OracleHelper.stringBindIn(null, 8),
+  //     sz_provider: OracleHelper.stringBindIn(
+  //       data.getDataFromDslamPortIdResponse.abaprovider,
+  //       16,
+  //     ),
+  //     sz_room: OracleHelper.stringBindIn(BossConstants.ADSL, 32),
+  //     // n_recursive: OracleHelper.numberBindIn(BossConstants.ZERO),
+  //     sz_sistema: OracleHelper.stringBindIn(null),
+  //     iCoid: OracleHelper.stringBindIn(
+  //       data.getDSLCentralCoIdByDSLAMPortIdResponse.centralPortId,
+  //       10,
+  //     ),
+  //     i_executiondate: OracleHelper.stringBindIn(null),
+  //     i_autoinstall: OracleHelper.numberBindIn(
+  //       data.requestDto.isAutoInstallation
+  //         ? BossConstants.ONE
+  //         : BossConstants.ZERO,
+  //     ),
+
+  //     l_errorcode: OracleHelper.tableOfNumberBindOut(),
+  //   };
+  //   await this.setTimestampFormat(dbConnection);
+  //   const result = await super.executeStoredProcedure(
   //     dbConnection,
-  //     BossConstants.GET_DSL_CENTRAL_CO_ID_BY_DSLAM_PORT_ID,
-  //     null,
+  //     BossConstants.UTL_PACKAGE,
+  //     BossConstants.READ_IABA_ORDER,
   //     parameters,
   //   );
-  //   const response: IGetDSLCentralCoIdByDSLAMPortIdResponse = {
-  //     centralPortId: result?.outBinds?.result,
+  //   const response: IReadIABAOrderResponse = {
+  //     errorCode: (OracleHelper.getFirstItem(result, 'l_errorcode') ??
+  //       ReadIABAOrderStatusConstants.GENERAL_DATABASE_ERROR) as ReadIABAOrderStatusConstants,
   //   };
-  //   return response;
+  //   switch (response.errorCode) {
+  //     case ReadIABAOrderStatusConstants.SUCCESSFULL:
+  //       return response;
+  //     case ReadIABAOrderStatusConstants.ASSIGNED_PORT:
+  //       throw new ReadIABAOrderAssignedPortException();
+  //     case ReadIABAOrderStatusConstants.THE_ORDER_EXISTS:
+  //       throw new ReadIABAOrderOrderExistsException();
+  //     case ReadIABAOrderStatusConstants.THE_ORDER_ID_OLD:
+  //       throw new ReadIABAOrderOrderIsOldException();
+  //     case ReadIABAOrderStatusConstants.THE_ORDER_ALREADY_EXISTS_IN_BOSS:
+  //       throw new ReadIABAOrderTheOrderAlreadyExistsInBossException();
+  //     case ReadIABAOrderStatusConstants.GENERAL_DATABASE_ERROR:
+  //       throw new ReadIABAOrderGeneralDatabaseErrorException();
+  //     default:
+  //       throw new ReadIABAOrderGeneralDatabaseErrorException();
+  //   }
   // }
 
-  private async readIABAOrder(
-    dbConnection,
-    data: IAbaRegisterValidateTechnicalFeasibilityResponse,
-  ): Promise<IReadIABAOrderResponse> {
-    const dateTimeOrderDate = data?.getABADataResponse?.abaorderdate
-      ? DateTime.fromFormat(
-          data?.getABADataResponse?.abaorderdate,
-          BossConstants.DEFAULT_DATE_FORMAT,
-        )
-      : DateTime.now();
-    const orderDate = dateTimeOrderDate.isValid
-      ? dateTimeOrderDate.toJSDate()
-      : null;
-    const parameters = {
-      sz_ncc: OracleHelper.stringBindIn(
-        this.getValue(
-          data.requestDto.orderIsAtBoss,
-          data.getABADataResponse.abancc,
-          '0000000000',
-        ),
-        10,
-      ),
-      sz_areacode: OracleHelper.stringBindIn(data.requestDto.areaCode, 3),
-      sz_phonenumber: OracleHelper.stringBindIn(
-        data.requestDto.phoneNumber,
-        16,
-      ),
-      orderid: OracleHelper.stringBindIn(String(data.requestDto.orderId), 12),
-
-      sz_clienttype: OracleHelper.stringBindIn(
-        this.getValue(
-          data.requestDto.orderIsAtBoss,
-          data.getABADataResponse.abaclienttype,
-          data.getABADataResponse.abaclienttype ?? data.requestDto.lineType,
-        ),
-      ),
-
-      sz_orderdate: OracleHelper.dateBindIn(orderDate),
-
-      sz_rack: OracleHelper.stringBindIn(
-        this.getValue(
-          data.requestDto.orderIsAtBoss,
-          String(data.getABADataResponse.abarack),
-          String(data.getDataFromDslamPortIdResponse.abarack),
-        ),
-        2,
-      ),
-      sz_position: OracleHelper.stringBindIn(
-        this.getValue(
-          data.requestDto.orderIsAtBoss,
-          String(data.getABADataResponse.abaposition),
-          data.getDataFromDslamPortIdResponse.abadslamposition,
-        ),
-        2,
-      ),
-      n_dslamslot: OracleHelper.numberBindIn(
-        this.getValue(
-          data.requestDto.orderIsAtBoss,
-          data.getABADataResponse.abaslot,
-          data.getDataFromDslamPortIdResponse.abaslot,
-        ),
-      ),
-      n_port: OracleHelper.numberBindIn(
-        this.getValue(
-          data.requestDto.orderIsAtBoss,
-          data.getABADataResponse.abaport,
-          data.getDataFromDslamPortIdResponse.abaport,
-        ),
-      ),
-      sz_ad: OracleHelper.stringBindIn(
-        this.getValue(
-          data.requestDto.orderIsAtBoss,
-          data.getABADataResponse.abaad,
-          data.getDataFromDslamPortIdResponse.abaad,
-        ),
-        5,
-      ),
-      sz_adpair: OracleHelper.stringBindIn(
-        this.getValue(
-          data.requestDto.orderIsAtBoss,
-          data.getABADataResponse.abaparad,
-          data.getDataFromDslamPortIdResponse.abapairad,
-        ),
-        4,
-      ),
-      sz_office: OracleHelper.stringBindIn(null, 10),
-      sz_createdby: OracleHelper.stringBindIn(null, 8),
-      sz_provider: OracleHelper.stringBindIn(
-        data.getDataFromDslamPortIdResponse.abaprovider,
-        16,
-      ),
-      sz_room: OracleHelper.stringBindIn(BossConstants.ADSL, 32),
-      // n_recursive: OracleHelper.numberBindIn(BossConstants.ZERO),
-      sz_sistema: OracleHelper.stringBindIn(null),
-      iCoid: OracleHelper.stringBindIn(
-        data.getDSLCentralCoIdByDSLAMPortIdResponse.centralPortId,
-        10,
-      ),
-      i_executiondate: OracleHelper.stringBindIn(null),
-      i_autoinstall: OracleHelper.numberBindIn(
-        data.requestDto.isAutoInstallation
-          ? BossConstants.ONE
-          : BossConstants.ZERO,
-      ),
-
-      l_errorcode: OracleHelper.tableOfNumberBindOut(),
-    };
-    await this.setTimestampFormat(dbConnection);
-    const result = await super.executeStoredProcedure(
-      dbConnection,
-      BossConstants.UTL_PACKAGE,
-      BossConstants.READ_IABA_ORDER,
-      parameters,
-    );
-    const response: IReadIABAOrderResponse = {
-      errorCode: (OracleHelper.getFirstItem(result, 'l_errorcode') ??
-        ReadIABAOrderErrorCodeConstants.GENERAL_DATABASE_ERROR) as ReadIABAOrderErrorCodeConstants,
-    };
-    switch (response.errorCode) {
-      case ReadIABAOrderErrorCodeConstants.SUCCESSFULL:
-        return response;
-      case ReadIABAOrderErrorCodeConstants.ASSIGNED_PORT:
-        throw new ReadIABAOrderAssignedPortException();
-      case ReadIABAOrderErrorCodeConstants.THE_ORDER_EXISTS:
-        throw new ReadIABAOrderOrderExistsException();
-      case ReadIABAOrderErrorCodeConstants.THE_ORDER_ID_OLD:
-        throw new ReadIABAOrderOrderIsOldException();
-      case ReadIABAOrderErrorCodeConstants.THE_ORDER_ALREADY_EXISTS_IN_BOSS:
-        throw new ReadIABAOrderTheOrderAlreadyExistsInBossException();
-      case ReadIABAOrderErrorCodeConstants.GENERAL_DATABASE_ERROR:
-        throw new ReadIABAOrderGeneralDatabaseErrorException();
-      default:
-        throw new ReadIABAOrderGeneralDatabaseErrorException();
-    }
-  }
-
-  private getValue<T>(orderIsAtBoss: boolean, value: T, elseValue: T): T {
-    return orderIsAtBoss ? value : elseValue;
-  }
+  // private getValue<T>(orderIsAtBoss: boolean, value: T, elseValue: T): T {
+  //   return orderIsAtBoss ? value : elseValue;
+  // }
 }

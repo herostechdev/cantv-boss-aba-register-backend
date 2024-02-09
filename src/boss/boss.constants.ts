@@ -68,6 +68,7 @@ export class BossConstants {
   // NUMBERS
 
   public static ZERO = 0;
+  public static ZEROS_10 = '0000000000';
   public static ONE = 1;
 
   // DATES

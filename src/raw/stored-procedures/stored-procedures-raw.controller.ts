@@ -96,6 +96,7 @@ import { IsOccupiedPortRawService } from './Is-occupied-port/Is-occupied-port-ra
 import { IsOccupiedPortRequestDto } from './Is-occupied-port/Is-occupied-port-request.dto';
 import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid-voice-line-raw.service';
 import { IsPrepaidVoiceLineRequestDto } from './is-prepaid-voice-line/is-prepaid-voice-line-request.dto';
+import { IReadIABAOrderResponse } from './read-iaba-order/read-iaba-order-response.interface';
 import { IsReservedLoginRequestDto } from './is-reserved-login/is-reserved-login-request.dto';
 import { IsValidIpAddressRawService } from './is-valid-ip-address/is-valid-ip-address-raw.service';
 import { IsValidIpAddressRequestDto } from './is-valid-ip-address/is-valid-ip-address-request.dto';
@@ -103,6 +104,8 @@ import { IUpdateDslAbaRegistersResponse } from './update-dsl-aba-registers/updat
 import { IVerifyContractByPhoneResponse } from './verify-contract-by-phone/verify-contract-by-phone-response.interface';
 import { PlansByCustomerClassRequestDto } from './plans-by-customer-class/plans-by-customer-class-request.dto';
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
+import { ReadIABAOrderRawService } from './read-iaba-order/read-iaba-order-raw.service';
+import { ReadIABAOrderRequestDto } from './read-iaba-order/read-iaba-order-request.dto';
 import { ReverseAbaRegisterRawService } from './reverse-aba-register/reverse-aba-register-raw.service';
 import { ReverseAbaRegisterRequestDto } from './reverse-aba-register/reverse-aba-register-request.dto';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
@@ -152,6 +155,7 @@ export class StoredProceduresRawController {
     private readonly isReservedLoginRawService: IsReservedLoginRawService,
     private readonly isValidIpAddressRawService: IsValidIpAddressRawService,
     private readonly planByCustomerClassRawService: PlansByCustomerClassRawService,
+    private readonly readIABAOrderRawService: ReadIABAOrderRawService,
     private readonly reverseAbaRegisterRawService: ReverseAbaRegisterRawService,
     private readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
     private readonly updatePasswordFromLoginRawService: UpdatePasswordFromLoginRawService,
@@ -455,6 +459,15 @@ export class StoredProceduresRawController {
     @Body() dto: ReverseAbaRegisterRequestDto,
   ): Promise<IReverseAbaRegisterResponse> {
     return this.reverseAbaRegisterRawService.execute(dto, null, true);
+  }
+
+  @Post('readIABAOrder')
+  @HttpCode(HttpCodeConstants.HTTP_200_OK)
+  @UseFilters(new HttpExceptionFilter())
+  readIABAOrder(
+    @Body() dto: ReadIABAOrderRequestDto,
+  ): Promise<IReadIABAOrderResponse> {
+    return this.readIABAOrderRawService.execute(dto, null, true);
   }
 
   @Post('updateDslAbaRegisters')

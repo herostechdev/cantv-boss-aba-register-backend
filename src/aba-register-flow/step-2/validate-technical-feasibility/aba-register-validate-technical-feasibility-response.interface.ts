@@ -16,7 +16,7 @@ import { IIsPrepaidVoiceLineResponse } from '../../../raw/stored-procedures/is-p
 import { IIsOccupiedPortResponse } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port-response.interface';
 import { IIsValidIpAddressResponse } from '../../../raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-response.interface';
 import { ILinkNetworkResponse } from 'src/raw/pic/get-asap-order-detail/Iink-network-response.interface';
-import { IReadIABAOrderResponse } from '../../../validate-technical-feasibility/read-iaba-order/read-iaba-order-response.interface';
+import { IReadIABAOrderResponse } from '../../../raw/stored-procedures/read-iaba-order/read-iaba-order-response.interface';
 import { IVerifyContractByPhoneResponse } from 'src/raw/stored-procedures/verify-contract-by-phone/verify-contract-by-phone-response.interface';
 
 export interface IAbaRegisterValidateTechnicalFeasibilityResponse {

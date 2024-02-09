@@ -32,6 +32,7 @@ import { IsPrepaidVoiceLineRawService } from './is-prepaid-voice-line/is-prepaid
 import { IsReservedLoginRawService } from './is-reserved-login/is-reserved-login-raw.service';
 import { IsValidIpAddressRawService } from './is-valid-ip-address/is-valid-ip-address-raw.service';
 import { PlansByCustomerClassRawService } from './plans-by-customer-class/plans-by-customer-class-raw.service';
+import { ReadIABAOrderRawService } from './read-iaba-order/read-iaba-order-raw.service';
 import { ReverseAbaRegisterRawService } from './reverse-aba-register/reverse-aba-register-raw.service';
 import { StoredProceduresRawController } from './stored-procedures-raw.controller';
 import { UpdateDslAbaRegistersRawService } from './update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
@@ -75,6 +76,7 @@ import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/veri
     IsReservedLoginRawService,
     IsValidIpAddressRawService,
     PlansByCustomerClassRawService,
+    ReadIABAOrderRawService,
     ReverseAbaRegisterRawService,
     UpdateDslAbaRegistersRawService,
     UpdatePasswordFromLoginRawService,
@@ -114,6 +116,7 @@ import { VerifyContractByPhoneRawService } from './verify-contract-by-phone/veri
     IsReservedLoginRawService,
     IsValidIpAddressRawService,
     PlansByCustomerClassRawService,
+    ReadIABAOrderRawService,
     ReverseAbaRegisterRawService,
     UpdateDslAbaRegistersRawService,
     UpdatePasswordFromLoginRawService,
