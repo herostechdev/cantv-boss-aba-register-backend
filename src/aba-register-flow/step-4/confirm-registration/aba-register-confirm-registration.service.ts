@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Connection } from 'oracledb';
 import { AbaRegisterPayAbaInstallationService } from '../../dependencies/pay-aba-installation/pay-aba-installation.service';
 import { AbaRegisterCreateAndProvisioningCustomerService } from '../../dependencies/create-and-provisioning-customer/create-and-provisioning-customer.service';
 import { AbaRegisterCreateAndProvisioningMasterAccountService } from '../../dependencies/create-and-provisioning-master-account/create-and-provisioning-master-account.service';
@@ -46,10 +47,10 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   async confirm(
     dto: AbaRegisterConfirmRegistrationRequestDto,
   ): Promise<IAbaRegisterConfirmRegistrationResponse> {
+    super.infoLog(BossConstants.START);
     this.initialize(dto);
+    const dbConnection = await super.connect();
     try {
-      super.infoLog(BossConstants.START);
-      await super.connect();
       // Wlog.instance.info({
       //   phoneNumber: BossHelper.getPhoneNumber(dto),
       //   message: 'getPlanAbaFromKenan',
@@ -64,9 +65,9 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
       //       phoneNumber: dto.phoneNumber,
       //       technicalPlanName: dto.technicalPlanName,
       //     },
-      //     this.dbConnection,
+      //     dbConnection,
       //   );
-      await this.getAbaPlanForKenan();
+      await this.getAbaPlanForKenan(dbConnection);
       // Wlog.instance.info({
       //   phoneNumber: BossHelper.getPhoneNumber(dto),
       //   message: 'Verifica que el cliente existe',
@@ -84,9 +85,9 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
       //       ),
       //       attributeValue: data.requestDto.customerIdentificationDocument,
       //     },
-      //     this.dbConnection,
+      //     dbConnection,
       //   );
-      await this.customerExists();
+      await this.customerExists(dbConnection);
       if (
         this.response.customerExistsResponse.status ===
         CustomerExistsStatusConstants.SUCCESSFULL
@@ -114,9 +115,9 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
         //       technicalPlanName: dto.technicalPlanName,
         //       zipCode: dto.zipCode ?? BossConstants.NOT_AVAILABLE,
         //     },
-        //     this.dbConnection,
+        //     dbConnection,
         //   );
-        await this.createAndProvisioningMasterAccount();
+        await this.createAndProvisioningMasterAccount(dbConnection);
         if (
           this.response.createAndProvisioningMasterAccountResponse.status !==
           CreateAndProvisioningMasterAccountStatusConstants.SUCCESSFULL
@@ -149,9 +150,9 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
         //       technicalPlanName: dto.technicalPlanName,
         //       zipCode: dto.zipCode ?? BossConstants.NOT_AVAILABLE,
         //     },
-        //     this.dbConnection,
+        //     dbConnection,
         //   );
-        await this.createAndProvisioningCustomer();
+        await this.createAndProvisioningCustomer(dbConnection);
         if (
           this.response.createAndProvisioningCustomerResponse.status !==
           CreateAndProvisioningCustomerStatusConstants.SUCCESSFULL
@@ -179,9 +180,9 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
       //         dto.customerIdentificationDocument,
       //       ),
       //     },
-      //     this.dbConnection,
+      //     dbConnection,
       //   );
-      await this.isReservedLogin();
+      await this.isReservedLogin(dbConnection);
       // Wlog.instance.info({
       //   phoneNumber: BossHelper.getPhoneNumber(dto),
       //   message: 'abaRegisterGetCSIdAndPlanNameFromLogin',
@@ -200,9 +201,9 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
       //         data.requestDto.customerIdentificationDocument,
       //       ),
       //     },
-      //     this.dbConnection,
+      //     dbConnection,
       //   );
-      await this.getCSIdAndPlanNameFromLogin();
+      await this.getCSIdAndPlanNameFromLogin(dbConnection);
       // Wlog.instance.info({
       //   phoneNumber: BossHelper.getPhoneNumber(dto),
       //   message: 'abaRegister',
@@ -218,10 +219,10 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
       //     customerServiceId:
       //       data.getCSIdAndPlanNameFromLoginResponse.customerServiceId,
       //   },
-      //   this.dbConnection,
+      //   dbConnection,
       //   false,
       // );
-      await this.abaRegister();
+      await this.abaRegister(dbConnection);
       if (dto.isAutoInstallation === true) {
         // Wlog.instance.info({
         //   phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -239,10 +240,10 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
         //         dto.customerIdentificationDocument,
         //       installerLogin: dto.installerLogin ?? BossConstants.REGISTER,
         //     },
-        //     this.dbConnection,
+        //     dbConnection,
         //     false,
         //   );
-        await this.payAbaInstallation();
+        await this.payAbaInstallation(dbConnection);
       }
       // Wlog.instance.info({
       //   phoneNumber: BossHelper.getPhoneNumber(dto),
@@ -257,9 +258,9 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
       //     phoneNumber: dto.phoneNumber,
       //     registerStatus: BossConstants.PROCESSED,
       //   },
-      //   this.dbConnection,
+      //   dbConnection,
       // );
-      await this.updateDslAbaRegistersWithProcessedValue();
+      await this.updateDslAbaRegistersWithProcessedValue(dbConnection);
       super.infoLog(BossConstants.END);
 
       // TODO: send mail notifications
@@ -271,10 +272,10 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
       // TODO: send mail notifications
       // TODO: Add mail configurations (enable send mail notifications)
       // await this.sendNotOkNotification();
-      await this.updateDslABARegistersWithNotProcessedValue();
+      await this.updateDslABARegistersWithNotProcessedValue(dbConnection);
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
-      await this.closeConnection();
+      await this.closeConnection(dbConnection, true);
     }
   }
 
@@ -293,7 +294,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
     };
   }
 
-  private async getAbaPlanForKenan(): Promise<void> {
+  private async getAbaPlanForKenan(dbConnection: Connection): Promise<void> {
     super.infoLog('getPlanAbaFromKenan');
     this.response.getAbaPlanForKenanResponse =
       await this.abaRegisterGetAbaPlanForKenanService.execute(
@@ -302,11 +303,11 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
           phoneNumber: this.dto.phoneNumber,
           technicalPlanName: this.dto.technicalPlanName,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async customerExists(): Promise<void> {
+  private async customerExists(dbConnection: Connection): Promise<void> {
     super.infoLog('Verifica que el cliente existe');
     this.response.customerExistsResponse =
       await this.abaRegisterCustomerExistsService.execute(
@@ -318,11 +319,13 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
           ),
           attributeValue: this.dto.customerIdentificationDocument,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async createAndProvisioningMasterAccount(): Promise<void> {
+  private async createAndProvisioningMasterAccount(
+    dbConnection: Connection,
+  ): Promise<void> {
     super.infoLog('createAndProvisioningMasterAccount');
     this.response.createAndProvisioningMasterAccountResponse =
       await this.abaRegisterCreateAndProvisioningMasterAccountService.execute(
@@ -340,11 +343,13 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
           technicalPlanName: this.dto.technicalPlanName,
           zipCode: this.dto.zipCode ?? BossConstants.NOT_AVAILABLE,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async createAndProvisioningCustomer(): Promise<void> {
+  private async createAndProvisioningCustomer(
+    dbConnection: Connection,
+  ): Promise<void> {
     super.infoLog('createAndProvisioningCustomer');
     this.response.createAndProvisioningCustomerResponse =
       await this.abaRegisterCreateAndProvisioningCustomerService.execute(
@@ -362,11 +367,11 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
           technicalPlanName: this.dto.technicalPlanName,
           zipCode: this.dto.zipCode ?? BossConstants.NOT_AVAILABLE,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async isReservedLogin(): Promise<void> {
+  private async isReservedLogin(dbConnection: Connection): Promise<void> {
     super.infoLog('isReservedLogin');
     this.response.isReservedLoginResponse =
       await this.abaRegisterIsReservedLoginService.execute(
@@ -379,11 +384,13 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
             this.dto.customerIdentificationDocument,
           ),
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async getCSIdAndPlanNameFromLogin(): Promise<void> {
+  private async getCSIdAndPlanNameFromLogin(
+    dbConnection: Connection,
+  ): Promise<void> {
     super.infoLog('abaRegisterGetCSIdAndPlanNameFromLogin');
     this.response.getCSIdAndPlanNameFromLoginResponse =
       await this.abaRegisterGetCSIdAndPlanNameFromLoginService.execute(
@@ -396,11 +403,11 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
             this.dto.customerIdentificationDocument,
           ),
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async abaRegister(): Promise<void> {
+  private async abaRegister(dbConnection: Connection): Promise<void> {
     super.infoLog('abaRegister');
     this.response.abaRegisterResponse = await this.abaRegisterService.execute(
       {
@@ -410,11 +417,11 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
         customerServiceId:
           this.response.getCSIdAndPlanNameFromLoginResponse.customerServiceId,
       },
-      this.dbConnection,
+      dbConnection,
     );
   }
 
-  private async payAbaInstallation(): Promise<void> {
+  private async payAbaInstallation(dbConnection: Connection): Promise<void> {
     super.infoLog('payABAInstallation');
     this.response.cancelABAInstallationResponse =
       await this.abaRegisterPayAbaInstallationService.execute(
@@ -425,11 +432,13 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
             this.dto.customerIdentificationDocument,
           installerLogin: this.dto.installerLogin ?? BossConstants.REGISTER,
         },
-        this.dbConnection,
+        dbConnection,
       );
   }
 
-  private async updateDslAbaRegistersWithProcessedValue(): Promise<void> {
+  private async updateDslAbaRegistersWithProcessedValue(
+    dbConnection: Connection,
+  ): Promise<void> {
     super.infoLog('updateDslAbaRegistersService');
     await this.updateDslAbaRegistersRawService.execute(
       {
@@ -437,18 +446,20 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
         phoneNumber: this.dto.phoneNumber,
         registerStatus: BossConstants.PROCESSED,
       },
-      this.dbConnection,
+      dbConnection,
     );
   }
 
-  private async updateDslABARegistersWithNotProcessedValue(): Promise<void> {
+  private async updateDslABARegistersWithNotProcessedValue(
+    dbConnection: Connection,
+  ): Promise<void> {
     await this.updateDslAbaRegistersRawService.errorUpdate(
       {
         areaCode: this.dto.areaCode,
         phoneNumber: this.dto.phoneNumber,
         registerStatus: BossConstants.NOT_PROCESSED,
       },
-      this.dbConnection,
+      dbConnection,
       true,
     );
   }

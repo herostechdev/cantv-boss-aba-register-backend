@@ -19,9 +19,10 @@ export abstract class OracleExecuteFunctionRawService<DTO, RESPONSE>
   }
 
   async execute(dto: DTO, dbConnection?: Connection): Promise<RESPONSE> {
+    const connection = await super.connect(dbConnection);
     try {
-      await super.connect(dbConnection);
       const result = await super.executeFunction(
+        connection,
         this.functionName,
         this.packageName,
         this.getParameters(dto),
@@ -30,7 +31,10 @@ export abstract class OracleExecuteFunctionRawService<DTO, RESPONSE>
     } catch (error) {
       super.exceptionHandler(error, dto);
     } finally {
-      await super.closeConnection(!ValidationHelper.isDefined(dbConnection));
+      await super.closeConnection(
+        connection,
+        !ValidationHelper.isDefined(dbConnection),
+      );
     }
   }
 
