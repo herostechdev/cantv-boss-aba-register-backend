@@ -9,6 +9,14 @@ export class IntegrationsConfigurationService {
     return this.configService.get<string>('integrations.getASAPOrderDetailUrl');
   }
 
+  get getASAPOrderDetailStatusCode(): number {
+    return Number(
+      this.configService.get<string>(
+        'integrations.getASAPOrderDetailStatusCode',
+      ),
+    );
+  }
+
   get getDHCPDataUrl(): string {
     return this.configService.get<string>('integrations.getDHCPDataUrl');
   }

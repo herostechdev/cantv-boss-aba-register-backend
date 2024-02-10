@@ -30,6 +30,7 @@ import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-d
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
 import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
+import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
 import { IsValidIpAddressStatusConstants } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
@@ -63,6 +64,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     private readonly getDHCPDataService: GetDHCPDataRawService,
     private readonly getASAPOrderDetailService: GetASAPOrderDetailService,
     private readonly insertDslAbaRegistersRawService: InsertDslAbaRegistersRawService,
+    protected readonly integrationsConfigurationService: IntegrationsConfigurationService,
     protected readonly oracleConfigurationService: OracleConfigurationService,
     protected readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
@@ -563,7 +565,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       });
     if (
       data.getASAPOrderDetailResponse.CTVSTATUSASCODE !==
-      BossConstants.ASAP_ORDER_COMRED_STATUS
+      this.integrationsConfigurationService.getASAPOrderDetailStatusCode
     ) {
       throw new ASAPOrderStateIsInvalidException();
     }

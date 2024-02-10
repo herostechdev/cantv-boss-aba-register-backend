@@ -87,7 +87,6 @@ export class BossConstants {
   public static ABA_SENT_OK_NOTIFICATION =
     'La notificación de registro exitoso al servicio ABA fue enviada';
   public static ADSL = 'ADSL';
-  public static ASAP_ORDER_COMRED_STATUS = 399;
   public static CANTV_BILLING = 'FACTURA_CANTV';
   public static CONFIRM_METHOD = 'confirm';
   public static END = 'Fin';

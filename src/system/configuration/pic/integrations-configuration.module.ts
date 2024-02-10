@@ -12,6 +12,7 @@ import { IntegrationsConfigurationService } from './integrations-configuration.s
       load: [configuration],
       validationSchema: Joi.object({
         PIC_GET_ASAP_ORDER_DETAIL_URL: Joi.string(),
+        PIC_ASAP_ORDER_DETAIL_VALID_STATUS_CODE: Joi.string().default('399'),
         BOSS_GET_DHCP_DATA_URL: Joi.string(),
         PIC_CUSTOMER_BY_PHONE_NUMBER_URL: Joi.string(),
         PIC_CU594_GET_CUSTOMER: Joi.string(),

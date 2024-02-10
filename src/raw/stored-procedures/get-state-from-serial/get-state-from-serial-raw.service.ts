@@ -38,16 +38,6 @@ export class GetStateFromSerialRawService extends OracleExecuteStoredProcedureRa
   }
 
   protected getResponse(result: any): IGetStateFromSerialResponse {
-    // switch (response.status) {
-    //   case GetStateFromSerialStatusConstants.SUCCESSFULL:
-    //     break;
-    //   case GetStateFromSerialStatusConstants.ERROR:
-    //     throw new GetStateFromSerialException();
-    //   case GetStateFromSerialStatusConstants.THERE_IS_NO_DATA:
-    //     break;
-    //   default:
-    //     throw new GetStateFromSerialException();
-    // }
     return {
       states: OracleHelper.getItems(result, 'o_state'),
       status: (OracleHelper.getFirstItem(result, 'o_status') ??
