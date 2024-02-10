@@ -17,9 +17,9 @@ import { AbaRegisterIsValidIpAddressService } from 'src/aba-register-flow/depend
 import { AbaRegisterReadIABAOrderService } from 'src/aba-register-flow/dependencies/read-iaba-order/read-iaba-order.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './aba-register-validate-technical-feasibility-request.dto';
 import { AbaRegisterVerifyContractByPhoneService } from 'src/aba-register-flow/dependencies/verify-contract-by-phone/verify-contract-by-phone.service';
+import { ASAPOrderStateIsInvalidException } from './exceptions/asap-order-state-is-invalid.exception';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossFlowService } from 'src/boss-flows/boss-flow.service';
-import { BossHelper } from 'src/boss/boss.helper';
 import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
@@ -37,7 +37,6 @@ import { ReadIABAOrderStatusConstants } from '../../../raw/stored-procedures/rea
 import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowService<
@@ -94,7 +93,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
       ) {
         await this.isOccupiedPort(dbConnection);
         if (this.response.isOccupiedPortResponse.result > 0) {
-          super.infoLog('getPortIdFlow    (1)');
+          super.infoLog('getPortIdFlow    (1st call)');
           await this.getPortIdFlow(dbConnection, this.response);
         } else {
           super.infoLog('getASAPOrderDetail');
@@ -102,7 +101,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           await this.setASAPOrderDetail(dbConnection, this.response);
         }
       } else {
-        super.infoLog('getPortIdFlow   (2)');
+        super.infoLog('getPortIdFlow   (2nd call)');
         await this.getPortIdFlow(dbConnection, this.response);
       }
       await this.getABAData(dbConnection);
@@ -130,13 +129,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
         }
         await this.deleteOrder(dbConnection);
         await this.getDSLCentralCoIdByDSLAMPortId(dbConnection);
-        Wlog.instance.info({
-          phoneNumber: BossHelper.getPhoneNumber(dto),
-          message: 'readIABAOrder',
-          input: BossHelper.getPhoneNumber(dto),
-          clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-          method: 'validateTechnicalFeasibility',
-        });
         await this.readIABAOrder(dbConnection);
 
         if (
@@ -151,9 +143,9 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
             throw new ErrorInsertingIABAFromRegisterException();
           }
         } else {
-          if (this.response.deleteOrderResponse.status === 2) {
-            // throw error puerto ocupado
-          }
+          // if (this.response.deleteOrderResponse.status === 2) {
+          //   throw error puerto ocupado
+          // }
         }
       }
       return this.response;
@@ -521,34 +513,13 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     dbConnection: Connection,
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
-    Wlog.instance.info({
-      phoneNumber: null,
-      message: 'queryDHCP',
-      input: null,
-      clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      method: 'getPortIdFlow',
-    });
+    super.infoLog('queryDHCP');
     data.queryDHCPResponse = await this.queryDHCP(data);
-
-    Wlog.instance.info({
-      phoneNumber: null,
-      message: 'getValidVPI',
-      input: null,
-      clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      method: 'getPortIdFlow',
-    });
+    super.infoLog('getValidVPI');
     data.getValidVPIResponse = await this.getValidVPI(dbConnection, data);
-
     await this.getPortId(dbConnection);
-
-    Wlog.instance.info({
-      phoneNumber: null,
-      message: 'validaciones validaciones',
-      input: null,
-      clazz: AbaRegisterValidateTechnicalFeasibilityService.name,
-      method: 'getPortIdFlow',
-    });
     if (ValidationHelper.isDefined(data.getPortIdResponse)) {
+      super.infoLog('call dslAuditLogs');
       await this.dslAuditLogsService.execute({
         areaCode: data.requestDto.areaCode,
         phoneNumber: data.requestDto.phoneNumber,
@@ -590,13 +561,12 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
         phoneNumber: data.requestDto.phoneNumber,
         orderId: String(data.requestDto.orderId),
       });
-
-    // if (
-    //   data.getASAPOrderDetailResponse.CTVSTATUSASCODE !==
-    //   BossConstants.ASAP_ORDER_COMRED_STATUS
-    // ) {
-    //   throw new ASAPOrderStateIsInvalidException();
-    // }
+    if (
+      data.getASAPOrderDetailResponse.CTVSTATUSASCODE !==
+      BossConstants.ASAP_ORDER_COMRED_STATUS
+    ) {
+      throw new ASAPOrderStateIsInvalidException();
+    }
     this.setLinkNetwork(data);
   }
 
