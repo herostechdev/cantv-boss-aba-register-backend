@@ -102,7 +102,6 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
           super.infoLog('getPortIdFlow    (1)');
           await this.getPortIdFlow(this.response);
         } else {
-          super.infoLog('getASAPOrderDetail');
           await this.rbeDoesNotExistLog(this.response);
           await this.setASAPOrderDetail(this.response);
         }
@@ -666,6 +665,7 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
   private async setASAPOrderDetail(
     data: IAbaRegisterValidateTechnicalFeasibilityResponse,
   ): Promise<void> {
+    super.infoLog('getASAPOrderDetail');
     data.getASAPOrderDetailResponse =
       await this.getASAPOrderDetailService.execute({
         areaCode: data.requestDto.areaCode,
