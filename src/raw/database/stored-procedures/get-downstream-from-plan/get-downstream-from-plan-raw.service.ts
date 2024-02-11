@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { BossConstants } from 'src/boss/boss.constants';
-
+import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan-status.constants';
 import { GetDownstreamFromPlanRequestDto } from './get-downstream-from-plan-request.dto';
 import { IGetDownstreamFromPlanResponse } from './get-downstream-from-plan-response.interface';
-
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleExecuteStoredProcedureRawService } from 'src/oracle/oracle-execute-stored-procedure-raw.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { GetDownstreamFromPlanStatusConstants } from './get-downstream-from-plan-status.constants';
+import { UpdateDslAbaRegistersRawService } from '../update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
 export class GetDownstreamFromPlanRawService extends OracleExecuteStoredProcedureRawService<

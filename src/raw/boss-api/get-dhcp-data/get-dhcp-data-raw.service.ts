@@ -9,7 +9,7 @@ import { HttpHelper } from 'src/system/infrastructure/http/http-helper';
 import { HttpService } from '@nestjs/axios';
 import { IGetDHCPDataResponse } from './get-dhcp-data-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
-import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/database/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 import { WLogHelper } from 'src/system/infrastructure/winston-logger/wlog.helper';
 

@@ -19,7 +19,7 @@ import { BossApiModule } from './raw/boss-api/boss-api-raw.module';
 import { EncryptionModule } from './system/infrastructure/security/encryption/encryption.module';
 import { DatabaseFunctionsRawModule } from './raw/database/functions/database-functions-raw.module';
 import { PICModule } from './raw/pic/pic.module';
-import { StoredProceduresRawModule } from './raw/stored-procedures/stored-procedures-raw.module';
+import { StoredProceduresRawModule } from './raw/database/stored-procedures/stored-procedures-raw.module';
 
 @Module({
   imports: [

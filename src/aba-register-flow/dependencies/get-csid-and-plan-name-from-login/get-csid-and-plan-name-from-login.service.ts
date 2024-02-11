@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { GetCSIdAndPlanNameFromLoginException } from 'src/raw/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login.exception';
-import { GetCSIdAndPlanNameFromLoginRawService } from 'src/raw/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-raw.service';
-import { GetCSIdAndPlanNameFromLoginRequestDto } from 'src/raw/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-request.dto';
-import { GetCSIdAndPlanNameFromLoginThereIsNoDataException } from 'src/raw/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-there-is-no-data.exception';
-import { GetCSIdAndPlanNameFromLoginStatusConstants } from 'src/raw/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-status.constants';
-import { IGetCSIdAndPlanNameFromLoginResponse } from 'src/raw/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-response.interface';
+import { GetCSIdAndPlanNameFromLoginRawService } from 'src/raw/database/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-raw.service';
+import { GetCSIdAndPlanNameFromLoginRequestDto } from 'src/raw/database/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-request.dto';
+import { GetCSIdAndPlanNameFromLoginStatusConstants } from 'src/raw/database/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-status.constants';
+import { GetCSIdAndPlanNameFromLoginThereIsNoDataException } from 'src/raw/database/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-there-is-no-data.exception';
+import { GetCSIdAndPlanNameFromLoginException } from 'src/raw/database/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login.exception';
+import { IGetCSIdAndPlanNameFromLoginResponse } from 'src/raw/database/stored-procedures/get-csid-and-plan-name-from-login/get-csid-and-plan-name-from-login-response.interface';
 
 @Injectable()
 export class AbaRegisterGetCSIdAndPlanNameFromLoginService extends AbaRegisterExecuteService<

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { CreateAndProvisioningCustomerException } from 'src/raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer.exception';
-import { CreateAndProvisioningCustomerRawService } from 'src/raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
-import { CreateAndProvisioningCustomerRequestDto } from 'src/raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-request.dto';
-import { CreateAndProvisioningCustomerStatusConstants } from 'src/raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
-import { ICreateAndProvisioningCustomerResponse } from 'src/raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
+import { CreateAndProvisioningCustomerRawService } from 'src/raw/database/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-raw.service';
+import { CreateAndProvisioningCustomerRequestDto } from 'src/raw/database/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-request.dto';
+import { CreateAndProvisioningCustomerStatusConstants } from 'src/raw/database/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
+import { CreateAndProvisioningCustomerException } from 'src/raw/database/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer.exception';
+import { ICreateAndProvisioningCustomerResponse } from 'src/raw/database/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-response.interface';
 
 @Injectable()
 export class AbaRegisterCreateAndProvisioningCustomerService extends AbaRegisterExecuteService<

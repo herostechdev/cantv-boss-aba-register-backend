@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { DeleteOrderException } from 'src/raw/stored-procedures/delete-order/delete-order.exception';
-import { DeleteOrderRawService } from 'src/raw/stored-procedures/delete-order/delete-order-raw.service';
-import { DeleteOrderRequestDto } from 'src/raw/stored-procedures/delete-order/delete-order-request.dto';
-import { DeleteOrderStatusConstants } from 'src/raw/stored-procedures/delete-order/delete-order-status.constants';
-import { DeleteOrderThePortIsOccupiedByAnotherContractException } from 'src/raw/stored-procedures/delete-order/delete-order-the-is-occupied-by-another-contract.exception';
-import { IDeleteOrderResponse } from 'src/raw/stored-procedures/delete-order/delete-order-response.interface';
+import { DeleteOrderRawService } from 'src/raw/database/stored-procedures/delete-order/delete-order-raw.service';
+import { DeleteOrderRequestDto } from 'src/raw/database/stored-procedures/delete-order/delete-order-request.dto';
+import { DeleteOrderStatusConstants } from 'src/raw/database/stored-procedures/delete-order/delete-order-status.constants';
+import { DeleteOrderThePortIsOccupiedByAnotherContractException } from 'src/raw/database/stored-procedures/delete-order/delete-order-the-is-occupied-by-another-contract.exception';
+import { DeleteOrderException } from 'src/raw/database/stored-procedures/delete-order/delete-order.exception';
+import { IDeleteOrderResponse } from 'src/raw/database/stored-procedures/delete-order/delete-order-response.interface';
 
 @Injectable()
 export class AbaRegisterDeleteOrderService extends AbaRegisterExecuteService<

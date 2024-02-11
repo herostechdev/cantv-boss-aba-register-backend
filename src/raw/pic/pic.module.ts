@@ -7,7 +7,7 @@ import { CustomerByPhoneNumberService } from './customer-by-phone-number/custome
 import { CustomerByPhoneNumberRequestPayloadService } from './customer-by-phone-number/customer-by-phone-number-request-payload.service';
 import { GetASAPOrderDetailService } from './get-asap-order-detail/get-asap-order-detail.service';
 import { GetASAPOrderDetailPayloadService } from './get-asap-order-detail/get-asap-order-detail-payload.service';
-import { StoredProceduresRawModule } from '../stored-procedures/stored-procedures-raw.module';
+import { StoredProceduresRawModule } from '../database/stored-procedures/stored-procedures-raw.module';
 
 @Module({
   imports: [HttpModule, StoredProceduresRawModule],

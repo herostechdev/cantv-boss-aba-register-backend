@@ -42,7 +42,7 @@ import { DatabaseFunctionsRawModule } from 'src/raw/database/functions/database-
 import { EncryptionModule } from 'src/system/infrastructure/security/encryption/encryption.module';
 import { MailModule } from 'src/system/infrastructure/mail/mail.module';
 import { PICModule } from 'src/raw/pic/pic.module';
-import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-procedures-raw.module';
+import { StoredProceduresRawModule } from 'src/raw/database/stored-procedures/stored-procedures-raw.module';
 
 @Module({
   imports: [

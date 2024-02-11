@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { ExpiredIpException } from 'src/raw/stored-procedures/is-ip-allowed/expired-ip.exception';
-import { IsIpAllowedException } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed.exception';
-import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
-import { IsIPAllowedRawService } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-raw.service';
-import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
-import { IsIpAllowedStatusConstants } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-status.constants';
+import { ExpiredIpException } from 'src/raw/database/stored-procedures/is-ip-allowed/expired-ip.exception';
+import { IsIPAllowedRawService } from 'src/raw/database/stored-procedures/is-ip-allowed/is-ip-allowed-raw.service';
+import { IsIPAllowedRequestDto } from 'src/raw/database/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
+import { IIsIPAllowedResponse } from 'src/raw/database/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
+import { IsIpAllowedStatusConstants } from 'src/raw/database/stored-procedures/is-ip-allowed/is-ip-allowed-status.constants';
+import { IsIpAllowedException } from 'src/raw/database/stored-procedures/is-ip-allowed/is-ip-allowed.exception';
 
 @Injectable()
 export class AbaRegisterIsIPAllowedService extends AbaRegisterExecuteService<

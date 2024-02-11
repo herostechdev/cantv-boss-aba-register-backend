@@ -11,28 +11,28 @@ import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-regist
 import { AbaRegisterLoginRequestDto } from './step-1/login/aba-register-login-request.dto';
 import { AbaRegisterLoginService } from './step-1/login/aba-register-login.service';
 import { AbaRegisterPlansByCustomerClassService } from './step-3/plans-by-customer-class/plans-by-customer-class.service';
-import { AbaRegisterRequestDto } from 'src/raw/stored-procedures/aba-register/aba-register-request.dto';
+import { AbaRegisterRequestDto } from 'src/raw/database/stored-procedures/aba-register/aba-register-request.dto';
 import { AbaRegisterService } from './dependencies/aba-register/aba-register.service';
-import { IAbaRegisterValidateCustomerResponse } from './step-2/validate-customer/aba-register-validate-customer-response.interface';
 import { AbaRegisterValidateCustomerRequestDto } from './step-2/validate-customer/aba-register-validate-customer-request.dto';
 import { AbaRegisterValidateCustomerService } from './step-2/validate-customer/aba-register-validate-customer.service';
 import { AbaRegisterValidateTechnicalFeasibilityRequestDto } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility-request.dto';
 import { AbaRegisterValidateTechnicalFeasibilityService } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility.service';
-import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
-import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
-import { GetStateFromSerialRequestDto } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-request.dto';
+import { GetDSLAreaCodesRequestDto } from 'src/raw/database/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
+import { GetOrderIdFromABASalesRequestDto } from 'src/raw/database/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
+import { GetStateFromSerialRequestDto } from 'src/raw/database/stored-procedures/get-state-from-serial/get-state-from-serial-request.dto';
 import { HttpCodeConstants } from 'src/system/infrastructure/http/http-code-constants';
 import { HttpExceptionFilter } from 'src/system/infrastructure/exceptions/exception-filters/http-exception.filter';
+import { IAbaRegisterValidateCustomerResponse } from './step-2/validate-customer/aba-register-validate-customer-response.interface';
 import { IAbaRegisterGetLegalDocuments } from './step-4/get-legal-documents/aba-register-get-legal-documents-response.interface';
-import { IAbaRegisterResponse } from 'src/raw/stored-procedures/aba-register/aba-register-response.interface';
+import { IAbaRegisterResponse } from 'src/raw/database/stored-procedures/aba-register/aba-register-response.interface';
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './step-2/validate-technical-feasibility/aba-register-validate-technical-feasibility-response.interface';
-import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
-import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
-import { IGetStateFromSerialResponse } from 'src/raw/stored-procedures/get-state-from-serial/get-state-from-serial-response.interface';
-import { IPlansByCustomerClassListResponse } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class-list-response.interface';
-import { IIsIPAllowedResponse } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
-import { IsIPAllowedRequestDto } from 'src/raw/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
-import { PlansByCustomerClassRequestDto } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class-request.dto';
+import { IGetDSLAreaCodesResponse } from 'src/raw/database/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
+import { IGetOrderIdFromABASalesResponse } from 'src/raw/database/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
+import { IGetStateFromSerialResponse } from 'src/raw/database/stored-procedures/get-state-from-serial/get-state-from-serial-response.interface';
+import { IsIPAllowedRequestDto } from 'src/raw/database/stored-procedures/is-ip-allowed/is-ip-allowed-request.dto';
+import { IIsIPAllowedResponse } from 'src/raw/database/stored-procedures/is-ip-allowed/is-ip-allowed-response.interface';
+import { IPlansByCustomerClassListResponse } from 'src/raw/database/stored-procedures/plans-by-customer-class/plans-by-customer-class-list-response.interface';
+import { PlansByCustomerClassRequestDto } from 'src/raw/database/stored-procedures/plans-by-customer-class/plans-by-customer-class-request.dto';
 
 @Controller({
   path: 'abaRegister',

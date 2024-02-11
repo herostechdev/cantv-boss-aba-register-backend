@@ -4,10 +4,10 @@ import { BossConstants } from 'src/boss/boss.constants';
 import { Error1003Exception } from 'src/exceptions/error-1003.exception';
 import { Error30041Exception } from 'src/exceptions/error-3004-1.exception';
 import { Error30055Exception } from 'src/exceptions/error-3005-5.exception';
-import { IsValidIpAddressRawService } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-raw.service';
-import { IsValidIpAddressRequestDto } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-request.dto';
-import { IIsValidIpAddressResponse } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-response.interface';
-import { IsValidIpAddressStatusConstants } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-status.constants';
+import { IsValidIpAddressRawService } from 'src/raw/database/stored-procedures/is-valid-ip-address/is-valid-ip-address-raw.service';
+import { IsValidIpAddressRequestDto } from 'src/raw/database/stored-procedures/is-valid-ip-address/is-valid-ip-address-request.dto';
+import { IIsValidIpAddressResponse } from 'src/raw/database/stored-procedures/is-valid-ip-address/is-valid-ip-address-response.interface';
+import { IsValidIpAddressStatusConstants } from 'src/raw/database/stored-procedures/is-valid-ip-address/is-valid-ip-address-status.constants';
 
 @Injectable()
 export class AbaRegisterIsValidIpAddressService extends AbaRegisterExecuteService<

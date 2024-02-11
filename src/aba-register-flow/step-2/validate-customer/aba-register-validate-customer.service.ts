@@ -6,20 +6,20 @@ import { IAbaRegisterValidateCustomerResponse } from './aba-register-validate-cu
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossFlowService } from 'src/boss-flows/boss-flow.service';
 import { BossHelper } from 'src/boss/boss.helper';
-import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
+import { CustomerExistsStatusConstants } from 'src/raw/database/stored-procedures/customer-exists/customer-exists-status.constants';
 import { Error1002Exception } from 'src/exceptions/error-1002.exception';
 import { Error30101Exception } from 'src/exceptions/error-3010-1.exception';
-import { GetAllValuesFromCustomerValuesRawService } from 'src/raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
-import { GetAllValuesFromCustomerValuesStatusConstants } from '../../../raw/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-status.constants';
-import { GetCustomerClassNameFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
-import { GetCustomerInstanceIdFromIdValueRawService } from 'src/raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
-import { GetCustomerInstanceIdFromIdValueStatusConstants } from '../../../raw/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
-import { GetDebtFromCustomerRawService } from 'src/raw/stored-procedures/get-debt-from-customer/get-debt-from-customer-raw.service';
-import { GetDebtFromCustomerStatusConstants } from '../../../raw/stored-procedures/get-debt-from-customer/get-debt-from-customer-status.constants';
-import { GetFirstLetterFromABARequestRawService } from 'src/raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
-import { GetFirstLetterFromABARequestStatusConstants } from '../../../raw/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
+import { GetAllValuesFromCustomerValuesRawService } from 'src/raw/database/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-raw.service';
+import { GetAllValuesFromCustomerValuesStatusConstants } from 'src/raw/database/stored-procedures/get-all-values-from-customer-values/get-all-values-from-customer-values-status.constants';
+import { GetCustomerClassNameFromIdValueRawService } from 'src/raw/database/stored-procedures/get-customer-class-name-from-id-value/get-customer-class-name-from-id-value-raw.service';
+import { GetCustomerInstanceIdFromIdValueRawService } from 'src/raw/database/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-raw.service';
+import { GetCustomerInstanceIdFromIdValueStatusConstants } from 'src/raw/database/stored-procedures/get-customer-instance-id-from-id-value/get-customer-instance-id-from-id-value-status.constants';
+import { GetDebtFromCustomerRawService } from 'src/raw/database/stored-procedures/get-debt-from-customer/get-debt-from-customer-raw.service';
+import { GetDebtFromCustomerStatusConstants } from 'src/raw/database/stored-procedures/get-debt-from-customer/get-debt-from-customer-status.constants';
+import { GetFirstLetterFromABARequestRawService } from 'src/raw/database/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-raw.service';
+import { GetFirstLetterFromABARequestStatusConstants } from 'src/raw/database/stored-procedures/get-first-letter-from-aba-request/get-first-letter-from-aba-request-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/database/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
 export class AbaRegisterValidateCustomerService extends BossFlowService<

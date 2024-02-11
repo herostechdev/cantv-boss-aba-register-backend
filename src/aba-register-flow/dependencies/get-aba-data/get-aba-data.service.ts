@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { GetAbaDataStatusConstants } from 'src/raw/stored-procedures/get-aba-data/get-aba-data-status.constants';
-import { GetABADataException } from 'src/raw/stored-procedures/get-aba-data/get-aba-data.exception';
-import { GetAbaDataRawService } from 'src/raw/stored-procedures/get-aba-data/get-aba-data-raw.service';
-import { GetAbaDataRequestDto } from 'src/raw/stored-procedures/get-aba-data/get-aba-data-request.dto';
-import { IGetAbaDataResponse } from 'src/raw/stored-procedures/get-aba-data/get-aba-data-response.interface';
+import { GetAbaDataRawService } from 'src/raw/database/stored-procedures/get-aba-data/get-aba-data-raw.service';
+import { GetAbaDataRequestDto } from 'src/raw/database/stored-procedures/get-aba-data/get-aba-data-request.dto';
+import { GetAbaDataStatusConstants } from 'src/raw/database/stored-procedures/get-aba-data/get-aba-data-status.constants';
+import { GetABADataException } from 'src/raw/database/stored-procedures/get-aba-data/get-aba-data.exception';
+import { IGetAbaDataResponse } from 'src/raw/database/stored-procedures/get-aba-data/get-aba-data-response.interface';
 
 @Injectable()
 export class AbaRegisterGetAbaDataService extends AbaRegisterExecuteService<

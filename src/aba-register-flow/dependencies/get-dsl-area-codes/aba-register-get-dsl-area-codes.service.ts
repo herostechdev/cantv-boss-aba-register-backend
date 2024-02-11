@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { GetDSLAreaCodesException } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes.exception';
-import { GetDSLAreaCodesRawService } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-raw.service';
-import { GetDSLAreaCodesRequestDto } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
-import { GetDSLAreaCodesStatusConstants } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-status.constants';
-import { IGetDSLAreaCodesResponse } from 'src/raw/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
+import { GetDSLAreaCodesRawService } from 'src/raw/database/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-raw.service';
+import { GetDSLAreaCodesRequestDto } from 'src/raw/database/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-request.dto';
+import { GetDSLAreaCodesStatusConstants } from 'src/raw/database/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-status.constants';
+import { GetDSLAreaCodesException } from 'src/raw/database/stored-procedures/get-dsl-area-codes/get-dsl-area-codes.exception';
+import { IGetDSLAreaCodesResponse } from 'src/raw/database/stored-procedures/get-dsl-area-codes/get-dsl-area-codes-response.interface';
 
 @Injectable()
 export class AbaRegisterGetDslAreaCodesService extends AbaRegisterExecuteService<

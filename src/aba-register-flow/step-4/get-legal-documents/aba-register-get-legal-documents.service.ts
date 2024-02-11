@@ -7,7 +7,7 @@ import { CustomNotFoundException } from 'src/system/infrastructure/exceptions/cu
 import { DocumentsConfigurationService } from 'src/system/configuration/documents/documents-configuration.service';
 import { ExceptionsService } from 'src/system/infrastructure/services/exceptions.service';
 import { IAbaRegisterGetLegalDocuments } from './aba-register-get-legal-documents-response.interface';
-import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/database/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { WLogHelper } from 'src/system/infrastructure/winston-logger/wlog.helper';
 
 @Injectable()

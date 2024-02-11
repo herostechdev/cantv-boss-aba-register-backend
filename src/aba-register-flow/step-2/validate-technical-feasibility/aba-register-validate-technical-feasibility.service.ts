@@ -21,22 +21,22 @@ import { AbaRegisterVerifyContractByPhoneService } from 'src/aba-register-flow/d
 import { ASAPOrderStateIsInvalidException } from './exceptions/asap-order-state-is-invalid.exception';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossFlowService } from 'src/boss-flows/boss-flow.service';
-import { DSLAuditLogsRawService } from 'src/raw/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
+import { DSLAuditLogsRawService } from 'src/raw/database/stored-procedures/dsl-audit-logs/dsl-audit-logs-raw.service';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
 import { ErrorInsertingIABAFromRegisterException } from './exceptions/error-inserting-iaba-from-register.exception';
-import { GetAbaDataStatusConstants } from 'src/raw/stored-procedures/get-aba-data/get-aba-data-status.constants';
 import { GetASAPOrderDetailService } from 'src/raw/pic/get-asap-order-detail/get-asap-order-detail.service';
-import { GetDataFromDSLAMPortIdStatusConstants } from '../../../raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
+import { GetAbaDataStatusConstants } from 'src/raw/database/stored-procedures/get-aba-data/get-aba-data-status.constants';
+import { GetDataFromDSLAMPortIdStatusConstants } from 'src/raw/database/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { GetDHCPDataRawService } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-raw.service';
 import { IAbaRegisterValidateTechnicalFeasibilityResponse } from './aba-register-validate-technical-feasibility-response.interface';
 import { IGetDHCPDataResponse } from 'src/raw/boss-api/get-dhcp-data/get-dhcp-data-response.interface';
-import { InsertDslAbaRegistersRawService } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
-import { IsValidIpAddressStatusConstants } from 'src/raw/stored-procedures/is-valid-ip-address/is-valid-ip-address-status.constants';
+import { InsertDslAbaRegistersRawService } from 'src/raw/database/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-raw.service';
+import { IsValidIpAddressStatusConstants } from 'src/raw/database/stored-procedures/is-valid-ip-address/is-valid-ip-address-status.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { ReadIABAOrderStatusConstants } from '../../../raw/stored-procedures/read-iaba-order/read-iaba-order-status.constants';
+import { ReadIABAOrderStatusConstants } from 'src/raw/database/stored-procedures/read-iaba-order/read-iaba-order-status.constants';
 import { TheClientAlreadyHasABAServiceException } from './exceptions/the-client-already-has-aba-service.exception';
-import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/database/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
 @Injectable()

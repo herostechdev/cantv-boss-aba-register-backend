@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { Error30043Exception } from 'src/exceptions/error-3004-3.exception';
-import { GetDataFromDSLAMPortIdException } from 'src/raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id.exception';
-import { GetDataFromDSLAMPortIdRequestRawService } from 'src/raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-raw.service';
-import { GetDataFromDSLAMPortIdRequestDto } from 'src/raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-request.dto';
-import { IGetDataFromDSLAMPortIdResponse } from 'src/raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
-import { GetDataFromDSLAMPortIdStatusConstants } from 'src/raw/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
 import { BossConstants } from 'src/boss/boss.constants';
+import { Error30043Exception } from 'src/exceptions/error-3004-3.exception';
+import { GetDataFromDSLAMPortIdRequestRawService } from 'src/raw/database/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-raw.service';
+import { GetDataFromDSLAMPortIdRequestDto } from 'src/raw/database/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-request.dto';
+import { GetDataFromDSLAMPortIdStatusConstants } from 'src/raw/database/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-status.constants';
+import { GetDataFromDSLAMPortIdException } from 'src/raw/database/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id.exception';
+import { IGetDataFromDSLAMPortIdResponse } from 'src/raw/database/stored-procedures/get-data-from-dslam-port-id/get-data-from-dslam-port-id-response.interface';
 
 @Injectable()
 export class AbaRegisterGetDataFromDSLAMPortIdRequestService extends AbaRegisterExecuteService<

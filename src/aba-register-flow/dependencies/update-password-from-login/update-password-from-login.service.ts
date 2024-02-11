@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { IUpdatePasswordFromLoginResponse } from 'src/raw/stored-procedures/update-password-from-login/update-password-from-login-response.interface';
-import { UpdatePasswordFromLoginException } from 'src/raw/stored-procedures/update-password-from-login/update-password-from-login.exception';
-import { UpdatePasswordFromLoginRawService } from 'src/raw/stored-procedures/update-password-from-login/update-password-from-login-raw.service';
-import { UpdatePasswordFromLoginRequestDto } from 'src/raw/stored-procedures/update-password-from-login/update-password-from-login-request.dto';
-import { UpdatePasswordFromLoginStatusConstants } from 'src/raw/stored-procedures/update-password-from-login/update-password-from-login-status.constants';
-import { UpdatePasswordFromLoginThereIsNoDataException } from 'src/raw/stored-procedures/update-password-from-login/update-password-from-login-there-is-no-data.exception';
+import { IUpdatePasswordFromLoginResponse } from 'src/raw/database/stored-procedures/update-password-from-login/update-password-from-login-response.interface';
+import { UpdatePasswordFromLoginRawService } from 'src/raw/database/stored-procedures/update-password-from-login/update-password-from-login-raw.service';
+import { UpdatePasswordFromLoginRequestDto } from 'src/raw/database/stored-procedures/update-password-from-login/update-password-from-login-request.dto';
+import { UpdatePasswordFromLoginStatusConstants } from 'src/raw/database/stored-procedures/update-password-from-login/update-password-from-login-status.constants';
+import { UpdatePasswordFromLoginThereIsNoDataException } from 'src/raw/database/stored-procedures/update-password-from-login/update-password-from-login-there-is-no-data.exception';
+import { UpdatePasswordFromLoginException } from 'src/raw/database/stored-procedures/update-password-from-login/update-password-from-login.exception';
 
 @Injectable()
 export class UpdatePasswordFromLoginService extends AbaRegisterExecuteService<

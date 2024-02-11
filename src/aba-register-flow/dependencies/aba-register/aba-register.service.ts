@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ABARegisterException } from 'src/raw/stored-procedures/aba-register/aba-register.exception';
+import { ABARegisterException } from 'src/raw/database/stored-procedures/aba-register/aba-register.exception';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { AbaRegisterRawService } from 'src/raw/stored-procedures/aba-register/aba-register-raw.service';
-import { AbaRegisterRequestDto } from 'src/raw/stored-procedures/aba-register/aba-register-request.dto';
-import { AbaRegisterStatusConstants } from 'src/raw/stored-procedures/aba-register/aba-register-status.constants';
+import { AbaRegisterRawService } from 'src/raw/database/stored-procedures/aba-register/aba-register-raw.service';
+import { AbaRegisterRequestDto } from 'src/raw/database/stored-procedures/aba-register/aba-register-request.dto';
+import { AbaRegisterStatusConstants } from 'src/raw/database/stored-procedures/aba-register/aba-register-status.constants';
 import { Error10023Exception } from 'src/exceptions/error-1002-3.exception';
-import { IAbaRegisterResponse } from 'src/raw/stored-procedures/aba-register/aba-register-response.interface';
+import { IAbaRegisterResponse } from 'src/raw/database/stored-procedures/aba-register/aba-register-response.interface';
 import { BossConstants } from 'src/boss/boss.constants';
 
 @Injectable()

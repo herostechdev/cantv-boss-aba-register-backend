@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
 import { Error2002Exception } from 'src/exceptions/error-2002.exception';
-import { GetOrderIdFromABASalesException } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales.exception';
-import { GetOrderIdFromABASalesRawService } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
-import { GetOrderIdFromABASalesRequestDto } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
-import { GetOrderIdFromABASalesStatusConstants } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-status.constants';
-import { IGetOrderIdFromABASalesResponse } from 'src/raw/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
 import { BossConstants } from 'src/boss/boss.constants';
+import { GetOrderIdFromABASalesRawService } from 'src/raw/database/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-raw.service';
+import { GetOrderIdFromABASalesRequestDto } from 'src/raw/database/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-request.dto';
+import { GetOrderIdFromABASalesStatusConstants } from 'src/raw/database/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-status.constants';
+import { GetOrderIdFromABASalesException } from 'src/raw/database/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales.exception';
+import { IGetOrderIdFromABASalesResponse } from 'src/raw/database/stored-procedures/get-order-id-from-aba-sales/get-order-id-from-aba-sales-response.interface';
 
 @Injectable()
 export class AbaRegisterGetOrderIdFromAbaSalesService extends AbaRegisterExecuteService<

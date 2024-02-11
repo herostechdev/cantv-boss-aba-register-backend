@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { GetPortIdFromIpBadIpFormatException } from 'src/raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
-import { GetPortIdFromIpExecutionException } from 'src/raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-execution.exception';
-import { GetPortIdFromIpRawService } from 'src/raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-raw.service';
-import { GetPortIdFromIpRequestDto } from 'src/raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-request.dto';
-import { IGetPortIdFromIpResponse } from 'src/raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-response.interface';
-import { GetPortIdFromIpStatusConstants } from 'src/raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-status.constants';
+import { GetPortIdFromIpBadIpFormatException } from 'src/raw/database/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-bad-ip-format.exception';
+import { GetPortIdFromIpExecutionException } from 'src/raw/database/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-execution.exception';
+import { GetPortIdFromIpRawService } from 'src/raw/database/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-raw.service';
+import { GetPortIdFromIpRequestDto } from 'src/raw/database/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-request.dto';
+import { GetPortIdFromIpStatusConstants } from 'src/raw/database/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-status.constants';
+import { IGetPortIdFromIpResponse } from 'src/raw/database/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-response.interface';
 
 @Injectable()
 export class AbaRegisterGetPortIdFromIpService extends AbaRegisterExecuteService<

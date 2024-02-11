@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { GetABADataFromRequestsException } from 'src/raw/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests.exception';
-import { GetAbaDataFromRequestsRawService } from 'src/raw/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
-import { GetAbaDataFromRequestsRequestDto } from 'src/raw/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-request.dto';
-import { GetAbaDataFromRequestsStatusConstants } from 'src/raw/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-status.constants';
-import { IGetAbaDataFromRequestsResponse } from 'src/raw/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-response.interface';
+import { GetAbaDataFromRequestsRawService } from 'src/raw/database/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-raw.service';
+import { GetAbaDataFromRequestsRequestDto } from 'src/raw/database/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-request.dto';
+import { GetAbaDataFromRequestsStatusConstants } from 'src/raw/database/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-status.constants';
+import { GetABADataFromRequestsException } from 'src/raw/database/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests.exception';
+import { IGetAbaDataFromRequestsResponse } from 'src/raw/database/stored-procedures/get-aba-data-from-requests/get-aba-data-from-requests-response.interface';
 
 @Injectable()
 export class AbaRegisterGetAbaDataFromRequestsService extends AbaRegisterExecuteService<

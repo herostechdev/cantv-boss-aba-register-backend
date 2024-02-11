@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
-import { IPlansByCustomerClassListResponse } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class-list-response.interface';
-import { PlansByCustomerClassException } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class.exception';
-import { PlansByCustomerClassRawService } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class-raw.service';
-import { PlansByCustomerClassRequestDto } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class-request.dto';
-import { PlansByCustomerClassStatusConstants } from 'src/raw/stored-procedures/plans-by-customer-class/plans-by-customer-class-status.constants';
+import { IPlansByCustomerClassListResponse } from 'src/raw/database/stored-procedures/plans-by-customer-class/plans-by-customer-class-list-response.interface';
+import { PlansByCustomerClassRawService } from 'src/raw/database/stored-procedures/plans-by-customer-class/plans-by-customer-class-raw.service';
+import { PlansByCustomerClassRequestDto } from 'src/raw/database/stored-procedures/plans-by-customer-class/plans-by-customer-class-request.dto';
+import { PlansByCustomerClassStatusConstants } from 'src/raw/database/stored-procedures/plans-by-customer-class/plans-by-customer-class-status.constants';
+import { PlansByCustomerClassException } from 'src/raw/database/stored-procedures/plans-by-customer-class/plans-by-customer-class.exception';
 
 @Injectable()
 export class AbaRegisterPlansByCustomerClassService extends AbaRegisterExecuteService<

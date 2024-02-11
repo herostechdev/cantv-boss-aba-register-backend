@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { AbaRegisterExecuteService } from 'src/aba-register-flow/aba-register-execute.service';
 import { BossConstants } from 'src/boss/boss.constants';
 import { Error30092Exception } from 'src/exceptions/error-3009-2.exception';
-import { GetPortIdException } from 'src/raw/stored-procedures/get-port-id/get-port-id.exception';
-import { GetPortIdRawService } from 'src/raw/stored-procedures/get-port-id/get-port-id-raw.service';
-import { GetPortIdRequestDto } from 'src/raw/stored-procedures/get-port-id/get-port-id-request.dto';
-import { GetPortIdStatusConstants } from 'src/raw/stored-procedures/get-port-id/get-port-id-status.constants';
-import { IGetPortIdResponse } from 'src/raw/stored-procedures/get-port-id/get-port-id-response.interface';
+import { GetPortIdRawService } from 'src/raw/database/stored-procedures/get-port-id/get-port-id-raw.service';
+import { GetPortIdRequestDto } from 'src/raw/database/stored-procedures/get-port-id/get-port-id-request.dto';
+import { GetPortIdStatusConstants } from 'src/raw/database/stored-procedures/get-port-id/get-port-id-status.constants';
+import { GetPortIdException } from 'src/raw/database/stored-procedures/get-port-id/get-port-id.exception';
+import { IGetPortIdResponse } from 'src/raw/database/stored-procedures/get-port-id/get-port-id-response.interface';
 
 @Injectable()
 export class AbaRegisterGetPortIdService extends AbaRegisterExecuteService<

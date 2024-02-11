@@ -11,7 +11,7 @@ import { IntegrationsConfigurationService } from 'src/system/configuration/pic/i
 import { PICConstants } from 'src/boss/pic.constants';
 import { SoapRequestService } from 'src/soap/requests/soap-request.service';
 import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
-import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/database/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
 export class CustomerByPhoneNumberService extends SoapRequestService<ICustomerByPhoneNumberResponse> {

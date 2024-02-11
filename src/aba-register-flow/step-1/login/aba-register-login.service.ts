@@ -9,7 +9,7 @@ import { HashService } from 'src/system/infrastructure/security/encryption/hash.
 import { IAbaRegisterLoginResponse } from './aba-register-login-response.interface';
 import { InvalidPasswordException } from 'src/exceptions/invalid-password.exception';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/database/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
 export class AbaRegisterLoginService extends BossFlowService<

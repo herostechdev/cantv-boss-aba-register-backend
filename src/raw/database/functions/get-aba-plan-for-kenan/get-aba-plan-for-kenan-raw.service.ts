@@ -5,7 +5,7 @@ import { IGetAbaPlanForKenanResponse } from './get-aba-plan-for-kenan-response.i
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { OracleExecuteFunctionRawService } from 'src/oracle/oracle-execute-function-raw.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { UpdateDslAbaRegistersRawService } from '../../stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
 export class GetAbaPlanForKenanRawService extends OracleExecuteFunctionRawService<

@@ -14,12 +14,12 @@ import { BossFlowService } from 'src/boss-flows/boss-flow.service';
 import { IAbaRegisterConfirmRegistrationResponse } from './aba-register-confirm-registration-response.interface';
 import { BossConstants } from 'src/boss/boss.constants';
 import { BossHelper } from 'src/boss/boss.helper';
-import { CreateAndProvisioningCustomerStatusConstants } from '../../../raw/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
-import { CreateAndProvisioningMasterAccountStatusConstants } from '../../../raw/stored-procedures/create-and-provisioning-master-account/create-and-provisioning-master-account-status.constants';
-import { CustomerExistsStatusConstants } from 'src/raw/stored-procedures/customer-exists/customer-exists-status.constants';
+import { CreateAndProvisioningCustomerStatusConstants } from 'src/raw/database/stored-procedures/create-and-provisioning-customer/create-and-provisioning-customer-status.constants';
+import { CreateAndProvisioningMasterAccountStatusConstants } from 'src/raw/database/stored-procedures/create-and-provisioning-master-account/create-and-provisioning-master-account-status.constants';
+import { CustomerExistsStatusConstants } from 'src/raw/database/stored-procedures/customer-exists/customer-exists-status.constants';
 import { Error10041Exception } from 'src/exceptions/error-1004-1.exception';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
+import { UpdateDslAbaRegistersRawService } from 'src/raw/database/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 
 @Injectable()
 export class AbaRegisterConfirmRegistrationService extends BossFlowService<
