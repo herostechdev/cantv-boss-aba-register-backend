@@ -23,10 +23,7 @@ export abstract class OracleExecuteStoredProcedureRawService<DTO, RESPONSE>
     dbConnection?: Connection,
     autoCommit = false,
   ): Promise<RESPONSE> {
-    this.logger.log('OracleExecuteStoredProcedureRawService');
-    this.logger.log('    > get databasete connection');
     const connection = await super.connect(dbConnection);
-    this.logger.log('    > databasete connection acquired');
     try {
       const result = await this.executeStoredProcedure(
         connection,
