@@ -22,7 +22,6 @@ export class IsReservedLoginRawService extends OracleExecuteStoredProcedureRawSe
       BossConstants.ACT_PACKAGE,
       BossConstants.IS_RESERVED_LOGIN,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

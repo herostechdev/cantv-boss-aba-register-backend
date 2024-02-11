@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { v4 } from 'uuid';
 import { CustomForbiddenException } from '../exceptions/custom-exceptions/custom-forbidden-exception';
 import { EntityDuplicatedException } from 'src/system/infrastructure/exceptions/entity-duplicated.exception';

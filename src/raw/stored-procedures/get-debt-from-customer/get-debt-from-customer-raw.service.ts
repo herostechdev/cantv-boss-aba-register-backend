@@ -22,7 +22,6 @@ export class GetDebtFromCustomerRawService extends OracleExecuteStoredProcedureR
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_DEBT_FROM_CUSTOMER,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

@@ -22,7 +22,6 @@ export class PayAbaInstallationRawService extends OracleExecuteStoredProcedureRa
       BossConstants.ACT_PACKAGE,
       BossConstants.PAY_ABA_INSTALLATION,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

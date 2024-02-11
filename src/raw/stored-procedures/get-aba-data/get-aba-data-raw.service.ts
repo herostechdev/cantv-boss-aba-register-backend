@@ -22,7 +22,6 @@ export class GetAbaDataRawService extends OracleExecuteStoredProcedureRawService
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_ABA_DATA,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

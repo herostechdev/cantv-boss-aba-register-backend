@@ -23,7 +23,6 @@ export class GetDownstreamFromPlanRawService extends OracleExecuteStoredProcedur
       null,
       BossConstants.GET_DOWNSTREAM_FROM_PLAN,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

@@ -22,7 +22,6 @@ export class CheckIpRawService extends OracleExecuteStoredProcedureRawService<
       BossConstants.BOSS_PACKAGE,
       BossConstants.CHECK_IP,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

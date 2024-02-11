@@ -22,7 +22,6 @@ export class GetCustomerInstanceIdFromIdValueRawService extends OracleExecuteSto
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_CUSTOMER_INSTANCE_ID_FROM_ID_VALUE,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

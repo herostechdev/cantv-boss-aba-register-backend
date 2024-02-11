@@ -21,7 +21,6 @@ export class DeleteOrderRawService extends OracleExecuteStoredProcedureRawServic
       BossConstants.BOSS_PACKAGE,
       BossConstants.DELETE_ORDER,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

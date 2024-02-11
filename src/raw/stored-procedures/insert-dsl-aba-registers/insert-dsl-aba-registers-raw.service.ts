@@ -7,50 +7,25 @@ import { InsertDslAbaRegisterException } from './insert-dsl-aba-register.excepti
 import { InsertDslAbaRegisterStatusConstants } from './insert-dsl-aba-register-status.constants';
 import { InsertDslAbaRegistersRequestDto } from './insert-dsl-aba-registers-request.dto';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
-import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle-database.service';
+import { OracleExecuteStoredProcedureRawService } from 'src/oracle/oracle-execute-stored-procedure-raw.service';
 import { OracleHelper } from 'src/oracle/oracle.helper';
-import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
 
 @Injectable()
-export class InsertDslAbaRegistersRawService extends OracleDatabaseService {
+export class InsertDslAbaRegistersRawService extends OracleExecuteStoredProcedureRawService<
+  InsertDslAbaRegistersRequestDto,
+  IInsertDslAbaRegistersResponse
+> {
   constructor(
     protected readonly oracleConfigurationService: OracleConfigurationService,
   ) {
-    super(oracleConfigurationService);
+    super(
+      BossConstants.ABA_PACKAGE,
+      BossConstants.INSERT_DSL_ABA_REGISTERS,
+      oracleConfigurationService,
+    );
   }
 
-  async execute(
-    dto: InsertDslAbaRegistersRequestDto,
-    dbConnection?: Connection,
-  ): Promise<IInsertDslAbaRegistersResponse> {
-    const connection = await super.connect(dbConnection);
-    try {
-      const result = await super.executeStoredProcedure(
-        connection,
-        BossConstants.ABA_PACKAGE,
-        BossConstants.INSERT_DSL_ABA_REGISTERS,
-        this.getParameters(dto),
-      );
-      const response = this.getResponse(result);
-      switch (response.status) {
-        case InsertDslAbaRegisterStatusConstants.SUCCESSFULL:
-          return response;
-        case InsertDslAbaRegisterStatusConstants.ERROR:
-          throw new InsertDslAbaRegisterException();
-        default:
-          throw new InsertDslAbaRegisterException();
-      }
-    } catch (error) {
-      super.exceptionHandler(error, `${JSON.stringify(dto)}`);
-    } finally {
-      await this.closeConnection(
-        connection,
-        !ValidationHelper.isDefined(dbConnection),
-      );
-    }
-  }
-
-  private getParameters(dto: InsertDslAbaRegistersRequestDto): any {
+  protected getParameters(dto: InsertDslAbaRegistersRequestDto): any {
     const registerDate = DateTime.fromFormat(
       dto.registerDate,
       BossConstants.DEFAULT_DATE_FORMAT,
@@ -66,7 +41,7 @@ export class InsertDslAbaRegistersRawService extends OracleDatabaseService {
     };
   }
 
-  private getResponse(result: any): IInsertDslAbaRegistersResponse {
+  protected getResponse(result: any): IInsertDslAbaRegistersResponse {
     const response = {
       status: (result?.outBinds?.status ??
         InsertDslAbaRegisterStatusConstants.ERROR) as InsertDslAbaRegisterStatusConstants,
@@ -83,9 +58,10 @@ export class InsertDslAbaRegistersRawService extends OracleDatabaseService {
 
   async errorInsert(
     dto: InsertDslAbaRegistersRequestDto,
+    dbConnection?: Connection,
   ): Promise<IInsertDslAbaRegistersResponse> {
     try {
-      return await this.execute(dto);
+      return await this.execute(dto, dbConnection);
     } catch (error) {}
   }
 }

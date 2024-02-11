@@ -22,7 +22,6 @@ export class UpdatePasswordFromLoginRawService extends OracleExecuteStoredProced
       BossConstants.ACT_PACKAGE,
       BossConstants.UPDATE_PASSWORD_FROM_LOGIN,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

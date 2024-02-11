@@ -22,7 +22,6 @@ export class GetCustomerClassNameFromIdValueRawService extends OracleExecuteStor
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_CUSTOMER_CLASS_NAME_FROM_ID_VALUE,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

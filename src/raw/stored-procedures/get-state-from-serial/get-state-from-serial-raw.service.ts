@@ -22,7 +22,6 @@ export class GetStateFromSerialRawService extends OracleExecuteStoredProcedureRa
       BossConstants.BOSS_PACKAGE,
       BossConstants.GET_STATE_FROM_SERIAL,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

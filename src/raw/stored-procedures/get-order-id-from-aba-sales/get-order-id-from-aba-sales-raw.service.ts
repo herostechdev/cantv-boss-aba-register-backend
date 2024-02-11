@@ -21,7 +21,6 @@ export class GetOrderIdFromABASalesRawService extends OracleExecuteStoredProcedu
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_ORDER_ID_FROM_ABA_SALES,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

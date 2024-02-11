@@ -22,7 +22,6 @@ export class GetPortIdFromIpRawService extends OracleExecuteStoredProcedureRawSe
       BossConstants.BOSS_PACKAGE,
       BossConstants.GET_PORT_ID_FROM_IP,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

@@ -21,7 +21,6 @@ export class GetPortIdRawService extends OracleExecuteStoredProcedureRawService<
       BossConstants.BOSS_PACKAGE,
       BossConstants.GET_PORT_ID,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

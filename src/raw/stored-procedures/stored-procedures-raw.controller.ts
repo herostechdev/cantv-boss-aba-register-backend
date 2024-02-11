@@ -467,7 +467,7 @@ export class StoredProceduresRawController {
   readIABAOrder(
     @Body() dto: ReadIABAOrderRequestDto,
   ): Promise<IReadIABAOrderResponse> {
-    return this.readIABAOrderRawService.execute(dto, null, true);
+    return this.readIABAOrderRawService.execute(dto);
   }
 
   @Post('updateDslAbaRegisters')
@@ -476,6 +476,9 @@ export class StoredProceduresRawController {
   updateDslAbaRegisters(
     @Body() dto: UpdateDslAbaRegistersRequestDto,
   ): Promise<IUpdateDslAbaRegistersResponse> {
+    console.log();
+    console.log('updateDslAbaRegisters controller method');
+    // updateDslAbaRegisters
     return this.updateDslAbaRegistersRawService.execute(dto);
   }
 

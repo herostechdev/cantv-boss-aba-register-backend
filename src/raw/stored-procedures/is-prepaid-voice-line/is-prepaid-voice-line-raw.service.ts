@@ -22,7 +22,6 @@ export class IsPrepaidVoiceLineRawService extends OracleExecuteStoredProcedureRa
       BossConstants.ACT_PACKAGE,
       BossConstants.IS_PREPAID,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

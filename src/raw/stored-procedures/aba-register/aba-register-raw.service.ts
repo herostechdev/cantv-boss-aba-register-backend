@@ -22,7 +22,6 @@ export class AbaRegisterRawService extends OracleExecuteStoredProcedureRawServic
       BossConstants.ACT_PACKAGE,
       BossConstants.ABA_REGISTER,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

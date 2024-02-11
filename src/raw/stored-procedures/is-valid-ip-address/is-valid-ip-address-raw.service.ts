@@ -22,7 +22,6 @@ export class IsValidIpAddressRawService extends OracleExecuteStoredProcedureRawS
       BossConstants.BOSS_PACKAGE,
       BossConstants.IS_VALID_IP_ADDRESS,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

@@ -22,7 +22,6 @@ export class CreateAndProvisioningMasterAccountRawService extends OracleExecuteS
       BossConstants.SIGS_PACKAGE,
       BossConstants.CREATE_AND_PROVISIONING_MASTER_ACCOUNT,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

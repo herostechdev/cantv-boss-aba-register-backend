@@ -21,7 +21,6 @@ export class CustomerExistsRawService extends OracleExecuteStoredProcedureRawSer
       BossConstants.ACT_PACKAGE,
       BossConstants.CUSTOMER_EXISTS,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

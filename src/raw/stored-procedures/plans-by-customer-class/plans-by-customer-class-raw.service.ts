@@ -23,7 +23,6 @@ export class PlansByCustomerClassRawService extends OracleExecuteStoredProcedure
       BossConstants.BOSS_PACKAGE,
       BossConstants.PLAN_BY_CUSTOMER_CLASS,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 
@@ -54,7 +53,7 @@ export class PlansByCustomerClassRawService extends OracleExecuteStoredProcedure
   }
 
   protected getResponse(result: any): IPlansByCustomerClassListResponse {
-    const rawResponse = {
+    const response = {
       plan: OracleHelper.getItems(result, 'O_PLAN'),
       planDesired: OracleHelper.getItems(result, 'O_PLANDESIRED'),
       shortName: OracleHelper.getItems(result, 'O_SHORTNAME'),
@@ -65,7 +64,7 @@ export class PlansByCustomerClassRawService extends OracleExecuteStoredProcedure
       status: (OracleHelper.getFirstItem(result, 'O_STATUS') ??
         PlansByCustomerClassStatusConstants.ERROR) as PlansByCustomerClassStatusConstants,
     };
-    return this.rawToListResponse(rawResponse);
+    return this.rawToListResponse(response);
     // switch (response.status) {
     //   case PlanByCustomerClassStatusConstants.SUCCESSFULL:
     //     return response;

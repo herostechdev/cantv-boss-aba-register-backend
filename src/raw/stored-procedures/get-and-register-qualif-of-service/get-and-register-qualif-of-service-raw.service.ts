@@ -21,7 +21,6 @@ export class GetAndRegisterQualifOfServiceRawService extends OracleExecuteStored
       null,
       BossConstants.GET_AND_REGISTER_QUALIF_OF_SERVICE,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

@@ -22,7 +22,6 @@ export class CreateAndProvisioningCustomerRawService extends OracleExecuteStored
       BossConstants.SIGS_PACKAGE,
       BossConstants.CREATE_AND_PROVISIONING_CUSTOMER,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

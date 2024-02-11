@@ -20,7 +20,6 @@ export class GetDSLCentralCoIdByDSLAMPortIdRawService extends OracleExecuteFunct
       null,
       BossConstants.GET_DSL_CENTRAL_CO_ID_BY_DSLAM_PORT_ID,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

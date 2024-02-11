@@ -18,12 +18,7 @@ export class ReverseAbaRegisterRawService extends OracleExecuteStoredProcedureRa
     protected readonly oracleConfigurationService: OracleConfigurationService,
     protected readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
-    super(
-      null,
-      BossConstants.REVERSE_ABA_REGISTER,
-      oracleConfigurationService,
-      updateDslAbaRegistersService,
-    );
+    super(null, BossConstants.REVERSE_ABA_REGISTER, oracleConfigurationService);
   }
 
   protected getParameters(dto: ReverseAbaRegisterRequestDto): any {

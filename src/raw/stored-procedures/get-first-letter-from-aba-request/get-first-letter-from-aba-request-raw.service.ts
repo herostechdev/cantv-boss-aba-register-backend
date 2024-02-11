@@ -22,7 +22,6 @@ export class GetFirstLetterFromABARequestRawService extends OracleExecuteStoredP
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_FIRST_LETTER_FROM_ABA_REQUEST,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

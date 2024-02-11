@@ -20,7 +20,6 @@ export class ISGActionAllowedRawService extends OracleExecuteStoredProcedureRawS
       BossConstants.SIGS_PACKAGE,
       BossConstants.ISG_ACTION_ALLOWED,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

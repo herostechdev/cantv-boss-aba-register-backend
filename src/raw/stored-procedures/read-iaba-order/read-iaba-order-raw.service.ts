@@ -22,7 +22,6 @@ export class ReadIABAOrderRawService extends OracleExecuteStoredProcedureRawServ
       BossConstants.UTL_PACKAGE,
       BossConstants.READ_IABA_ORDER,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

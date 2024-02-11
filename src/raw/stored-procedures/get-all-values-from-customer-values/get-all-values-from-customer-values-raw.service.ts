@@ -22,7 +22,6 @@ export class GetAllValuesFromCustomerValuesRawService extends OracleExecuteStore
       BossConstants.SIGS_PACKAGE,
       BossConstants.GET_ALL_VALUES_FROM_CUSTOMER_VALUES,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

@@ -22,7 +22,6 @@ export class IsOccupiedPortRawService extends OracleExecuteStoredProcedureRawSer
       BossConstants.ACT_PACKAGE,
       BossConstants.IS_OCCUPIED_PORT,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

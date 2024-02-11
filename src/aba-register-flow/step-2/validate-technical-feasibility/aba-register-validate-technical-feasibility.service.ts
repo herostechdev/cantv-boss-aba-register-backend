@@ -535,18 +535,21 @@ export class AbaRegisterValidateTechnicalFeasibilityService extends BossFlowServ
     await this.getPortId(dbConnection);
     if (ValidationHelper.isDefined(data.getPortIdResponse)) {
       this.wlog.info('call dslAuditLogs');
-      await this.dslAuditLogsService.execute({
-        areaCode: data.requestDto.areaCode,
-        phoneNumber: data.requestDto.phoneNumber,
-        orderId: data.requestDto.orderId,
-        ipAddress: data.requestDto.ipAddress,
-        activationLogin: null,
-        webPage: null,
-        code: null,
-        description: 'Se obtuvo exitosamente el ID del Puerto',
-        comments: null,
-        planName: null,
-      });
+      await this.dslAuditLogsService.execute(
+        {
+          areaCode: data.requestDto.areaCode,
+          phoneNumber: data.requestDto.phoneNumber,
+          orderId: data.requestDto.orderId,
+          ipAddress: data.requestDto.ipAddress,
+          activationLogin: null,
+          webPage: null,
+          code: null,
+          description: 'Se obtuvo exitosamente el ID del Puerto',
+          comments: null,
+          planName: null,
+        },
+        dbConnection,
+      );
       if (
         data.isValidIpAddressResponse.status ===
         IsValidIpAddressStatusConstants.POOL_RBE_LEASE

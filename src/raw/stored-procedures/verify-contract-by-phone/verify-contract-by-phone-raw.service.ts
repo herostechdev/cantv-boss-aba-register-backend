@@ -21,7 +21,6 @@ export class VerifyContractByPhoneRawService extends OracleExecuteStoredProcedur
       BossConstants.BOSS_PACKAGE,
       BossConstants.VERIFY_CONTRACT_BY_PHONE,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

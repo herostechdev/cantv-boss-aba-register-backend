@@ -21,7 +21,6 @@ export class GetDSLAreaCodesRawService extends OracleExecuteStoredProcedureRawSe
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_DSL_AREA_CODES,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

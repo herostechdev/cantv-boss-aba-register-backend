@@ -20,7 +20,6 @@ export class GetValidVPIRawService extends OracleExecuteFunctionRawService<
       BossConstants.UTL_PACKAGE,
       BossConstants.GET_VALID_VPI,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

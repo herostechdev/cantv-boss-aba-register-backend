@@ -22,7 +22,6 @@ export class GetGroupAccessFromLoginRawService extends OracleExecuteStoredProced
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

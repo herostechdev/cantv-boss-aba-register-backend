@@ -21,7 +21,6 @@ export class GetCSIdAndPlanNameFromLoginRawService extends OracleExecuteStoredPr
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_CSID_AND_PLAN_NAME_FROM_LOGIN,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

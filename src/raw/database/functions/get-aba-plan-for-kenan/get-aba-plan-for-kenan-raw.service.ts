@@ -20,7 +20,6 @@ export class GetAbaPlanForKenanRawService extends OracleExecuteFunctionRawServic
       null,
       BossConstants.GET_ABA_PLAN_FOR_KENAN,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

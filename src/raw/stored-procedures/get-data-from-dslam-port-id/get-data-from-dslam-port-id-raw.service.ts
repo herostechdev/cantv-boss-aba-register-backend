@@ -21,7 +21,6 @@ export class GetDataFromDSLAMPortIdRequestRawService extends OracleExecuteStored
       BossConstants.BOSS_PACKAGE,
       BossConstants.GET_DATA_FROM_DSLAM_PORT_ID,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

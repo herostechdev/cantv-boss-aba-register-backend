@@ -22,7 +22,6 @@ export class DSLAuditLogsRawService extends OracleExecuteStoredProcedureRawServi
       BossConstants.UTL_PACKAGE,
       BossConstants.INSERT_DSL_AUDIT_LOGS,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 

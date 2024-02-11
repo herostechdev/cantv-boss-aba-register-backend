@@ -21,7 +21,6 @@ export class IsIPAllowedRawService extends OracleExecuteStoredProcedureRawServic
       BossConstants.BOSS_PACKAGE,
       BossConstants.GET_IF_REMOTE_INSTALLER_IP,
       oracleConfigurationService,
-      updateDslAbaRegistersService,
     );
   }
 
