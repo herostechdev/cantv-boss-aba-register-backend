@@ -24,8 +24,6 @@ export class AbaRegisterLoginService extends BossFlowService<
     protected readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService, updateDslAbaRegistersRawService);
-    // super.className = AbaRegisterLoginService.name;
-    // super.methodName = BossConstants.EXECUTE_METHOD;
     this.wlog.className = AbaRegisterLoginService.name;
     this.wlog.methodName = BossConstants.EXECUTE_METHOD;
   }

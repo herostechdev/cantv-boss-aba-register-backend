@@ -18,14 +18,11 @@ export class GetGroupAccessFromLoginRawService extends OracleExecuteStoredProced
     protected readonly updateDslAbaRegistersService: UpdateDslAbaRegistersRawService,
   ) {
     super(
-      // BossConstants.SIGS_PACKAGE,
       BossConstants.ACT_PACKAGE,
       BossConstants.GET_GROUP_ACCESS_FROM_LOGIN,
       oracleConfigurationService,
     );
   }
-
-  // Cantv2024
 
   getParameters(dto: GetGroupAccessFromLoginRequestDto): any {
     return {
