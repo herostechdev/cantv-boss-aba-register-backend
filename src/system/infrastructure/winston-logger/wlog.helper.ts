@@ -5,11 +5,11 @@ import { IAbaRegisterWinstonLogInputData } from './aba-register-winston-log-inpu
 import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
 import { Wlog } from './winston-logger.service';
 
-export class WlogHelper {
+export class WLogHelper {
   constructor(
-    private _dto?: IPhoneNumber,
     private _className?: string,
     private _methodName?: string,
+    private _dto?: IPhoneNumber,
   ) {}
 
   set dto(value: IPhoneNumber) {

@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
-import * as https from 'https';
 import { xml2js } from 'xml-js';
 import { BossConstants } from 'src/boss/boss.constants';
-import { BossHelper } from 'src/boss/boss.helper';
 import { GetASAPOrderDetailInvalidQueryRequestException } from './get-asap-order-detail-invalid-request.exception';
 import { GetASAPOrderDetailPayloadService } from './get-asap-order-detail-payload.service';
 import { GetASAPOrderDetailRequestDto } from './get-asap-order-detail-request.dto';
+import { HttpHelper } from 'src/system/infrastructure/http/http-helper';
 import { IGetASAPOrderDetailRequest } from './get-asap-order-detail-request.interface';
 import { IGetASAPOrderDetailResponse } from './get-asap-order-detail-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
@@ -14,9 +12,7 @@ import { PICConstants } from 'src/boss/pic.constants';
 import { SoapRequestService } from 'src/soap/requests/soap-request.service';
 import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 import { ValidationHelper } from 'src/system/infrastructure/helpers/validation.helper';
-import { HttpHelper } from 'src/system/infrastructure/http/http-helper';
 
 @Injectable()
 export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderDetailResponse> {
@@ -31,46 +27,19 @@ export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderD
   async execute(
     dto: GetASAPOrderDetailRequestDto,
   ): Promise<IGetASAPOrderDetailResponse> {
+    this.wlog.className = GetASAPOrderDetailService.name;
+    this.wlog.methodName = BossConstants.EXECUTE_METHOD;
+    this.wlog.dto = dto;
     try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.START,
-        input: dto.orderId,
-        clazz: GetASAPOrderDetailService.name,
-        method: 'getASAPOrderDetail',
-      });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Validar parámetros de entrada',
-        input: dto.orderId,
-        clazz: GetASAPOrderDetailService.name,
-        method: 'getASAPOrderDetail',
-      });
+      this.wlog.info(BossConstants.START);
+      this.wlog.info('Validando parámetros de entrada');
       this.validateInput(dto);
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Obteniendo información de la orden',
-        input: dto.orderId,
-        clazz: GetASAPOrderDetailService.name,
-        method: 'getASAPOrderDetail',
-      });
+      this.wlog.info('Obteniendo información de la orden');
       const response = await this.invoke(dto);
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.END,
-        input: dto.orderId,
-        clazz: GetASAPOrderDetailService.name,
-        method: 'getASAPOrderDetail',
-      });
+      this.wlog.info(BossConstants.END);
       return response;
     } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: dto.orderId,
-        clazz: GetASAPOrderDetailService.name,
-        method: 'getASAPOrderDetail',
-        error: error,
-      });
+      this.wlog.error(error);
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),
         phoneNumber: String(dto.phoneNumber),
@@ -91,13 +60,7 @@ export class GetASAPOrderDetailService extends SoapRequestService<IGetASAPOrderD
     const bodyPayload: IGetASAPOrderDetailRequest = {
       orderId: dto.orderId,
     };
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: `Url ${this.picConfigurationService.getASAPOrderDetailUrl}`,
-      input: JSON.stringify(dto),
-      clazz: GetASAPOrderDetailService.name,
-      method: 'getASAPOrderDetail',
-    });
+    this.wlog.info(`Url ${this.picConfigurationService.getASAPOrderDetailUrl}`);
 
     console.log();
     console.log('============================================================');

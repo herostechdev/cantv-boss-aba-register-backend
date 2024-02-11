@@ -11,19 +11,12 @@ import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 import { ApplicationConfigurationService } from './system/configuration/application/application-configuration.service';
-import { BossHelper } from './boss/boss.helper';
 import { OracleConfigurationService } from './system/configuration/oracle/oracle-configuration.service';
 import { OracleConstants } from './oracle/oracle.constants';
-import { Wlog } from './system/infrastructure/winston-logger/winston-logger.service';
+import { WLogHelper } from './system/infrastructure/winston-logger/wlog.helper';
 
-const initializePipes = (app: INestApplication) => {
-  Wlog.instance.info({
-    phoneNumber: null,
-    message: 'Inicializando pipes',
-    input: null,
-    clazz: BossHelper.applicationName,
-    method: 'initializePipes',
-  });
+const initializePipes = (app: INestApplication, wlog: WLogHelper) => {
+  wlog.info('Inicializando pipes');
   app.useGlobalPipes(
     new ValidationPipe({
       forbidNonWhitelisted: false,
@@ -37,15 +30,10 @@ const initializePipes = (app: INestApplication) => {
 const initializeOracleDatabaseClient = async (
   app: INestApplication,
   logger: Logger,
+  wlog: WLogHelper,
 ) => {
   logger.log('Initializing oracle database client ...');
-  Wlog.instance.info({
-    phoneNumber: null,
-    message: 'Inicializando el cliente de base de datos Oracle',
-    input: null,
-    clazz: BossHelper.applicationName,
-    method: 'initializeOracleDatabaseClient',
-  });
+  wlog.info('Inicializando el cliente de base de datos Oracle');
   // Initialize Oracle Client
   const oracleConfigurationService: OracleConfigurationService = app.get(
     OracleConfigurationService,
@@ -53,25 +41,23 @@ const initializeOracleDatabaseClient = async (
   const clientOpts = { libDir: oracleConfigurationService.oracleHome };
   initOracleClient(clientOpts);
   logger.log('Oracle database client initialized');
+  wlog.info('Cliente de base de datos Oracle inicializado');
   // Initialize connection pool
   initializeOracleDatabasePoolConnections(
     app,
     logger,
+    wlog,
     oracleConfigurationService,
   );
-  Wlog.instance.info({
-    phoneNumber: null,
-    message:
-      'El cliente base de datos de Oracle ha sido inicializado correctamente',
-    input: null,
-    clazz: BossHelper.applicationName,
-    method: 'initializeOracleDatabaseClient',
-  });
+  wlog.info(
+    'El cliente base de datos de Oracle ha sido inicializado correctamente',
+  );
 };
 
 const initializeOracleDatabasePoolConnections = async (
   app: INestApplication,
   logger: Logger,
+  wlog: WLogHelper,
   oracleConfigurationService: OracleConfigurationService,
 ) => {
   logger.log(
@@ -97,14 +83,12 @@ const initializeOracleDatabasePoolConnections = async (
   logger.log('Oracle database connections pool initialized');
 };
 
-const startServer = async (app: INestApplication, logger: Logger) => {
-  Wlog.instance.info({
-    phoneNumber: null,
-    message: 'Iniciando el servidor',
-    input: null,
-    clazz: BossHelper.applicationName,
-    method: 'startServer',
-  });
+const startServer = async (
+  app: INestApplication,
+  logger: Logger,
+  wlog: WLogHelper,
+) => {
+  wlog.info('Iniciando el servidor');
   const applicationConfigurationService: ApplicationConfigurationService =
     app.get(ApplicationConfigurationService);
   logger.log(
@@ -125,11 +109,12 @@ const startServer = async (app: INestApplication, logger: Logger) => {
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Main');
-  await initializeOracleDatabaseClient(app, logger);
+  const wlog = new WLogHelper('Main', 'bootstrap');
+  await initializeOracleDatabaseClient(app, logger, wlog);
   logger.log('Initializing pipes');
-  initializePipes(app);
+  initializePipes(app, wlog);
   logger.log('Starting server');
-  await startServer(app, logger);
+  await startServer(app, logger, wlog);
 };
 
 bootstrap();

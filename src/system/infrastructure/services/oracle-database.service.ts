@@ -8,10 +8,10 @@ import {
 import { CommonService } from './common.service';
 import { CloseDatabaseConnectionException } from '../exceptions/close-database-connection.exception';
 import { GetDatabaseConnectionException } from '../exceptions/get-database-connection.exception';
+import { InfrastructureConstants } from '../infrastructure.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { ValidationHelper } from '../helpers/validation.helper';
 import { Wlog } from '../winston-logger/winston-logger.service';
-import { InfrastructureConstants } from '../infrastructure.constants';
 
 export abstract class OracleDatabaseService extends CommonService {
   constructor(

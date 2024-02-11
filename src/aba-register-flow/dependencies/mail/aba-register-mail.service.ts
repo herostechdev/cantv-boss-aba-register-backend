@@ -1,69 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { AbaRegisterMailDto } from './aba-register-mail.dto';
 import { BossConstants } from 'src/boss/boss.constants';
-import { BossHelper } from 'src/boss/boss.helper';
 import { IMailSendOptions } from 'src/system/infrastructure/mail/mail-send-options.interface';
 import { MailBodyType } from 'src/system/infrastructure/mail/mail-body-type.constants';
 import { MailService } from 'src/system/infrastructure/mail/mail.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { WLogHelper } from 'src/system/infrastructure/winston-logger/wlog.helper';
 
 @Injectable()
 export class AbaRegisterMailService {
   constructor(private readonly mailService: MailService) {}
 
+  private readonly wlog = new WLogHelper(AbaRegisterMailService.name);
+
   public async okNotification(dto: AbaRegisterMailDto): Promise<void> {
+    this.wlog.methodName = 'okNotification';
+    this.wlog.dto = dto;
     try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.ABA_SEND_OK_NOTIFICATION,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterMailService.name,
-        method: 'okNotification',
-      });
+      this.wlog.info(BossConstants.ABA_SEND_OK_NOTIFICATION);
       await this.mailService.send(this.getOkOptions());
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.ABA_SENT_OK_NOTIFICATION,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterMailService.name,
-        method: 'okNotification',
-      });
+      this.wlog.info(BossConstants.ABA_SENT_OK_NOTIFICATION);
     } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterMailService.name,
-        method: 'okNotification',
-        error: error,
-      });
+      this.wlog.error(error);
     }
   }
 
   public async notOkNotification(dto: AbaRegisterMailDto): Promise<void> {
+    this.wlog.methodName = 'notOkNotification';
+    this.wlog.dto = dto;
     try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.ABA_SEND_NOT_OK_NOTIFICATION,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterMailService.name,
-        method: 'notOkNotification',
-      });
+      this.wlog.info(BossConstants.ABA_SEND_NOT_OK_NOTIFICATION);
       await this.mailService.send(this.getNotOkOptions());
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.ABA_SENT_NOT_OK_NOTIFICATION,
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterMailService.name,
-        method: 'notOkNotification',
-      });
+      this.wlog.info(BossConstants.ABA_SENT_NOT_OK_NOTIFICATION);
     } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: JSON.stringify(dto),
-        clazz: AbaRegisterMailService.name,
-        method: 'notOkNotification',
-        error: error,
-      });
+      this.wlog.error(error);
     }
   }
 

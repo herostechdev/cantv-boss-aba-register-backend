@@ -5,7 +5,6 @@ import { Logger } from '@nestjs/common';
 
 export abstract class CommonService extends ExceptionsService {
   protected readonly logger = new Logger();
-
   protected getIds(id: number | string): number[] {
     if (typeof id === 'number') return [id];
     return id.split(',').map((id) => parseInt(id));

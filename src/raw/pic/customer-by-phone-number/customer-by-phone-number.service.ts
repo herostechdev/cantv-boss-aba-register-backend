@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { xml2js } from 'xml-js';
 import { BossConstants } from 'src/boss/boss.constants';
-import { BossHelper } from 'src/boss/boss.helper';
 import { CustomerByPhoneNumberInvalidQueryRequestException } from './customer-by-phone-number-invalid-request.exception';
 import { CustomerByPhoneNumberRequestPayloadService } from './customer-by-phone-number-request-payload.service';
 import { CustomerByPhoneNumberDto } from './customer-by-phone-number.dto';
@@ -13,7 +12,6 @@ import { PICConstants } from 'src/boss/pic.constants';
 import { SoapRequestService } from 'src/soap/requests/soap-request.service';
 import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class CustomerByPhoneNumberService extends SoapRequestService<ICustomerByPhoneNumberResponse> {
@@ -29,41 +27,19 @@ export class CustomerByPhoneNumberService extends SoapRequestService<ICustomerBy
   async execute(
     dto: CustomerByPhoneNumberDto,
   ): Promise<ICustomerByPhoneNumberResponse> {
+    this.wlog.className = CustomerByPhoneNumberService.name;
+    this.wlog.methodName = BossConstants.EXECUTE_METHOD;
+    this.wlog.dto = dto;
     try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Inicio ',
-        clazz: CustomerByPhoneNumberService.name,
-        method: 'get',
-      });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Validando parámetros',
-        clazz: CustomerByPhoneNumberService.name,
-        method: 'get',
-      });
+      this.wlog.info(BossConstants.START);
+      this.wlog.info('Validando parámetros');
       this.validateInput(dto);
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Consultando',
-        clazz: CustomerByPhoneNumberService.name,
-        method: 'get',
-      });
+      this.wlog.info('Consultando información de clientes');
       const response = await this.getCustomer(dto);
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.END,
-        clazz: CustomerByPhoneNumberService.name,
-        method: 'get',
-      });
+      this.wlog.info(BossConstants.END);
       return response;
     } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        clazz: CustomerByPhoneNumberService.name,
-        method: 'get',
-        error: error,
-      });
+      this.wlog.error(error);
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: dto.areaCode,
         phoneNumber: dto.phoneNumber,
@@ -94,13 +70,7 @@ export class CustomerByPhoneNumberService extends SoapRequestService<ICustomerBy
     dto: CustomerByPhoneNumberDto,
     bodyPayload: ICustomerByPhoneNumberRequestBody,
   ): Promise<ICustomerByPhoneNumberResponse> {
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: `Url: ${this.customerByPhoneNumberUrl}`,
-      input: JSON.stringify(bodyPayload),
-      clazz: CustomerByPhoneNumberService.name,
-      method: 'invoke',
-    });
+    this.wlog.info(`Url: ${this.customerByPhoneNumberUrl}`);
     const response =
       await this.httpService.axiosRef.post<ICustomerByPhoneNumberResponse>(
         this.customerByPhoneNumberUrl,

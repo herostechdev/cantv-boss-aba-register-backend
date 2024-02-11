@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'oracledb';
 import { BossConstants } from 'src/boss/boss.constants';
-import { BossHelper } from 'src/boss/boss.helper';
 import { IOracleExecute } from 'src/oracle/oracle-execute.interface';
 import { IPhoneNumber } from 'src/boss/dtos/phone-number.interface';
 import { OracleFinalExecuteService } from 'src/oracle/oracle-final-execute.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export abstract class AbaRegisterExecuteService<
@@ -25,43 +23,20 @@ export abstract class AbaRegisterExecuteService<
     dbConnection?: Connection,
     autoCommit = false,
   ): Promise<RESPONSE> {
+    this.wlog.dto = dto;
     try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.START,
-        input: JSON.stringify(dto),
-        clazz: this.className,
-        method: BossConstants.EXECUTE_METHOD,
-      });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: this.processMessage,
-        input: JSON.stringify(dto),
-        clazz: this.className,
-        method: BossConstants.EXECUTE_METHOD,
-      });
+      this.wlog.info(BossConstants.START);
+      this.wlog.info(this.processMessage);
       const response = await this.rawService.execute(
         dto,
         dbConnection,
         autoCommit,
       );
       this.processResponse(response);
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.END,
-        input: JSON.stringify(dto),
-        clazz: this.className,
-        method: BossConstants.EXECUTE_METHOD,
-      });
+      this.wlog.info(BossConstants.END);
       return response;
     } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: JSON.stringify(dto),
-        clazz: this.className,
-        method: BossConstants.EXECUTE_METHOD,
-        error: error,
-      });
+      this.wlog.error(error);
       super.exceptionHandler(error, JSON.stringify(dto));
     }
   }

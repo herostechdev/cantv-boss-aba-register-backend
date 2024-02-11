@@ -2,18 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { xml2js } from 'xml-js';
 import { BossConstants } from 'src/boss/boss.constants';
-import { BossHelper } from 'src/boss/boss.helper';
 import { CRMCustomerDto } from './crm-customer.dto';
 import { CRMCustomerInvalidQueryRequestException } from './crm-customer-query-invalid-request.exception';
 import { CRMCustomerRequestPayloadService } from './crm-customer-request-payload.service';
 import { ICRMCustomerRequestBody } from './crm-customer-request-body.interface';
 import { ICRMCustomerResponse } from './crm-customer-response.interface';
 import { IntegrationsConfigurationService } from 'src/system/configuration/pic/integrations-configuration.service';
-
 import { SoapRequestService } from 'src/soap/requests/soap-request.service';
 import { SoapTagTypesConstants } from 'src/soap/requests/soap-tag-types.constants';
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
-import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
 
 @Injectable()
 export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse> {
@@ -27,21 +24,12 @@ export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse
   }
 
   async execute(dto: CRMCustomerDto): Promise<ICRMCustomerResponse> {
+    this.wlog.className = CRMCustomersService.name;
+    this.wlog.methodName = BossConstants.EXECUTE_METHOD;
+    this.wlog.dto = dto;
     try {
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: BossConstants.START,
-        input: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
-        clazz: CRMCustomersService.name,
-        method: 'get',
-      });
-      Wlog.instance.info({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        message: 'Validar parámetros de entrada',
-        input: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
-        clazz: CRMCustomersService.name,
-        method: 'get',
-      });
+      this.wlog.info(BossConstants.START);
+      this.wlog.info('Validar parámetros de entrada');
       this.validateInput(dto);
       if (dto.customerId) {
         return await this.getClientByCustomerId(dto);
@@ -51,13 +39,7 @@ export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse
       }
       return await this.getClientByFiscalNumber(dto);
     } catch (error) {
-      Wlog.instance.error({
-        phoneNumber: BossHelper.getPhoneNumber(dto),
-        input: dto.customerId ?? dto.fiscalNumber ?? dto.identificationDocument,
-        clazz: CRMCustomersService.name,
-        method: 'get',
-        error: error,
-      });
+      this.wlog.error(error);
       await this.updateDslAbaRegistersService.errorUpdate({
         areaCode: String(dto.areaCode),
         phoneNumber: String(dto.phoneNumber),
@@ -78,65 +60,29 @@ export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse
   private async getClientByCustomerId(
     dto: CRMCustomerDto,
   ): Promise<ICRMCustomerResponse> {
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: 'Obtiene cliente por ID',
-      input: dto.customerId,
-      clazz: CRMCustomersService.name,
-      method: 'get',
-    });
+    this.wlog.info('Obtiene cliente por ID');
     const response = await this.invoke(dto, { CUST_ID: dto.customerId });
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: BossConstants.END,
-      input: dto.customerId,
-      clazz: CRMCustomersService.name,
-      method: 'get',
-    });
+    this.wlog.info(BossConstants.END);
     return response;
   }
 
   private async getClientByIdentificationDocument(
     dto: CRMCustomerDto,
   ): Promise<ICRMCustomerResponse> {
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: 'Obtiene cliente por cédula de identidad',
-      input: dto.identificationDocument,
-      clazz: CRMCustomersService.name,
-      method: 'get',
-    });
+    this.wlog.info('Obtiene cliente por cédula de identidad');
     const response = await this.invoke(dto, {
       NATIONAL_ID: dto.identificationDocument,
     });
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: BossConstants.END,
-      input: dto.identificationDocument,
-      clazz: CRMCustomersService.name,
-      method: 'get',
-    });
+    this.wlog.info(BossConstants.END);
     return response;
   }
 
   private async getClientByFiscalNumber(
     dto: CRMCustomerDto,
   ): Promise<ICRMCustomerResponse> {
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: 'Obtiene cliente por RIF',
-      input: dto.fiscalNumber,
-      clazz: CRMCustomersService.name,
-      method: 'get',
-    });
+    this.wlog.info('Obtiene cliente por RIF');
     const response = await this.invoke(dto, { TAXPAYER_ID: dto.fiscalNumber });
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: BossConstants.END,
-      input: dto.fiscalNumber,
-      clazz: CRMCustomersService.name,
-      method: 'get',
-    });
+    this.wlog.info(BossConstants.END);
     return response;
   }
 
@@ -148,13 +94,7 @@ export class CRMCustomersService extends SoapRequestService<ICRMCustomerResponse
     dto: CRMCustomerDto,
     bodyPayload: ICRMCustomerRequestBody,
   ): Promise<ICRMCustomerResponse> {
-    Wlog.instance.info({
-      phoneNumber: BossHelper.getPhoneNumber(dto),
-      message: `Url: ${this.clientQueryUrl}`,
-      input: JSON.stringify(bodyPayload),
-      clazz: CRMCustomersService.name,
-      method: 'invoke',
-    });
+    this.wlog.info(`Url: ${this.clientQueryUrl}`);
     const response = await this.httpService.axiosRef.post<ICRMCustomerResponse>(
       this.clientQueryUrl,
       this.getBodyPayload(bodyPayload),

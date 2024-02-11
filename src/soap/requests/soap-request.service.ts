@@ -5,10 +5,13 @@ import { HttpConstants } from 'src/system/infrastructure/http/http-constants';
 import { ISOAPCommonResponse } from './soap-common-response.interface';
 import { PICConstants } from 'src/boss/pic.constants';
 import { BossConstants } from 'src/boss/boss.constants';
+import { WLogHelper } from 'src/system/infrastructure/winston-logger/wlog.helper';
 
 export abstract class SoapRequestService<
   RESPONSE extends ISOAPCommonResponse,
 > extends CommonService {
+  protected readonly wlog = new WLogHelper();
+
   protected getAxiosRequestConfig(soapAction: string): AxiosRequestConfig {
     return {
       headers: this.getheaders(soapAction),

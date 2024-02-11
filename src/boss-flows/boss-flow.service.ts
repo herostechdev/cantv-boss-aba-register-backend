@@ -8,7 +8,7 @@ import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { WinstonLogTypeConstants } from 'src/system/infrastructure/winston-logger/winston-log-type.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
-import { WlogHelper } from 'src/system/infrastructure/winston-logger/wlog.helper';
+import { WLogHelper } from 'src/system/infrastructure/winston-logger/wlog.helper';
 
 export abstract class BossFlowService<
   DTO extends IPhoneNumber,
@@ -25,7 +25,7 @@ export abstract class BossFlowService<
 
   protected response: RESPONSE;
 
-  protected readonly wlog = new WlogHelper();
+  protected readonly wlog = new WLogHelper();
 
   // private _className: string;
   // private _methodName: string;
