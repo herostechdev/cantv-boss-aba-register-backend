@@ -11,6 +11,7 @@ import { IGetDownstreamFromPlanResponse } from '../../../raw/stored-procedures/g
 import { IGetDSLCentralCoIdByDSLAMPortIdResponse } from 'src/raw/database/functions/get-dsl-central-coid-by-dslam-port-id/get-dsl-central-coid-by-dslam-port-id-response.interface';
 import { IGetPortIdFromIpResponse } from '../../../raw/stored-procedures/get-port-id-from-ip/get-port-id-from-ip-response.interface';
 import { IGetPortIdResponse } from '../../../raw/stored-procedures/get-port-id/get-port-id-response.interface';
+import { IGetValidVPIResponse } from 'src/raw/database/functions/get-valid-vpi/get-valid-vpi-response.interface';
 import { IInsertDslAbaRegistersResponse } from 'src/raw/stored-procedures/insert-dsl-aba-registers/insert-dsl-aba-registers-response.interface';
 import { IIsPrepaidVoiceLineResponse } from '../../../raw/stored-procedures/is-prepaid-voice-line/is-prepaid-voice-line-response.interface';
 import { IIsOccupiedPortResponse } from '../../../raw/stored-procedures/Is-occupied-port/is-occupied-port-response.interface';
@@ -30,7 +31,7 @@ export interface IAbaRegisterValidateTechnicalFeasibilityResponse {
   isValidIpAddressResponse: IIsValidIpAddressResponse;
   getPortIdFromIpResponse: IGetPortIdFromIpResponse;
   queryDHCPResponse: IGetDHCPDataResponse;
-  getValidVPIResponse: string;
+  getValidVPIResponse: IGetValidVPIResponse;
   getPortIdResponse: IGetPortIdResponse;
   isOccupiedPortResponse: IIsOccupiedPortResponse;
   getASAPOrderDetailResponse: IGetASAPOrderDetailResponse;

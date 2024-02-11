@@ -37,14 +37,16 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
     protected readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService, updateDslAbaRegistersRawService);
-    super.className = AbaRegisterValidateCustomerService.name;
-    super.methodName = BossConstants.VALIDATE_METHOD;
+    // super.className = AbaRegisterValidateCustomerService.name;
+    // super.methodName = BossConstants.VALIDATE_METHOD;
+    this.wlog.className = AbaRegisterValidateCustomerService.name;
+    this.wlog.methodName = BossConstants.EXECUTE_METHOD;
   }
 
   async validate(
     dto: AbaRegisterValidateCustomerRequestDto,
   ): Promise<IAbaRegisterValidateCustomerResponse> {
-    super.infoLog(BossConstants.START);
+    this.wlog.info(BossConstants.START);
     this.initialize(dto);
     const dbConnection = await super.connect();
     try {
@@ -105,10 +107,10 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
           );
         }
       }
-      super.infoLog(BossConstants.END);
+      this.wlog.info(BossConstants.END);
       return this.response;
     } catch (error) {
-      super.errorLog(error);
+      this.wlog.error(error);
       await this.updateDslABARegistersWithNotProcessedValue(dbConnection);
       super.exceptionHandler(error, `${dto?.areaCode} ${dto?.phoneNumber}`);
     } finally {
@@ -133,7 +135,7 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
   private async getCustomerClassNameFromIdValue(
     dbConnection: Connection,
   ): Promise<void> {
-    super.infoLog('getClientClassNameFromIdValue');
+    this.wlog.info('getClientClassNameFromIdValue');
     this.response.getCustomerClassNameFromIdValueResponse =
       await this.getCustomerClassNameFromIdValueRawService.execute(
         {
@@ -151,7 +153,7 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
   private async getFirstLetterFromABARequest(
     dbConnection: Connection,
   ): Promise<void> {
-    super.infoLog('getFirstLetterFromABARequest');
+    this.wlog.info('getFirstLetterFromABARequest');
     this.response.getFirstLetterFromABARequestResponse =
       await this.getFirstLetterFromABARequestRawService.execute(
         {
@@ -163,7 +165,7 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
   }
 
   private async customerExists(dbConnection: Connection): Promise<void> {
-    super.infoLog('customerExists');
+    this.wlog.info('customerExists');
     this.response.customerExistsResponse =
       await this.abaRegisterCustomerExistsService.execute(
         {
@@ -183,7 +185,7 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
   private async getAllValuesFromCustomerValues(
     dbConnection: Connection,
   ): Promise<void> {
-    super.infoLog('getAllValuesFromCustomerValues');
+    this.wlog.info('getAllValuesFromCustomerValues');
     this.response.getAllValuesFromCustomerValuesResponse =
       await this.getAllValuesFromCustomerValuesRawService.execute(
         {
@@ -204,7 +206,7 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
   private async getCustomerInstanceIdFromIdValue(
     dbConnection: Connection,
   ): Promise<void> {
-    super.infoLog('getCustomerInstanceIdFromIdValue');
+    this.wlog.info('getCustomerInstanceIdFromIdValue');
     this.response.getCustomerInstanceIdFromIdValueResponse =
       await this.getCustomerInstanceIdFromIdValueRawService.execute(
         {
@@ -222,7 +224,7 @@ export class AbaRegisterValidateCustomerService extends BossFlowService<
   }
 
   private async getDebtFromCustomer(dbConnection: Connection): Promise<void> {
-    super.infoLog('getDebtFromCustomer');
+    this.wlog.info('getDebtFromCustomer');
     this.response.getDebtFromCustomerResponse =
       await this.getDebtFromCustomerRawService.execute(
         {

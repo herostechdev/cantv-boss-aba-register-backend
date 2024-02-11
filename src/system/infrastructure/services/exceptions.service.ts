@@ -6,16 +6,16 @@ import { EntityNotFoundException } from '../exceptions/entity-not-found.exceptio
 import { InfrastructureConstants } from '../infrastructure.constants';
 
 export abstract class ExceptionsService {
-  protected exceptionHandler(error: any, document?: any): void {
+  protected exceptionHandler(error: any, data?: any): void {
     this.conditionalThrowException(
       error,
       'duplicate key',
-      new EntityDuplicatedException(document, error),
+      new EntityDuplicatedException(data, error),
     );
     this.conditionalThrowException(
       error,
       'Could not find any entity',
-      new EntityNotFoundException(document, error),
+      new EntityNotFoundException(data, error),
     );
     this.throwHttpException(error);
   }

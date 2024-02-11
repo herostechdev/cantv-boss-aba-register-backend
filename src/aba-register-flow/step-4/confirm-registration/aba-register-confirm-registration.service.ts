@@ -40,14 +40,16 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
     protected readonly updateDslAbaRegistersRawService: UpdateDslAbaRegistersRawService,
   ) {
     super(oracleConfigurationService, updateDslAbaRegistersRawService);
-    super.className = AbaRegisterConfirmRegistrationService.name;
-    super.methodName = BossConstants.CONFIRM_METHOD;
+    // super.className = AbaRegisterConfirmRegistrationService.name;
+    // super.methodName = BossConstants.CONFIRM_METHOD;
+    this.wlog.className = AbaRegisterConfirmRegistrationService.name;
+    this.wlog.methodName = BossConstants.EXECUTE_METHOD;
   }
 
   async confirm(
     dto: AbaRegisterConfirmRegistrationRequestDto,
   ): Promise<IAbaRegisterConfirmRegistrationResponse> {
-    super.infoLog(BossConstants.START);
+    this.wlog.info(BossConstants.START);
     this.initialize(dto);
     const dbConnection = await super.connect();
     try {
@@ -261,14 +263,14 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
       //   dbConnection,
       // );
       await this.updateDslAbaRegistersWithProcessedValue(dbConnection);
-      super.infoLog(BossConstants.END);
+      this.wlog.info(BossConstants.END);
 
       // TODO: send mail notifications
       // TODO: Add mail configurations (enable send mail notifications)
       // await this.sendOkNotification();
       return this.response;
     } catch (error) {
-      super.errorLog(error);
+      this.wlog.error(error);
       // TODO: send mail notifications
       // TODO: Add mail configurations (enable send mail notifications)
       // await this.sendNotOkNotification();
@@ -295,7 +297,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   }
 
   private async getAbaPlanForKenan(dbConnection: Connection): Promise<void> {
-    super.infoLog('getPlanAbaFromKenan');
+    this.wlog.info('getPlanAbaFromKenan');
     this.response.getAbaPlanForKenanResponse =
       await this.abaRegisterGetAbaPlanForKenanService.execute(
         {
@@ -308,7 +310,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   }
 
   private async customerExists(dbConnection: Connection): Promise<void> {
-    super.infoLog('Verifica que el cliente existe');
+    this.wlog.info('Verifica que el cliente existe');
     this.response.customerExistsResponse =
       await this.abaRegisterCustomerExistsService.execute(
         {
@@ -326,7 +328,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   private async createAndProvisioningMasterAccount(
     dbConnection: Connection,
   ): Promise<void> {
-    super.infoLog('createAndProvisioningMasterAccount');
+    this.wlog.info('createAndProvisioningMasterAccount');
     this.response.createAndProvisioningMasterAccountResponse =
       await this.abaRegisterCreateAndProvisioningMasterAccountService.execute(
         {
@@ -350,7 +352,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   private async createAndProvisioningCustomer(
     dbConnection: Connection,
   ): Promise<void> {
-    super.infoLog('createAndProvisioningCustomer');
+    this.wlog.info('createAndProvisioningCustomer');
     this.response.createAndProvisioningCustomerResponse =
       await this.abaRegisterCreateAndProvisioningCustomerService.execute(
         {
@@ -372,7 +374,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   }
 
   private async isReservedLogin(dbConnection: Connection): Promise<void> {
-    super.infoLog('isReservedLogin');
+    this.wlog.info('isReservedLogin');
     this.response.isReservedLoginResponse =
       await this.abaRegisterIsReservedLoginService.execute(
         {
@@ -391,7 +393,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   private async getCSIdAndPlanNameFromLogin(
     dbConnection: Connection,
   ): Promise<void> {
-    super.infoLog('abaRegisterGetCSIdAndPlanNameFromLogin');
+    this.wlog.info('abaRegisterGetCSIdAndPlanNameFromLogin');
     this.response.getCSIdAndPlanNameFromLoginResponse =
       await this.abaRegisterGetCSIdAndPlanNameFromLoginService.execute(
         {
@@ -408,7 +410,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   }
 
   private async abaRegister(dbConnection: Connection): Promise<void> {
-    super.infoLog('abaRegister');
+    this.wlog.info('abaRegister');
     this.response.abaRegisterResponse = await this.abaRegisterService.execute(
       {
         areaCode: this.dto.areaCode,
@@ -422,7 +424,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   }
 
   private async payAbaInstallation(dbConnection: Connection): Promise<void> {
-    super.infoLog('payABAInstallation');
+    this.wlog.info('payABAInstallation');
     this.response.cancelABAInstallationResponse =
       await this.abaRegisterPayAbaInstallationService.execute(
         {
@@ -439,7 +441,7 @@ export class AbaRegisterConfirmRegistrationService extends BossFlowService<
   private async updateDslAbaRegistersWithProcessedValue(
     dbConnection: Connection,
   ): Promise<void> {
-    super.infoLog('updateDslAbaRegistersService');
+    this.wlog.info('updateDslAbaRegistersService');
     await this.updateDslAbaRegistersRawService.execute(
       {
         areaCode: this.dto.areaCode,

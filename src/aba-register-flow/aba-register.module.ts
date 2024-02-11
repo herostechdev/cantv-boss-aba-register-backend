@@ -22,6 +22,7 @@ import { AbaRegisterGetOrderIdFromAbaSalesService } from './step-2/get-order-id-
 import { AbaRegisterGetPortIdService } from './dependencies/get-port-id/get-port-id.service';
 import { AbaRegisterGetPortIdFromIpService } from './dependencies/get-port-id-from-ip/get-port-id-from-ip.service';
 import { AbaRegisterGetStateFromSerialService } from './step-4/get-state-from-serial/aba-register-get-state-from-serial.service';
+import { AbaRegisterGetValidVPIService } from './dependencies/get-valid-vpi/get-valid-vpi.service';
 import { AbaRegisterIsIPAllowedService } from './step-1/is-ip-allowed/aba-register-is-ip-allowed.service';
 import { AbaRegisterISGActionAllowedService } from './step-1/login/aba-register-isg-action-allowed.service';
 import { AbaRegisterIsOccupiedPortService } from './dependencies/Is-occupied-port/Is-occupied-port.service';
@@ -76,6 +77,7 @@ import { StoredProceduresRawModule } from 'src/raw/stored-procedures/stored-proc
     AbaRegisterGetPortIdService,
     AbaRegisterGetPortIdFromIpService,
     AbaRegisterGetStateFromSerialService,
+    AbaRegisterGetValidVPIService,
     AbaRegisterISGActionAllowedService,
     AbaRegisterIsIPAllowedService,
     AbaRegisterIsOccupiedPortService,

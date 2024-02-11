@@ -8,6 +8,7 @@ import { OracleDatabaseService } from 'src/system/infrastructure/services/oracle
 import { UpdateDslAbaRegistersRawService } from 'src/raw/stored-procedures/update-dsl-aba-registers/update-dsl-aba-registers-raw.service';
 import { WinstonLogTypeConstants } from 'src/system/infrastructure/winston-logger/winston-log-type.constants';
 import { Wlog } from 'src/system/infrastructure/winston-logger/winston-logger.service';
+import { WlogHelper } from 'src/system/infrastructure/winston-logger/wlog.helper';
 
 export abstract class BossFlowService<
   DTO extends IPhoneNumber,
@@ -20,74 +21,77 @@ export abstract class BossFlowService<
     super(oracleConfigurationService);
   }
 
-  private _className: string;
-  private _methodName: string;
-
-  protected set className(className: string) {
-    this._className = className;
-  }
-
-  protected set methodName(methodName: string) {
-    this._methodName = methodName;
-  }
-
   protected dto: DTO;
+
   protected response: RESPONSE;
 
-  protected infoLog(message: string): void {
-    this.log(message, WinstonLogTypeConstants.INFO);
-  }
+  protected readonly wlog = new WlogHelper();
 
-  protected warnLog(message: string): void {
-    this.log(message, WinstonLogTypeConstants.WARNING);
-  }
+  // private _className: string;
+  // private _methodName: string;
 
-  protected debugLog(message: string): void {
-    this.log(message, WinstonLogTypeConstants.DEBUG);
-  }
+  // protected set className(className: string) {
+  //   this._className = className;
+  // }
 
-  protected errorLog(error: any): void {
-    this.log(null, WinstonLogTypeConstants.ERROR, error);
-  }
+  // protected set methodName(methodName: string) {
+  //   this._methodName = methodName;
+  // }
 
-  private log(
-    message: string,
-    logType: WinstonLogTypeConstants,
-    error?: any,
-  ): void {
-    switch (logType) {
-      case WinstonLogTypeConstants.INFO:
-        Wlog.instance.info(this.getLogPayload(message));
-        break;
-      case WinstonLogTypeConstants.WARNING:
-        Wlog.instance.warn(this.getLogPayload(message));
-        break;
-      case WinstonLogTypeConstants.DEBUG:
-        Wlog.instance.debug(this.getLogPayload(message));
-        break;
-      case WinstonLogTypeConstants.ERROR:
-        Wlog.instance.error(this.getErrorLogPayload(error));
-        break;
-      default:
-        Wlog.instance.info(this.getLogPayload(message));
-        break;
-    }
-  }
+  // protected infoLog(message: string): void {
+  //   this.log(message, WinstonLogTypeConstants.INFO);
+  // }
 
-  private getLogPayload(message: string): IAbaRegisterWinstonLogInputData {
-    return {
-      phoneNumber: BossHelper.getPhoneNumber(this.dto),
-      message: message,
-      input: this.dto,
-      clazz: this._className ?? BossConstants.UNKNOWN,
-      method: this._methodName ?? BossConstants.UNKNOWN,
-    };
-  }
+  // protected warnLog(message: string): void {
+  //   this.log(message, WinstonLogTypeConstants.WARNING);
+  // }
 
-  private getErrorLogPayload(error: any): IAbaRegisterWinstonErrorLogInputData {
-    return {
-      ...this.getLogPayload(null),
-      error: error,
-    };
-  }
+  // protected debugLog(message: string): void {
+  //   this.log(message, WinstonLogTypeConstants.DEBUG);
+  // }
+
+  // protected errorLog(error: any): void {
+  //   this.log(null, WinstonLogTypeConstants.ERROR, error);
+  // }
+
+  // private log(
+  //   message: string,
+  //   logType: WinstonLogTypeConstants,
+  //   error?: any,
+  // ): void {
+  //   switch (logType) {
+  //     case WinstonLogTypeConstants.INFO:
+  //       Wlog.instance.info(this.getLogPayload(message));
+  //       break;
+  //     case WinstonLogTypeConstants.WARNING:
+  //       Wlog.instance.warn(this.getLogPayload(message));
+  //       break;
+  //     case WinstonLogTypeConstants.DEBUG:
+  //       Wlog.instance.debug(this.getLogPayload(message));
+  //       break;
+  //     case WinstonLogTypeConstants.ERROR:
+  //       Wlog.instance.error(this.getErrorLogPayload(error));
+  //       break;
+  //     default:
+  //       Wlog.instance.info(this.getLogPayload(message));
+  //       break;
+  //   }
+  // }
+
+  // private getLogPayload(message: string): IAbaRegisterWinstonLogInputData {
+  //   return {
+  //     phoneNumber: BossHelper.getPhoneNumber(this.dto),
+  //     message: message,
+  //     input: this.dto,
+  //     clazz: this._className ?? BossConstants.UNKNOWN,
+  //     method: this._methodName ?? BossConstants.UNKNOWN,
+  //   };
+  // }
+
+  // private getErrorLogPayload(error: any): IAbaRegisterWinstonErrorLogInputData {
+  //   return {
+  //     ...this.getLogPayload(null),
+  //     error: error,
+  //   };
+  // }
 }
