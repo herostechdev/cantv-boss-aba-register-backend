@@ -1,17 +1,9 @@
-import {
-  getConnection,
-  Connection,
-  BindParameter,
-  BIND_OUT,
-  ExecuteOptions,
-} from 'oracledb';
+import { getConnection, Connection, BindParameter, BIND_OUT } from 'oracledb';
 import { CommonService } from './common.service';
 import { CloseDatabaseConnectionException } from '../exceptions/close-database-connection.exception';
 import { GetDatabaseConnectionException } from '../exceptions/get-database-connection.exception';
-import { InfrastructureConstants } from '../infrastructure.constants';
 import { OracleConfigurationService } from 'src/system/configuration/oracle/oracle-configuration.service';
 import { ValidationHelper } from '../helpers/validation.helper';
-import { Wlog } from '../winston-logger/winston-logger.service';
 
 export abstract class OracleDatabaseService extends CommonService {
   constructor(
@@ -24,18 +16,18 @@ export abstract class OracleDatabaseService extends CommonService {
     try {
       this.logger.log('Connect to database');
       if (ValidationHelper.isDefined(dbConnection)) {
-        this.logger.log('Existing database connection');
+        this.logger.log('Return existing database connection');
         return dbConnection;
       }
       this.logger.log('Get database connection string');
       const connectionString = `${this.oracleConfigurationService.uri}:${this.oracleConfigurationService.port}/${this.oracleConfigurationService.sid}`;
-      this.logger.log('Request database connection');
+      this.logger.log('Request new database connection');
       const connection = await getConnection({
         user: this.oracleConfigurationService.username,
         password: this.oracleConfigurationService.password,
         connectionString: connectionString,
       });
-      this.logger.log('Database connection acquired');
+      this.logger.log('New database connection acquired');
       return connection;
     } catch (error) {
       this.logger.error(
@@ -56,7 +48,9 @@ export abstract class OracleDatabaseService extends CommonService {
         this.logger.log('Closing database connection');
         await dbConnection.close();
         this.logger.log('Database connection closed');
+        return;
       }
+      this.logger.log('The connection to the database was not closed');
     } catch (error) {
       this.logger.error(
         'An error occurred while closing a database connection',
@@ -65,148 +59,6 @@ export abstract class OracleDatabaseService extends CommonService {
       throw new CloseDatabaseConnectionException(error);
     }
   }
-
-  // protected async executeStoredProcedure(
-  //   dbConnection: Connection,
-  //   packageName: string,
-  //   storedProcedure: string,
-  //   parameters?: any,
-  //   additionalData?: any,
-  //   autoCommit = false,
-  // ): Promise<any> {
-  //   this.logger.log(InfrastructureConstants.SEPARATOR);
-  //   this.logger.log(
-  //     `Running the stored procedure ${this.getPackage(
-  //       packageName,
-  //     )}${storedProcedure}`,
-  //   );
-  //   this.logger.log(InfrastructureConstants.SIMPLE_SEPARATOR);
-  //   this.logger.log('Parameters');
-  //   this.logger.log(parameters);
-  //   Wlog.instance.info({
-  //     phoneNumber: additionalData?.phoneNumber,
-  //     message: `Ejecutando el SP: ${this.getPackage(
-  //       packageName,
-  //     )}${storedProcedure}`,
-  //     input: JSON.stringify(parameters),
-  //     clazz: OracleDatabaseService.name,
-  //     method: 'executeStoredProcedure',
-  //   });
-  //   const sql = this.getStoredProcedureStatement(
-  //     packageName,
-  //     storedProcedure,
-  //     parameters,
-  //   );
-  //   Wlog.instance.info({
-  //     phoneNumber: additionalData?.phoneNumber,
-  //     message: `Sentencia Sql: ${sql}`,
-  //     input: JSON.stringify(parameters),
-  //     clazz: OracleDatabaseService.name,
-  //     method: 'executeStoredProcedure',
-  //   });
-  //   const options: ExecuteOptions = {
-  //     autoCommit: autoCommit,
-  //   };
-  //   this.logger.log('Options');
-  //   this.logger.log(options);
-
-  //   const response = await dbConnection.execute(sql, parameters, options);
-
-  //   this.logger.log('Response');
-  //   this.logger.log(JSON.stringify(response));
-
-  //   Wlog.instance.info({
-  //     phoneNumber: additionalData?.phoneNumber,
-  //     message: `Respuesta del SP: ${this.getPackage(
-  //       packageName,
-  //     )}${storedProcedure}`,
-  //     response: JSON.stringify(response),
-  //     clazz: OracleDatabaseService.name,
-  //     method: 'executeStoredProcedure',
-  //   });
-  //   return response;
-  // }
-
-  // private getStoredProcedureStatement(
-  //   packageName: string,
-  //   storedProcedure: string,
-  //   parameters?: any,
-  // ): string {
-  //   packageName = this.getPackage(packageName);
-  //   parameters = this.getParameterNames(parameters);
-  //   return `BEGIN ${packageName}${storedProcedure}(${parameters}); END;`;
-  // }
-
-  // protected async executeFunction(
-  //   dbConnection: Connection,
-  //   functionName: string,
-  //   packageName?: string,
-  //   parameters?: any,
-  //   additionalData?: any,
-  // ): Promise<any> {
-  //   this.logger.log(InfrastructureConstants.SEPARATOR);
-  //   this.logger.log(
-  //     `Running the function ${this.getPackage(packageName)}${functionName}`,
-  //   );
-  //   this.logger.log(InfrastructureConstants.SIMPLE_SEPARATOR);
-
-  //   this.logger.log('Parameters');
-  //   this.logger.log(parameters);
-
-  //   Wlog.instance.info({
-  //     phoneNumber: additionalData?.phoneNumber,
-  //     message: `Ejecutando la función: ${this.getPackage(
-  //       packageName,
-  //     )}${functionName}`,
-  //     input: JSON.stringify(parameters),
-  //     clazz: OracleDatabaseService.name,
-  //     method: 'executeFunction',
-  //   });
-  //   const sql = this.getFunctionStatement(
-  //     functionName,
-  //     packageName,
-  //     parameters,
-  //   );
-
-  //   Wlog.instance.info({
-  //     phoneNumber: additionalData?.phoneNumber,
-  //     message: `Sentencia Sql: ${sql}`,
-  //     input: JSON.stringify(parameters),
-  //     clazz: OracleDatabaseService.name,
-  //     method: 'executeFunction',
-  //   });
-  //   const options = {
-  //     autoCommit: true,
-  //   };
-  //   this.logger.log('Options');
-  //   this.logger.log(options);
-
-  //   const response = await dbConnection.execute(sql, parameters, options);
-
-  //   this.logger.log('Response');
-  //   this.logger.log(JSON.stringify(response));
-
-  //   Wlog.instance.info({
-  //     phoneNumber: additionalData?.phoneNumber,
-  //     message: `Respuesta la función: ${this.getPackage(
-  //       packageName,
-  //     )}${functionName}`,
-  //     response: JSON.stringify(response),
-  //     clazz: OracleDatabaseService.name,
-  //     method: 'executeFunction',
-  //   });
-  //   return response;
-  // }
-
-  // private getFunctionStatement(
-  //   functionName: string,
-  //   packageName?: string,
-  //   parameters?: any,
-  // ): string {
-  //   packageName = this.getPackage(packageName);
-  //   parameters = this.getParameterNames(parameters, true);
-  //   return `BEGIN :result := ${packageName}${functionName}(${parameters}); END;`;
-  // }
 
   protected getPackage(packageName?: string): string {
     return packageName ? `${packageName}.` : '';
