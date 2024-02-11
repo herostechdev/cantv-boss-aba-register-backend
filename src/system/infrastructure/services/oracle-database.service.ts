@@ -44,7 +44,7 @@ export abstract class OracleDatabaseService extends CommonService {
   }
 
   protected async closeConnection(
-    dbConnection?: Connection,
+    dbConnection: Connection,
     closeConnection = true,
   ): Promise<void> {
     try {
